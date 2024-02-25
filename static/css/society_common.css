@@ -1,0 +1,864 @@
+* {
+    margin: 0;
+    padding: 0
+}
+
+
+
+p {
+    color: grey
+}
+
+#heading {
+    text-transform: uppercase;
+    color: #2b96f1;
+    font-weight: bold;
+}
+
+#msform {
+    text-align: center;
+    position: relative;
+    margin-top: 20px
+}
+
+#msform fieldset {
+    background: none;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+    position: relative
+}
+
+.form-card {
+    text-align: left
+}
+
+#msform fieldset:not(:first-of-type) {
+    display: none
+}
+
+/* #msform input,
+#msform textarea {
+    padding: 8px 15px 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 0px;
+    margin-bottom: 25px;
+    margin-top: 2px;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: montserrat;
+    color: #2C3E50;
+    /* background-color: #ECEFF1; */
+    /* font-size: 16px;
+    letter-spacing: 1px
+} */
+
+/* #msform input:focus,
+#msform textarea:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: 1px solid #673AB7;
+    outline-width: 0
+} */
+
+#msform .action-button {
+    width: 110px;
+    background: #2b96f1;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px 10px 5px;
+    float: right;
+    margin-right: 10px;
+}
+
+#msform .action-button:hover,
+#msform .action-button:focus {
+    background-color: #2b96f1
+}
+
+#msform .action-button-previous {
+    width: 100px;
+    background: #616161;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 5px 10px 0px;
+    float: right
+}
+
+#msform .action-button-previous:hover,
+#msform .action-button-previous:focus {
+    background-color: #000000
+}
+
+.card {
+    z-index: 0;
+    border: none;
+    position: relative
+}
+
+.fs-title {
+    font-size: 25px;
+    color: #2b96f1;
+    margin-bottom: 15px;
+    font-weight: normal;
+    text-align: left
+}
+
+.purple-text {
+    color: #2b96f1;
+    font-weight: normal
+}
+
+.steps {
+    font-size: 25px;
+    color: gray;
+    margin-bottom: 10px;
+    font-weight: normal;
+    text-align: right
+}
+
+.fieldlabels {
+    color: gray;
+    text-align: left
+}
+
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: lightgrey
+}
+
+#progressbar .active {
+    color: #2b96f1
+}
+
+#progressbar li {
+    list-style-type: none;
+    font-size: 15px;
+    width: 25%;
+    float: left;
+    position: relative;
+    font-weight: 400
+}
+
+#progressbar #account:before {
+    font-family: FontAwesome;
+    content: "\f1ad"
+}
+
+#progressbar #personal:before {
+    font-family: FontAwesome;
+    content: "\f19c"
+}
+
+#progressbar #payment:before {
+    font-family: FontAwesome;
+    content: "\f15c"
+}
+
+#progressbar #confirm:before {
+    font-family: FontAwesome;
+    content: "\f009"
+}
+
+
+/* MEMBER DETAILS LIST STYLE */
+#progressbar #member:before {
+    font-family: FontAwesome;
+    content: "\f500"
+}
+
+#progressbar #shares:before {
+    font-family: FontAwesome;
+    content: "\e529"
+}
+
+#progressbar #homeLoan:before {
+    font-family: FontAwesome;
+    content: "\f752"
+}
+
+#progressbar #gst:before {
+    font-family: FontAwesome;
+    content: "\f81d"
+}
+
+#progressbar #vehicle:before {
+    font-family: FontAwesome;
+    content: "\f1b9"
+}
+
+/ ------Income / Expense Creation------ /
+#progressbar #income:before {
+    font-family: FontAwesome;
+    content: "\f53d"
+}
+
+#progressbar #expense:before {
+    font-family: FontAwesome;
+    content: "\e528"
+}
+
+#progressbar li:before {
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    display: block;
+    font-size: 20px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px
+}
+
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 25px;
+    z-index: -1
+}
+
+#progressbar li.active:before,
+#progressbar li.active:after {
+    background: #2b96f1
+}
+
+.progress {
+    height: 20px
+}
+
+.progress-bar {
+    background-color: #2b96f1
+}
+
+.fit-image {
+    width: 100%;
+    object-fit: cover
+}
+
+
+
+.sty-input-wrapper{
+    position:relative;
+    /* line-height:14px; */
+    /* margin:0 10px; */
+    display:inline-block;
+}
+
+.sty-label{
+    color:#2b96f1;
+  font-size:11px;
+  text-transform:uppercase;
+  position:absolute;
+  z-index:2;
+  left:20px;
+  top:14px;
+  padding:0 2px;
+  pointer-events:none;
+  background:white;
+  /* transition:transform 100ms ease; */
+  transform:translateY(-20px);
+}
+
+.sty-inp{
+    font-size:13px;
+  color:#555;
+  outline:none;
+  border:1px solid #bbb;
+  padding:10px 20px;
+  border-radius:15px;
+  position:relative;
+}
+
+.sty-inp:invalid .sty-label{
+    transform: translateY(0);
+    transition: transform 100ms ease;
+}
+
+.sty-inp:focus{
+    border-color:#2b96f1;
+}
+
+.sty-inp + .sty-label{
+    color:#2b96f1;
+    transform:translateY(-20px);
+    transition: color 100ms ease, transform 100ms ease;
+}
+
+.more-content{
+    display: none;
+}
+
+.less {
+    display: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    color: #2b96f1;
+}
+
+.more{
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    color: #2b96f1;
+}
+
+
+
+
+
+
+
+/*===================================================================*/
+.error-message {
+    /* color: #d50707; */
+    color: red;
+    font-size: 14px;
+}
+
+
+
+/* bank details starts */
+
+.add-mem-btn{
+    background: #6ebbff;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px 10px 5px;
+    float: right;
+    margin-right: 10px;
+}
+/* bank details end */
+
+
+
+/* toast style start */
+.toast-top {
+    margin-top: 200px; /* Adjust the value as needed */
+}
+/* toast style end */
+
+
+.abc{
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #6ebbff;
+    font-family: 'Calibri', sans-serif;
+}
+.abc.active{
+    border-bottom: 3px solid #007BFF !important;
+    font-weight: bold;
+    color: #2b96f1 !important;
+}
+
+.abc:hover{
+    border-bottom: 3px solid #007BFF !important;
+    color: #2b2b2b;
+
+}
+
+.hovme{
+    cursor: pointer;
+}
+.hovme:hover{
+    font-weight: bold !important;
+    text-decoration: underline;
+}
+
+.view-label{
+    color: #000; font-weight: bold; font-size: 15px;
+    font-family:"Calibri", sans-serif;
+
+}
+
+.view-inps{
+    color: grey;
+    font-size: 14px;
+    font-family:"Calibri", sans-serif;
+    font-weight: normal;
+}
+
+
+.hidden-charge-amount {
+    display: none;
+}
+
+
+
+/* MEMBER TABLE STYLE */
+
+
+#example_previous.paginate_button.previous{
+    color: #fff !important;
+    font-family: 'Calibri', sans-serif !important;
+}
+#example_previous.paginate_button.previous:hover{
+    background: #2b96f1 !important;
+}
+#example_next.paginate_button.next{
+    color: #fff !important;
+    font-family: 'Calibri', sans-serif !important;
+}
+#example_next.paginate_button.next:hover{
+    background: #2b96f1 !important;
+}
+
+.modal-body .abs {
+    position: sticky !important;
+    /* width: 100%; */
+    top: 0;
+    background: #fff;
+
+}
+    th, td { white-space: nowrap; }
+
+/* Custom styles to fix double appearance issue */
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_paginate {
+margin-top: 0; /* Adjust as needed */
+}
+
+/* Custom style to adjust spacing between controls and the table */
+.custom-controls {
+margin-bottom: 10px; /* Adjust as needed */
+}
+
+.dt-buttons {
+float: right;
+font-family: 'Calibri', sans-serif;
+/* padding:5px !important; */
+}
+
+.dt-button-custom {
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        margin-left: .167em;
+        margin-right: .167em;
+        margin-bottom: .333em;
+        padding: .5em 1em;
+        border: 1px solid rgba(0, 0, 0, 0.3);
+        border-radius: 2px;
+        cursor: pointer;
+        font-size: .88em;
+        line-height: 1.6em;
+        color: inherit;
+        white-space: nowrap;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.1);
+        background: linear-gradient(to bottom, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+        /* filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr="rgba(230, 230, 230, 0.1)", EndColorStr="rgba(0, 0, 0, 0.1)"); */
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        text-decoration: none;
+        outline: none;
+        text-overflow: ellipsis;
+    }
+}
+
+.custom-dropdown {
+float: right;
+margin-left: 10px; /* Adjust as needed */
+}
+.dropdown-content {
+display: none;
+position: absolute;
+background-color: #f9f9f9;
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+z-index: 1;
+}
+
+.dropdown-content a {
+color: black;
+padding: 12px 16px;
+display: block;
+}
+
+.dropdown-content a:hover {
+background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+display: block;
+}
+.dt-table th,
+.dt-table td {
+white-space: nowrap;
+}
+
+
+
+.dataTables_filter {
+float: right;
+margin: 5px 2px 10px;
+}
+
+/* Custom styles for DataTables row height */
+table.dataTable tbody th,
+table.dataTable tbody td {
+height: 20px; /* Adjust the value as needed */
+}
+
+
+table {
+
+border-collapse: collapse;
+width: 100%;
+font-family: 'Calibri', sans-serif;
+}
+
+
+thead th {
+padding: 10px;
+text-align: left;
+font-weight: bold;
+}
+
+
+
+
+
+
+/* Custom styles for the first and second columns */
+thead th:nth-child(1),
+thead th:nth-child(2) {
+
+position: sticky;
+left: 0;
+z-index: 2;
+}
+
+/* Custom styles for DataTable buttons */
+.dt-button {
+background-color: #6ebbff !important;
+color: #fff !important;
+border: none !important;
+/* padding: 10px 15px !important; */
+border-radius: 5px !important;
+cursor: pointer ;
+/* margin-right: 5px; */
+}
+.dt-button:hover{
+background-color: #2b96f1 !important;
+}
+
+.dt-button-collection {
+background: #6ebbff !important;
+}
+
+.dataTables_info {
+font-family: 'Calibri', sans-serif;
+/* margin-top: -45px;
+position: relative !important;
+left: 40% !important; */
+/* float: inline !important; */
+/* text-align: center !important; */
+}
+.dataTables_length {
+font-family: 'Calibri', sans-serif;
+padding-right: 10px;
+padding-top: 15px;
+position: absolute;
+
+}
+
+
+.dataTables_filter input {
+border: 1px solid #ddd; /* Optional: Add a border for better visibility */
+padding: 10px;
+border-radius: 30px !important;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Pleasant box shadow */
+transition: box-shadow 0.3s ease;
+}
+.dataTables_filter input:hover {
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Adjusted box shadow on hover */
+}
+
+.dataTables_length select {
+border: 1px solid #ddd; /* Optional: Add a border for better visibility */
+padding: 10px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Pleasant box shadow */
+transition: box-shadow 0.3s ease;
+}
+.dataTables_length select:hover {
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Adjusted box shadow on hover */
+}
+
+
+
+/* Hover effect on buttons */
+.dt-button:hover {
+background-color:#2b96f1;
+}
+
+/* Adjust styles for the search input */
+.dataTables_filter input {
+border: 1px solid #ddd;
+padding: 8px;
+}
+.dataTables_filter label {
+/* border: 1px solid #ddd; */
+/* padding: 8px; */
+text-transform: uppercase;
+font-weight: bold;
+color: #555;
+font-family: 'Calibri', sans-serif !important;
+}
+
+/* Add a subtle shadow to the table */
+table {
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* background-color: #fff !important; */
+}
+
+
+/* ---------------------------------------------------------------------- */
+
+/* Custom styles for DataTable pagination */
+
+/* Style the pagination container */
+.dataTables_paginate {
+margin-top: 10px !important;
+color: #fff !important;
+}
+
+/* Style the individual pagination buttons */
+.dataTables_paginate .paginate_button {
+background-color: #6ebbff !important;
+color: #fff !important;
+font-weight: bold;
+font-family: 'Calibri', sans-serif;
+border: none !important;
+/* padding: 10px 15px !important; */
+border-radius: 5px !important;
+cursor: pointer;
+margin: 0 5px;
+}
+
+/* .paginate_button.next.disabled{
+color: #fff !important;
+} */
+
+/* Hover effect on pagination buttons */
+
+
+/* Style the active page button */
+.dataTables_paginate .paginate_button.current {
+background-color: #2b96f1 !important;
+transform: scale(1.1);
+}
+
+
+/* Disable the "Previous" and "Next" buttons on hover */
+.dataTables_paginate .paginate_button.disabled:hover {
+background-color: #007BFF !important;
+color: #fff !important;
+cursor: not-allowed !important;
+}
+
+/* Add a subtle shadow to the pagination container */
+.dataTables_paginate {
+/* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important; */
+}
+
+
+
+/* Custom styles for the DataTable */
+
+/* ... (existing styles) ... */
+
+/* Remove default sorting icons */
+thead .sorting,
+thead .sorting_asc,
+thead .sorting_desc {
+background: none;
+}
+
+/* Style the Font Awesome sorting icons */
+thead .sorting::before,
+thead .sorting_asc::before,
+thead .sorting_desc::before {
+font-family: 'Font Awesome 6 Free'; /* Check the correct font family name for Font Awesome 6 */
+font-weight: 900;
+content: '\f0dc'; /* Unicode for the FontAwesome sort icon */
+margin-right: 5px;
+}
+
+/* Change the icon for ascending order */
+thead .sorting_asc::before {
+content: '\f0de'; /* Unicode for the FontAwesome sort-up icon */
+}
+
+/* Change the icon for descending order */
+thead .sorting_desc::before {
+content: '\f0dd'; /* Unicode for the FontAwesome sort-down icon */
+}
+
+table.dt-table tbody th,
+table.dt-table tbody td {
+background-color: #fff !important; /* Set the background color to white */
+}
+
+
+/* Table related stuff */
+.abs{
+    z-index: 100;
+}
+
+
+.action-button-new {
+    width: 110px;
+    background: #2b96f1;
+    font-weight: bold;
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 10px 5px;
+    margin: 10px 0px 10px 5px;
+    float: right;
+    margin-right: 10px;
+}
+
+input::placeholder {
+    color: #c7c3c3 !important;
+}
+
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  .hr-container{
+    max-width: 80%;
+    margin: 0 auto;
+  }
+  .hr-text{
+    position: relative;
+    ouline: 0;
+    border: 0;
+    height: 1.5em;
+  }
+  .hr-text:before{
+    content: '';
+    position: absolute;
+    background: green;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 1px;
+  }
+  .hr-text:after{
+    content: attr(data-content);
+    position: relative;
+    display: inline-block;
+    color: black;
+    padding: 0 2em;
+    line-height: 1.5em;
+    color: #2b96f1;
+    background-color: #fcfcfa;
+  }
+
+
+  .error {
+    color: red;
+    font-size: 14px;
+}
+
+
+
+
+/* Loader CSS */
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Hide loader when not needed */
+.loader.hidden {
+    display: none;
+}
+
+
+
+
+/* checkbox style */
+.att-table input[type="checkbox"] {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: red;
+    outline: none;
+    border-radius: 2rem;
+    cursor: pointer;
+    box-shadow: inset 0 0 5px rgb(0 0 0 / 50%);
+}
+
+.att-table input[type="checkbox"]::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: 0.5s;
+    border: 1px solid grey;
+}
+
+.att-table input[type="checkbox"]:checked::before {
+    transform: translateX(100%) !important;
+    background: #fff;
+}
+
+.att-table input[type="checkbox"]:checked {
+    background: #00ed64;
+}
+
+
+.notEditable{
+    cursor: not-allowed;
+}

@@ -1,0 +1,290 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<div class="container">
+    <div id="tenantAllocationVue">
+        <div class="member-title mt-4 d-flex" style="justify-content: space-between;">
+            <h3 class="lead" style="font-size: 27px;">Allocate Tenant</h3>
+            <div class="gap-4">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tenentCreation">Allocate Tenant</button>
+            </div>
+        </div>
+        {% verbatim %}
+        <div>
+            <table id="example" class="display dt-table order-column" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th v-for="(value, key) in tenantData[0]" :key="key">{{ key }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(tenantData, index) in tenantData" :key="index">
+                        <td>
+                            <span @click="viewRequestedData(tenantData.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                            <span @click="editRequestedData(tenantData.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                        </td>
+                        <td v-for="(value, key) in tenantData" :key="key">{{ value }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% endverbatim %}
+
+        <!-- Tenant CREATE modal -->
+        <div class="modal fade" id="tenentCreation" tabindex="-1" aria-labelledby="tenentCreationLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="tenentCreationLabel">Allocate Tenant</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        {% verbatim %}
+                        <div class="row">
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <select v-model="formData.wing_flat" class="w-100 sty-inp form-control" @change="getOwnerName($event)">
+                                        <option v-for="unit in units" :value="unit[0]">{{ unit[1] }}</option>
+                                    </select>
+                                    <label for="" class="sty-label">Wing & Flat No.</label>
+                                    <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.member_name">
+                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.pk" hidden>
+                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.aadharPanPk" hidden>
+                                    <label for="id_flat_primary_owner" class="sty-label">Owner Name</label>
+                                    <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.aadhar_pan" @input="getAadharPan">
+                                    <label for="id_tenant_aadhar_pan" class="sty-label">Aadhaar / PAN No.</label>
+                                    <span v-if="errors.aadhar_pan" class="error">{{ errors.aadhar_pan[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.tenant_name">
+                                    <label for="id_tenant_name" class="sty-label">Tenant Name</label>
+                                    <span v-if="errors.tenant_name" class="error">{{ errors.tenant_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="date" class="sty-inp form-control w-100" v-model="formData.tenant_from_date">
+                                    <label for="id_tenant_period_from" class="sty-label">Period From</label>
+                                    <span v-if="errors.tenant_from_date" class="error">{{ errors.tenant_from_date[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="date" class="sty-inp form-control w-100" v-model="formData.tenant_to_date" disabled>
+                                    <label for="id_tenant_period_to" class="sty-label">Period To</label>
+                                    <span v-if="errors.tenant_to_date" class="error">{{ errors.tenant_to_date[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-2 d-flex">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="file" class="w-100 sty-inp form-control" ref="tenant_agreement" @change="handleFileChange($event, 'tenant_agreement')">
+                                    <label for="id_tenant_agreement" class="sty-label">Attach Agreement</label>
+                                    <span v-if="errors.tenant_agreement" class="error">{{ errors.tenant_agreement[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                <div class="prev">
+                                    <button type="button" class="sty-inp form-control"
+                                        onclick="PreviewImage('id_tenant_agreement')">
+                                        <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-2 d-flex">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="file" class="w-100 sty-inp form-control" ref="tenant_noc" @change="handleFileChange($event, 'tenant_noc')">
+                                    <label for="id_tenant_noc" class="sty-label">Attach NOC</label>
+                                    <span v-if="errors.tenant_noc" class="error">{{ errors.tenant_noc[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                <div class="prev">
+                                    <button type="button" class="sty-inp form-control" onclick="PreviewImage('id_tenant_noc')">
+                                        <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endverbatim %}
+                    </form>
+                    <hr>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" value="Submit" @click="submitTenant">Save changes</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Tenant UPDATE modal -->
+        <div class="modal fade" id="tenentUpdateModal" tabindex="-1" aria-labelledby="tenentUpdateModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="tenentUpdateModalLabel">Update Allocated Tenant</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        {% verbatim %}
+                        <div class="row">
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <select v-model="formData.wing_flat" class="w-100 sty-inp form-control notEditable" @change="getOwnerName($event)" readonly>
+                                        <option :value="formData.wing_flat">{{ formData.wing_flat }}</option>
+                                    </select>
+                                    <label for="" class="sty-label">Wing & Flat No.</label>
+                                    <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100 notEditable" v-model="formData.member_name" readonly>
+                                    <label for="id_flat_primary_owner" class="sty-label">Owner Name</label>
+                                    <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100 notEditable" v-model="formData.aadhar_pan" @input="getAadharPan" readonly>
+                                    <label for="id_tenant_aadhar_pan" class="sty-label">Aadhaar / PAN No.</label>
+                                    <span v-if="errors.aadhar_pan" class="error">{{ errors.aadhar_pan[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100 notEditable" v-model="formData.tenant_name" readonly>
+                                    <label for="id_tenant_name" class="sty-label">Tenant Name</label>
+                                    <span v-if="errors.tenant_name" class="error">{{ errors.tenant_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="date" class="sty-inp form-control w-100 notEditable" v-model="formData.tenant_from_date" readonly>
+                                    <label for="id_tenant_period_from" class="sty-label">Period From</label>
+                                    <span v-if="errors.tenant_from_date" class="error">{{ errors.tenant_from_date[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="date" class="sty-inp form-control w-100" v-model="formData.tenant_to_date">
+                                    <label for="id_tenant_period_to" class="sty-label">Period To</label>
+                                    <span v-if="errors.tenant_to_date" class="error">{{ errors.tenant_to_date[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-2 d-flex">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="file" class="w-100 sty-inp form-control notEditable" ref="tenant_agreement" @change="handleFileChange($event, 'tenant_agreement')" readonly>
+                                    <label for="id_tenant_agreement" class="sty-label">Attach Agreement</label>
+                                    <span v-if="errors.tenant_agreement" class="error">{{ errors.tenant_agreement[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                <div class="prev">
+                                    <button type="button" class="sty-inp form-control"
+                                        onclick="PreviewImage('id_tenant_agreement')">
+                                        <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-2 d-flex">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="file" class="w-100 sty-inp form-control notEditable" ref="tenant_noc" @change="handleFileChange($event, 'tenant_noc')" readonly>
+                                    <label for="id_tenant_noc" class="sty-label">Attach NOC</label>
+                                    <span v-if="errors.tenant_noc" class="error">{{ errors.tenant_noc[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                <div class="prev">
+                                    <button type="button" class="sty-inp form-control" onclick="PreviewImage('id_tenant_noc')">
+                                        <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endverbatim %}
+                    </form>
+                    <hr>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" value="Submit" @click="updateTenant">Save changes</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Tenant VIEW modal -->
+        <div class="modal fade" id="tenentViewModal" tabindex="-1" aria-labelledby="tenentViewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="tenentViewModalLabel">View Allocated Tenant</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body">
+                        {% verbatim %}
+                            <p>wing_flat: {{ formData.wing_flat }}</p>
+                            <p>member_name: {{ formData.member_name }}</p>
+                            <p>aadhar_pan: {{ formData.aadhar_pan }}</p>
+                            <p>tenant_name: {{ formData.tenant_name }}</p>
+                            <p>tenant_from_date: {{ formData.tenant_from_date }}</p>
+                            <p>tenant_to_date: {{ formData.tenant_to_date }}</p>
+                            <p>tenant_agreement: {{ formData.tenant_agreement }}</p>
+                            <p>tenant_noc: {{ formData.tenant_noc }}</p>
+                        {% endverbatim %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" value="Submit" @click="updateTenant">Save changes</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}

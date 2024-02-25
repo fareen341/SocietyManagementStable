@@ -1,0 +1,824 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<!-- <h1>METTINGS</h1> -->
+<div class="container">
+    <button type="button" class="btn btn-primary float-end mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Create Meeting
+    </button>
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content" id="meetingApp">
+        <!-- <form> -->
+            <div class="modal-header">
+            <label class="form-label dataTable-Text" id="exampleModalLabel">Meeting Type:-</label>
+            <select id="toggleSelect" ref="meeting_type" @change="get_meetingtype" v-model="selectedMeetingType" class="form-control ms-3" style="width: max-content;">
+                <option value="">Select Meeting Type</option>
+                <option value="option1">First General Meeting</option>
+                <option value="option2">Annual General Meeting</option>
+                <option value="option3">Managing Committee Meeting</option>
+                <option value="option4">Special General Body Meeting</option>
+                <option value="option5">Last General Meeting</option>
+            </select>
+            <small v-if="meeting_type_error" class="error">{{ meeting_type_error }}</small>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4 id="heading">Rules:-</h4>
+                <div id="toggleDiv1" class="toggle-div" style="display: none;">
+                    <ol>
+                        <li><span class="fw-semibold">Prediocity: </span>first General Meeting shall be held within the period of three months of the date of the registration of the Society, as provided under Rule 59 of the Rules. It shall be the responsibility of the Chief Promoter Society to convene First General Body meeting within the stipulated period.</li>
+
+                        <li><span class="fw-semibold">Notice: </span>Clear fourteen days Notice of the First General Body Meeting of the Society shall be given</li>
+
+                        <li class="more-content"><span class="fw-semibold">Quorum: </span>quorum for every general body meeting of the Society shall be 2/3rd of the total number of Members of the Society or 20, whichever is less.</li>
+
+                        <li class="more-content"><span class="fw-semibold">Adjournment: </span>If within half an hour after the time appointed for general body meeting of the Society, there is no quorum, the meeting, if convened upon the requisition of the Members, shall be dissolved. In any other case, it shall be adjourned to a later hour on the same day and at the same place, as may have been specified in the notice, calling the general body meeting of the Society or to a subsequent date, not earlier than 7 days and not later than 30 days and at such adjourned general body meeting</li>
+                        <span class="more" onclick="showMore()">Show More</span>
+                        <span class="less" onclick="showLess()">Show Less</span>
+                    </ol>
+                </div>
+
+                    <div id="toggleDiv2" class="toggle-div" style="display: none;">
+
+                    <ol>
+                        <li><span class="fw-semibold">Prediocity: </span>Annual General Body Meeting of the Society shall be held on or before 30th September each year</li>
+
+                        <li><span class="fw-semibold">Notice: </span>Clear fourteen days Notice of the First General Body Meeting of the Society shall be given</li>
+
+                        <li class="more-content"><span class="fw-semibold">Quorum: </span>quorum for every general body meeting of the Society shall be 2/3rd of the total number of Members of the Society or 20, whichever is less.</li>
+
+                        <li class="more-content"><span class="fw-semibold">Adjournment: </span>If within half an hour after the time appointed for general body meeting of the Society, there is no quorum, the meeting, if convened upon the requisition of the Members, shall be dissolved. In any other case, it shall be adjourned to a later hour on the same day and at the same place, as may have been specified in the notice, calling the general body meeting of the Society or to a subsequent date, not earlier than 7 days and not later than 30 days and at such adjourned general body meeting</li>
+                        <span class="more" onclick="showMore()">Show More</span>
+                        <span class="less" onclick="showLess()">Show Less</span>
+                    </ol>
+                </div>
+
+                <div id="toggleDiv3" class="toggle-div" style="display: none;">
+
+                    <ol>
+                        <li><span class="fw-semibold">Prediocity: </span>The first meeting of the newly elected jointly with outgoing Committee shall be held within 30 days from the date of constitution of the new committee. Subsequently at least one meeting need to be held on monthly basis</li>
+
+                        <!-- <li><span class="fw-semibold">Notice: </span>Clear fourteen days Notice of the First General Body Meeting of the Society shall be given</li> -->
+
+                        <li><span class="fw-semibold">Quorum: </span>The Committee shall consist of *11 / 13 / 15 / 17 / 19 Members of the Society. This strength includes the reservation of seats as provided under section 73B and 73C of the Act.
+                        <div class="d-flex" style="flex-direction: column;">
+                            <p>Note: *The strength of the managing committee and strength of the quorum for conducting the meeting would be as under:-</p>
+                            <img src="./images/my-images/Skype_Picture_2024_01_31T10_46_29_075Z.jpeg" alt="">
+                            <p>Quorum for the Meeting will be simple majority of the existing Committee Members.</p>
+                        </div>
+                        </li>
+
+                        <li class="more-content"><span class="fw-semibold">Adjournment: </span>If within half an hour after the time appointed for Managing Committee meeting of the Society, there is no quorum, the meeting can be started with present members </li>
+                        <span class="more" onclick="showMore()">Show More</span>
+                        <span class="less" onclick="showLess()">Show Less</span>
+                    </ol>
+
+                </div>
+
+                <div id="toggleDiv4" class="toggle-div" style="display: none;">
+
+                    <ol>
+                        <li><span class="fw-semibold">Prediocity: </span>Special General Body Meeting of the Society may be called at any time at the instance of the Chairman or by the decision of the majority of the Committee and shall be called within one month of the date of the receipt or requisition, in writing signed by at least 1/5th of the Members of the Society.</li>
+
+                        <li><span class="fw-semibold">Notice: </span>Clear 7  day's Notice need to be send to Members along with Agenda (specific point to discuss)</li>
+
+                        <li class="more-content"><span class="fw-semibold">Quorum: </span>quorum for every general body meeting of the Society shall be 2/3rd of the total number of Members of the Society or 20, whichever is less.</li>
+
+                        <li class="more-content"><span class="fw-semibold">Adjournment: </span>If within half an hour after the time appointed for Special General meeting of the Society, there is no quorum, the meeting can be started with present members.</li>
+                        <span class="more" onclick="showMore()">Show More</span>
+                        <span class="less" onclick="showLess()">Show Less</span>
+                    </ol>
+                </div>
+
+                <div id="toggleDiv5" class="toggle-div" style="display: none;">
+
+                    <ol>
+                        <li><span class="fw-semibold">Prediocity: </span>first General Meeting shall be held within the period of three months of the date of the registration of the Society, as provided under Rule 59 of the Rules. It shall be the responsibility of the Chief Promoter Society to convene First General Body meeting within the stipulated period.</li>
+
+                        <li><span class="fw-semibold">Notice: </span>Clear fourteen days Notice of the First General Body Meeting of the Society shall be given</li>
+
+                        <li class="more-content"><span class="fw-semibold">Quorum: </span>quorum for every general body meeting of the Society shall be 2/3rd of the total number of Members of the Society or 20, whichever is less.</li>
+
+                        <li class="more-content"><span class="fw-semibold">Adjournment: </span>If within half an hour after the time appointed for general body meeting of the Society, there is no quorum, the meeting, if convened upon the requisition of the Members, shall be dissolved. In any other case, it shall be adjourned to a later hour on the same day and at the same place, as may have been specified in the notice, calling the general body meeting of the Society or to a subsequent date, not earlier than 7 days and not later than 30 days and at such adjourned general body meeting</li>
+                        <span class="more" onclick="showMore()">Show More</span>
+                        <span class="less" onclick="showLess()">Show Less</span>
+                    </ol>
+                </div>
+                <hr>
+                {% verbatim %}
+                <div id="">
+                    <form @submit.prevent="submitForm" enctype="multipart/form-data" ref="submitForms">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-3 w-100 sty-input-wrapper">
+                                    <!-- <input class="w-100 sty-inp" name="date_of_meeting" id="date_of_meeting" v-model="formData.date_of_meeting" type="date"> -->
+                                    <input type="date" class="sty-inp form-control" id="date_of_meeting" v-model="formData.date_of_meeting">
+                                    <label class="sty-label">Date of Meeting</label>
+                                    <small v-if="dateOfMeetingError" class="error">{{ dateOfMeetingError }}</small>
+                                    <!-- <small v-if="errors.date_of_meeting" class="error">{{ errors.date_of_meeting[0] }}</small>
+                                    <small v-else></small> -->
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3 w-100 sty-input-wrapper">
+                                    <input class="sty-inp form-control" id="time_of_meeting" v-model="formData.time_of_meeting" type="time">
+                                    <label class=" sty-label">Time of Meeting</label>
+                                    <small v-if="timeOfMeetingError" class="error">{{ timeOfMeetingError }}</small>
+                                    <!-- <small v-if="errors.time_of_meeting" class="error">{{ errors.time_of_meeting[0] }}</small>
+                                    <small v-else></small> -->
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="mb-3 w-100 sty-input-wrapper">
+                                    <input class="sty-inp form-control" name="place_of_meeting" v-model="formData.place_of_meeting" type="text">
+                                    <label class="sty-label">Place of Meeting</label>
+                                    <small v-if="placeOfMeetingError" class="error">{{ placeOfMeetingError }}</small>
+                                    <!-- <small v-if="errors.place_of_meeting" class="error">{{ errors.place_of_meeting[0] }}</small> -->
+                                    <!-- <small v-else></small> -->
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3 d-flex" style="flex-direction: column;">
+                                <label style="text-transform: uppercase; color: #2b96f1; font-family: 'Calibri', sans-serif;">Agenda of Meeting</label>
+                                <textarea id="editor" v-model="formData.content" style="color: #000 !important; min-height: 500px !important; font-family: 'Calibri', sans-serif;" cols="30" rows="10">
+                                </textarea>
+                                <small v-if="contentError" class="error">{{contentError}}</small>
+                                <!-- <small v-else></small> -->
+                            </div>
+
+
+                            <div class="col-lg-4">
+                                <div class="d-flex mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                        <input type="file" class="sty-inp form-control" id="agenda" ref="agendaInput" @change="handleFileChange">
+                                        <label class="sty-label">Agenda Document</label>
+                                        <small v-if="agendaError" class="error">{{ agendaError }}</small>
+                                        <!-- <small v-if="errors.agenda" class="error">{{ errors.agenda[0] }}</small>
+                                    <small v-else></small> -->
+                                    </div>
+                                    <div class="prev">
+                                        <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('agenda')">
+                                            <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="d-flex mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                        <input type="file" class="sty-inp form-control" id="financials" ref="financialsInput" @change="handleFileChange">
+                                        <label class="sty-label">Financals Document</label>
+                                        <small v-if="financialsError" class="error">{{ financialsError }}</small>
+                                        <!-- <small v-if="errors.financials" class="error">{{ errors.financials[0] }}</small>
+                                    <small v-else></small> -->
+                                    </div>
+                                    <div class="prev">
+                                        <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('financials')">
+                                            <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4">
+                                <div class="d-flex mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                        <input type="file" class="sty-inp form-control" id="other" ref="otherInput" @change="handleFileChange">
+                                        <label class="sty-label">Other Document</label>
+                                    </div>
+                                    <div class="prev">
+                                        <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('other')">
+                                            <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary ms-auto me-3 mb-3" style="width: max-content;" type="submit">Submit</button>
+                        </div>
+
+                    </form>
+                </div>
+                {% endverbatim %}
+            </div>
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div> -->
+        <!-- </form> -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+<div id="meetingTableDiv" class="container" style="font-family: 'Calibri', sans-serif !important;">
+    {% verbatim %}
+    <table id="example" class="display dt-table table-sm order-column" style="width:100%">
+    <!-- <table id="houseHelpDataTable"> -->
+        <thead>
+            <tr>
+                <th>Actions</th>
+                <!-- <th v-for="(value, key) in meeting[0]" :key="key">{{ key }}</th> -->
+                <th>Type of Meeting</th>
+                <th>Date of Meeting</th>
+                <th>Time of Meeting</th>
+                <th>Agenda</th>
+                <th>Minutes</th>
+                <th>Place of Meeting</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(user, index) in meeting" :key="index">
+                <td>
+                    <div class="d-flex">
+                        <button class="btn" title="View Meeting Details"  @click="viewMeetingDetails(user.id)"  ><i class="fa-solid fa-eye"></i></button>
+                        <button class="btn" title="Drop your Suggestion" @click="suggestionForm(user.id)"><i class="fa-solid fa-comment-dots"></i></button>
+                        <button class="btn" title="Mark Attendance" @click="attendance(user.id)"><i class="fas fa-user-clock"></i></button>
+                        <span v-if="!user.minutes_content">
+                            <button class="btn" title="Add Minutes of the Meeting" @click="editForm(user.id)"><i class="fa-solid fa-pen-to-square"></i></button>
+                        </span>
+                    </div>
+                </td>
+                <td>{{ user.meeting_type }}</td>
+                <!-- <td v-for="(value, key) in user" :key="key">{{ value }}</td> -->
+                <td>{{ user.date_of_meeting }}</td>
+                <td>{{ formatTime(user.time_of_meeting) }}</td>
+                <td><i class="fa-solid fa-a" style="color: #37ff00;"></i></td>
+                <!-- <td><i class="fa-solid fa-check" style="color: #37ff00;"></i></td> -->
+                <td v-if="user.minutes_content">
+                    <!-- <i class="fa-solid fa-check" style="color: #37ff00;"></i> -->
+                    <i class="fa-solid fa-m fa-sm" style="color: #37ff00;"></i>
+                </td>
+                <td v-else="user.minutes_content">
+                    <!-- <i class="fa-solid fa-xmark" style="color: #ff0000;"></i> -->
+                    <i class="fa-solid fa-m fa-sm" style="color: #ff0000;"></i>
+                </td>
+
+                <td>{{ user.place_of_meeting }}</td>
+
+            </tr>
+        </tbody>
+    </table>
+    {% endverbatim %}
+
+
+    <!-- Attendance Modal -->
+    <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header" id="heading">
+              <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
+
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form @submit.prevent="submitAttendance" enctype="multipart/form-data" ref="submitAttendances">
+                    <div class="table-responsive">
+                        <div class="d-flex gap-3 float-end mb-3" >
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchInput"  placeholder="Search">
+                                <div class="input-group-append">
+                                    <button class="btn" type="button" id="clearSearchInput"><i class="fas fa-times"></i></button>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                        <table class="table table-sm table-bordered att-table text-center" id="dataTable">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Flat Number</th>
+                                    <th>Member Name</th>
+                                    <th>Member Type</th>
+                                    <th>Attendance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>A-wing-101</td>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><select name="" id="" class="form-control myEdit" >
+                                            <option value="">Primary Member</option>
+                                            <option value="">Secondary Member</option>
+                                            <option value="">Proxy</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" name="" id="">
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td>B-wing-302</td>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><select name="" id="" class="form-control">
+                                            <option value="">Primary Member</option>
+                                            <option value="">Secondary Member</option>
+                                            <option value="">Proxy</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="checkbox" name="" id=""></td>
+                                </tr>
+
+                                <tr>
+                                    <td>C-wing-401</td>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><select name="" id="" class="form-control">
+                                            <option value="">Primary Member</option>
+                                            <option value="">Secondary Member</option>
+                                            <option value="">Proxy</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="checkbox" name="" id=""></td>
+                                </tr>
+
+                                <tr>
+                                    <td>B-wing-202</td>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><select name="" id="" class="form-control">
+                                            <option value="">Primary Member</option>
+                                            <option value="">Secondary Member</option>
+                                            <option value="">Proxy</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="checkbox" name="" id=""></td>
+                                </tr>
+
+                                <tr>
+                                    <td>D-wing-501</td>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><select name="" id="" class="form-control">
+                                            <option value="">Primary Member</option>
+                                            <option value="">Secondary Member</option>
+                                            <option value="">Proxy</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="checkbox" name="" id=""></td>
+                                </tr>
+
+                                <tr>
+                                    <td>A-wing-603</td>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><select name="" id="" class="form-control">
+                                            <option value="">Primary Member</option>
+                                            <option value="">Secondary Member</option>
+                                            <option value="">Proxy</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="checkbox" name="" id=""></td>
+                                </tr>
+
+                                <tr>
+                                    <td>B-wing-704</td>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><select name="" id="" class="form-control">
+                                            <option value="">Primary Member</option>
+                                            <option value="">Secondary Member</option>
+                                            <option value="">Proxy</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="checkbox" name="" id=""></td>
+                                </tr>
+
+                                <tr>
+                                    <td>D-wing-204</td>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><select name="" id="" class="form-control">
+                                            <option value="">Primary Member</option>
+                                            <option value="">Secondary Member</option>
+                                            <option value="">Proxy</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="checkbox" name="" id=""></td>
+                                </tr>
+
+                                <tr>
+                                    <td>C-wing-404</td>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><select name="" id="" class="form-control">
+                                            <option value="">Primary Member</option>
+                                            <option value="">Secondary Member</option>
+                                            <option value="">Proxy</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="checkbox" name="" id=""></td>
+                                </tr>
+
+                                <tr>
+                                    <td>D-wing-203</td>
+                                    <td><input type="text" class="form-control"></td>
+                                    <td><select name="" id="" class="form-control">
+                                            <option value="">Primary Member</option>
+                                            <option value="">Secondary Member</option>
+                                            <option value="">Proxy</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="checkbox" name="" id=""></td>
+                                </tr>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+
+
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+
+    <!-- View Modal -->
+  <div class="modal fade" id="viewMeetingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header" id="heading">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title {{ id }}</h1>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {% verbatim %}
+         <!-- <p><strong>Date of Meeting:</strong> <span id="dateOfMeeting"></span></p> -->
+
+         <div class="row">
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="view-label">Date of Meeting</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="view-inps" id="date" v-html="sanitizeHTML(singleMeeting.date_of_meeting)"> </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="view-label">Time of Meeting</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="view-inps" id="time"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-3">
+                        <p class="view-label">Place of Meeting</p>
+                    </div>
+                    <div class="col-9">
+                        <p class="view-inps" id="place"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 mb-3" style="border: 1px solid grey;">
+                <div class="row">
+                    <div class="col-12" style="text-align: center;">
+                        <p class="view-label">Agenda</p>
+                    </div>
+                    <div class="col-12">
+                        <p class="view-inps" style="text-align: justify !important;" id="content" v-html="sanitizeHTML(singleMeeting.content)"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="view-label">Agenda Document</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="view-inps" id="agendaDoc"></p>
+                        <!-- <div id="agendaDoc">
+
+                        </div> -->
+                        <!-- <p class="view-inps"><a href="${this.singleMeeting.documentUrl}" target="_blank">View Document</a></p> -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="view-label">Financals Document</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="view-inps" id="financialsDoc"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="view-label">Other Document</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="view-inps" id="otherDoc"></p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- <hr style="height: 2px; background: #000 !important; border: 1px solid #000;"> -->
+
+            <div class="col-lg-12 mb-3" style="border: 1px solid grey;">
+                <div class="row">
+                    <div class="col-12" style="text-align: center;">
+                        <p class="view-label">Minutes</p>
+                    </div>
+                    <div class="col-12">
+                        <p class="view-inps" style="text-align: justify !important;" id="minutes_content" v-html="sanitizeHTML(singleMeeting.minutes_content)"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="view-label">Minutes Document</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="view-inps" id="minutes_document"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="row">
+                    <div class="col-6">
+                        <p class="view-label">Minutes Other Document</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="view-inps" id="minutes_other"></p>
+                    </div>
+                </div>
+            </div>
+         </div>
+         {% endverbatim %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header" id="heading">
+              <!-- <h1 class="modal-title fs-5">{{ form.edit }}</h1> -->
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% verbatim %}
+
+                <form @submit.prevent="minutesForm(form.id)" class="mb-3" enctype="multipart/form-data" ref="minutesForms">
+
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion-item" style="border: 1px solid grey;">
+                          <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" id="heading" style="border-bottom: 1px solid grey;" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                              Agenda Details
+                            </button>
+                          </h2>
+                          <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="mb-3 w-100 sty-input-wrapper">
+                                            <!-- <input class="w-100 sty-inp" name="date_of_meeting" id="date_of_meeting" v-model="formData.date_of_meeting" type="date"> -->
+                                            <input type="text" class="sty-inp form-control" id="editdate" readonly v-model="form.date_of_meeting">
+                                            <label class="sty-label">Date of Meeting</label>
+                                            <!-- <small v-if="dateOfMeetingError" class="error">{{ dateOfMeetingError }}</small> -->
+                                            <!-- <small v-if="errors.date_of_meeting" class="error">{{ errors.date_of_meeting[0] }}</small>
+                                            <small v-else></small> -->
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="mb-3 w-100 sty-input-wrapper">
+                                            <input type="text" class="sty-inp form-control" id="edittime" readonly v-model="form.time_of_meeting">
+                                            <label class=" sty-label">Time of Meeting</label>
+                                            <!-- <small v-if="timeOfMeetingError" class="error">{{ timeOfMeetingError }}</small> -->
+                                            <!-- <small v-if="errors.time_of_meeting" class="error">{{ errors.time_of_meeting[0] }}</small>
+                                            <small v-else></small> -->
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="mb-3 w-100 sty-input-wrapper">
+                                            <input type="text" class="sty-inp form-control" id="editplace" readonly v-model="form.place_of_meeting">
+                                            <label class="sty-label">Place of Meeting</label>
+                                            <!-- <small v-if="placeOfMeetingError" class="error">{{ placeOfMeetingError }}</small> -->
+                                            <!-- <small v-if="errors.place_of_meeting" class="error">{{ errors.place_of_meeting[0] }}</small> -->
+                                            <!-- <small v-else></small> -->
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mb-3 d-flex" style="flex-direction: column;">
+                                        <label style="text-transform: uppercase; color: #2b96f1; font-family: 'Calibri', sans-serif;">Agenda of Meeting</label>
+                                        <p id="editContnet" class="sty-inp" v-html="sanitizeHTML(form.sanitizedContent)" readonly></p>
+                                        <!-- <small v-if="contentError" class="error">{{contentError}}</small> -->
+                                        <!-- <small v-else></small> -->
+                                    </div>
+
+
+                                    <div class="col-lg-4">
+                                        <div class="d-flex mb-3">
+                                            <div class="w-100 sty-input-wrapper">
+                                                <input type="text" class="sty-inp form-control" id="editAgenda" v-model="form.agenda" readonly>
+                                                <label class="sty-label">Agenda Document</label>
+                                                <!-- <small v-if="agendaError" class="error">{{ agendaError }}</small> -->
+                                                <!-- <small v-if="errors.agenda" class="error">{{ errors.agenda[0] }}</small>
+                                            <small v-else></small> -->
+                                            </div>
+                                            <!-- <div class="prev">
+                                                <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('agenda')">
+                                                    <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                </button>
+                                            </div> -->
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="d-flex mb-3">
+                                            <div class="w-100 sty-input-wrapper">
+                                                <input type="text" class="sty-inp form-control" id="editFinancials" v-model="form.financials" >
+                                                <label class="sty-label">Financals Document</label>
+                                                <!-- <small v-if="financialsError" class="error">{{ financialsError }}</small> -->
+                                                <!-- <small v-if="errors.financials" class="error">{{ errors.financials[0] }}</small>
+                                            <small v-else></small> -->
+                                            </div>
+                                            <!-- <div class="prev">
+                                                <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('financials')">
+                                                    <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                </button>
+                                            </div> -->
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="d-flex mb-3">
+                                            <div class="w-100 sty-input-wrapper">
+                                                <input type="text" class="sty-inp form-control" id="editOther" v-model="form.other">
+                                                <label class="sty-label">Other Document</label>
+                                            </div>
+                                            <!-- <div class="prev">
+                                                <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('other')">
+                                                    <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                </button>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="accordion-item mt-2" style="border: 1px solid grey;">
+                          <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" id="heading" style="border-bottom: 1px solid grey;" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                              Minutes Form
+                            </button>
+                          </h2>
+                          <div id="flush-collapseTwo" class="accordion-collapse collapse show" data-bs-parent="#accordionFlushExample">
+                            <div class="accordion-body">
+                                <div class="row">
+                                    <div class="col-12 mb-3 d-flex" style="flex-direction: column;">
+                                        <label style="text-transform: uppercase; color: #2b96f1; font-family: 'Calibri', sans-serif;">Minutes of Meeting</label>
+                                        <textarea id="minutes_editor" v-model="form.minutes_content" style="color: #000 !important; min-height: 500px !important; font-family: 'Calibri', sans-serif;" cols="30" rows="10">
+                                        </textarea>
+                                        <small v-if="minutes_content_error" class="error">{{ minutes_content_error }}</small>
+                                        <!-- <small v-else></small> -->
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="d-flex">
+                                            <div class="w-100 sty-input-wrapper">
+                                                <input type="file" class="sty-inp form-control" id="minutes_file" ref="minutes_file" >
+                                                <label class="sty-label">Minutes Document</label>
+                                                <small v-if="minutes_file_error" class="error">{{ minutes_file_error }}</small>
+                                            </div>
+                                            <div class="prev">
+                                                <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('minutes_file')">
+                                                    <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="d-flex">
+                                            <div class="w-100 sty-input-wrapper">
+                                                <input type="file" class="sty-inp form-control" id="minutes_other" ref="minutes_other" @change="handleFileChange1">
+                                                <label class="sty-label">Other Document</label>
+                                            </div>
+                                            <div class="prev">
+                                                <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('minutes_other')">
+                                                    <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    <div class="row">
+
+
+                        <hr>
+
+
+                    </div>
+                    <hr>
+                    <div class="subBtn mb-3" style="height: 30px;">
+                        <button class="btn btn-primary float-end ms-auto me-3" style="width: max-content;" type="submit">Submit</button>
+                    </div>
+                </form>
+
+                {% endverbatim %}
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> -->
+          </div>
+        </div>
+    </div>
+
+    <!-- Suggestion Modal -->
+  <div class="modal fade" id="suggestionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header" id="heading">
+          <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {% verbatim %}
+            <form @submit.prevent="submitSuggestionForm" class="w-100" enctype="multipart/form-data" ref="submitSuggestionForms">
+                <div class="sty-input-wrapper w-100 mb-3 d-none">
+                    <input class="sty-inp w-100" name="meeting" id="meeting" v-model="form.meeting" readonly>
+                    <label class="sty-label">Meeting Id</label>
+                </div>
+                <div class="sty-input-wrapper w-100">
+                    <textarea class="sty-inp w-100" name="suggestion" id="suggestions" v-model="form.suggestions" cols="30" rows="5"></textarea>
+                    <label class="sty-label">Write your Suggestion</label>
+                    <small v-if="suggestionsError" class="error">{{ suggestionsError }}</small>
+                    <!-- <small id="suggestError" class="error"></small> -->
+                </div>
+                <hr>
+                <div class="btn-grp float-end gap-3 mb-2">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+            </form>
+            {% endverbatim %}
+        </div>
+        <!-- <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+{% endblock body %}

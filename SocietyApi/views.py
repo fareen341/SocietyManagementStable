@@ -1,0 +1,606 @@
+from django.shortcuts import render
+from .models import *
+from rest_framework import viewsets
+from .serializers import *
+from rest_framework.response import Response
+from rest_framework import status
+from .utils import *
+from rest_framework.parsers import JSONParser
+from collections import OrderedDict
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter
+from rest_framework.decorators import action
+from django.http import HttpResponse, JsonResponse
+from django.db.models import Q
+
+
+
+# Create your views here.
+class SocietyCreationView(viewsets.ModelViewSet):
+    queryset = SocietyCreation.objects.all()
+    serializer_class = SocietyCreationSerializer
+
+    def list(self, request, *args, **kwargs):
+        # Get the last object in the queryset
+        last_object = self.queryset.last()
+        if last_object:
+            serializer = self.get_serializer(last_object)
+            return Response(serializer.data)
+        else:
+            return Response({"message": "No objects available."}, status=status.HTTP_404_NOT_FOUND)
+
+    # def retrieve(self, request, *args, **kwargs):
+    #     # Replace the instance with your custom logic
+    #     instance = SocietyCreation.objects.first()
+    #     serializer = self.get_serializer(instance)
+    #     serializer_data = serializer.data
+    #     return Response(serializer_data)
+
+    # def partial_update(self, request, *args, **kwargs):
+    #     return super().partial_update(request, *args, **kwargs)
+
+
+class SocietyBankView(viewsets.ModelViewSet):
+    queryset = SocietyBank.objects.all()
+    serializer_class = SocietyBankSerializer
+
+    def create(self, request, *args, **kwargs):
+        errors = []
+        saved_data = []
+
+        for index, data in enumerate(request.data):
+            serializer = self.get_serializer(data=data)
+            if not serializer.is_valid():
+                error_detail = serializer.errors
+                error_detail['index'] = index  # Include the index number
+                errors.append(error_detail)
+
+        if errors:
+            print("ERRORS=========", errors)
+            return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            for data in request.data:
+                serializer = self.get_serializer(data=data)
+                serializer.is_valid(raise_exception=True)
+                self.perform_create(serializer)
+                saved_data.append(serializer.data)
+            return Response(saved_data, status=status.HTTP_201_CREATED)
+
+
+class SocietyOtherDocumentView(viewsets.ModelViewSet):
+    queryset = SocietyOtherDocument.objects.all()
+    serializer_class = SocietyOtherDocumentSerializer
+    # parser_classes = (MultipartJsonParser, JSONParser)
+
+    # def create(self, request, *args, **kwargs):
+    #     print("DOCUMENTS===>", request.data)
+    #     return super().create(request, *args, **kwargs)
+
+
+class SocietyRegistrationDocumentView(viewsets.ModelViewSet):
+    queryset = SocietyRegistrationDocument.objects.all()
+    serializer_class = SocietyRegistrationDocumentSerializer
+
+
+class WingFlatView(viewsets.ModelViewSet):
+    queryset = WingFlat.objects.all()
+    serializer_class = WingFlatSerializers
+
+    def create(self, request, *args, **kwargs):
+        wing = request.data.get('wing_name')
+        flats = request.data.get('flat_number')
+        if wing and flats:
+            flat_split = list(OrderedDict.fromkeys(flats.split(',')))
+            print("FLAT DATA==>", flat_split)
+            created_instances = []
+
+            # Check if a WingFlat instance with the same wing_name already exists
+            existing_instance = WingFlat.objects.filter(wing_name=wing).first()
+            if existing_instance:
+                return Response({"error": "Wing with the same name already exists"}, status=status.HTTP_400_BAD_REQUEST)
+
+            wing_flat_combined_instance = WingFlat.objects.create(wing_name=wing, flat_number=','.join(flat_split))
+            created_instances.append(wing_flat_combined_instance)
+
+            for flat in flat_split:
+                unique = f'{wing}-{flat}'
+                wing_instance = WingFlatUnique.objects.create(wing=wing_flat_combined_instance, wing_flat_unique=unique)
+
+            wing_flat_combined_serializer = WingFlatSerializers(wing_flat_combined_instance)
+
+            response_data = {
+                "WingFlatCombined": wing_flat_combined_serializer.data
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        return super().create(request, *args, **kwargs)
+
+
+    def partial_update(self, request, *args, **kwargs):
+        print(request.data)
+        object_id = kwargs.get('pk')
+        wing = request.data.get('wing_name')
+        flats = request.data.get('flat_number')
+        wing_flat_combined_instance = WingFlat.objects.get(id=object_id)
+        wing_flat_unique = wing_flat_combined_instance.flat_number
+        if wing and flats:
+            flat_split = list(OrderedDict.fromkeys(flats.split(',')))
+            wing_obj_to_delete = list(set(wing_flat_unique.split(',')) - set(flats.split(',')))
+            print("id to be delete===>", wing_obj_to_delete)
+
+            # Update the attributes of the retrieved instance
+            wing_flat_combined_instance.wing_name = wing
+            wing_flat_combined_instance.flat_number = ','.join(flat_split)
+            wing_flat_combined_instance.save()
+
+            # ADD FLATS
+            for flat in flat_split:
+                unique = f'{wing}-{flat}'
+                check_for_existing_obj = WingFlatUniqueSerializers.objects.filter(wing_flat_unique=unique)
+                if not check_for_existing_obj:
+                    WingFlatUniqueSerializers.objects.create(wing=wing_flat_combined_instance, wing_flat_unique=unique)
+
+            # REMOVE FLATS
+            for flat in wing_obj_to_delete:
+                unique = f'{wing}-{flat}'
+                object_to_delete = WingFlatUniqueSerializers.objects.filter(wing_flat_unique=unique)
+                print("FLAT====>", object_to_delete)
+                if object_to_delete:
+                    object_to_delete.delete()
+
+            wing_flat_combined_serializer = WingFlatSerializers(wing_flat_combined_instance)
+
+            response_data = {
+                "WingFlatCombined": wing_flat_combined_serializer.data
+            }
+            return Response(response_data, status=status.HTTP_201_CREATED)
+        return super().partial_update(request, *args, **kwargs)
+
+
+# GET ALL WINGS
+class UnitWingView(viewsets.ViewSet):
+    def list(self, request):
+        units = WingFlatUnique.objects.values_list('id', 'wing_flat_unique').distinct()
+        return Response(units)
+
+
+class MemberView(viewsets.ModelViewSet):
+    # queryset = Members.objects.all()
+    queryset = Members.objects.prefetch_related('nominees')
+    serializer_class = MembersSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['=wing_flat__id']
+    parser_classes = (MultipartJsonParser, JSONParser)
+
+    def create(self, request, *args, **kwargs):
+        print("ALL DATA=========================", request.data)
+
+        try:
+            member_data = Members.objects.get(
+                wing_flat=request.data.get('wing_flat'),
+                member_is_primary=True,
+                date_of_cessation__isnull=True
+            ).same_flat_member_identification
+            print("ALL member_data=========================", member_data)
+        except Members.DoesNotExist:
+            member_data = None
+            print("No member data found")
+
+        nominees_data = request.POST.getlist('nominees')[0]
+        # nominees_data = request.POST.getlist('nominees')
+        print("NOM----", nominees_data)
+
+        modified_data = request.data
+        if member_data:
+            modified_data = request.data.copy()
+            modified_data['same_flat_member_identification'] = member_data
+
+        member_serializer = self.get_serializer(data=modified_data)
+        if member_serializer.is_valid():
+            member_instance = member_serializer.save()
+
+            # Loop through nominee data and save each nominee
+            for nominee_dict in nominees_data:
+                print("NOMINEE", nominee_dict)
+                nominee_serializer = NomineesSerializer(data=nominee_dict)
+                if nominee_serializer.is_valid():
+                    # Associate the nominee with the member instance
+                    nominee_serializer.save(member_name=member_instance)
+                else:
+                    return Response(nominee_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response(member_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(member_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        wing_flat_id = self.request.query_params.get('wing_flat__id')
+
+        if wing_flat_id:
+            try:
+                queryset = queryset.get(wing_flat=wing_flat_id, member_is_primary=True, date_of_cessation__isnull=True)
+                print("NUMBER================1", queryset)
+            except Exception as e:
+                print("NOT EXISTS")
+                return Response({"error": "Object not found."})
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        print("NUMBER================2")
+        # queryset = Members.objects.filter(member_is_primary=True, date_of_cessation__isnull=True)
+        queryset = Members.objects.filter(member_is_primary=True, date_of_cessation__isnull=True)
+        serializer = MembersSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+    def retrieve(self, request, *args, **kwargs):
+        instance_id = kwargs.get('pk')
+        if instance_id:
+            try:
+                instance = Members.objects.get(pk=instance_id, date_of_cessation__isnull=True)
+                identification_name = instance.same_flat_member_identification
+                print("INST=====>", identification_name)
+                instance = Members.objects.filter(same_flat_member_identification=identification_name)
+            except Members.DoesNotExist:
+                return Response(data={"message": "Member not found"})
+
+            serializer = MembersSerializer(instance, many=True)
+            print("DATA====", serializer.data)
+            return Response(serializer.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    @action(detail=False, methods=['get'])
+    def member_history_retrieve(self, request, *args, **kwargs):
+        print("NUMBER================4")
+        wing_flat_id = self.request.query_params.get('wing_flat__id')
+        try:
+            instances = Members.objects.filter(wing_flat=wing_flat_id, date_of_cessation__isnull=False)
+            print("INSTANCE:", instances)
+        except Members.DoesNotExist:
+            return Response(data={"message": "Member not found"})
+
+        serializer = MembersSerializer(instances, many=True)
+        return Response(serializer.data)
+
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        print("NOM---->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", request.data)
+        nominees_data = request.POST.getlist('nominees')[0]
+        member_serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if member_serializer.is_valid():
+            member_instance = member_serializer.save()
+
+            # If there are nominee data, process them
+            if nominees_data:
+                # Loop through nominee data and either create or update each nominee
+                for nominee_dict in nominees_data:
+                    nominee_id = nominee_dict.get('id')  # Assuming nominee has an 'id' field
+                    print("NOMINEE UPDATE=====", nominee_id)
+                    if nominee_id:
+                        # If nominee has an id, try to get existing nominee
+                        nominee_instance = Nominees.objects.get(pk=nominee_id)
+                        nominee_serializer = NomineesSerializer(
+                            nominee_instance, data=nominee_dict, partial=True
+                        )
+                    # else:
+                    #     # If nominee doesn't have an id, it's a new nominee
+                    #     nominee_serializer = NomineesSerializer(data=nominee_dict)
+
+                        if nominee_serializer.is_valid():
+                            nominee_serializer.save(member_name=member_instance)
+                        else:
+                            return Response(nominee_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            member_id = request.data.get("id")
+            if request.data.get('date_of_cessation', None):
+                # MAKE SHARES AS HISTORY
+                shares_data = FlatShares.objects.get(unique_member_shares=member_id)
+                shares_data.date_of_cessation = request.data.get('date_of_cessation')
+                shares_data.save()
+
+                # # MAKE HOME-LOAN AS HISTORY
+                home_loan = FlatHomeLoan.objects.get(unique_member_shares=member_id)
+                home_loan.date_of_cessation = request.data.get('date_of_cessation')
+                home_loan.save()
+
+                # # MAKE GST AS HISTORY
+                gst = FlatGST.objects.get(unique_member_shares=member_id)
+                gst.date_of_cessation = request.data.get('date_of_cessation')
+                gst.save()
+
+                # MAKE VEHICLE AS HISTORY
+                vehicle_obj = FlatMemberVehicle.objects.filter(unique_member_shares=member_id)
+                for vehicle in vehicle_obj:
+                    vehicle.date_of_cessation = request.data.get('date_of_cessation')
+                    vehicle.save()
+
+            return Response(member_serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(member_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def hide_non_primary_member_checkbox(request, id):
+    member_status = True
+    member = Members.objects.filter(
+        wing_flat=id,
+        member_is_primary=True,
+        date_of_cessation__isnull=True
+    )
+
+    if member:
+        print("MEMBER NAME==", member)
+        member_status = False
+    data = {
+        "member_status": member_status,
+    }
+    return JsonResponse(data)
+
+
+class FlatSharesView(viewsets.ModelViewSet):
+    queryset = FlatShares.objects.all()
+    serializer_class = FlatSharesSerializers
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance_id = kwargs.get('pk')
+            instance = FlatShares.objects.get(unique_member_shares=instance_id, date_of_cessation__isnull=True)
+            print("INSTANCE==>", instance)
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except FlatShares.DoesNotExist:
+            pass
+
+    def create(self, request, *args, **kwargs):
+        unique_member_share = None
+        if request.data.get('wing_flat'):
+            unique_member_share = Members.objects.get(
+                wing_flat=request.data.get('wing_flat'), member_is_primary=True,
+                date_of_cessation__isnull=True
+            ).pk
+
+        modified_data = request.data.copy()
+        modified_data['unique_member_shares'] = unique_member_share
+        serializer = self.get_serializer(data=modified_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+
+class FlatHomeLoanView(viewsets.ModelViewSet):
+    queryset = FlatHomeLoan.objects.all()
+    serializer_class = FlatHomeLoanSerializers
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance_id = kwargs.get('pk')
+            instance = FlatHomeLoan.objects.get(unique_member_shares=instance_id, date_of_cessation__isnull=True)
+            print("INSTANCE==>", instance)
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except FlatHomeLoan.DoesNotExist:
+            pass
+
+    def create(self, request, *args, **kwargs):
+        unique_member_share = None
+        if request.data.get('wing_flat'):
+            unique_member_share = Members.objects.get(
+                wing_flat=request.data.get('wing_flat'), member_is_primary=True,
+                date_of_cessation__isnull=True
+            ).pk
+
+        modified_data = request.data.copy()
+        modified_data['unique_member_shares'] = unique_member_share
+        serializer = self.get_serializer(data=modified_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class FlatGSTView(viewsets.ModelViewSet):
+    queryset = FlatGST.objects.all()
+    serializer_class = FlatGSTSerializers
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance_id = kwargs.get('pk')
+            instance = FlatGST.objects.get(unique_member_shares=instance_id, date_of_cessation__isnull=True)
+            print("INSTANCE==>", instance)
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except FlatGST.DoesNotExist:
+            pass
+
+    def create(self, request, *args, **kwargs):
+        unique_member_share = None
+        if request.data.get('wing_flat'):
+            unique_member_share = Members.objects.get(
+                wing_flat=request.data.get('wing_flat'), member_is_primary=True,
+                date_of_cessation__isnull=True
+            ).pk
+
+        modified_data = request.data.copy()
+        modified_data['unique_member_shares'] = unique_member_share
+        serializer = self.get_serializer(data=modified_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class FlatMemberVehicleView(viewsets.ModelViewSet):
+    queryset = FlatMemberVehicle.objects.all()
+    serializer_class = FlatMemberVehicleSerializer
+    parser_classes = (MultipartJsonParser, JSONParser)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance_id = kwargs.get('pk')
+            instance = FlatMemberVehicle.objects.filter(unique_member_shares=instance_id, date_of_cessation__isnull=True)
+            print("INSTANCE==>", instance)
+            serializer = self.get_serializer(instance, many=True)
+            return Response(serializer.data)
+        except FlatMemberVehicle.DoesNotExist:
+            pass
+
+    def create(self, request, *args, **kwargs):
+        unique_member_share = None
+        if request.data.get('wing_flat'):
+            unique_member_share = Members.objects.get(
+                wing_flat=request.data.get('wing_flat'), member_is_primary=True,
+                date_of_cessation__isnull=True
+            ).pk
+
+        modified_data = request.data.copy()
+        modified_data['unique_member_shares'] = unique_member_share
+        serializer = self.get_serializer(data=modified_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class HouseHelpView(viewsets.ModelViewSet):
+    queryset = HouseHelp.objects.all()
+    serializer_class = HouseHelpSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['=house_help_aadhar_number','=house_help_pan_number']
+
+
+class HouseHelpAllocationView(viewsets.ModelViewSet):
+    queryset = HouseHelpAllocationMaster.objects.all()
+    serializer_class = HouseHelpAllocationSerializer
+
+    def create(self, request, *args, **kwargs):
+        print("d==============", request.data)
+        return super().create(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        # Prefetch related member data to avoid N+1 queries
+        queryset = queryset.select_related('wing_flat')
+
+        # Add member's name to each serialized HouseHelp object
+        for house_help_obj in serializer.data:
+            # Code to get wing flat object
+            wing_flat = house_help_obj['wing_flat']
+            wing_flat = WingFlatUnique.objects.get(id=wing_flat).wing_flat_unique
+            house_help_obj['wing_flat'] = wing_flat
+
+            print(house_help_obj)
+            # Code to get member name
+            member_name = house_help_obj['member_name']
+            member_name = Members.objects.get(id=member_name).member_name
+            house_help_obj['member_name'] = member_name
+
+            # Code to get aadhar/pan
+            aadhar_pan = house_help_obj['aadhar_pan']
+            aadhar_pan_obj = HouseHelpAllocationMaster.objects.filter(
+                Q(aadhar_pan=aadhar_pan) #| Q(house_help_aadhar_number=aadhar_pan)
+            ).values("aadhar_pan__house_help_pan_number", "aadhar_pan__house_help_aadhar_number", "aadhar_pan__house_help_name").first()
+
+            print("DATA===", aadhar_pan_obj)
+            # print(aadhar_pan.len())
+            # aadhar_pan = HouseHelp.objects.get(id=aadhar_pan).house_help_aadhar_number
+            house_help_obj['aadhar_pan'] = aadhar_pan_obj['aadhar_pan__house_help_pan_number']
+
+            # Code to get househelp name
+            house_help_obj['house_help_name'] = aadhar_pan_obj['aadhar_pan__house_help_name']
+
+
+            # Additional field
+            house_help_obj['aadhar'] = aadhar_pan_obj['aadhar_pan__house_help_aadhar_number']
+
+        return Response(serializer.data)
+
+
+class TenantMasterView(viewsets.ModelViewSet):
+    queryset = TenantMaster.objects.all()
+    serializer_class = TenantMasterSerializers
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['=tenant_aadhar_number','=tenant_pan_number']
+
+
+
+class TenantAllocationView(viewsets.ModelViewSet):
+    queryset = TenantAllocation.objects.all()
+    serializer_class = TenantAllocationSerializers
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        # Prefetch related member data to avoid N+1 queries
+        queryset = queryset.select_related('wing_flat')
+
+        # Add member's name to each serialized HouseHelp object
+        for house_help_obj in serializer.data:
+            # Code to get wing flat object
+            wing_flat = house_help_obj['wing_flat']
+            wing_flat = WingFlatUnique.objects.get(id=wing_flat).wing_flat_unique
+            house_help_obj['wing_flat'] = wing_flat
+
+            # Code to get member name
+            member_name = house_help_obj['member_name']
+            member_name = Members.objects.get(id=member_name).member_name
+            house_help_obj['member_name'] = member_name
+
+            # Code to get aadhar/pan
+            aadhar_pan = house_help_obj['aadhar_pan']
+            aadhar_pan_obj = TenantAllocation.objects.filter(
+                Q(aadhar_pan=aadhar_pan)
+            ).values("aadhar_pan__tenant_pan_number", "aadhar_pan__tenant_aadhar_number").first()
+            house_help_obj['aadhar_pan'] = aadhar_pan_obj['aadhar_pan__tenant_pan_number']
+
+            # Code to get tenant name
+            tenant_name = house_help_obj['tenant_name']
+            tenant_name_obj = TenantAllocation.objects.filter(tenant_name=tenant_name).values("tenant_name__tenant_name").first()
+            print("tenant_name_obj", tenant_name_obj)
+            house_help_obj['tenant_name'] = tenant_name_obj['tenant_name__tenant_name']
+
+            # Additional aadhar field
+            house_help_obj['aadhar'] = aadhar_pan_obj['aadhar_pan__tenant_aadhar_number']
+
+        return Response(serializer.data)
+
+
+def get_owner_name(request, flat_id):
+    try:
+        member = Members.objects.get(
+            wing_flat=flat_id,
+            member_is_primary=True,
+            date_of_cessation__isnull=True
+        )
+        data = {
+            "member_name": member.member_name,
+            "id": member.pk
+        }
+    except Members.DoesNotExist:
+        data = {
+            "member_name": "Not Found.",
+            "id": "Not Found."
+        }
+    return JsonResponse(data)
+
+
+
+class MeetingsView(viewsets.ModelViewSet):
+    queryset = Meetings.objects.all()
+    serializer_class = MeetingsSerializer
+
+
+class SuggestionsView(viewsets.ModelViewSet):
+    queryset = Suggestion.objects.all()
+    serializer_class = SuggestionSerializer
+
+
+
+class AddNomineesView(viewsets.ModelViewSet):
+    queryset = Nominees.objects.all()
+    serializer_class = AddNomineesSerializer
+
+

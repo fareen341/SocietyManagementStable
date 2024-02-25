@@ -1,0 +1,455 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<div class="container">
+    <div id="tenantTableVue">
+        <div class="member-title mt-4 d-flex" style="justify-content: space-between;">
+            <h3 class="lead" style="font-size: 27px;">Tenant Details</h3>
+            <div class="gap-4">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tenentCreation">Create Tenant</button>
+            </div>
+        </div>
+        {% verbatim %}
+        <div>
+            <table id="example" class="display dt-table order-column" style="width:100%">
+                <!-- <table id="houseHelpDataTable"> -->
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th v-for="(value, key) in tenantData[0]" :key="key">{{ key }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(tenantData, index) in tenantData" :key="index">
+                        <td>
+                            <span @click="viewRequestedData(tenantData.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                            <span @click="editRequestedData(tenantData.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                        </td>
+                        <td v-for="(value, key) in tenantData" :key="key">{{ value }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% endverbatim %}
+
+        <!-- Tenant CREATE modal -->
+        <div class="modal fade" id="tenentCreation" tabindex="-1" aria-labelledby="tenentCreationLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="tenentCreationLabel">Create Tenant</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% verbatim %}
+                    <form>
+                        <div class="row">
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="formData.tenant_name">
+                                    <label for="id_tenent_name" class="sty-label">Tenent Name</label>
+                                    <span v-if="errors.tenant_name" class="error">{{ errors.tenant_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-8 mb-3">
+                                <div class="mb-2">
+                                    <div class="input-group">
+                                        <div class="firstinp w-50 sty-input-wrapper">
+                                            <input class="w-100 sty-inp" type="text" v-model="formData.tenant_pan_number">
+                                            <label for="id_tenent_pan_number" class="sty-label">Tenent PAN No.</label>
+                                            <span v-if="errors.tenant_pan_number" class="error">{{ errors.tenant_pan_number[0] }}</span>
+                                            <span v-else></span>
+                                        </div>
+                                        <div class="secinp w-50 d-flex">
+                                            <div class="fileinp">
+                                                <input type="file" class="sty-inp form-control" style="color: #2b96f1 !important;" ref="tenant_pan_doc" @change="handleFileChange($event, 'tenant_pan_doc')" />
+                                                <span v-if="errors.tenant_pan_doc" class="error">{{ errors.tenant_pan_doc[0] }}</span>
+                                                <span v-else></span>
+                                            </div>
+                                            <div class="prev">
+                                                <button type="button" class="sty-inp form-control"
+                                                    onclick="PreviewImage('tenPanDoc')">
+                                                    <i class="fa-solid fa-eye"
+                                                        style="color: #2b96f1 !important;"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="formData.tenant_contact">
+                                    <label for="id_tenent_contact" class="sty-label">Tenent Contact No.</label>
+                                    <span v-if="errors.tenant_contact" class="error">{{ errors.tenant_contact[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-8 mb-3">
+                                <div class="mb-2">
+                                    <div class="input-group">
+                                        <div class="firstinp w-50 sty-input-wrapper">
+                                            <input class="w-100 sty-inp" type="text" v-model="formData.tenant_aadhar_number">
+                                            <label for="id_tenent_aadhar_number" class="sty-label">Tenent Aadhaar No.</label>
+                                            <span v-if="errors.tenant_aadhar_number" class="error">{{ errors.tenant_aadhar_number[0] }}</span>
+                                            <span v-else></span>
+                                        </div>
+                                        <div class="secinp w-50 d-flex">
+                                            <div class="fileinp">
+                                                <input type="file" class="sty-inp form-control" style="color: #2b96f1 !important;" ref="tenant_aadhar_doc" @change="handleFileChange($event, 'tenant_aadhar_doc')" />
+                                                <span v-if="errors.tenant_aadhar_doc" class="error">{{ errors.tenant_aadhar_doc[0] }}</span>
+                                                <span v-else></span>
+                                            </div>
+                                            <div class="prev">
+                                                <button type="button" class="sty-inp form-control"
+                                                    onclick="PreviewImage('tenAadhaarDoc')">
+                                                    <i class="fa-solid fa-eye"
+                                                        style="color: #2b96f1 !important;"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 mb-3">
+                                <div class="row">
+                                    <div class="col-lg-6  sty-input-wrapper">
+                                        <textarea class="w-100 sty-inp" cols="30" rows="1" v-model="formData.tenant_address"></textarea>
+                                        <label for="id_tenent_address" class="sty-label">Tenent's Address</label>
+                                        <span v-if="errors.tenant_address" class="error">{{ errors.tenant_address[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                    <div class="col-lg-2 sty-input-wrapper">
+                                        <select class="w-100 sty-inp form-control" v-model="formData.tenant_state">
+                                            <option value="">Select State</option>
+                                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                            <option value="Assam">Assam</option>
+                                            <option value="Bihar">Bihar</option>
+                                            <option value="Chhattisgarh">Chhattisgarh</option>
+                                            <option value="Goa">Goa</option>
+                                            <option value="Gujarat">Gujarat</option>
+                                            <option value="Haryana">Haryana</option>
+                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                            <option value="Jharkhand">Jharkhand</option>
+                                            <option value="Karnataka">Karnataka</option>
+                                            <option value="Kerala">Kerala</option>
+                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                            <option value="Maharashtra">Maharashtra</option>
+                                            <option value="Manipur">Manipur</option>
+                                            <option value="Meghalaya">Meghalaya</option>
+                                            <option value="Mizoram">Mizoram</option>
+                                            <option value="Nagaland">Nagaland</option>
+                                            <option value="Odisha">Odisha</option>
+                                            <option value="Punjab">Punjab</option>
+                                            <option value="Rajasthan">Rajasthan</option>
+                                            <option value="Sikkim">Sikkim</option>
+                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                            <option value="Telangana">Telangana</option>
+                                            <option value="Tripura">Tripura</option>
+                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                            <option value="Uttarakhand">Uttarakhand</option>
+                                            <option value="West Bengal">West Bengal</option>
+                                            <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
+                                            <option value="Islands">Islands</option>
+                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                            <option value="Daman and Diu">Daman and Diu</option>
+                                            <option value="Delhi">Delhi</option>
+                                            <option value="Ladakh">Ladakh</option>
+                                            <option value="Lakshadweep">Lakshadweep</option>
+                                            <option value="Puducherry">Puducherry</option>
+
+
+                                        </select>
+                                        <label for="id_tenent_state" class="sty-label">State</label>
+                                        <span v-if="errors.tenant_state" class="error">{{ errors.tenant_state[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                    <div class="col-lg-2 sty-input-wrapper">
+                                        <input type="text" class=" w-100 sty-inp" v-model="formData.tenant_city">
+                                        <label for="id_tenent_city" class="sty-label">City</label>
+                                        <span v-if="errors.tenant_city" class="error">{{ errors.tenant_city[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                    <div class="col-lg-2 sty-input-wrapper">
+                                        <input type="number" class="w-100 sty-inp" v-model="formData.tenant_pin_code">
+                                        <label for="id_tenent_pin_code" class="sty-label">Pin Code</label>
+                                        <span v-if="errors.tenant_pin_code" class="error">{{ errors.tenant_pin_code[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="email" class="w-100 sty-inp" v-model="formData.tenant_email">
+                                    <label for="id_tenent_email" class="sty-label">Tenent Email</label>
+                                    <span v-if="errors.tenant_email" class="error">{{ errors.tenant_email[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-3 d-flex">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="file" class="w-100 sty-inp form-control" ref="tenant_other_doc" @change="handleFileChange($event, 'tenant_other_doc')" />
+                                    <label for="id_tenent_other_doc" class="sty-label">Other Documents</label>
+                                    <span v-if="errors.tenant_other_doc" class="error">{{ errors.tenant_other_doc[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" name="" class="w-100 sty-inp" v-model="formData.tenant_doc_specification">
+                                    <label for="id_tenent_doc_specification" class="sty-label">Specify your Document</label>
+                                    <span v-if="errors.tenant_doc_specification" class="error">{{ errors.tenant_doc_specification[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                <div class="prev">
+                                    <button type="button" class="sty-inp form-control" onclick="PreviewImage('otherDoc')">
+                                        <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    {% endverbatim %}
+                    <hr>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" value="Submit" @click="submitTenant">Save changes</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Tenant UPDATE modal -->
+        <div class="modal fade" id="tenentUpdateModal" tabindex="-1" aria-labelledby="tenentUpdateModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="tenentUpdateModalLabel">Update Tenant</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% verbatim %}
+                    <form>
+                        <div class="row">
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="formData.tenant_name">
+                                    <label for="id_tenent_name" class="sty-label">Tenent Name</label>
+                                    <span v-if="errors.tenant_name" class="error">{{ errors.tenant_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-8 mb-3">
+                                <div class="mb-2">
+                                    <div class="input-group">
+                                        <div class="firstinp w-50 sty-input-wrapper">
+                                            <input class="w-100 sty-inp" type="text" v-model="formData.tenant_pan_number">
+                                            <label for="id_tenent_pan_number" class="sty-label">Tenent PAN No.</label>
+                                            <span v-if="errors.tenant_pan_number" class="error">{{ errors.tenant_pan_number[0] }}</span>
+                                            <span v-else></span>
+                                        </div>
+                                        <div class="secinp w-50 d-flex">
+                                            <div class="fileinp">
+                                                <input type="file" class="sty-inp form-control" style="color: #2b96f1 !important;" ref="tenant_pan_doc" @change="handleFileChange($event, 'tenant_pan_doc')" />
+                                                <span v-if="errors.tenant_pan_doc" class="error">{{ errors.tenant_pan_doc[0] }}</span>
+                                                <span v-else></span>
+                                            </div>
+                                            <div class="prev">
+                                                <button type="button" class="sty-inp form-control"
+                                                    onclick="PreviewImage('tenPanDoc')">
+                                                    <i class="fa-solid fa-eye"
+                                                        style="color: #2b96f1 !important;"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="formData.tenant_contact">
+                                    <label for="id_tenent_contact" class="sty-label">Tenent Contact No.</label>
+                                    <span v-if="errors.tenant_contact" class="error">{{ errors.tenant_contact[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-8 mb-3">
+                                <div class="mb-2">
+                                    <div class="input-group">
+                                        <div class="firstinp w-50 sty-input-wrapper">
+                                            <input class="w-100 sty-inp" type="text" v-model="formData.tenant_aadhar_number">
+                                            <label for="id_tenent_aadhar_number" class="sty-label">Tenent Aadhaar No.</label>
+                                            <span v-if="errors.tenant_aadhar_number" class="error">{{ errors.tenant_aadhar_number[0] }}</span>
+                                            <span v-else></span>
+                                        </div>
+                                        <div class="secinp w-50 d-flex">
+                                            <div class="fileinp">
+                                                <input type="file" class="sty-inp form-control" style="color: #2b96f1 !important;" ref="tenant_aadhar_doc" @change="handleFileChange($event, 'tenant_aadhar_doc')" />
+                                                <span v-if="errors.tenant_aadhar_doc" class="error">{{ errors.tenant_aadhar_doc[0] }}</span>
+                                                <span v-else></span>
+                                            </div>
+                                            <div class="prev">
+                                                <button type="button" class="sty-inp form-control"
+                                                    onclick="PreviewImage('tenAadhaarDoc')">
+                                                    <i class="fa-solid fa-eye"
+                                                        style="color: #2b96f1 !important;"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 mb-3">
+                                <div class="row">
+                                    <div class="col-lg-6  sty-input-wrapper">
+                                        <textarea class="w-100 sty-inp" cols="30" rows="1" v-model="formData.tenant_address"></textarea>
+                                        <label for="id_tenent_address" class="sty-label">Tenent's Address</label>
+                                        <span v-if="errors.tenant_address" class="error">{{ errors.tenant_address[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                    <div class="col-lg-2 sty-input-wrapper">
+                                        <select class="w-100 sty-inp form-control" v-model="formData.tenant_state">
+                                            <option value="">Select State</option>
+                                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                            <option value="Assam">Assam</option>
+                                            <option value="Bihar">Bihar</option>
+                                            <option value="Chhattisgarh">Chhattisgarh</option>
+                                            <option value="Goa">Goa</option>
+                                            <option value="Gujarat">Gujarat</option>
+                                            <option value="Haryana">Haryana</option>
+                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                            <option value="Jharkhand">Jharkhand</option>
+                                            <option value="Karnataka">Karnataka</option>
+                                            <option value="Kerala">Kerala</option>
+                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                            <option value="Maharashtra">Maharashtra</option>
+                                            <option value="Manipur">Manipur</option>
+                                            <option value="Meghalaya">Meghalaya</option>
+                                            <option value="Mizoram">Mizoram</option>
+                                            <option value="Nagaland">Nagaland</option>
+                                            <option value="Odisha">Odisha</option>
+                                            <option value="Punjab">Punjab</option>
+                                            <option value="Rajasthan">Rajasthan</option>
+                                            <option value="Sikkim">Sikkim</option>
+                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                            <option value="Telangana">Telangana</option>
+                                            <option value="Tripura">Tripura</option>
+                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                            <option value="Uttarakhand">Uttarakhand</option>
+                                            <option value="West Bengal">West Bengal</option>
+                                            <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
+                                            <option value="Islands">Islands</option>
+                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                            <option value="Daman and Diu">Daman and Diu</option>
+                                            <option value="Delhi">Delhi</option>
+                                            <option value="Ladakh">Ladakh</option>
+                                            <option value="Lakshadweep">Lakshadweep</option>
+                                            <option value="Puducherry">Puducherry</option>
+
+
+                                        </select>
+                                        <label for="id_tenent_state" class="sty-label">State</label>
+                                        <span v-if="errors.tenant_state" class="error">{{ errors.tenant_state[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                    <div class="col-lg-2 sty-input-wrapper">
+                                        <input type="text" class=" w-100 sty-inp" v-model="formData.tenant_city">
+                                        <label for="id_tenent_city" class="sty-label">City</label>
+                                        <span v-if="errors.tenant_city" class="error">{{ errors.tenant_city[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                    <div class="col-lg-2 sty-input-wrapper">
+                                        <input type="number" class="w-100 sty-inp" v-model="formData.tenant_pin_code">
+                                        <label for="id_tenent_pin_code" class="sty-label">Pin Code</label>
+                                        <span v-if="errors.tenant_pin_code" class="error">{{ errors.tenant_pin_code[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="email" class="w-100 sty-inp" v-model="formData.tenant_email">
+                                    <label for="id_tenent_email" class="sty-label">Tenent Email</label>
+                                    <span v-if="errors.tenant_email" class="error">{{ errors.tenant_email[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-3 d-flex">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="file" class="w-100 sty-inp form-control" ref="tenant_other_doc" @change="handleFileChange($event, 'tenant_other_doc')" />
+                                    <label for="id_tenent_other_doc" class="sty-label">Other Documents</label>
+                                    <span v-if="errors.tenant_other_doc" class="error">{{ errors.tenant_other_doc[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" name="" class="w-100 sty-inp" v-model="formData.tenant_doc_specification">
+                                    <label for="id_tenent_doc_specification" class="sty-label">Specify your Document</label>
+                                    <span v-if="errors.tenant_doc_specification" class="error">{{ errors.tenant_doc_specification[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                <div class="prev">
+                                    <button type="button" class="sty-inp form-control" onclick="PreviewImage('otherDoc')">
+                                        <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    {% endverbatim %}
+                    <hr>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" value="Submit" @click="updateTenant">Save changes</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!-- Tenant VIEW modal -->
+        <div class="modal fade" id="tenentViewModal" tabindex="-1" aria-labelledby="tenentViewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="tenentViewModalLabel">View Tenant</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body">
+                        {% verbatim %}
+                            <h1>View Data</h1>
+                            <p>tenant_name: {{ formData.tenant_name }}</p>
+                            <p>tenant_pan_number: {{ formData.tenant_pan_number }}</p>
+                            <p>tenant_pan_doc: {{ formData.tenant_pan_doc }}</p>
+                            <p>tenant_contact: {{ formData.tenant_contact }}</p>
+                            <p>tenant_aadhar_number: {{ formData.tenant_aadhar_number }}</p>
+                            <p>tenant_aadhar_doc: {{ formData.tenant_aadhar_doc }}</p>
+                            <p>tenant_address: {{ formData.tenant_address }}</p>
+                            <p>tenant_city: {{ formData.tenant_city }}</p>
+                            <p>tenant_state: {{ formData.tenant_state }}</p>
+                            <p>tenant_pin_code: {{ formData.tenant_pin_code }}</p>
+                            <p>tenant_email: {{ formData.tenant_email }}</p>
+                            <p>tenant_other_doc: {{ formData.tenant_other_doc }}</p>
+                            <p>tenant_doc_specification: {{ formData.tenant_doc_specification }}</p>
+                        {% endverbatim %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" value="Submit" @click="updateTenant">Save changes</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
