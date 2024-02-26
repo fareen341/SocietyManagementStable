@@ -511,87 +511,147 @@
                     <button class="btn btn-success ms-auto me-5" data-bs-toggle="modal"
                         data-bs-target="#addBankDetails">Add</button>
                 </div>
-                {% for item in soc_bank_object %}
-                <div class="d-flex w-75" style="justify-content: space-between;">
-                    <div class="headingg">
-                        <p class="lead" style="font-family:'Calibri', sans-serif;">
-                            <b>Bank Detail 1:</b>
-                        </p>
-                    </div>
-                    <div class="optionn">
-                        <p class="ms-auto">
-                            <span>
-                                <i class="fa-solid fa-pen fa-xs pe-2" style="color: black" data-bs-toggle="modal"
-                                    data-bs-target="#editBankDetails"></i>
-                                <i class="fa-solid fa-trash-can fa-xs" style="color: black;" data-bs-toggle="modal"
-                                    data-bs-target="#deleteBankDetails"></i>
-                            </span>
-                        </p>
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="row d-flex" style="align-items: baseline;">
-                        <div class="col-4">
-                            <p class=" view-label">Beneficiary Name</p>
-                        </div>
-                        <div class="col-8">
-                            <p class="view-inps">{{item.beneficiary_name}}</p>
-                        </div>
-                    </div>
-                </div>
+                {% comment %} {% for item in soc_bank_object %} {% endcomment %}
+                <div id="bankDisplayVue">
+                    {% verbatim %}
+                        <div class="row" v-for="(item, index) in bankData" :key="index">
+                            <div class="d-flex w-75" style="justify-content: space-between;">
+                                <div class="headingg">
+                                    <p class="lead" style="font-family:'Calibri', sans-serif;">
+                                        <b>Bank Detail 1:</b>
+                                    </p>
+                                </div>
+                                <div class="optionn">
+                                    <p class="ms-auto">
+                                        <span @click="bankUpdate(item.id)">
+                                            <i class="fa-solid fa-pen fa-xs pe-2" style="color: black"></i>
+                                        </span>
+                                        <span @click="deleteBank(item.id)">
+                                            <i class="fa-solid fa-trash-can fa-xs" style="color: black;"></i>
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="row d-flex" style="align-items: baseline;">
+                                    <div class="col-4">
+                                        <p class=" view-label">Beneficiary Name</p>
+                                    </div>
+                                    <div class="col-8">
+                                        <p class="view-inps">{{item.beneficiary_name}}</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                <div class="col-lg-6">
-                    <div class="row d-flex" style="align-items: baseline;">
-                        <div class="col-4">
-                            <p class="view-label">Beneficiary IFSC Code</p>
-                        </div>
-                        <div class="col-8">
-                            <p class="view-inps">{{item.beneficiary_code}}</p>
-                        </div>
-                    </div>
-                </div>
+                            <div class="col-lg-6">
+                                <div class="row d-flex" style="align-items: baseline;">
+                                    <div class="col-4">
+                                        <p class="view-label">Beneficiary IFSC Code</p>
+                                    </div>
+                                    <div class="col-8">
+                                        <p class="view-inps">{{item.beneficiary_code}}</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                <div class="col-lg-6">
-                    <div class="row d-flex" style="align-items: baseline;">
-                        <div class="col-4">
-                            <p class="view-label">Beneficiary Account Number</p>
-                        </div>
-                        <div class="col-8">
-                            <p class="view-inps">{{item.beneficiary_acc_number}}</p>
-                        </div>
-                    </div>
-                </div>
+                            <div class="col-lg-6">
+                                <div class="row d-flex" style="align-items: baseline;">
+                                    <div class="col-4">
+                                        <p class="view-label">Beneficiary Account Number</p>
+                                    </div>
+                                    <div class="col-8">
+                                        <p class="view-inps">{{item.beneficiary_acc_number}}</p>
+                                    </div>
+                                </div>
+                            </div>
 
-                <div class="col-lg-6">
-                    <div class="row d-flex" style="align-items: baseline;">
-                        <div class="col-4">
-                            <p class="view-label">Bank Name & Branch</p>
-                        </div>
-                        <div class="col-8">
-                            <p class="view-inps">{{item.beneficiary_bank}}</p>
-                            <!-- <p style="font-size: 14px;">SAMEER NASIR SHAIKH</p> -->
-                        </div>
-                    </div>
-                </div>
+                            <div class="col-lg-6">
+                                <div class="row d-flex" style="align-items: baseline;">
+                                    <div class="col-4">
+                                        <p class="view-label">Bank Name & Branch</p>
+                                    </div>
+                                    <div class="col-8">
+                                        <p class="view-inps">{{item.beneficiary_bank}}</p>
+                                        <!-- <p style="font-size: 14px;">SAMEER NASIR SHAIKH</p> -->
+                                    </div>
+                                </div>
+                            </div>
 
-                <div class="col-lg-6">
-                    <div class="row d-flex" style="align-items: baseline;">
-                        <div class="col-4">
-                            <p class="view-label">Is Primary</p>
+                            <div class="col-lg-6">
+                                <div class="row d-flex" style="align-items: baseline;">
+                                    <div class="col-4">
+                                        <p class="view-label">Is Primary</p>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-8">
-                            <!-- <p class="view-inps">{{item.is_primary}}</p> -->
-                            {% if item.is_primary %}
-                            <p class="view-inps"><i class="fa-solid fa-check" style="color: green;"></i></p>
-                            {% else %}
-                            <p class="view-inps"><i class="fa-solid fa-xmark" style="color: red;"></i></p>
-                            {% endif %}
-                            <!-- <p style="font-size: 14px;">SAMEER NASIR SHAIKH</p> -->
+                    {% endverbatim %}
+
+                    <div class="modal fade" id="editBankDetails" tabindex="-1" aria-labelledby="" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="">Edit Bank Details</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {% verbatim %}
+                                    <form id="bankForm" class="form">
+                                        <div class="row p-2 mt-2">
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="mb-2 w-100 sty-input-wrapper">
+                                                    <input class="w-100 sty-inp" type="text" v-model="formData.beneficiary_name">
+                                                    <label for="id_beneficiary_name" class="sty-label">Beneficiary Name</label>
+                                                    <span v-if="errors.beneficiary_name" class="error">{{ errors.beneficiary_name[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                <small id="beneficiaryName1_Error" class="error-message"></small>
+                                            </div>
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="mb-2 w-100 sty-input-wrapper">
+                                                    <input class="w-100 sty-inp" type="text" v-model="formData.beneficiary_code">
+                                                    <label for="id_beneficiary_code" class="sty-label">Beneficiary IFSC Code</label>
+                                                    <span v-if="errors.beneficiary_code" class="error">{{ errors.beneficiary_code[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="mb-2 w-100 sty-input-wrapper">
+                                                    <input class="w-100 sty-inp" type="number" v-model="formData.beneficiary_acc_number">
+                                                    <label for="id_beneficiary_acc_number" class="sty-label">Beneficiary Account Number</label>
+                                                    <span v-if="errors.beneficiary_acc_number" class="error">{{ errors.beneficiary_acc_number[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="mb-2 w-100 sty-input-wrapper">
+                                                    <input class="w-100 sty-inp" type="text" v-model="formData.beneficiary_bank">
+                                                    <label for="id_beneficiary_bank" class="sty-label">Beneficiary Bank Name & Branch</label>
+                                                    <span v-if="errors.beneficiary_bank" class="error">{{ errors.beneficiary_bank[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 mb-4 gap-3 align-items-center">
+                                                <input type="checkbox" class="sty-inp" v-model="formData.is_primary">
+                                                <label>Make this Primary</label>
+                                                <span v-if="errors.is_primary" class="error">{{ errors.is_primary[0] }}</span>
+                                                <span v-else></span>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    {% endverbatim %}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="submitBankUpdatedData(formData.id)">Save changes</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
                 <hr class="">
-                {% endfor %}
             </div>
         </div>
 
@@ -784,9 +844,11 @@
                                         <label>Make this Primary</label>
                                         <span class="error" v-if="hasError(index, 'is_primary')">{{ getError(index, 'is_primary') }}</span>
                                     </div>
+                                    <!--
                                     <div class="col-lg-4 mb-4 gap-3 align-items-center">
                                         <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
                                     </div>
+                                    -->
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -796,72 +858,6 @@
                         </form>
                     {% endverbatim %}
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="editBankDetails" tabindex="-1" aria-labelledby="" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="">Edit Bank Details</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="bankForm" , class="form">
-                    {% csrf_token %}
-                    <div id="bankclonedFieldsContainer">
-                        <div class="row p-2 mt-2">
-                            <div class="col-lg-4 mb-3">
-                                <div class="mb-2 w-100 sty-input-wrapper">
-                                    <input class="w-100 sty-inp" type="text" id="id_beneficiary_name1" placeholder="">
-                                    <label for="id_beneficiary_name" class="sty-label">Beneficiary Name</label>
-                                    <small id="id_beneficiary_name1_Error" class="error-message"></small>
-                                </div>
-                                <small id="beneficiaryName1_Error" class="error-message"></small>
-                            </div>
-                            <div class="col-lg-4 mb-3">
-                                <div class="mb-2 w-100 sty-input-wrapper">
-                                    <input class="w-100 sty-inp" type="text" id="id_beneficiary_code1" placeholder="">
-                                    <label for="id_beneficiary_code" class="sty-label">Beneficiary IFSC Code</label>
-                                    <small id="id_beneficiary_code1_Error" class="error-message"></small>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 mb-3">
-                                <div class="mb-2 w-100 sty-input-wrapper">
-                                    <input class="w-100 sty-inp" type="number" id="id_beneficiary_acc_number1"
-                                        placeholder="">
-                                    <label for="id_beneficiary_acc_number" class="sty-label">Beneficiary Account
-                                        Number</label>
-                                    <small id="id_beneficiary_acc_number1_Error" class="error-message"></small>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 mb-3">
-                                <div class="mb-2 w-100 sty-input-wrapper">
-                                    <input class="w-100 sty-inp" type="text" id="id_beneficiary_bank1" placeholder="">
-                                    <label for="id_beneficiary_bank" class="sty-label">Beneficiary Bank Name &
-                                        Branch</label>
-                                    <small id="id_beneficiary_bank1_Error" class="error-message"></small>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 mb-4 gap-3 align-items-center">
-                                <input type="checkbox" class="sty-inp" id="id_isPrimary1">
-                                <label>Make this Primary</label>
-                                <small class="mb-3 error-message" id="id_isPrimary1_Error"></small>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-
-                    <div class="" id="bankCloneContainer"></div>
-
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
@@ -971,7 +967,7 @@
                         }
                     </script>
 
-                    <div id="wingCreation">
+                    <div id="wingCreationUpdate">
                         {% verbatim %}
                             <form enctype="multipart/form-data">
                                 <div v-for="(form, index) in forms" :key="index">
@@ -1049,6 +1045,9 @@
         $(this).addClass('current');
         $("#" + tab_id).addClass('current');
     })
+
+    let datatable_columns;
 </script>
+
 
 {% endblock body %}

@@ -9,6 +9,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 </head>
 <body>
+
+  <label for="editable-dropdown">Select or type:</label>
+  <input list="options" id="editable-dropdown" name="editable-dropdown">
+  <datalist id="options">
+    <option value="Option 1"></option>
+    <option value="Option 2"></option>
+    <option value="Option 3"></option>
+    <!-- Add more options as needed -->
+  </datalist>
+
+
   <div class="container mt-5">
     <form id="myForm">
       <div class="form-group">

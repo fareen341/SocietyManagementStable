@@ -13,6 +13,7 @@ class SocietyBankSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocietyBank
         fields = [
+            'id',
             'beneficiary_name',
             'beneficiary_code',
             'beneficiary_acc_number',

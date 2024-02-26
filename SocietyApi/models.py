@@ -78,6 +78,9 @@ class WingFlat(models.Model):
     wing_name = models.CharField(max_length=50)
     flat_number = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.wing_name
+
 
 class WingFlatUnique(models.Model):
     wing = models.ForeignKey(WingFlat, on_delete=models.CASCADE)
@@ -245,6 +248,7 @@ class TenantAllocation(models.Model):
     tenant_to_date = models.DateField(null=True, blank=True)
     tenant_agreement = models.FileField(upload_to='tenant_agreements/')
     tenant_noc = models.FileField(upload_to='tenant_nocs/')
+    no_of_members = models.CharField(max_length=300)
 
     def __str__(self):
         return self.tenant_name.tenant_name
@@ -281,6 +285,15 @@ class HouseHelpAllocationMaster(models.Model):
         return self.house_help_name.house_help_name
 
 
+
+meeting_type = [
+        ('first_general_meeting', 'First General Meeting'),
+        ('annual_general_meeting', 'Annual General Meeting'),
+        ('managing_committee_meeting', 'Managing Committee Meeting'),
+        ('special_general_body_meeting', 'Special General Body Meeting'),
+        ('last_general_meeting', 'Last General Meeting'),
+    ]
+
 class Meetings(models.Model):
     date_of_meeting = models.DateField(null=True, blank=True)
     time_of_meeting = models.CharField(max_length=200, null=True, blank=True)
@@ -289,8 +302,18 @@ class Meetings(models.Model):
     financials =  models.FileField(upload_to='files/', null=True, blank=True)
     other =  models.FileField(upload_to='files/', null=True, blank=True)
     content = RichTextUploadingField(default='')
+    meeting_type = models.CharField(max_length=200, choices=meeting_type)
 
 
 class Suggestion(models.Model):
     meeting = models.ForeignKey(Meetings, on_delete=models.CASCADE)
     suggestions = models.TextField()
+
+
+
+'''
+For attendance:
+ID    TYPE    FLATS(MULTIPLE)
+1.    AGM     FLATS
+2.    AGM     FLATS
+'''

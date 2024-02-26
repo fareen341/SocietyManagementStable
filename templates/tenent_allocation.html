@@ -133,6 +133,15 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <div class="col-lg-4 mb-4 mt-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.no_of_members">
+                                    <label for="id_tenant_name" class="sty-label">No. Of Members</label>
+                                    <span v-if="errors.no_of_members" class="error">{{ errors.no_of_members[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
                         </div>
                         {% endverbatim %}
                     </form>
@@ -242,6 +251,16 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <div class="col-lg-4 mb-4 mt-4">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100 notEditable" v-model="formData.no_of_members">
+                                    <label for="id_tenant_name" class="sty-label">No. Of Members</label>
+                                    <span v-if="errors.no_of_members" class="error">{{ errors.no_of_members[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
                         </div>
                         {% endverbatim %}
                     </form>
@@ -274,6 +293,7 @@
                             <p>tenant_to_date: {{ formData.tenant_to_date }}</p>
                             <p>tenant_agreement: {{ formData.tenant_agreement }}</p>
                             <p>tenant_noc: {{ formData.tenant_noc }}</p>
+                            <p>no_of_members: {{ formData.no_of_members }}</p>
                         {% endverbatim %}
                     </div>
                 </div>
@@ -287,4 +307,7 @@
     </div>
 </div>
 
+<script>
+    let datatable_columns = {{ datatable_columns }};
+</script>
 {% endblock body %}

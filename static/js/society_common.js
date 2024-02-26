@@ -408,6 +408,139 @@ new Vue({
 });
 
 
+// Add wing from society details modal
+new Vue({
+    el: '#wingCreationUpdate',
+    data: {
+        forms: [
+            {}
+        ],
+        errors: [],
+    },
+    methods: {
+        addForm() {
+            this.forms.push({});
+            const newIndex = this.forms.length - 1;
+            // this.errors = this.errors.filter(error => error.index !== newIndex);
+        },
+        removeForm(index) {
+            this.forms.splice(index, 1);
+        },
+        // hasError(index, field) {
+        //     return this.errors.some(error => error.index === index && error[field]);
+        // },
+        // getError(index, field) {
+        //     const error = this.errors.find(error => error.index === index);
+        //     return error ? error[field][0] : '';
+        // },
+        submitWingFlat() {
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+            this.forms.forEach((form, index) => {
+                const formData = new FormData();
+                formData.append('wing_name', form.wing_name);
+                formData.append('flat_number', form.flat_number);
+
+                axios.post('http://127.0.0.1:8000/api/wing-flat/', formData, {})
+                    .then(response => {
+                        console.log('Form data submitted successfully:', response.data);
+                    })
+                    .catch(errors => {
+                        console.error('Error submitting form data:', errors);
+                        this.errors = errors.response.data.errors;
+                    });
+            });
+        },
+        getFormNumber: index => index + 1
+    },
+    // mounted() {
+    //     axios.get('http://127.0.0.1:8000/api/wing/')
+    //         .then(response => {
+    //             console.log("WINGS  DIWSPLAY===", response.data);
+    //         })
+    //         .catch(error => {
+    //             console.error('Error fetching data:', error);
+    //         });
+    // },
+});
+
+
+
+// Display Wing-Flat
+new Vue({
+    el: '#wingDisplayVue',
+    data: {
+        wingFlatData: [],
+    },
+    methods: {
+        updateWingModal(){
+            alert("calling");
+        }
+    },
+    mounted() {
+        axios.get('http://127.0.0.1:8000/api/wing-flat/')
+            .then(response => {
+                console.log("WINGS  DIWSPLAY===", response.data);
+                this.wingFlatData = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    },
+});
+
+function getObjectId(id) {
+    $('#wing_flat_id').val(id);
+    $('#editWingFlatDetails').modal('show');
+    clearFormData();
+
+    const wingFlatId = $('#wing_flat_id').val();
+
+    // Make an HTTP request using Axios
+    axios.get(`http://127.0.0.1:8000/api/wing-flat/${wingFlatId}`)
+        .then(response => {
+            updateFormFields(response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+// Function to clear form data
+function clearFormData() {
+    $('#wingFlatForm')[0].reset();
+}
+
+// Function to update form fields with response data
+function updateFormFields(formData) {
+    $('#wing_name').val(formData.wing_name);
+    $('#flat_number').val(formData.flat_number);
+}
+
+
+function updateWingFlatData() {
+    let getIdForUpdate = $('#wing_flat_id').val();
+    wing_name = $('#wing_name').val();
+    flat_number = $('#flat_number').val();
+
+    const formData = new FormData();
+    formData.append('wing_name', wing_name);
+    formData.append('flat_number', flat_number);
+
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+    axios.patch(`http://127.0.0.1:8000/api/wing-flat/${getIdForUpdate}/`, formData)
+        .then(response => {
+            console.log("RESPONSE==>", response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
+
+
+
 // EDIT SOCIETY DETAILS:
 new Vue({
     el: '#editSocietyVue',
@@ -520,7 +653,7 @@ new Vue({
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-            axios.post('http://127.0.0.1:8000/api/bank-creation/', this.forms, {})
+            axios.post('http://127.0.0.1:8000/api/society_bank/', this.forms, {})
                 .then(response => {
                     console.log('Form data submitted successfully:', response.data);
                     this.nextAction();
@@ -618,6 +751,9 @@ new Vue({
             const error = this.errors.find(error => error.index === index);
             return error ? error[field][0] : '';
         },
+        removeForm(index) {
+            this.forms.splice(index, 1);
+        },
         submitBothDocs() {
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -626,16 +762,11 @@ new Vue({
                 .then(response => {
                     society_creation_obj = response.data.id
                     this.forms.forEach((form, index) => {
-                        console.log("formdata==>", form);
                         const formData = new FormData();
-                        const payload = {
-                            other_document_specification: form.other_document_specification,
-                            society_creation: society_creation_obj
-                        }
 
-                        formData.append('other_document_specification', JSON.stringify(payload));
+                        formData.append('society_creation', form.society_creation_obj);
+                        formData.append('other_document_specification', form.other_document_specification);
                         formData.append('other_document', form.other_document);
-
 
                         axios.post('http://127.0.0.1:8000/api/society-other-docs/', formData, {
                             headers: {
@@ -657,7 +788,6 @@ new Vue({
                 });
         },
         handleFileUpload(event, index) {
-            console.log("file===========");
             const selectedFile = event.target.files[0];
             console.log('Selected File:', selectedFile);
 
@@ -669,6 +799,152 @@ new Vue({
         getFormNumber: index => index + 1
     }
 });
+
+// BANK ON SOCIETY DETAILS PAGE:
+new Vue({
+    el: '#bankDisplayVue',
+    data: {
+        bankData: {},
+        formData: {},
+        errors: {},
+        // formInput: new FormData(),
+        // tenantData: [],
+        // tenantIdToUpdate: null,
+    },
+    methods: {
+        bankUpdate(id) {
+            // this.tenantIdToUpdate = id;
+            $('#editBankDetails').modal('show');
+            axios.get(`http://127.0.0.1:8000/api/society_bank/${id}/`)
+                .then(response => {
+                    console.log("CALLING FOR EDIT BANK", response.data);
+                    this.formData = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        submitBankUpdatedData(id){
+            console.log("id from submit====>", id);
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+            const formData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    formData.append(key, this.formData[key]);
+                }
+            }
+
+            axios.patch(`http://127.0.0.1:8000/api/society_bank/${id}/`, formData)
+                .then(response => {
+                    console.log("Form Submitted:", response.data);
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error Submitting:", this.errors );
+                });
+        },
+        deleteBank(id){
+            console.log("id====", id);
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.delete(`http://127.0.0.1:8000/api/society_bank/${id}/`)
+            .then(response => {
+                console.log("Form Submitted:", response.data);
+            })
+            .catch(error => {
+                this.errors = error.response.data
+                console.log("Error Submitting:", this.errors );
+            });
+
+        },
+        // updateTenant(){
+        //     for (const key in this.formData) {
+        //         if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+        //             if (this.formData[key] !== null) {
+        //                 this.formInput.append(key, this.formData[key]);
+        //             }
+        //         }
+        //     }
+
+        //     axios.defaults.xsrfCookieName = 'csrftoken';
+        //     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+        //     axios.patch(`http://127.0.0.1:8000/api/tenant_creation/${this.tenantIdToUpdate}/`, this.formInput, {
+        //         headers: {
+        //             'Content-Type': 'multipart/form-data'
+        //         }
+        //     })
+        //         .then(response => {
+        //             console.log("Form Submitted:", response.data);
+        //         })
+        //         .catch(error => {
+        //             this.errors = error.response.data
+        //             console.log("Error Submitting:", this.errors );
+        //         });
+        // },
+        // viewRequestedData(id) {
+        //     $('#tenentViewModal').modal('show');
+        //     axios.get(`http://127.0.0.1:8000/api/tenant_creation/${id}/`)
+        //         .then(response => {
+        //             this.formData = response.data;
+        //         })
+        //         .catch(error => {
+        //             console.error('Error fetching data:', error);
+        //         });
+        // },
+        // submitTenant() {
+        //     for (const key in this.formData) {
+        //         if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+        //             if (this.formData[key] !== null) {
+        //                 this.formInput.append(key, this.formData[key]);
+        //             }
+        //         }
+        //     }
+
+        //     axios.defaults.xsrfCookieName = 'csrftoken';
+        //     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+        //     axios.post('http://127.0.0.1:8000/api/tenant_creation/', this.formInput, {
+        //         headers: {
+        //             'Content-Type': 'multipart/form-data'
+        //         }
+        //     })
+        //         .then(response => {
+        //             console.log("Form Submitted:", response.data);
+        //         })
+        //         .catch(error => {
+        //             this.errors = error.response.data
+        //             console.log("Error Submitting:", this.errors );
+
+        //         });
+        // },
+        // handleFileChange(event, refName){
+        //     const selectedFile = event.target.files[0];
+
+        //     if (selectedFile) {
+        //         this.formInput.append(refName, selectedFile);
+        //     }
+        // },
+        // clearErrors() {
+        //     this.errors = {};
+        // },
+    },
+    mounted() {
+        axios.get('http://127.0.0.1:8000/api/society_bank/')
+            .then(response => {
+                this.bankData = response.data;
+                console.log("BANK DATA FROM MOUNT==>", this.bankData);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // $('#tenentCreation, #tenentUpdateModal').on('hidden.bs.modal', () => {
+        //     this.clearErrors();
+        //     this.formData = {};
+        // });
+    },
+})
 
 
 
@@ -2097,6 +2373,7 @@ new Vue({
             this.formInput.append('tenant_name', this.formData.aadharPanPk);
             this.formInput.append('tenant_from_date', this.formData.tenant_from_date);
             this.formInput.append('tenant_to_date', this.formData.tenant_to_date);
+            this.formInput.append('no_of_members', this.formData.no_of_members);
 
 
             axios.defaults.xsrfCookieName = 'csrftoken';
@@ -2564,7 +2841,7 @@ var app = new Vue({
                     // $('#attendanceModal .modal-header');
                 })
 
-            axios.get('https://5214-114-143-252-210.ngrok-free.app/api/wint-unit/')
+            axios.get('http://127.0.0.1:8000/api/wing/')
                 .then(response => {
                     this.sameer = response.data;
                     console.log("data aagya", response);
@@ -2788,6 +3065,7 @@ new Vue({
         message: '',
         // },
         formData: {
+            meeting_type: '',
             date_of_meeting: '',
             time_of_meeting: '',
             place_of_meeting: '',
@@ -2806,8 +3084,9 @@ new Vue({
         financialsError: '',
         contentError: '',
         submitted: false,
-        error: null,
+        error: {},
         errors: {},
+        meetingTypeChoices: [],
     },
     mounted() {
         const initialContent =
@@ -2852,21 +3131,18 @@ new Vue({
     },
 
     methods: {
-
-
         get_meetingtype(event) {
             const selectedOptionText = event.target.options[event.target.selectedIndex].text;
             // console.log("type:", this.selectedOptionText);
 
         },
-
         submitForm() {
             this.errors = {};
 
 
             // validateMeetingType() {
             if (!this.selectedMeetingType) {
-
+                console.log("Meeting type present");
             } else {
                 this.meetingTypeValidation.error = false;
                 this.meetingTypeValidation.message = '';
@@ -2890,6 +3166,7 @@ new Vue({
             }
 
             this.selectedOptionText = this.$refs.meeting_type.options[this.$refs.meeting_type.selectedIndex].text;
+            console.log("meeting type===>", this.formData.meeting_type);
 
             const formData = new FormData();
             formData.append('meeting_type', this.selectedOptionText);
@@ -2899,6 +3176,7 @@ new Vue({
             formData.append('agenda', this.formData.agenda);
             formData.append('financials', this.formData.financials);
             formData.append('content', this.formData.content);
+            formData.append('meeting_type', this.formData.meeting_type);
             if (this.$refs.otherInput) {
                 const otherFile = this.$refs.otherInput.files[0];
                 formData.append('other', otherFile || '');
@@ -2997,44 +3275,177 @@ new Vue({
             this.formData.financials = this.$refs.financialsInput.files[0];
             // this.formData.other = this.$refs.other.files[0];
         },
-
     },
+    mounted(){
+        axios.get('http://127.0.0.1:8000/api/get-meeting-type-choices/')
+        .then(response => {
+            this.meetingTypeChoices = response.data;
+        })
+        .catch(error => {
+            console.error('Error fetching meeting type choices:', error);
+    });
+
+    }
 });
 
 
 
 
 // ATTANDANCE KA SERACH YAHA HAI
+// $(document).ready(function () {
+//     // Save the original table content for resetting
+//     var originalTableContent = $('#dataTable tbody').html();
+
+//     // Function to filter table based on search input
+//     function filterTable() {
+//         var searchText = $('#searchInput').val().toLowerCase();
+
+//         // Reset the table to its original state if the search input is empty
+//         if (searchText === '') {
+//             $('#dataTable tbody').html(originalTableContent);
+//             return;
+//         }
+
+//         // Filter the rows based on the search input
+//         $('#dataTable tbody tr').filter(function () {
+//             $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
+//         });
+//     }
+
+//     // Attach onchange event to the search input
+//     $('#searchInput').on('input', function () {
+//         filterTable();
+
+//         $('#clearSearchInput').toggle(!!$(this).val());
+//     });
+
+//     $('#clearSearchInput').on('click', function () {
+//         // Clear the input value
+//         $('#searchInput').val('').trigger('input');
+//     });
+// });
+
+
+
+/* ====================== DATATABLE ============================== */
+// MEMBER TABLE SCRIPT
 $(document).ready(function () {
-    // Save the original table content for resetting
-    var originalTableContent = $('#dataTable tbody').html();
+    // datatable_columns_id = $('datatable_columns_id').val()
+    let get_datatable_columns
+    get_datatable_columns = [0, 1, 2, 3]
 
-    // Function to filter table based on search input
-    function filterTable() {
-        var searchText = $('#searchInput').val().toLowerCase();
-
-        // Reset the table to its original state if the search input is empty
-        if (searchText === '') {
-            $('#dataTable tbody').html(originalTableContent);
-            return;
-        }
-
-        // Filter the rows based on the search input
-        $('#dataTable tbody tr').filter(function () {
-            $(this).toggle($(this).text().toLowerCase().indexOf(searchText) > -1);
-        });
+    if(datatable_columns){
+        get_datatable_columns = datatable_columns;
     }
 
-    // Attach onchange event to the search input
-    $('#searchInput').on('input', function () {
-        filterTable();
+    // Define a custom filter function
+    $.fn.dataTable.ext.search.push(
+        function (settings, data, dataIndex) {
+            // Customize this logic based on your needs
+            var customStatus = data[1]; // Assuming the status is in the third column (adjust as needed)
 
-        $('#clearSearchInput').toggle(!!$(this).val());
+            // Get the selected value from the dropdown
+            var selectedStatus = $('#statusFilterDropdown').val();
+            // console.log("selectedStatus==========", selectedStatus)
+
+            if (selectedStatus === 'Active') {
+                return customStatus === 'Active';
+            } else if (selectedStatus === 'Inactive') {
+                return customStatus === 'Inactive';
+            }
+            return true;
+            // Apply the filter based on the selected status
+
+        }
+    );
+    var table = $('#example').DataTable({
+        // dom: 'Bfrtip', // Include the buttons extension
+        "dom": '<"dt-buttons"Br><"clear">ftipl',         //Qlfrtip
+        // buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+        responsive: true,
+
+        buttons: [
+            {
+                extend: 'colvis',
+                text: 'More Column',
+                postfixButtons: [
+                    'colvisRestore'
+                ]
+            },
+            {
+                extend: 'searchBuilder',
+                text: 'Filter'
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    // columns: ':visible',
+                    columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                    modifier: { search: 'applied', order: 'applied' },
+
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print All',
+                exportOptions: {
+                    columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                    // modifier: { search: 'applied', order: 'applied' },
+
+                }
+            },
+
+
+        ],
+
+        order: [],
+        "stripeClasses": [],
+
+        columnDefs: [
+
+            { "visible": true, "targets": get_datatable_columns },
+            { "visible": false, "targets": '_all' },
+        ],
+        fixedColumns: {
+            left: 2
+        },
+        // "paging": true,
+        // 'pageLength': '5',
+        pagingType: "simple",
+        paginate: {
+            previous: "<",
+            next: ">"
+        },
+        scrollCollapse: false,
+        scrollX: true
     });
 
-    $('#clearSearchInput').on('click', function () {
-        // Clear the input value
-        $('#searchInput').val('').trigger('input');
+    let statusDD = $(
+        '<select class="dt-button ms-2 dt-button-custom dataTable-Text" id="statusFilterDropdown"><option value="all">All</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select>')
+        .on('change', function () {
+            table.draw();
+        });
+
+    $('#example_filter').append(statusDD);
+
+    // Set the DataTable info text to be centered
+    $('#example_info').css({
+        'text-align': 'center',
+        'position': 'relative',
+        'left': '40%',
+        'padding-top': '20px',
+        // 'margin-right': 'auto',
+        'display': 'block'
     });
+
+    // Adjust the info text position when the table is redrawn
+    table.on('draw.dt', function () {
+        $('#example_info').css({
+            'text-align': 'center',
+            'margin-left': 'auto',
+            'margin-right': 'auto'
+        });
+    });
+
+
 });
-

@@ -135,14 +135,14 @@ class WingFlatView(viewsets.ModelViewSet):
             # ADD FLATS
             for flat in flat_split:
                 unique = f'{wing}-{flat}'
-                check_for_existing_obj = WingFlatUniqueSerializers.objects.filter(wing_flat_unique=unique)
+                check_for_existing_obj = WingFlatUnique.objects.filter(wing_flat_unique=unique)
                 if not check_for_existing_obj:
-                    WingFlatUniqueSerializers.objects.create(wing=wing_flat_combined_instance, wing_flat_unique=unique)
+                    WingFlatUnique.objects.create(wing=wing_flat_combined_instance, wing_flat_unique=unique)
 
             # REMOVE FLATS
             for flat in wing_obj_to_delete:
                 unique = f'{wing}-{flat}'
-                object_to_delete = WingFlatUniqueSerializers.objects.filter(wing_flat_unique=unique)
+                object_to_delete = WingFlatUnique.objects.filter(wing_flat_unique=unique)
                 print("FLAT====>", object_to_delete)
                 if object_to_delete:
                     object_to_delete.delete()
@@ -530,6 +530,10 @@ class TenantAllocationView(viewsets.ModelViewSet):
     queryset = TenantAllocation.objects.all()
     serializer_class = TenantAllocationSerializers
 
+    def create(self, request, *args, **kwargs):
+        print("DOCUMENTS===>", request.data)
+        return super().create(request, *args, **kwargs)
+
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
@@ -604,3 +608,20 @@ class AddNomineesView(viewsets.ModelViewSet):
     serializer_class = AddNomineesSerializer
 
 
+def get_last_object(request):
+    try:
+        last_society_creation = SocietyCreation.objects.first()
+        if last_society_creation:
+            data = {
+                'id': last_society_creation.id,
+            }
+            return JsonResponse(data)
+    except SocietyCreation.DoesNotExist:
+        return JsonResponse({'message': 'No objects found'}, status=404)
+
+
+def get_meeting_type_choices(request):
+    meeting_type_choices = [
+        {'value': choice[0], 'label': choice[1]} for choice in Meetings.meeting_type
+    ]
+    return JsonResponse(meeting_type_choices, safe=False)

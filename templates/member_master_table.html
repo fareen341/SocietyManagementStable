@@ -88,14 +88,14 @@
                                 aria-labelledby="member-tab" tabindex="0">
                                 {% verbatim %}
                                 <div v-for="(member, index) in memberData" :key="index">
-                                    <div class="accordion" id="accordionExample">
+                                    <div class="accordion" :id="'accordionExample' + index">
                                         <div class="accordion-item">
                                           <h2 class="accordion-header">
-                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" aria-expanded="true" aria-controls="collapseOne">
+                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + member.id" aria-expanded="true" aria-controls="collapseOne" :style="index === 0 ? '' : 'background-color: white;' ">
                                                     {{ member.member_name }}
                                                 </button>
                                           </h2>
-                                            <div :id="'collapse' + index" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                            <div :id="'collapse' + member.id" :class="index === 0 ? 'accordion-collapse collapse show' : 'accordion-collapse collapse'" :data-bs-parent="'accordionExample' + index">
                                                 <div class="accordion-body">
 
                                                     <div class="row mt-3">
@@ -254,15 +254,20 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!-- <div v-for="(nominee, nIndex) in member.nominees" :key="nIndex"> -->
-                                                    <div class="accordion" id="accordionExample" v-for="(nominee, nIndex) in member.nominees" :key="nIndex">
+
+                                                <div class="seven">
+                                                    <h1>Nominee Details</h1>
+                                                  </div>
+
+                                                <div v-for="(nominee, nIndex) in member.nominees" :key="nIndex">
+                                                    <div class="accordion" id="accordionExample">
                                                         <div class="accordion-item ms-2 me-2">
-                                                          <h2 class="accordion-header">
-                                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_nominee' + nIndex" aria-expanded="true" aria-controls="collapseOne">
+                                                        <h2 class="accordion-header">
+                                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_nominee' + nominee.id" aria-expanded="true" aria-controls="collapseOne" style="background-color: white;">
                                                                 {{ nominee.nominee_name }}
                                                             </button>
-                                                          </h2>
-                                                          <div :id="'collapse_nominee' + nIndex" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                                        </h2>
+                                                        <div :id="'collapse_nominee' + nominee.id" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                                             <div class="row mt-3">
                                                                 <div class="col-lg-3">
                                                                     <p class="ms-3 view-label">Nominee's Name</p>
@@ -398,10 +403,10 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                          </div>
+                                                        </div>
                                                         </div>
                                                     </div>
-                                                <!-- </div> -->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -3558,4 +3563,9 @@
         </div>
     </div>
 
+
+
+    <script>
+        let datatable_columns = {{ datatable_columns }};
+    </script>
     {% endblock body %}

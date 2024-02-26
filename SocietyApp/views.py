@@ -11,15 +11,22 @@ def society_detail(request):
     soc_object = SocietyCreation.objects.all().values()
     society_id = SocietyCreation.objects.first().id
     soc_bank_object = SocietyBank.objects.all().values()
+    wing_flat_list = WingFlat.objects.all()
+    soc_other_document_object = SocietyOtherDocument.objects.all().values()
+    soc_document_object = SocietyRegistrationDocument.objects.all().values()
     return render(request,'society_details_view.html', {
         'soc_object': soc_object,
         'society_id': society_id,
-        'soc_bank_object': soc_bank_object
+        'soc_bank_object': soc_bank_object,
+        'wing_flat_list': wing_flat_list,
+        'soc_other_document_object': soc_other_document_object,
+        'soc_document_object': soc_document_object
     })
 
 
 def member_details(request):
-    return render(request, 'member_master_table.html')
+    datatable_columns = [0, 2, 3, 4, 5, 6, 7]
+    return render(request, 'member_master_table.html', {'datatable_columns': datatable_columns})
 
 
 def create_member(request):
@@ -27,20 +34,30 @@ def create_member(request):
 
 
 def create_house_help(request):
-    return render(request, 'house_help/house_help_master.html')
+    datatable_columns = [0, 2, 3, 4]
+    return render(request, 'house_help/house_help_master.html', {'datatable_columns': datatable_columns})
 
 
 def allocate_house_help(request):
-    return render(request, 'house_help_allocation.html')
+    datatable_columns = [0, 2, 3, 4, 5, 6, 7]
+    return render(request, 'house_help_allocation.html', {'datatable_columns': datatable_columns})
 
 
 def create_tenant(request):
-    return render(request, 'tenent_master.html')
+    datatable_columns = [0, 2, 3, 4]
+    return render(request, 'tenent_master.html', {'datatable_columns': datatable_columns})
 
 
 def allocate_tenant(request):
-    return render(request, 'tenent_allocation.html')
+    datatable_columns = [0, 2, 3, 4]
+    return render(request, 'tenent_allocation.html', {'datatable_columns': datatable_columns})
 
 
 def meetings_view(request):
-    return render(request, 'meetings.html')
+    datatable_columns = [0, 2, 3, 4, 5, 6, 7]
+    return render(request, 'meetings.html', {'datatable_columns': datatable_columns})
+
+
+def extra(request):
+    return render(request, 'extra3.html')
+

@@ -57,14 +57,19 @@ urlpatterns = [
     path('society-details/', views.society_detail, name="society_details"),
     path('members-detail/', views.member_details, name="member_details"),
     path('create-member/', views.create_member, name="create_member"),
-    path('non-primary/<int:id>/', apiviews.hide_non_primary_member_checkbox, name='non-primary'),
-    path('api/history/', apiviews.MemberView.as_view({'get': 'member_history_retrieve'}), name='history'),
     path('create-house-help/', views.create_house_help, name='create_house_help'),
     path('allocate-house-help/', views.allocate_house_help, name='allocate_house_help'),
     path('create-tenant/', views.create_tenant, name='create_tenant'),
     path('allocate-tenant/', views.allocate_tenant, name='allocate_tenant'),
-    path('api/owner_name/<int:flat_id>/', apiviews.get_owner_name, name="owner_name"),
     path('meetings/', views.meetings_view, name="meetings"),
+    path('extra/', views.extra, name='extra'),
+    path('non-primary/<int:id>/', apiviews.hide_non_primary_member_checkbox, name='non-primary'),
+    path('api/history/', apiviews.MemberView.as_view({'get': 'member_history_retrieve'}), name='history'),
+    path('api/owner_name/<int:flat_id>/', apiviews.get_owner_name, name="owner_name"),
+    path('last-object/', apiviews.get_last_object, name='last-object'),
+    path('api/get-meeting-type-choices/', apiviews.get_meeting_type_choices, name='get_meeting_type_choices'),
+
+
 
 
 
