@@ -43,6 +43,8 @@ router.register('tenant_creation', apiviews.TenantMasterView, basename='tenant_c
 router.register('tenant_allocation', apiviews.TenantAllocationView, basename='tenant_allocation')
 router.register('meetings', apiviews.MeetingsView, basename='meetings')
 router.register('suggestion', apiviews.SuggestionsView, basename='suggestion')
+router.register('attendance', apiviews.SaveAttendanceView, basename='attendance')
+
 
 
 
@@ -68,6 +70,9 @@ urlpatterns = [
     path('api/owner_name/<int:flat_id>/', apiviews.get_owner_name, name="owner_name"),
     path('last-object/', apiviews.get_last_object, name='last-object'),
     path('api/get-meeting-type-choices/', apiviews.get_meeting_type_choices, name='get_meeting_type_choices'),
+    path('api/get_flat_with_members/', apiviews.get_flat_with_members, name='get_flat_with_members'),
+    path('api/get_nominees_details/', apiviews.get_nominees_details, name='get_nominees_details'),
+
 
 
 

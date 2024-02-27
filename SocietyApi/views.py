@@ -621,7 +621,104 @@ def get_last_object(request):
 
 
 def get_meeting_type_choices(request):
-    meeting_type_choices = [
-        {'value': choice[0], 'label': choice[1]} for choice in Meetings.meeting_type
+    # Retrieve the choices from the meeting_type field
+    meeting_type_choices = Meetings._meta.get_field('meeting_type').choices
+
+    # Convert choices into a list of dictionaries
+    choices_list = [{'value': choice[0], 'label': choice[1]} for choice in meeting_type_choices]
+
+    return JsonResponse(choices_list, safe=False)
+
+
+from django.core.serializers import serialize
+from django.http import JsonResponse
+
+# def get_flat_with_members(request):
+#     flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()[0:2]
+#     print("FLATS VALUE=======================================================================================", flats)
+#     data = []
+#     for flat in flats:
+#         members = Members.objects.filter(wing_flat__wing_flat_unique=flat['wing_flat_unique'])
+#         serialized_members = MemberSerializersForAttendance(members, many=True).data
+#         data.append({
+#             "flat_id": flat['id'],
+#             "flat_no": flat['wing_flat_unique'],
+#             "members": serialized_members
+#         })
+#     return JsonResponse({"flats": data})
+
+
+class SaveAttendanceView(viewsets.ModelViewSet):
+    queryset = Attendance.objects.all()
+    serializer_class = SaveAttendanceSerializers
+
+    def create(self, request, *args, **kwargs):
+        print("DOCUMENTS===>", request.data)
+        return super().create(request, *args, **kwargs)
+
+    # def perform_create(self, serializer):
+    #     print("ATTENDANCE SAVED====>", self.request.data)
+    #     # Check if the request data is a list (many=True)
+    #     if isinstance(self.request.data, list):
+    #         serializer.save(many=True)
+    #     else:
+    #         serializer.save()
+
+
+'''
+nominees: [
+  "flat_no": F1001,
+  "members": {
+    "member_name": "Fareen",
+    "nominees": [
+      {"nominee_name": "Fareen Nom 1", "nominee_sharein": "20%"},
+      {"nominee_name": "Fareen Nom 2", "nominee_sharein": "30%"}
     ]
-    return JsonResponse(meeting_type_choices, safe=False)
+  }
+]
+'''
+
+
+# def get_nominees_details(request):
+#     data = {}
+#     flats = WingFlatUnique.objects.all().distinct()
+#     for flat in flats:
+#         members = Members.objects.filter(wing_flat__wing_flat_unique=flat.wing_flat_unique)
+#         serialized_members = MemberSerializersForAttendance(members, many=True).data
+#         print("Nominees view==>", serialized_members)
+
+#         # data.update({'flat_name': flats})
+
+#         # data.update({'flat_name': flats})
+#         print("FLAT===>", flat)
+#     return JsonResponse({"flats": "data"})
+
+
+def get_flat_with_members(request):
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()[0:2]
+    print("FLATS VALUE=======================================================================================", flats)
+    data = []
+    for flat in flats:
+        members = Members.objects.filter(wing_flat__wing_flat_unique=flat['wing_flat_unique'])
+        serialized_members = MemberSerializersForAttendance(members, many=True).data
+        data.append({
+            "flat_id": flat['id'],
+            "flat_no": flat['wing_flat_unique'],
+            "members": serialized_members
+        })
+    return JsonResponse({"flats": data})
+
+
+
+def get_nominees_details(request):
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()[0:2]
+    data = []
+    for flat in flats:
+        members = Members.objects.filter(wing_flat__wing_flat_unique=flat['wing_flat_unique'])
+        serialized_members = MemberSerializersForNominees(members, many=True).data
+        data.append({
+            "flat_id": flat['id'],
+            "flat_no": flat['wing_flat_unique'],
+            "members": serialized_members
+        })
+    return JsonResponse({"flats": data})

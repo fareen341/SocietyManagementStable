@@ -474,7 +474,7 @@ new Vue({
         wingFlatData: [],
     },
     methods: {
-        updateWingModal(){
+        updateWingModal() {
             alert("calling");
         }
     },
@@ -824,7 +824,7 @@ new Vue({
                     console.error('Error fetching data:', error);
                 });
         },
-        submitBankUpdatedData(id){
+        submitBankUpdatedData(id) {
             console.log("id from submit====>", id);
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -842,21 +842,21 @@ new Vue({
                 })
                 .catch(error => {
                     this.errors = error.response.data
-                    console.log("Error Submitting:", this.errors );
+                    console.log("Error Submitting:", this.errors);
                 });
         },
-        deleteBank(id){
+        deleteBank(id) {
             console.log("id====", id);
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             axios.delete(`http://127.0.0.1:8000/api/society_bank/${id}/`)
-            .then(response => {
-                console.log("Form Submitted:", response.data);
-            })
-            .catch(error => {
-                this.errors = error.response.data
-                console.log("Error Submitting:", this.errors );
-            });
+                .then(response => {
+                    console.log("Form Submitted:", response.data);
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error Submitting:", this.errors);
+                });
 
         },
         // updateTenant(){
@@ -1437,7 +1437,7 @@ var app = new Vue({
             $('#memberHistoryModal').modal('show');
             axios.get(`http://127.0.0.1:8000/api/history/?wing_flat__id=${wing_flat}`)
                 .then(response => {
-                    if(response.data){
+                    if (response.data) {
                         console.log("RESPONSE ~~~~~~~~~~~~~~~~~~~~~~~~==>", response.data[0]['same_flat_member_identification']);
                         this.memberHistory = response.data;
 
@@ -2179,7 +2179,7 @@ new Vue({
                     console.error('Error fetching data:', error);
                 });
         },
-        updateTenant(){
+        updateTenant() {
             for (const key in this.formData) {
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
                     if (this.formData[key] !== null) {
@@ -2200,7 +2200,7 @@ new Vue({
                 })
                 .catch(error => {
                     this.errors = error.response.data
-                    console.log("Error Submitting:", this.errors );
+                    console.log("Error Submitting:", this.errors);
                 });
         },
         viewRequestedData(id) {
@@ -2234,11 +2234,11 @@ new Vue({
                 })
                 .catch(error => {
                     this.errors = error.response.data
-                    console.log("Error Submitting:", this.errors );
+                    console.log("Error Submitting:", this.errors);
 
                 });
         },
-        handleFileChange(event, refName){
+        handleFileChange(event, refName) {
             const selectedFile = event.target.files[0];
 
             if (selectedFile) {
@@ -2310,7 +2310,7 @@ new Vue({
                 this.formData.name = "";
             }
         },
-        getOwnerName(event){
+        getOwnerName(event) {
             console.log('event====', event.target.value);
             let selectedVal = event.target.value;
             if (selectedVal) {
@@ -2341,7 +2341,7 @@ new Vue({
                     console.error('Error fetching data:', error);
                 });
         },
-        updateTenant(){
+        updateTenant() {
             this.formInput.append('tenant_to_date', this.formData.tenant_to_date);
 
             axios.defaults.xsrfCookieName = 'csrftoken';
@@ -2352,7 +2352,7 @@ new Vue({
                 })
                 .catch(error => {
                     this.errors = error.response.data
-                    console.log("Error Submitting:", this.errors );
+                    console.log("Error Submitting:", this.errors);
                 });
         },
         viewRequestedData(id) {
@@ -2388,11 +2388,11 @@ new Vue({
                 })
                 .catch(error => {
                     this.errors = error.response.data
-                    console.log("Error Submitting:", this.errors );
+                    console.log("Error Submitting:", this.errors);
 
                 });
         },
-        handleFileChange(event, refName){
+        handleFileChange(event, refName) {
             const selectedFile = event.target.files[0];
             if (selectedFile) {
                 this.formInput.append(refName, selectedFile);
@@ -2668,6 +2668,8 @@ var app = new Vue({
             minutes_file: null,
             minutes_other: null,
         },
+        attendanceData: [],
+        meetingId: '',
 
     },
 
@@ -2726,10 +2728,66 @@ var app = new Vue({
                 console.error(error);
             });
 
+        // Attendance API:
+        console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDd==========");
+        axios.get('http://127.0.0.1:8000/api/get_flat_with_members/')
+            .then(response => {
+                // this.submitted = true;
+                console.log("ATTENDANCE  RESPONSE-->", response.data.flats);
+                this.attendanceData = response.data.flats;
+                this.someVal = 'xyz'
+            })
+            .catch(error => {
+                this.errors = error.response.data
+            });
 
     },
 
     methods: {
+        submitAttendance() {
+            const formData = new FormData(this.$refs.submitAttendances);
+            const tableData = [];
+            const rows = document.querySelectorAll('#attendanceTable tbody tr');
+
+            rows.forEach(row => {
+                const flatNo = row.cells[0].innerText;
+                const memberName = row.querySelector('input[name="editable-dropdown"]').value;
+                // const memberName = document.getElementsByName('editable-dropdown')[0].value;
+                const memberType = row.querySelector('select#member_type_dropdown').value;
+                const attachment = row.querySelector('input[type="file"]').files[0];
+                const attendance = row.querySelector('input[type="checkbox"]').checked;
+
+                const formData = new FormData();
+
+                formData.append('meeting_id', this.meetingId)
+                formData.append('flat_no', flatNo)
+                formData.append('member', memberName)
+                formData.append('member_type', memberType)
+                formData.append('attachment', attachment)
+                formData.append('attendance', attendance)
+
+
+                axios.defaults.xsrfCookieName = 'csrftoken';
+                axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+                axios.post('http://127.0.0.1:8000/api/attendance/', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                    .then(response => {
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            });
+
+            // console.log("TABLE==>", tableData);
+
+
+        },
+
         addMeetingToTop(newMeeting) {
             this.meeting.unshift(newMeeting);
         },
@@ -2829,6 +2887,7 @@ var app = new Vue({
 
         attendance(id) {
             // alert(id);
+            this.meetingId = id;
             $('#attendanceModal').modal('show');
 
             axios.get(`http://127.0.0.1:8000/api/meetings/${id}`)
@@ -3086,7 +3145,6 @@ new Vue({
         submitted: false,
         error: {},
         errors: {},
-        meetingTypeChoices: [],
     },
     mounted() {
         const initialContent =
@@ -3276,16 +3334,6 @@ new Vue({
             // this.formData.other = this.$refs.other.files[0];
         },
     },
-    mounted(){
-        axios.get('http://127.0.0.1:8000/api/get-meeting-type-choices/')
-        .then(response => {
-            this.meetingTypeChoices = response.data;
-        })
-        .catch(error => {
-            console.error('Error fetching meeting type choices:', error);
-    });
-
-    }
 });
 
 
@@ -3330,11 +3378,12 @@ new Vue({
 /* ====================== DATATABLE ============================== */
 // MEMBER TABLE SCRIPT
 $(document).ready(function () {
+
     // datatable_columns_id = $('datatable_columns_id').val()
     let get_datatable_columns
     get_datatable_columns = [0, 1, 2, 3]
 
-    if(datatable_columns){
+    if (datatable_columns) {
         get_datatable_columns = datatable_columns;
     }
 
@@ -3448,4 +3497,172 @@ $(document).ready(function () {
     });
 
 
+
+
+
+    var attendanceTable = $('#attendanceTable').DataTable({
+        // dom: 'Bfrtip', // Include the buttons extension
+        "dom": '<"dt-buttons"Br><"clear">ftipl',         //Qlfrtip
+        // buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+        responsive: true,
+
+        buttons: [
+            {
+                extend: 'colvis',
+                text: 'More Column',
+                postfixButtons: [
+                    'colvisRestore'
+                ]
+            },
+            {
+                extend: 'searchBuilder',
+                text: 'Filter'
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    // columns: ':visible',
+                    columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                    modifier: { search: 'applied', order: 'applied' },
+
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print All',
+                exportOptions: {
+                    columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                    // modifier: { search: 'applied', order: 'applied' },
+
+                }
+            },
+
+
+        ],
+
+        order: [],
+        "stripeClasses": [],
+
+        columnDefs: [
+
+            { "visible": true, "targets": [0, 1, 2, 3, 4] },
+            { "visible": false, "targets": '_all' },
+        ],
+        fixedColumns: {
+            left: 2
+        },
+        // "paging": true,
+        // 'pageLength': '5',
+        pagingType: "simple",
+        paginate: {
+            previous: "<",
+            next: ">"
+        },
+        scrollCollapse: false,
+        scrollX: true
+    });
+
+    // let statusDD1 = $(
+    //     '<select class="dt-button ms-2 dt-button-custom dataTable-Text" id="statusFilterDropdown"><option value="all">All</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select>')
+    //     .on('change', function () {
+    //         attendanceTable.draw();
+    //     });
+
+    // $('#attendanceTable_filter').append(statusDD1);
+
+    // Set the DataTable info text to be centered
+    $('#attendanceTable_info').css({
+        'text-align': 'center',
+        'position': 'relative',
+        'left': '40%',
+        'padding-top': '20px',
+        // 'margin-right': 'auto',
+        'display': 'block'
+    });
+
+    // Adjust the info text position when the table is redrawn
+    attendanceTable.on('draw.dt', function () {
+        $('#attendanceTable_info').css({
+            'text-align': 'center',
+            'margin-left': 'auto',
+            'margin-right': 'auto'
+        });
+    });
+
+
+    // DATA LIST OPTION JS
+    var input = document.getElementById('editable-dropdown');
+
+    // Event listener for when the input value changes
+    // input.addEventListener('input', function() {
+    //     // Get the selected option
+    //     var selectedOption = null;
+    //     var enteredValue = input.value;
+    //     var dataList = document.getElementById('options');
+
+    //     // Loop through the options in the datalist
+    //     for (var i = 0; i < dataList.options.length; i++) {
+    //         // Check if the entered value matches any option value
+    //         if (dataList.options[i].value === enteredValue) {
+    //             selectedOption = dataList.options[i];
+    //             break;
+    //         }
+    //     }
+
+    //     // If a matching option is found, log its value and data-info attribute
+    //     if (selectedOption) {
+    //         var info = selectedOption.getAttribute('data-info');
+    //         console.log('Selected option:', selectedOption.value);
+    //         console.log('Info:', info);
+    //     } else {
+    //         console.log('Custom value entered:', enteredValue);
+    //     }
+    // })
+
+    var input = document.getElementById('editable-dropdown');
+
+    input.addEventListener('input', function () {
+        var selectedOption = null;
+        var enteredValue = input.value;
+        var dataList = document.getElementById('options');
+
+        // for (var i = 0; i < dataList.options.length; i++) {
+        //     if (dataList.options[i].value === enteredValue) {
+        //         var nomineeId = dataList.options[i].getAttribute('data-id');
+        //         console.log('Selected Nominee ID:', nomineeId);
+        //         break;
+        //     }
+        // }
+
+        // Loop through the options in the datalist
+        for (var i = 0; i < dataList.options.length; i++) {
+            // Check if the entered value matches any option value
+            if (dataList.options[i].value === enteredValue) {
+                selectedOption = dataList.options[i];
+                break;
+            }
+        }
+
+        // If a matching option is found, log its value and data-info attribute
+        var memberTypeInput = document.getElementById('member_type_dropdown');
+        if (selectedOption) {
+            var id = selectedOption.getAttribute('data-id');
+            var status = selectedOption.getAttribute('data-status');
+            console.log('Selected option:', selectedOption.value);
+            console.log('ID:', id);
+            console.log('Status:', status);
+
+
+            if (status === 'secondary') {
+                console.log("TYPE=======>>>>>>", status);
+                memberTypeInput.value = "secondary";
+            } else if (status === 'primary') {
+                memberTypeInput.value = "primary";
+            }
+
+        } else {
+            console.log('Custom value entered:', enteredValue);
+            memberTypeInput.value = "proxy";
+        }
+    });
 });

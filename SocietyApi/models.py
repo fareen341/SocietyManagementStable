@@ -310,6 +310,15 @@ class Suggestion(models.Model):
     suggestions = models.TextField()
 
 
+class Attendance(models.Model):
+    meeting_id = models.ForeignKey(Meetings, on_delete=models.CASCADE)
+    flat_no = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
+    member = models.CharField(max_length=200, null=True, blank=True)
+    member_type = models.CharField(max_length=200, null=True, blank=True)
+    attachment = models.FileField(upload_to='files/', null=True, blank=True)
+    attendance = models.BooleanField(default=False)
+
+
 
 '''
 For attendance:

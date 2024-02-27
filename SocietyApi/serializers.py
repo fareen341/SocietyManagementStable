@@ -152,3 +152,42 @@ class AddNomineesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nominees
         fields = '__all__'
+
+
+class MemberSerializersForAttendance(serializers.ModelSerializer):
+    class Meta:
+        model = Members
+        fields = ['id', 'member_name', 'member_is_primary']
+
+
+class SaveAttendanceSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = "__all__"
+    #     fields = ['flat_no', 'member', 'member_type', 'attachment', 'attendance']
+
+    # def create(self, validated_data):
+    #     # If data is a list, perform bulk create
+    #     if isinstance(validated_data, list):
+    #         return [self.Meta.model.objects.create(**item) for item in validated_data]
+    #     else:
+    #         return super().create(validated_data)
+
+
+# To get nominees for data table
+class NomineesSerializerForNominees(serializers.ModelSerializer):
+    class Meta:
+        model = Nominees
+        fields = [
+            'nominee_name',
+            'nominee_sharein_percent'
+        ]
+
+
+
+class MemberSerializersForNominees(serializers.ModelSerializer):
+    nominees = NomineesSerializerForNominees(many=True, required=False)
+
+    class Meta:
+        model = Members
+        fields = '__all__'

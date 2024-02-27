@@ -27,6 +27,7 @@
                 <option value="special_general_body_meeting">Special General Body Meeting</option>
                 <option value="last_general_meeting">Last General Meeting</option>
             </select>
+
             <small v-if="meeting_type_error" class="error">{{ meeting_type_error }}</small>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
@@ -285,163 +286,52 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                    {% verbatim %}
+                    <form @submit.prevent="submitAttendance" enctype="multipart/form-data" ref="submitAttendances">
+                        <input type="submit" value="Submit" />
+                        <div class="table-responsive">
+                            <table id="attendanceTable" class="display dt-table order-column" style="width:100%">
+                                <thead class="">
+                                    <tr>
+                                        <th>Flat Id</th>
+                                        <th>Flat Number</th>
+                                        <th>Member Name</th>
+                                        <th>Member Type</th>
+                                        <th>Attachment</th>
+                                        <th>Attendance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(item, index) in attendanceData" :key="index">
+                                        <td>{{ item.flat_id }}</td>
+                                        <td>{{ item.flat_no }}</td>
+                                        <td>
+                                            <input class="form-control" :list="'options-' + index" :id="'editable-dropdown-' + index" name="editable-dropdown">
+                                            <datalist :id="'options-' + index">
+                                                <option v-for="(member, mIndex) in item.members" :key="mIndex" :value="member.member_name" :data-id="member.id" :data-status="member.member_is_primary ? 'primary' : 'secondary'">
+                                                </option>
+                                            </datalist>
+                                        </td>
+                                        <td><select id="member_type_dropdown" class="form-control myEdit" >
+                                                <option value="proxy">Proxy</option>
+                                                <option value="primary">Primary Member</option>
+                                                <option value="secondary">Secondary Member</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="file">
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name="" id="">
+                                        </td>
+                                    </tr>
 
-                <form @submit.prevent="submitAttendance" enctype="multipart/form-data" ref="submitAttendances">
-                    <div class="table-responsive">
-                        <div class="d-flex gap-3 float-end mb-3" >
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="searchInput"  placeholder="Search">
-                                <div class="input-group-append">
-                                    <button class="btn" type="button" id="clearSearchInput"><i class="fas fa-times"></i></button>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+
+                                </tbody>
+                            </table>
                         </div>
-                        <table class="table table-sm table-bordered att-table text-center" id="dataTable">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Flat Number</th>
-                                    <th>Member Name</th>
-                                    <th>Member Type</th>
-                                    <th>Attendance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>A-wing-101</td>
-                                    <td>
-                                        <input class="form-control" list="options" id="editable-dropdown" name="editable-dropdown">
-                                        <datalist id="options">
-                                            <option value="Option 1"></option>
-                                            <option value="Option 2"></option>
-                                            <option value="Option 3"></option>
-                                            <!-- Add more options as needed -->
-                                        </datalist>
-                                    </td>
-                                    <td><select name="" id="" class="form-control myEdit" >
-                                            <option value="">Primary Member</option>
-                                            <option value="">Secondary Member</option>
-                                            <option value="">Proxy</option>
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <input type="checkbox" name="" id="">
-                                    </td>
-                                </tr>
-
-                                <tr>
-                                    <td>B-wing-302</td>
-                                    <td><input type="text" class="form-control"></td>
-                                    <td><select name="" id="" class="form-control">
-                                            <option value="">Primary Member</option>
-                                            <option value="">Secondary Member</option>
-                                            <option value="">Proxy</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="checkbox" name="" id=""></td>
-                                </tr>
-
-                                <tr>
-                                    <td>C-wing-401</td>
-                                    <td><input type="text" class="form-control"></td>
-                                    <td><select name="" id="" class="form-control">
-                                            <option value="">Primary Member</option>
-                                            <option value="">Secondary Member</option>
-                                            <option value="">Proxy</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="checkbox" name="" id=""></td>
-                                </tr>
-
-                                <tr>
-                                    <td>B-wing-202</td>
-                                    <td><input type="text" class="form-control"></td>
-                                    <td><select name="" id="" class="form-control">
-                                            <option value="">Primary Member</option>
-                                            <option value="">Secondary Member</option>
-                                            <option value="">Proxy</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="checkbox" name="" id=""></td>
-                                </tr>
-
-                                <tr>
-                                    <td>D-wing-501</td>
-                                    <td><input type="text" class="form-control"></td>
-                                    <td><select name="" id="" class="form-control">
-                                            <option value="">Primary Member</option>
-                                            <option value="">Secondary Member</option>
-                                            <option value="">Proxy</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="checkbox" name="" id=""></td>
-                                </tr>
-
-                                <tr>
-                                    <td>A-wing-603</td>
-                                    <td><input type="text" class="form-control"></td>
-                                    <td><select name="" id="" class="form-control">
-                                            <option value="">Primary Member</option>
-                                            <option value="">Secondary Member</option>
-                                            <option value="">Proxy</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="checkbox" name="" id=""></td>
-                                </tr>
-
-                                <tr>
-                                    <td>B-wing-704</td>
-                                    <td><input type="text" class="form-control"></td>
-                                    <td><select name="" id="" class="form-control">
-                                            <option value="">Primary Member</option>
-                                            <option value="">Secondary Member</option>
-                                            <option value="">Proxy</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="checkbox" name="" id=""></td>
-                                </tr>
-
-                                <tr>
-                                    <td>D-wing-204</td>
-                                    <td><input type="text" class="form-control"></td>
-                                    <td><select name="" id="" class="form-control">
-                                            <option value="">Primary Member</option>
-                                            <option value="">Secondary Member</option>
-                                            <option value="">Proxy</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="checkbox" name="" id=""></td>
-                                </tr>
-
-                                <tr>
-                                    <td>C-wing-404</td>
-                                    <td><input type="text" class="form-control"></td>
-                                    <td><select name="" id="" class="form-control">
-                                            <option value="">Primary Member</option>
-                                            <option value="">Secondary Member</option>
-                                            <option value="">Proxy</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="checkbox" name="" id=""></td>
-                                </tr>
-
-                                <tr>
-                                    <td>D-wing-203</td>
-                                    <td><input type="text" class="form-control"></td>
-                                    <td><select name="" id="" class="form-control">
-                                            <option value="">Primary Member</option>
-                                            <option value="">Secondary Member</option>
-                                            <option value="">Proxy</option>
-                                        </select>
-                                    </td>
-                                    <td><input type="checkbox" name="" id=""></td>
-                                </tr>
-
-
-                            </tbody>
-                        </table>
-                    </div>
-                </form>
+                    </form>
+                    {% endverbatim %}
 
 
             </div>
@@ -824,5 +714,8 @@
 
 
 
+<script>
+    let datatable_columns;
+</script>
 
 {% endblock body %}
