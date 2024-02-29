@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from  SocietyApi.models import *
+from SocietyApi.serializers import MemberSerializersForNominees
 
 # Create your views here.
 
@@ -61,3 +62,22 @@ def meetings_view(request):
 def extra(request):
     return render(request, 'extra3.html')
 
+
+def nominee_register_view(request):
+    datatable_columns = []
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
+    data = []
+    for flat in flats:
+        members = Members.objects.filter(
+            wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+            date_of_cessation__isnull=True,
+        )
+        if(members):
+            serialized_members = MemberSerializersForNominees(members, many=True).data
+            data.append({
+                "flat_id": flat['id'],
+                "flat_no": flat['wing_flat_unique'],
+                "members": serialized_members
+            })
+    print('data============', data[0])
+    return render(request, 'register/nominee_register_table.html', {'datatable_columns': datatable_columns, 'nominees': data})

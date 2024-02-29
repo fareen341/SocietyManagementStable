@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+
+{% comment %} USE THIS TABLE IF BELOW TABLE IS NOT WORKING
+<tbody>
+{% for data1 in nominees %}
+    {% for data2 in data1.members  %}
+        {% with data2.nominees|length as rowspan_value %}
+            <tr>
+                <td rowspan="{{ rowspan_value }}">{{ data1.flat_no }}</td>
+                <td rowspan="{{ rowspan_value }}">{{ data2.member_name }}</td>
+                <td>{{ data2.nominees.0.nominee_name }}</td>
+                <td>{{ data2.nominees.0.nominee_sharein_percent }}</td>
+            </tr>
+            {% for data3 in data2.nominees|slice:"1:" %}
+                <tr>
+                    <td>{{ data3.nominee_name }}</td>
+                    <td>{{ data3.nominee_sharein_percent }}</td>
+                </tr>
+            {% endfor %}
+        {% endwith %}
+    {% endfor %}
+{% endfor %}
+</tbody> {% endcomment %}
+
+
+<div class='container-fluid'>
+    <div class="shares-table-J mt-3">
+      <center><h5 class="report_h m-0 p-0">List of Nominees of Sita Park D, E, F CO-OP. HSG. SOC. LTD.</h5></center>
+      <div class="table-responsive" style="font-family: 'Calibri',sans-serif !important; font-size: 15px;">
+        <table class="table table-sm table-bordered" style="align-items: center !important; vertical-align: middle;">
+          <thead class="table-dark">
+            <th>Flat No.</th>
+            <th>Member Name</th>
+            <th>Nominee Name</th>
+            <th>Nominee ShareIn %</th>
+          </thead>
+          <tbody>
+            {% for data1 in nominees %}
+                {% for data2 in data1.members  %}
+                    {% with data2.nominees|length as rowspan_value %}
+                        <tr>
+                          {% if forloop.first %}
+                            <td rowspan="{{ rowspan_value }}">{{ data1.flat_no }}</td>
+                            {% else %}
+                            <td rowspan="{{ rowspan_value }}"></td>
+                          {% endif %}
+                            <td rowspan="{{ rowspan_value }}">{{ data2.member_name }}</td>
+                            <td>{{ data2.nominees.0.nominee_name }}</td>
+                            <td>{{ data2.nominees.0.nominee_sharein_percent }}</td>
+                        </tr>
+                        {% for data3 in data2.nominees|slice:"1:" %}
+                            <tr>
+                                <td>{{ data3.nominee_name }}</td>
+                                <td>{{ data3.nominee_sharein_percent }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endwith %}
+                {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<script>
+    let datatable_columns = {{ datatable_columns }};
+</script>
+{% endblock body %}

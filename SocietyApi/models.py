@@ -1,5 +1,6 @@
 from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.contrib.auth.models import User
 
 
 
@@ -303,11 +304,10 @@ class Meetings(models.Model):
     other =  models.FileField(upload_to='files/', null=True, blank=True)
     content = RichTextUploadingField(default='')
     meeting_type = models.CharField(max_length=200, choices=meeting_type)
-
-
-class Suggestion(models.Model):
-    meeting = models.ForeignKey(Meetings, on_delete=models.CASCADE)
-    suggestions = models.TextField()
+    # Minutes fields:
+    minutes_content = RichTextUploadingField(null=True, blank=True)
+    minutes_document = models.FileField(upload_to='files/', null=True, blank=True)
+    minutes_otehr_doc = models.FileField(upload_to='files/', null=True, blank=True)
 
 
 class Attendance(models.Model):
@@ -317,6 +317,13 @@ class Attendance(models.Model):
     member_type = models.CharField(max_length=200, null=True, blank=True)
     attachment = models.FileField(upload_to='files/', null=True, blank=True)
     attendance = models.BooleanField(default=False)
+
+
+class Suggestion(models.Model):
+    # flat_id = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    meeting_id = models.ForeignKey(Meetings, on_delete=models.CASCADE)
+    suggestions = models.TextField()
 
 
 

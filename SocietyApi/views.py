@@ -653,50 +653,11 @@ class SaveAttendanceView(viewsets.ModelViewSet):
     serializer_class = SaveAttendanceSerializers
 
     def create(self, request, *args, **kwargs):
-        print("DOCUMENTS===>", request.data)
         return super().create(request, *args, **kwargs)
-
-    # def perform_create(self, serializer):
-    #     print("ATTENDANCE SAVED====>", self.request.data)
-    #     # Check if the request data is a list (many=True)
-    #     if isinstance(self.request.data, list):
-    #         serializer.save(many=True)
-    #     else:
-    #         serializer.save()
-
-
-'''
-nominees: [
-  "flat_no": F1001,
-  "members": {
-    "member_name": "Fareen",
-    "nominees": [
-      {"nominee_name": "Fareen Nom 1", "nominee_sharein": "20%"},
-      {"nominee_name": "Fareen Nom 2", "nominee_sharein": "30%"}
-    ]
-  }
-]
-'''
-
-
-# def get_nominees_details(request):
-#     data = {}
-#     flats = WingFlatUnique.objects.all().distinct()
-#     for flat in flats:
-#         members = Members.objects.filter(wing_flat__wing_flat_unique=flat.wing_flat_unique)
-#         serialized_members = MemberSerializersForAttendance(members, many=True).data
-#         print("Nominees view==>", serialized_members)
-
-#         # data.update({'flat_name': flats})
-
-#         # data.update({'flat_name': flats})
-#         print("FLAT===>", flat)
-#     return JsonResponse({"flats": "data"})
 
 
 def get_flat_with_members(request):
-    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()[0:2]
-    print("FLATS VALUE=======================================================================================", flats)
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
     data = []
     for flat in flats:
         members = Members.objects.filter(wing_flat__wing_flat_unique=flat['wing_flat_unique'])
@@ -709,16 +670,38 @@ def get_flat_with_members(request):
     return JsonResponse({"flats": data})
 
 
-
+# BELOW CODE TO GET THE NOMINEES DATA FOR NOMINEE - REGISTER, BELOW CODE IS NOT GETTING USED, USING JINJA FOR IT.
 def get_nominees_details(request):
-    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()[0:2]
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
     data = []
     for flat in flats:
-        members = Members.objects.filter(wing_flat__wing_flat_unique=flat['wing_flat_unique'])
-        serialized_members = MemberSerializersForNominees(members, many=True).data
-        data.append({
-            "flat_id": flat['id'],
-            "flat_no": flat['wing_flat_unique'],
-            "members": serialized_members
-        })
+        members = Members.objects.filter(
+            wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+            date_of_cessation__isnull=True,
+        )
+        if(members):
+            serialized_members = MemberSerializersForNominees(members, many=True).data
+            data.append({
+                "flat_id": flat['id'],
+                "flat_no": flat['wing_flat_unique'],
+                "members": serialized_members
+            })
     return JsonResponse({"flats": data})
+
+
+class SuggestionView(viewsets.ModelViewSet):
+    queryset = Suggestion.objects.all()
+    serializer_class = SuggestionSerializers
+
+    # def create(self, request, *args, **kwargs):
+    #     return super().create(request, *args, **kwargs)
+
+
+def get_current_logged_in_user(request):
+    return JsonResponse({"user_id": request.user.id})
+
+
+def get_previous_suggestions(request, meeting_id):
+    previous_suggestions = Suggestion.objects.filter(meeting_id=meeting_id)
+    serialized_suggestions = SuggestionSerializer(previous_suggestions, many=True)
+    return JsonResponse({"previous_suggestions": serialized_suggestions.data})  # Return serialized data

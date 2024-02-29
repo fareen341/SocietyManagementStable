@@ -234,8 +234,8 @@
                 <th>Actions</th>
                 <!-- <th v-for="(value, key) in meeting[0]" :key="key">{{ key }}</th> -->
                 <th>Type of Meeting</th>
-                <th>Date of Meeting</th>
-                <th>Time of Meeting</th>
+                <!-- th>Date of Meeting</th> -->
+                <th>Date & Time of Meeting</th>
                 <th>Agenda</th>
                 <th>Minutes</th>
                 <th>Place of Meeting</th>
@@ -254,18 +254,14 @@
                     </div>
                 </td>
                 <td>{{ user.meeting_type }}</td>
-                <!-- <td v-for="(value, key) in user" :key="key">{{ value }}</td> -->
-                <td>{{ user.date_of_meeting }}</td>
-                <td>{{ formatTime(user.time_of_meeting) }}</td>
-                <td><i class="fa-solid fa-a" style="color: #37ff00;"></i></td>
-                <!-- <td><i class="fa-solid fa-check" style="color: #37ff00;"></i></td> -->
+                <!--  <td>{{ user.date_of_meeting }}</td> -->
+                <td>{{ user.date_of_meeting }}, {{ user.time_of_meeting }}</td>
+                <td><i class="fa-solid fa-check" style="color: #37ff00;"></i></td>
                 <td v-if="user.minutes_content">
-                    <!-- <i class="fa-solid fa-check" style="color: #37ff00;"></i> -->
-                    <i class="fa-solid fa-m fa-sm" style="color: #37ff00;"></i>
+                    <i class="fa-solid fa-check" style="color: #37ff00;"></i>
                 </td>
                 <td v-else="user.minutes_content">
-                    <!-- <i class="fa-solid fa-xmark" style="color: #ff0000;"></i> -->
-                    <i class="fa-solid fa-m fa-sm" style="color: #ff0000;"></i>
+                    <i class="fa-solid fa-xmark" style="color: #ff0000;"></i>
                 </td>
 
                 <td>{{ user.place_of_meeting }}</td>
@@ -288,7 +284,10 @@
             <div class="modal-body">
                     {% verbatim %}
                     <form @submit.prevent="submitAttendance" enctype="multipart/form-data" ref="submitAttendances">
-                        <input type="submit" value="Submit" />
+                        <div style="text-align: right;" class="mb-3">
+                            <input class="btn btn-primary me-2" type="button" value="Bulk Upload" />
+                            <input class="btn btn-primary" type="submit" value="Submit Attendance" />
+                        </div>
                         <div class="table-responsive">
                             <table id="attendanceTable" class="display dt-table order-column" style="width:100%">
                                 <thead class="">
@@ -397,7 +396,7 @@
                         <p class="view-label">Agenda</p>
                     </div>
                     <div class="col-12">
-                        <p class="view-inps" style="text-align: justify !important;" id="content" v-html="sanitizeHTML(singleMeeting.content)"></p>
+                        <div v-html="singleMeeting.content"></div>
                     </div>
                 </div>
             </div>
@@ -448,7 +447,7 @@
                         <p class="view-label">Minutes</p>
                     </div>
                     <div class="col-12">
-                        <p class="view-inps" style="text-align: justify !important;" id="minutes_content" v-html="sanitizeHTML(singleMeeting.minutes_content)"></p>
+                        <div v-html="singleMeeting.minutes_content"></div>
                     </div>
                 </div>
             </div>
@@ -496,9 +495,7 @@
             </div>
             <div class="modal-body">
                 {% verbatim %}
-
                 <form @submit.prevent="minutesForm(form.id)" class="mb-3" enctype="multipart/form-data" ref="minutesForms">
-
                     <div class="accordion accordion-flush" id="accordionFlushExample">
                         <div class="accordion-item" style="border: 1px solid grey;">
                           <h2 class="accordion-header">
@@ -506,98 +503,65 @@
                               Agenda Details
                             </button>
                           </h2>
-                          <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-                            <div class="accordion-body">
-                                <div class="row">
-                                    <div class="col-lg-4">
-                                        <div class="mb-3 w-100 sty-input-wrapper">
-                                            <!-- <input class="w-100 sty-inp" name="date_of_meeting" id="date_of_meeting" v-model="formData.date_of_meeting" type="date"> -->
-                                            <input type="text" class="sty-inp form-control" id="editdate" readonly v-model="form.date_of_meeting">
-                                            <label class="sty-label">Date of Meeting</label>
-                                            <!-- <small v-if="dateOfMeetingError" class="error">{{ dateOfMeetingError }}</small> -->
-                                            <!-- <small v-if="errors.date_of_meeting" class="error">{{ errors.date_of_meeting[0] }}</small>
-                                            <small v-else></small> -->
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4">
-                                        <div class="mb-3 w-100 sty-input-wrapper">
-                                            <input type="text" class="sty-inp form-control" id="edittime" readonly v-model="form.time_of_meeting">
-                                            <label class=" sty-label">Time of Meeting</label>
-                                            <!-- <small v-if="timeOfMeetingError" class="error">{{ timeOfMeetingError }}</small> -->
-                                            <!-- <small v-if="errors.time_of_meeting" class="error">{{ errors.time_of_meeting[0] }}</small>
-                                            <small v-else></small> -->
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4">
-                                        <div class="mb-3 w-100 sty-input-wrapper">
-                                            <input type="text" class="sty-inp form-control" id="editplace" readonly v-model="form.place_of_meeting">
-                                            <label class="sty-label">Place of Meeting</label>
-                                            <!-- <small v-if="placeOfMeetingError" class="error">{{ placeOfMeetingError }}</small> -->
-                                            <!-- <small v-if="errors.place_of_meeting" class="error">{{ errors.place_of_meeting[0] }}</small> -->
-                                            <!-- <small v-else></small> -->
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12 mb-3 d-flex" style="flex-direction: column;">
-                                        <label style="text-transform: uppercase; color: #2b96f1; font-family: 'Calibri', sans-serif;">Agenda of Meeting</label>
-                                        <p id="editContnet" class="sty-inp" v-html="sanitizeHTML(form.sanitizedContent)" readonly></p>
-                                        <!-- <small v-if="contentError" class="error">{{contentError}}</small> -->
-                                        <!-- <small v-else></small> -->
-                                    </div>
-
-
-                                    <div class="col-lg-4">
-                                        <div class="d-flex mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="text" class="sty-inp form-control" id="editAgenda" v-model="form.agenda" readonly>
-                                                <label class="sty-label">Agenda Document</label>
-                                                <!-- <small v-if="agendaError" class="error">{{ agendaError }}</small> -->
-                                                <!-- <small v-if="errors.agenda" class="error">{{ errors.agenda[0] }}</small>
-                                            <small v-else></small> -->
+                            <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="mb-3 w-100 sty-input-wrapper">
+                                                <input type="text" class="sty-inp form-control notEditable" id="editdate" readonly v-model="form.date_of_meeting">
+                                                <label class="sty-label">Date of Meeting</label>
                                             </div>
-                                            <!-- <div class="prev">
-                                                <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('agenda')">
-                                                    <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
-                                                </button>
-                                            </div> -->
                                         </div>
-                                    </div>
 
-                                    <div class="col-lg-4">
-                                        <div class="d-flex mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="text" class="sty-inp form-control" id="editFinancials" v-model="form.financials" >
-                                                <label class="sty-label">Financals Document</label>
-                                                <!-- <small v-if="financialsError" class="error">{{ financialsError }}</small> -->
-                                                <!-- <small v-if="errors.financials" class="error">{{ errors.financials[0] }}</small>
-                                            <small v-else></small> -->
+                                        <div class="col-lg-4">
+                                            <div class="mb-3 w-100 sty-input-wrapper">
+                                                <input type="text" class="sty-inp form-control notEditable" id="edittime" readonly v-model="form.time_of_meeting">
+                                                <label class=" sty-label">Time of Meeting</label>
                                             </div>
-                                            <!-- <div class="prev">
-                                                <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('financials')">
-                                                    <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
-                                                </button>
-                                            </div> -->
                                         </div>
-                                    </div>
 
-                                    <div class="col-lg-4">
-                                        <div class="d-flex mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="text" class="sty-inp form-control" id="editOther" v-model="form.other">
-                                                <label class="sty-label">Other Document</label>
+                                        <div class="col-lg-4">
+                                            <div class="mb-3 w-100 sty-input-wrapper">
+                                                <input type="text" class="sty-inp form-control notEditable" id="editplace" readonly v-model="form.place_of_meeting">
+                                                <label class="sty-label">Place of Meeting</label>
                                             </div>
-                                            <!-- <div class="prev">
-                                                <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('other')">
-                                                    <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
-                                                </button>
-                                            </div> -->
+                                        </div>
+
+                                        <div class="col-12 mb-3 d-flex" style="flex-direction: column;">
+                                            <label style="text-transform: uppercase; color: #2b96f1; font-family: 'Calibri', sans-serif;">Agenda of Meeting</label>
+                                            <p id="editContnet" class="sty-inp notEditable" v-html="sanitizeHTML(form.sanitizedContent)" readonly></p>
+                                        </div>
+
+
+                                        <div class="col-lg-4">
+                                            <div class="d-flex mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="text" class="sty-inp form-control notEditable" id="editAgenda" v-model="form.agenda" readonly>
+                                                    <label class="sty-label">Agenda Document</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4">
+                                            <div class="d-flex mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="text" class="sty-inp form-control notEditable" id="editFinancials" v-model="form.financials" >
+                                                    <label class="sty-label">Financals Document</label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4">
+                                            <div class="d-flex mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="text" class="sty-inp form-control notEditable" id="editOther" v-model="form.other">
+                                                    <label class="sty-label">Other Document</label>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                          </div>
                         </div>
                         <div class="accordion-item mt-2" style="border: 1px solid grey;">
                           <h2 class="accordion-header">
@@ -605,57 +569,48 @@
                               Minutes Form
                             </button>
                           </h2>
-                          <div id="flush-collapseTwo" class="accordion-collapse collapse show" data-bs-parent="#accordionFlushExample">
-                            <div class="accordion-body">
-                                <div class="row">
-                                    <div class="col-12 mb-3 d-flex" style="flex-direction: column;">
-                                        <label style="text-transform: uppercase; color: #2b96f1; font-family: 'Calibri', sans-serif;">Minutes of Meeting</label>
-                                        <textarea id="minutes_editor" v-model="form.minutes_content" style="color: #000 !important; min-height: 500px !important; font-family: 'Calibri', sans-serif;" cols="30" rows="10">
-                                        </textarea>
-                                        <small v-if="minutes_content_error" class="error">{{ minutes_content_error }}</small>
-                                        <!-- <small v-else></small> -->
-                                    </div>
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse show" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-12 mb-3 d-flex" style="flex-direction: column;">
+                                            <label style="text-transform: uppercase; color: #2b96f1; font-family: 'Calibri', sans-serif;">Minutes of Meeting</label>
+                                            <textarea id="minutes_editor" v-model="form.minutes_content" style="color: #000 !important; min-height: 500px !important; font-family: 'Calibri', sans-serif;" cols="30" rows="10">
+                                            </textarea>
+                                            <small v-if="minutes_content_error" class="error">{{ minutes_content_error }}</small>
+                                        </div>
 
-                                    <div class="col-lg-4">
-                                        <div class="d-flex">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="file" class="sty-inp form-control" id="minutes_file" ref="minutes_file" >
-                                                <label class="sty-label">Minutes Document</label>
-                                                <small v-if="minutes_file_error" class="error">{{ minutes_file_error }}</small>
-                                            </div>
-                                            <div class="prev">
-                                                <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('minutes_file')">
-                                                    <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
-                                                </button>
+                                        <div class="col-lg-4">
+                                            <div class="d-flex">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="file" class="sty-inp form-control" id="minutes_file" ref="minutes_file" >
+                                                    <label class="sty-label">Minutes Document</label>
+                                                    <small v-if="minutes_file_error" class="error">{{ minutes_file_error }}</small>
+                                                </div>
+                                                <div class="prev">
+                                                    <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('minutes_file')">
+                                                        <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="col-lg-4">
-                                        <div class="d-flex">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="file" class="sty-inp form-control" id="minutes_other" ref="minutes_other" @change="handleFileChange1">
-                                                <label class="sty-label">Other Document</label>
-                                            </div>
-                                            <div class="prev">
-                                                <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('minutes_other')">
-                                                    <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
-                                                </button>
+                                        <div class="col-lg-4">
+                                            <div class="d-flex">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="file" class="sty-inp form-control" id="minutes_other" ref="minutes_other" @change="handleFileChange1">
+                                                    <label class="sty-label">Other Document</label>
+                                                </div>
+                                                <div class="prev">
+                                                    <button type="button" class="sty-inp form-control" id="previewBtn" onclick="PreviewImage('minutes_other')">
+                                                        <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                          </div>
                         </div>
-
-                      </div>
-                    <div class="row">
-
-
-                        <hr>
-
-
                     </div>
                     <hr>
                     <div class="subBtn mb-3" style="height: 30px;">
@@ -686,14 +641,20 @@
             {% verbatim %}
             <form @submit.prevent="submitSuggestionForm" class="w-100" enctype="multipart/form-data" ref="submitSuggestionForms">
                 <div class="sty-input-wrapper w-100 mb-3 d-none">
-                    <input class="sty-inp w-100" name="meeting" id="meeting" v-model="form.meeting" readonly>
+                    <input class="sty-inp w-100" name="meeting" id="meeting" readonly>
                     <label class="sty-label">Meeting Id</label>
                 </div>
                 <div class="sty-input-wrapper w-100">
-                    <textarea class="sty-inp w-100" name="suggestion" id="suggestions" v-model="form.suggestions" cols="30" rows="5"></textarea>
+                    <textarea class="sty-inp w-100" name="suggestion" id="suggestions" v-model="suggestion_input_data" cols="30" rows="5"></textarea>
                     <label class="sty-label">Write your Suggestion</label>
                     <small v-if="suggestionsError" class="error">{{ suggestionsError }}</small>
                     <!-- <small id="suggestError" class="error"></small> -->
+                </div>
+                <div v-if="previousSuggestions.length > 0">
+                    <h4>Previous Suggestions:</h4>
+                    <p v-for="(suggestion, index) in previousSuggestions" :key="index">
+                        {{ suggestion.suggestions }}
+                    </p>
                 </div>
                 <hr>
                 <div class="btn-grp float-end gap-3 mb-2">

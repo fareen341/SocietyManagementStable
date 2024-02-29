@@ -136,9 +136,17 @@ class TenantAllocationSerializers(serializers.ModelSerializer):
 
 
 class MeetingsSerializer(serializers.ModelSerializer):
+    # Define a custom serializer field for meeting_type
+    meeting_type = serializers.SerializerMethodField()
+
+    def get_meeting_type(self, obj):
+        # Retrieve the display value corresponding to the stored value
+        meeting_type_choices = dict(Meetings._meta.get_field('meeting_type').choices)
+        return meeting_type_choices.get(obj.meeting_type, '')
+
     class Meta:
         model = Meetings
-        fields = '__all__'
+        fields = ['id', 'date_of_meeting', 'time_of_meeting', 'place_of_meeting', 'agenda', 'financials', 'other', 'content', 'meeting_type']
 
 
 class SuggestionSerializer(serializers.ModelSerializer):
@@ -190,4 +198,11 @@ class MemberSerializersForNominees(serializers.ModelSerializer):
 
     class Meta:
         model = Members
+        fields = '__all__'
+
+
+
+class SuggestionSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Suggestion
         fields = '__all__'

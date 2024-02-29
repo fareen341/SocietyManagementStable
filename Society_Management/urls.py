@@ -44,8 +44,7 @@ router.register('tenant_allocation', apiviews.TenantAllocationView, basename='te
 router.register('meetings', apiviews.MeetingsView, basename='meetings')
 router.register('suggestion', apiviews.SuggestionsView, basename='suggestion')
 router.register('attendance', apiviews.SaveAttendanceView, basename='attendance')
-
-
+router.register('suggestions', apiviews.SuggestionView, basename='suggestions')
 
 
 
@@ -65,6 +64,8 @@ urlpatterns = [
     path('allocate-tenant/', views.allocate_tenant, name='allocate_tenant'),
     path('meetings/', views.meetings_view, name="meetings"),
     path('extra/', views.extra, name='extra'),
+    path('nominee-register/', views.nominee_register_view, name='nominee_register_view'),
+
     path('non-primary/<int:id>/', apiviews.hide_non_primary_member_checkbox, name='non-primary'),
     path('api/history/', apiviews.MemberView.as_view({'get': 'member_history_retrieve'}), name='history'),
     path('api/owner_name/<int:flat_id>/', apiviews.get_owner_name, name="owner_name"),
@@ -72,15 +73,8 @@ urlpatterns = [
     path('api/get-meeting-type-choices/', apiviews.get_meeting_type_choices, name='get_meeting_type_choices'),
     path('api/get_flat_with_members/', apiviews.get_flat_with_members, name='get_flat_with_members'),
     path('api/get_nominees_details/', apiviews.get_nominees_details, name='get_nominees_details'),
-
-
-
-
-
-
-
-
-
+    path('api/current_user/', apiviews.get_current_logged_in_user, name='current_user'),
+    path('api/get_previous_suggestions/<int:meeting_id>/', apiviews.get_previous_suggestions, name='get_previous_suggestions'),
 
 ]
 if settings.DEBUG:
