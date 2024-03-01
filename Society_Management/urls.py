@@ -64,7 +64,14 @@ urlpatterns = [
     path('allocate-tenant/', views.allocate_tenant, name='allocate_tenant'),
     path('meetings/', views.meetings_view, name="meetings"),
     path('extra/', views.extra, name='extra'),
+
+    # REGISTERS
     path('nominee-register/', views.nominee_register_view, name='nominee_register_view'),
+    path('vehicle-register/', views.vehicle_register, name='vehicle_register'),
+    path('hypotication-register/', views.hypotication_register, name='hypotication_register'),
+    path('unit-register/', views.unit_register, name='unit_register'),
+    path('form-I/', views.form_i_view, name='form_i_view'),
+    path('form-I-MH/<int:pk>/', views.form_i_MH_view, name='form_i_MH_view/<int:pk>/'),
 
     path('non-primary/<int:id>/', apiviews.hide_non_primary_member_checkbox, name='non-primary'),
     path('api/history/', apiviews.MemberView.as_view({'get': 'member_history_retrieve'}), name='history'),

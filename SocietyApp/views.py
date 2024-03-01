@@ -64,6 +64,9 @@ def extra(request):
 
 
 def nominee_register_view(request):
+    status = request.GET.get('selected', None)
+    print("QUERY URL-->", status)
+
     datatable_columns = []
     flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
     data = []
@@ -72,6 +75,15 @@ def nominee_register_view(request):
             wing_flat__wing_flat_unique=flat['wing_flat_unique'],
             date_of_cessation__isnull=True,
         )
+        if status == 'history':
+            members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+                date_of_cessation__isnull=False,
+            )
+        elif status == 'all':
+            members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique']
+            )
         if(members):
             serialized_members = MemberSerializersForNominees(members, many=True).data
             data.append({
@@ -81,3 +93,157 @@ def nominee_register_view(request):
             })
     print('data============', data[0])
     return render(request, 'register/nominee_register_table.html', {'datatable_columns': datatable_columns, 'nominees': data})
+
+
+def form_i_view(request):
+    datatable_columns = []
+    status = request.GET.get('selected', None)
+    print("QUERY URL-->", status)
+
+    datatable_columns = []
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
+    data = []
+    for flat in flats:
+        members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+                date_of_cessation__isnull=False,
+            )
+        if status == 'current':
+                members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+                date_of_cessation__isnull=True,
+            )
+        elif status == 'all':
+            members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique']
+            )
+        if(members):
+            serialized_members = MemberSerializersForNominees(members, many=True).data
+            data.append({
+                "flat_id": flat['id'],
+                "flat_no": flat['wing_flat_unique'],
+                "members": serialized_members
+            })
+    print('data============', data[0])
+    return render(request, 'register/fomr_i.html', {'datatable_columns': datatable_columns, 'nominees': data})
+
+
+def form_i_MH_view(request, pk):
+    datatable_columns = []
+    members = None
+    shares_details = []
+    try:
+        members = Members.objects.get(id=pk)
+        if members:
+            try:
+                shares_details = FlatShares.objects.filter(wing_flat=members.wing_flat)
+            except FlatShares.DoesNotExist:
+                print("Shares data not exists for the selected flat.")
+    except Members.DoesNotExist:
+       print("Member Not Found.")
+    return render(request, 'register/form_i_MH.html', {
+        'datatable_columns': datatable_columns,
+        'members': members,
+        'shares_details': shares_details,
+        })
+
+
+
+def vehicle_register(request):
+    datatable_columns = []
+    status = request.GET.get('selected', None)
+    print("QUERY URL-->", status)
+
+    datatable_columns = []
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
+    data = []
+    for flat in flats:
+        members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+                date_of_cessation__isnull=True,
+            )
+        if status == 'history':
+             members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+                date_of_cessation__isnull=False,
+            )
+        elif status == 'all':
+            members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique']
+            )
+        if(members):
+            serialized_members = MemberSerializersForNominees(members, many=True).data
+            data.append({
+                "flat_id": flat['id'],
+                "flat_no": flat['wing_flat_unique'],
+                "members": serialized_members
+            })
+    print('data============', data[0])
+    return render(request, 'register/vehicle_register.html', {'datatable_columns': datatable_columns, 'vehicles': data})
+
+
+def hypotication_register(request):
+    datatable_columns = []
+    status = request.GET.get('selected', None)
+    print("QUERY URL-->", status)
+
+    datatable_columns = []
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
+    data = []
+    for flat in flats:
+        members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+                date_of_cessation__isnull=True,
+            )
+        if status == 'history':
+             members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+                date_of_cessation__isnull=False,
+            )
+        elif status == 'all':
+            members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique']
+            )
+        if(members):
+            serialized_members = MemberSerializersForNominees(members, many=True).data
+            data.append({
+                "flat_id": flat['id'],
+                "flat_no": flat['wing_flat_unique'],
+                "members": serialized_members
+            })
+    print('data============', data[0])
+    return render(request, 'register/hypotication_register.html', {'datatable_columns': datatable_columns, 'banks': data})
+
+
+
+def unit_register(request):
+    datatable_columns = []
+    status = request.GET.get('selected', None)
+    print("QUERY URL-->", status)
+
+    datatable_columns = []
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
+    data = []
+    for flat in flats:
+        members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+                date_of_cessation__isnull=True,
+            )
+        if status == 'history':
+             members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique'],
+                date_of_cessation__isnull=False,
+            )
+        elif status == 'all':
+            members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique']
+            )
+        if(members):
+            serialized_members = MemberSerializersForNominees(members, many=True).data
+            data.append({
+                "flat_id": flat['id'],
+                "flat_no": flat['wing_flat_unique'],
+                "members": serialized_members
+            })
+    print('data============', data[0])
+    return render(request, 'register/unit_register.html', {'datatable_columns': datatable_columns, 'units': data})

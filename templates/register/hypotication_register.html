@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+
+<div class='container-fluid'>
+  <div style="text-align: right;" class="mt-3">
+    <select class="dt-button ms-2 dt-button-custom dataTable-Text" id="statusFilterDropdown">
+      <option value="current">Current</option>
+      <option value="history">History</option>
+      <option value="all">All</option>
+    </select>
+    <button class="ms-4 btn btn-primary">Print</button>
+  </div>
+
+    <div class="shares-table-J mt-3">
+      <center><h5 class="report_h m-0 p-0">List of Nominees of Sita Park D, E, F CO-OP. HSG. SOC. LTD.</h5></center>
+      <div class="table-responsive" style="font-family: 'Calibri',sans-serif !important; font-size: 15px;">
+        <table class="table table-sm table-bordered" style="align-items: center !important; vertical-align: middle;">
+          <thead class="table-dark">
+            <th>Sr No.</th>
+            <th>Flat No.</th>
+            <th>Member Name</th>
+            <th>Bank Loan Name</th>
+            <th>Objective Lot</th>
+            <th>Loan Value</th>
+            <th>Bank Account No.</th>
+            <th>Bank Installment</th>
+            <th>NOC File</th>
+            <th>Remark</th>
+          </thead>
+          <tbody>
+            <tbody>
+                {% for data1 in banks %}
+                    {% for data2 in data1.members %}
+                        {% with data2.banks|length as rowspan_value %}
+                                <tr>
+                                    {% if forloop.first %}
+                                        <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ forloop.parentloop.counter }}</td>
+                                        <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flat_no }}</td>
+                                    {% else %}
+                                        <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}></td>
+                                        <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flat_no }}</td>
+                                    {% endif %}
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.member_name }}({{ data2.member_is_primary }})</td>
+                                    <td>{{ data2.banks.0.bank_loan_name }}</td>
+                                    <td>{{ data2.banks.0.bank_loan_object }}</td>
+                                    <td>{{ data2.banks.0.bank_loan_value }}</td>
+                                    <td>{{ data2.banks.0.bank_loan_acc_no }}</td>
+                                    <td>{{ data2.banks.0.bank_loan_installment }}</td>
+                                    <td>{{ data2.banks.0.bank_noc_file }}</td>
+                                    <td>{{ data2.banks.0.bank_loan_remark }}</td>
+                                </tr>
+                                {% for data3 in data2.banks|slice:"1:" %}
+                                    <tr>
+                                        <td>{{ data3.bank_loan_name }}</td>
+                                        <td>{{ data3.bank_loan_object }}</td>
+                                        <td>{{ data3.bank_loan_value }}</td>
+                                        <td>{{ data3.bank_loan_acc_no }}</td>
+                                        <td>{{ data3.bank_loan_installment }}</td>
+                                        <td>{{ data3.bank_noc_file }}</td>
+                                        <td>{{ data3.bank_loan_remark }}</td>
+
+
+                                    </tr>
+                                {% endfor %}
+                        {% endwith %}
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+<script>
+    let datatable_columns = {{ datatable_columns }};
+</script>
+
+<script>
+    $(document).ready(function() {
+        var dropdown = $('#statusFilterDropdown');
+        console.log("Dropdown value:", dropdown.val());
+
+        // Parse the query string to get the value of the 'selected' parameter
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString);
+        var selectedValue = urlParams.get('selected');
+
+        // Set the value of the dropdown to the selectedValue
+        if (selectedValue) {
+            dropdown.val(selectedValue);
+        }
+
+        // Add an event listener for the change event
+        dropdown.on('change', function() {
+            var selectedValue = dropdown.val();
+            var newUrl = window.location.pathname + '?selected=' + selectedValue;
+            window.location.href = newUrl;
+        });
+    });
+</script>
+{% endblock body %}

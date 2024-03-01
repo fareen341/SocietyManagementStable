@@ -182,23 +182,41 @@ class SaveAttendanceSerializers(serializers.ModelSerializer):
     #         return super().create(validated_data)
 
 
-# To get nominees for data table
+# REQUIRED FOR NOMINEES REGISTER
 class NomineesSerializerForNominees(serializers.ModelSerializer):
     class Meta:
         model = Nominees
         fields = [
             'nominee_name',
-            'nominee_sharein_percent'
+            'nominee_sharein_percent',
+            'nominee_address',
+            'date_of_nomination',
         ]
-
 
 
 class MemberSerializersForNominees(serializers.ModelSerializer):
     nominees = NomineesSerializerForNominees(many=True, required=False)
+    vehicles = FlatMemberVehicleSerializer(many=True, required=False)
+    banks = FlatHomeLoanSerializers(many=True, required=False)
+    member_is_primary = serializers.SerializerMethodField()
 
     class Meta:
         model = Members
-        fields = '__all__'
+        fields = [
+            'id', 'member_name', 'member_is_primary', 'date_of_admission', 'date_of_entrance_fees',
+            'member_address', 'member_occupation', 'age_at_date_of_admission', 'date_of_cessation',
+            'reason_for_cessation',
+            'nominees',
+            'vehicles',
+            'banks'
+            ]
+
+    def get_member_is_primary(self, obj):
+        # Assuming member_is_primary is a field of the Members model
+        if obj.member_is_primary:
+            return "Primary"
+        else:
+            return "Secondary"
 
 
 

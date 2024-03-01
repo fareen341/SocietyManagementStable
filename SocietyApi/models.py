@@ -173,7 +173,7 @@ class FlatShares(models.Model):
 
 
 class FlatHomeLoan(models.Model):
-    unique_member_shares = models.ForeignKey(Members, on_delete=models.CASCADE)
+    unique_member_shares = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='banks')
     wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
     bank_loan_name = models.CharField(max_length=300)
     bank_loan_object = models.CharField(max_length=300)
@@ -205,7 +205,7 @@ class FlatGST(models.Model):
 
 
 class FlatMemberVehicle(models.Model):
-    unique_member_shares = models.ForeignKey(Members, on_delete=models.CASCADE)
+    unique_member_shares = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='vehicles')
     wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
     parking_lot = models.CharField(max_length=200)
     vehicle_type = models.CharField(max_length=200)

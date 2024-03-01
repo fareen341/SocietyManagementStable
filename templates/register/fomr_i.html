@@ -32,8 +32,8 @@
 <div class='container-fluid'>
   <div style="text-align: right;" class="mt-3">
     <select class="dt-button ms-2 dt-button-custom dataTable-Text" id="statusFilterDropdown">
+        <option value="history">History</option>
       <option value="current">Current</option>
-      <option value="history">History</option>
       <option value="all">All</option>
     </select>
     <button class="ms-4 btn btn-primary">Print</button>
@@ -46,9 +46,19 @@
           <thead class="table-dark">
             <th>Sr No.</th>
             <th>Flat No.</th>
-            <th>Member Name</th>
-            <th>Nominee Name</th>
-            <th>Nominee ShareIn %</th>
+            <th>Date Of Addmission</th>
+            <th>Date Of Enterance Fees</th>
+            <th>Full Name</th>
+            <th>Address</th>
+            <th>Occupation</th>
+            <th>Age at date of Addmission</th>
+            <th>Full Name & of the Person Nominated by Member</th>
+            <th>Address of the Person Nominated by Member</th>
+            <th>Date Nomination</th>
+            <th>Date of Cessation of Membership</th>
+            <th>Reason of Cessation</th>
+            <th>Remark</th>
+            <th>Form-MH</th>
           </thead>
           <tbody>
             {% for data1 in nominees %}
@@ -56,20 +66,33 @@
                     {% with data2.nominees|length as rowspan_value %}
                         <tr>
                           {% if forloop.first %}
-                            <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ forloop.parentloop.counter }}</td>
-                            <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flat_no }}</td>
+                            <td rowspan="{{ rowspan_value }}">{{ forloop.parentloop.counter }}</td>
+                            <td rowspan="{{ rowspan_value }}">{{ data1.flat_no }}</td>
                             {% else %}
-                            <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}></td>
-                            <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flat_no }}</td>
+                            <td rowspan="{{ rowspan_value }}">-</td>
+                            <td rowspan="{{ rowspan_value }}">-</td>
                           {% endif %}
-                            <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.member_name }}({{ data2.member_is_primary }})</td>
-                            <td>{{ data2.nominees.0.nominee_name }}</td>
-                            <td>{{ data2.nominees.0.nominee_sharein_percent }}</td>
+                          <td rowspan="{{ rowspan_value }}">{{ data2.date_of_admission }}</td>
+                          <td rowspan="{{ rowspan_value }}">{{ data2.date_of_entrance_fees }}</td>
+                          <td rowspan="{{ rowspan_value }}">{{ data2.member_name }}({{ data2.member_is_primary }})</td>
+                          <td rowspan="{{ rowspan_value }}">{{ data2.member_address }}</td>
+                          <td rowspan="{{ rowspan_value }}">{{ data2.member_occupation }}</td>
+                          <td rowspan="{{ rowspan_value }}">{{ data2.age_at_date_of_admission }}</td>
+                          <td>{{ data2.nominees.0.nominee_name }}</td>
+                          <td>{{ data2.nominees.0.nominee_address }}</td>
+                          <td>{{ data2.nominees.0.date_of_nomination }}</td>
+
+                          <td rowspan="{{ rowspan_value }}">{{ data2.date_of_cessation }}</td>
+                          <td rowspan="{{ rowspan_value }}">{{ data2.reason_for_cessation }}</td>
+                          <td rowspan="{{ rowspan_value }}">-</td>
+                          <td rowspan="{{ rowspan_value }}" onclick="view_form_MH(`{{ data2.id }}`)"><button>View</button></td>
+
                         </tr>
                         {% for data3 in data2.nominees|slice:"1:" %}
                             <tr>
                                 <td>{{ data3.nominee_name }}</td>
-                                <td>{{ data3.nominee_sharein_percent }}</td>
+                                <td>{{ data3.nominee_address }}</td>
+                                <td>{{ data3.date_of_nomination }}</td>
                             </tr>
                         {% endfor %}
                     {% endwith %}
@@ -107,5 +130,11 @@
             window.location.href = newUrl;
         });
     });
+</script>
+<script>
+function view_form_MH(member_id){
+        memberIdForVue = member_id;
+        window.location.href = "/form-I-MH/" + member_id + "/";
+    }
 </script>
 {% endblock body %}
