@@ -175,6 +175,11 @@ p {
 
 
 /* MEMBER DETAILS LIST STYLE */
+#progressbar #flat:before {
+    font-family: FontAwesome;
+    content: "\f500"
+}
+
 #progressbar #member:before {
     font-family: FontAwesome;
     content: "\f500"

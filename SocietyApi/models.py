@@ -92,7 +92,7 @@ class WingFlatUnique(models.Model):
 
 
 class Members(models.Model):
-    wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE, verbose_name="Flat No.")
+    wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE, related_name='members')
     member_name = models.CharField(max_length=200)
     ownership_percent = models.IntegerField()
     member_position = models.CharField(max_length=200)
@@ -114,6 +114,7 @@ class Members(models.Model):
     date_of_entrance_fees = models.DateField()
     date_of_cessation = models.DateField(null=True, blank=True)
     reason_for_cessation = models.CharField(max_length=200, null=True, blank=True)
+    # NEED TO REMOVE BELOE FIELD
     flat_status = models.CharField(max_length=200, null=True, blank=True)
     same_flat_member_identification = models.CharField(max_length=100, null=True, blank=True)
 
@@ -149,6 +150,33 @@ class Nominees(models.Model):
 
     def __str__(self):
         return self.nominee_name
+
+
+flat_choices = [
+        ('occupied', 'Occupied'),
+        ('not_occupied', 'Not Occupied'),
+        ('rented', 'Rented'),
+        ('japti', 'Japti'),
+        ('builder_possession', 'Builder Possession'),
+    ]
+
+
+class FlatDetail(models.Model):
+    # unique_member_shares = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='flats')
+    wing_flat = models.OneToOneField(WingFlatUnique, on_delete=models.CASCADE, related_name='flats')
+    unit_area = models.CharField(max_length=300)
+    unit_type = models.CharField(max_length=300)
+    unit_of_mesurement = models.CharField(max_length=300)
+    property_tax_no = models.CharField(max_length=300)
+    electricity_connection_no = models.CharField(max_length=300)
+    is_having_pet = models.BooleanField(default=False)
+    gas_connection_no = models.CharField(max_length=300)
+    water_connection_no = models.CharField(max_length=300)
+    flat_status = models.CharField(max_length=200, choices=flat_choices)
+    date_of_cessation = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.wing_flat.wing_flat_unique
 
 
 class FlatShares(models.Model):

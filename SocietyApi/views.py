@@ -369,6 +369,43 @@ class FlatSharesView(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class FlatDetailView(viewsets.ModelViewSet):
+    queryset = FlatDetail.objects.all()
+    serializer_class = FlatDetailSerializers
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance_id = kwargs.get('pk')
+            instance = FlatDetail.objects.get(wing_flat=instance_id, date_of_cessation__isnull=True)
+            print("INSTANCE==>", instance)
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except FlatDetail.DoesNotExist:
+            pass
+
+    @action(detail=False, methods=['get'])
+    def get_flat_status_dropdown(self, request, *args, **kwargs):
+        choices = [
+            {'value': choice[0], 'label': choice[1]} for choice in flat_choices
+        ]
+        return Response(choices)
+
+    def create(self, request, *args, **kwargs):
+        unique_member_share = None
+        if request.data.get('wing_flat'):
+            unique_member_share = Members.objects.get(
+                wing_flat=request.data.get('wing_flat'), member_is_primary=True,
+                date_of_cessation__isnull=True
+            ).pk
+
+        modified_data = request.data.copy()
+        modified_data['unique_member_shares'] = unique_member_share
+        serializer = self.get_serializer(data=modified_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 
 
 class FlatHomeLoanView(viewsets.ModelViewSet):

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from  SocietyApi.models import *
-from SocietyApi.serializers import MemberSerializersForNominees
+from SocietyApi.serializers import *
 
 # Create your views here.
 
@@ -31,7 +31,8 @@ def member_details(request):
 
 
 def create_member(request):
-    return render(request, 'member_master.html')
+    datatable_columns = []
+    return render(request, 'member_master.html', {'datatable_columns': datatable_columns})
 
 
 def create_house_help(request):
@@ -84,14 +85,12 @@ def nominee_register_view(request):
             members = Members.objects.filter(
                 wing_flat__wing_flat_unique=flat['wing_flat_unique']
             )
-        if(members):
-            serialized_members = MemberSerializersForNominees(members, many=True).data
-            data.append({
-                "flat_id": flat['id'],
-                "flat_no": flat['wing_flat_unique'],
-                "members": serialized_members
-            })
-    print('data============', data[0])
+        serialized_members = MemberSerializersForNominees(members, many=True).data
+        data.append({
+            "flat_id": flat['id'],
+            "flat_no": flat['wing_flat_unique'],
+            "members": serialized_members
+        })
     return render(request, 'register/nominee_register_table.html', {'datatable_columns': datatable_columns, 'nominees': data})
 
 
@@ -124,8 +123,7 @@ def form_i_view(request):
                 "flat_no": flat['wing_flat_unique'],
                 "members": serialized_members
             })
-    print('data============', data[0])
-    return render(request, 'register/fomr_i.html', {'datatable_columns': datatable_columns, 'nominees': data})
+    return render(request, 'register/form_i.html', {'datatable_columns': datatable_columns, 'nominees': data})
 
 
 def form_i_MH_view(request, pk):
@@ -146,7 +144,6 @@ def form_i_MH_view(request, pk):
         'members': members,
         'shares_details': shares_details,
         })
-
 
 
 def vehicle_register(request):
@@ -178,7 +175,6 @@ def vehicle_register(request):
                 "flat_no": flat['wing_flat_unique'],
                 "members": serialized_members
             })
-    print('data============', data[0])
     return render(request, 'register/vehicle_register.html', {'datatable_columns': datatable_columns, 'vehicles': data})
 
 
@@ -211,32 +207,73 @@ def hypotication_register(request):
                 "flat_no": flat['wing_flat_unique'],
                 "members": serialized_members
             })
-    print('data============', data[0])
     return render(request, 'register/hypotication_register.html', {'datatable_columns': datatable_columns, 'banks': data})
-
 
 
 def unit_register(request):
     datatable_columns = []
     status = request.GET.get('selected', None)
-    print("QUERY URL-->", status)
+    wing_flat_unique_instances = WingFlatUnique.objects.all().order_by('wing_flat_unique')
+    serialized_instances = UnitRegisterSerializers(wing_flat_unique_instances, many=True, context={'request': request} )
+    context = {
+        'datatable_columns': datatable_columns,
+        'units': serialized_instances.data,
+        'status': status
+    }
+    return render(request, 'register/unit_register.html', context)
 
+
+
+
+from django.http import HttpResponse, JsonResponse
+
+
+
+def form_j_view(request):
     datatable_columns = []
-    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
     data = []
+    status = request.GET.get('selected', None)
+    '''
+    TO CALCULATE SGM:
+        COUNT OF ALL MEETINGS HELD
+        --------------------------
+        NO. OF TIME PARTICULAR FLAT MEMBER PRESENT
+
+        EXAMPLE:
+        SGM HELD 10 TIMES:
+
+            10
+        ----------
+        A-WING-1 MEMBER(LATIKA(CURRENT)) PRESENT FOR 2 TIMES
+
+        SO, THAT MEMBER WILL BE DEFAULTER
+        AND ONLY MEMBER WILL BE SHOWN IN FORM J
+    '''
+
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
     for flat in flats:
+        print("FLATS==========", flat)
+        # annual_general_meeting
+        annual_general_meeting = Attendance.objects.filter(
+            flat_no=flat['id'], meeting_id__meeting_type='annual_general_meeting',
+            flat_no__members__date_of_cessation__isnull=True,
+            flat_no__members__member_is_primary=True,
+        )
+        # print("GET MEETING====>", annual_general_meeting.values('flat_no__members__member_name'))
+
+        # special_general_body_meeting
+        special_general_body_meeting = Attendance.objects.filter(
+            flat_no=flat['id'], meeting_id__meeting_type='special_general_body_meeting',
+            flat_no__members__date_of_cessation__isnull=True,
+            flat_no__members__member_is_primary=True,
+        )
+        print("GET MEETING====>", special_general_body_meeting.values('flat_no__members__member_name'))
+
+
         members = Members.objects.filter(
                 wing_flat__wing_flat_unique=flat['wing_flat_unique'],
                 date_of_cessation__isnull=True,
-            )
-        if status == 'history':
-             members = Members.objects.filter(
-                wing_flat__wing_flat_unique=flat['wing_flat_unique'],
-                date_of_cessation__isnull=False,
-            )
-        elif status == 'all':
-            members = Members.objects.filter(
-                wing_flat__wing_flat_unique=flat['wing_flat_unique']
+                member_is_primary = True
             )
         if(members):
             serialized_members = MemberSerializersForNominees(members, many=True).data
@@ -245,5 +282,5 @@ def unit_register(request):
                 "flat_no": flat['wing_flat_unique'],
                 "members": serialized_members
             })
-    print('data============', data[0])
-    return render(request, 'register/unit_register.html', {'datatable_columns': datatable_columns, 'units': data})
+    # return JsonResponse({'flats': data})
+    return render(request, 'register/form_j.html', {'datatable_columns': datatable_columns, 'members': data})

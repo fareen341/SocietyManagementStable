@@ -34,7 +34,7 @@
           </thead>
           <tbody>
             <tbody>
-                {% for data1 in banks %}
+              {% for data1 in banks %}
                     {% for data2 in data1.members %}
                         {% with data2.banks|length as rowspan_value %}
                                 <tr>
@@ -63,13 +63,32 @@
                                         <td>{{ data3.bank_loan_installment }}</td>
                                         <td>{{ data3.bank_noc_file }}</td>
                                         <td>{{ data3.bank_loan_remark }}</td>
-
-
                                     </tr>
                                 {% endfor %}
                         {% endwith %}
                     {% endfor %}
                 {% endfor %}
+
+
+                {% comment %} {% for data1 in banks %}
+                  {% with data1.members|length as rowspan_value %}
+                        {% for data2 in data1.members %}
+                            <tr>
+                                {% if forloop.first %}
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ forloop.parentloop.counter }}</td>
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flat_no }}</td>
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.bank_loan_name }}</td>
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.unit_type }}</td>
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.unit_of_mesurement }}</td>
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.property_tax_no }}</td>
+                                {% endif %}
+                                <td>{{ data2.member_name }} ({{ data2.member_is_primary }})</td>
+                                <td>{{ data2.date_of_admission }}</td>
+                                <td>{{ data2.date_of_cessation }}</td>
+                            </tr>
+                        {% endfor %}
+                  {% endwith %}
+              {% endfor %} {% endcomment %}
             </tbody>
           </tbody>
         </table>

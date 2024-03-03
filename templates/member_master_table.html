@@ -34,7 +34,7 @@
             <tbody>
                 <tr v-for="(members, index) in members" :key="index">
                     <td>
-                        <span @click="viewMemberData(members.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                        <span @click="viewMemberData(members.id, members.wing_flat)" class="me-3"><i class="fa-solid fa-eye"></i></span>
                         <span @click="editMemberData(members.id, members.wing_flat)" class="me-3"><i class="fa-solid fa-pen-to-square"></i></span>
                         <span @click="addMemberData(members.id)" class="me-3"><i class="fa-solid fa-user-plus"></i></span>
                         <span @click="memberHistoryData(members.wing_flat)" class="me-3"><i class="fa-solid fa-clock-rotate-left"></i></span>
@@ -57,34 +57,141 @@
                         <div class="abs">
                             <ul class="nav nav-justified aaa nav-tabs" id="myTab" role="tablist">
                                 <li class="nav-item " role="presentation">
-                                    <button class="nav-link abc active" id="member-tab" data-bs-toggle="tab"
+                                    <button class="nav-link abc active" id="flat-tab" data-bs-toggle="tab"
+                                        data-bs-target="#flat-tab-pane" type="button" role="tab"
+                                        aria-controls="flat-tab-pane" aria-selected="true">Flat</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link abc" id="member-tab" data-bs-toggle="tab"
                                         data-bs-target="#member-tab-pane" type="button" role="tab"
-                                        aria-controls="member-tab-pane" aria-selected="true">Members Details</button>
+                                        aria-controls="member-tab-pane" aria-selected="false">Members</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link abc" id="shares-tab" data-bs-toggle="tab"
                                         data-bs-target="#shares-tab-pane" type="button" role="tab"
-                                        aria-controls="shares-tab-pane" aria-selected="false">Shares Details</button>
+                                        aria-controls="shares-tab-pane" aria-selected="false">Shares</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link abc" id="loan-tab" data-bs-toggle="tab"
                                         data-bs-target="#loan-tab-pane" type="button" role="tab"
-                                        aria-controls="loan-tab-pane" aria-selected="false">Home Loan Details</button>
+                                        aria-controls="loan-tab-pane" aria-selected="false">Home Loan</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link abc" id="gst-tab" data-bs-toggle="tab"
                                         data-bs-target="#gst-tab-pane" type="button" role="tab" aria-controls="gst-tab-pane"
-                                        aria-selected="false">GST Details</button>
+                                        aria-selected="false">GST</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link abc" id="vehicle-tab" data-bs-toggle="tab"
                                         data-bs-target="#vehicle-tab-pane" type="button" role="tab"
-                                        aria-controls="vehicle-tab-pane" aria-selected="false">Vehicle Details</button>
+                                        aria-controls="vehicle-tab-pane" aria-selected="false">Vehicle</button>
                                 </li>
                             </ul>
                         </div>
                         <div class="tab-content w-100" id="myTabContent">
-                            <div class="tab-pane fade show active" id="member-tab-pane" role="tabpanel"
+                            <div class="tab-pane fade show active" id="flat-tab-pane" role="tabpanel" aria-labelledby="flat-tab"
+                                tabindex="0">
+                                {% verbatim %}
+                                <div class="container-fluid">
+                                    <div class="row mt-3" id="">
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <p class="ms-3 view-label">Unit Area</p>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <p class="view-inps">{{ flatData.unit_area }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <p class="ms-3 view-label">Unit Type</p>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <p class="view-inps">{{ flatData.unit_type }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <p class="ms-3 view-label">Unit Of Mesurement</p>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <p class="view-inps">{{ flatData.unit_of_mesurement }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <p class="ms-3 view-label">Property Tax Number</p>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <p class="view-inps">{{ flatData.property_tax_no }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <p class="ms-3 view-label">Electricity Connection Number</p>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <p class="view-inps">{{ flatData.electricity_connection_no }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <p class="ms-3 view-label">Having Pet</p>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <p class="view-inps">{{ flatData.is_having_pet }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <p class="ms-3 view-label">Gas Connection Number</p>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <p class="view-inps">{{ flatData.gas_connection_no }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <p class="ms-3 view-label">Water Connection Number</p>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <p class="view-inps">{{ flatData.water_connection_no }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-lg-6">
+                                                    <p class="ms-3 view-label">Flat Status</p>
+                                                </div>
+                                                <div class="col-lg-6">
+                                                    <p class="view-inps">{{ flatData.flat_status_formatted }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endverbatim %}
+                            </div>
+
+
+                            <div class="tab-pane fade" id="member-tab-pane" role="tabpanel"
                                 aria-labelledby="member-tab" tabindex="0">
                                 {% verbatim %}
                                 <div v-for="(member, index) in memberData" :key="index">

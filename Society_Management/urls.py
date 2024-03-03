@@ -34,6 +34,7 @@ router.register('wing', apiviews.UnitWingView, basename='WingView')
 router.register('members', apiviews.MemberView, basename='members')
 router.register('add-nominee', apiviews.AddNomineesView, basename='add_nominee')
 router.register('shares', apiviews.FlatSharesView, basename='shares')
+router.register('flat_detail', apiviews.FlatDetailView, basename='flat_detail')
 router.register('home-loan', apiviews.FlatHomeLoanView, basename='home_loan')
 router.register('flat-gst', apiviews.FlatGSTView, basename='flat_gst')
 router.register('vehicle', apiviews.FlatMemberVehicleView, basename='vehicle')
@@ -71,6 +72,7 @@ urlpatterns = [
     path('hypotication-register/', views.hypotication_register, name='hypotication_register'),
     path('unit-register/', views.unit_register, name='unit_register'),
     path('form-I/', views.form_i_view, name='form_i_view'),
+    path('form-J/', views.form_j_view, name='form_j_view'),
     path('form-I-MH/<int:pk>/', views.form_i_MH_view, name='form_i_MH_view/<int:pk>/'),
 
     path('non-primary/<int:id>/', apiviews.hide_non_primary_member_checkbox, name='non-primary'),
@@ -82,6 +84,9 @@ urlpatterns = [
     path('api/get_nominees_details/', apiviews.get_nominees_details, name='get_nominees_details'),
     path('api/current_user/', apiviews.get_current_logged_in_user, name='current_user'),
     path('api/get_previous_suggestions/<int:meeting_id>/', apiviews.get_previous_suggestions, name='get_previous_suggestions'),
+
+    path('api/get_flats_status/', apiviews.FlatDetailView.as_view({'get': 'get_flat_status_dropdown'}), name='get_flats_status'),
+
 
 ]
 if settings.DEBUG:

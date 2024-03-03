@@ -23,45 +23,84 @@
           <thead class="table-dark">
             <th>Sr No.</th>
             <th>Unit No.</th>
+            <th>Unit Area</th>
+            <th>Unit Type</th>
+            <th>Unit Mesurement</th>
+            <th>Unit Property Tax No.</th>
             <th>Member Name</th>
             <th>From Date</th>
             <th>To Date</th>
-            <th>Unit Square Meter</th>
           </thead>
           <tbody>
             <tbody>
-                {% for data1 in units %}
-                    {% for data2 in data1.members %}
-                        {% with data2.unit_register|length as rowspan_value %}
-                                <tr>
-                                    {% if forloop.first %}
-                                        <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ forloop.parentloop.counter }}</td>
-                                        <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flat_no }}</td>
-                                    {% else %}
-                                        <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}></td>
-                                        <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flat_no }}</td>
-                                    {% endif %}
-                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.member_name }}({{ data2.member_is_primary }})</td>
-                                    {% comment %} <td>{{ data2.vehicles.0.vehicle_number }}</td>
-                                    <td>{{ data2.vehicles.0.parking_lot }}</td>
-                                    <td>{{ data2.vehicles.0.vehicle_type }}</td>
-                                    <td>{{ data2.vehicles.0.vehicle_brand }}</td>
-                                    <td>{{ data2.vehicles.0.rc_copy }}</td>
-                                    <td>{{ data2.vehicles.0.sticker_number }}</td> {% endcomment %}
-                                </tr>
-                                {% comment %} {% for data3 in data2.vehicles|slice:"1:" %}
-                                    <tr>
-                                        <td>{{ data3.vehicle_number }}</td>
-                                        <td>{{ data3.parking_lot }}</td>
-                                        <td>{{ data3.vehicle_type }}</td>
-                                        <td>{{ data3.vehicle_brand }}</td>
-                                        <td>{{ data3.rc_copy }}</td>
-                                        <td>{{ data3.sticker_number }}</td>
-                                    </tr>
-                                {% endfor %} {% endcomment %}
-                        {% endwith %}
-                    {% endfor %}
+              {% comment %} {% for data1 in units %}
+                {% for data2 in data1.members  %}
+                    {% with data1.members|length as rowspan_value %}
+                        <tr>
+                          {% if forloop.first %}
+                            <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>====={{rowspan_value}} {{ forloop.parentloop.counter }}</td>
+                            <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.wing_flat_unique }}</td>
+                            <td>{{ data1.members.0.member_name }}</td>
+                          {% endif %}
+                        </tr>
+                        {% for data3 in data1.members|slice:"1:" %}
+                            <tr>
+                                <td>{{ data3.member_name }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% endwith %}
                 {% endfor %}
+            {% endfor %} {% endcomment %}
+
+
+            {% comment %} {% for data1 in units %}
+              {% with data1.members|length as rowspan_value %}
+                  {% for data2 in data1.members %}
+                      <tr>
+                          {% if forloop.first %}
+                              <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ forloop.parentloop.counter }}</td>
+                              <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.wing_flat_unique }}</td>
+                              <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.unit_area }}</td>
+                              <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.unit_type }}</td>
+                              <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.unit_of_mesurement }}</td>
+                              <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.property_tax_no }}</td>
+                          {% endif %}
+                          <td>{{ data2.member_name }} ({{ data2.member_is_primary }})</td>
+                          <td>{{ data2.date_of_admission }}</td>
+                          <td>{{ data2.date_of_cessation }}</td>
+                      </tr>
+                  {% endfor %}
+              {% endwith %}
+            {% endfor %} {% endcomment %}
+
+                {% for data1 in units %}
+                  {% with data1.members|length as rowspan_value %}
+                      {% if rowspan_value == 0 and status == 'all' %}
+                          <tr>
+                              <td>{{ forloop.counter }}</td>
+                              <td>{{ data1.wing_flat_unique }}</td>
+                              <!-- Display other unit details here -->
+                              <td colspan="7">-</td>
+                          </tr>
+                      {% else %}
+                        {% for data2 in data1.members %}
+                            <tr>
+                                {% if forloop.first %}
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ forloop.parentloop.counter }}</td>
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.wing_flat_unique }}</td>
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.unit_area }}</td>
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.unit_type }}</td>
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.unit_of_mesurement }}</td>
+                                    <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data1.flats.property_tax_no }}</td>
+                                {% endif %}
+                                <td>{{ data2.member_name }} ({{ data2.member_is_primary }})</td>
+                                <td>{{ data2.date_of_admission }}</td>
+                                <td>{{ data2.date_of_cessation }}</td>
+                            </tr>
+                        {% endfor %}
+                      {% endif %}
+                  {% endwith %}
+              {% endfor %}
             </tbody>
           </tbody>
         </table>

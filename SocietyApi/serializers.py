@@ -91,6 +91,23 @@ class FlatSharesSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class FlatDetailSerializers(serializers.ModelSerializer):
+    flat_status_formatted = serializers.SerializerMethodField()
+
+    def get_flat_status_formatted(self, obj):
+        # Retrieve the display value corresponding to the stored value
+        flat_status_choices = dict(FlatDetail._meta.get_field('flat_status').choices)
+        return flat_status_choices.get(obj.flat_status, '')
+
+    class Meta:
+        model = FlatDetail
+        fields = [
+            'id', 'wing_flat', 'unit_area', 'unit_type', 'unit_of_mesurement',
+            'property_tax_no', 'electricity_connection_no', 'is_having_pet',
+            'gas_connection_no', 'water_connection_no', 'flat_status', 'flat_status_formatted'
+        ]
+
+
 class FlatHomeLoanSerializers(serializers.ModelSerializer):
     class Meta:
         model = FlatHomeLoan
@@ -137,16 +154,16 @@ class TenantAllocationSerializers(serializers.ModelSerializer):
 
 class MeetingsSerializer(serializers.ModelSerializer):
     # Define a custom serializer field for meeting_type
-    meeting_type = serializers.SerializerMethodField()
+    meeting_type_formatted = serializers.SerializerMethodField()
 
-    def get_meeting_type(self, obj):
+    def get_meeting_type_formatted(self, obj):
         # Retrieve the display value corresponding to the stored value
         meeting_type_choices = dict(Meetings._meta.get_field('meeting_type').choices)
         return meeting_type_choices.get(obj.meeting_type, '')
 
     class Meta:
         model = Meetings
-        fields = ['id', 'date_of_meeting', 'time_of_meeting', 'place_of_meeting', 'agenda', 'financials', 'other', 'content', 'meeting_type']
+        fields = ['id', 'date_of_meeting', 'time_of_meeting', 'place_of_meeting', 'agenda', 'financials', 'other', 'content', 'meeting_type', 'meeting_type_formatted']
 
 
 class SuggestionSerializer(serializers.ModelSerializer):
@@ -224,3 +241,51 @@ class SuggestionSerializers(serializers.ModelSerializer):
     class Meta:
         model = Suggestion
         fields = '__all__'
+
+
+class FlatDetailSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = FlatDetail
+        fields = '__all__'
+
+
+
+
+class MemberForUnitSerializer(serializers.ModelSerializer):
+    # Keep it if Nominees required in future.
+    # nominees = NomineesSerializer(many=True, required=False)
+    member_is_primary = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Members
+        fields = ['id', 'member_name', 'member_is_primary', 'date_of_admission', 'date_of_cessation']
+
+    def get_member_is_primary(self, obj):
+        if obj.member_is_primary:
+            return "Primary"
+        else:
+            return "Secondary"
+
+
+# REQUIRED FOR UNIT REGISTER
+class UnitRegisterSerializers(serializers.ModelSerializer):
+    members = MemberForUnitSerializer(many=True)
+    flats = FlatDetailSerializers()
+
+    class Meta:
+        model = WingFlatUnique
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        status = request.GET.get('selected', None)
+
+        active_members = Members.objects.filter(wing_flat=instance)
+        if status == 'current':
+            active_members = active_members.filter(date_of_cessation__isnull=True)
+        elif status == 'history':
+            active_members = active_members.filter(date_of_cessation__isnull=False)
+
+        representation = super().to_representation(instance)
+        representation['members'] = MemberForUnitSerializer(active_members, many=True).data
+        return representation
