@@ -91,7 +91,6 @@ class WingFlatView(viewsets.ModelViewSet):
         flats = request.data.get('flat_number')
         if wing and flats:
             flat_split = list(OrderedDict.fromkeys(flats.split(',')))
-            print("FLAT DATA==>", flat_split)
             created_instances = []
 
             # Check if a WingFlat instance with the same wing_name already exists
@@ -116,7 +115,6 @@ class WingFlatView(viewsets.ModelViewSet):
 
 
     def partial_update(self, request, *args, **kwargs):
-        print(request.data)
         object_id = kwargs.get('pk')
         wing = request.data.get('wing_name')
         flats = request.data.get('flat_number')
@@ -125,7 +123,6 @@ class WingFlatView(viewsets.ModelViewSet):
         if wing and flats:
             flat_split = list(OrderedDict.fromkeys(flats.split(',')))
             wing_obj_to_delete = list(set(wing_flat_unique.split(',')) - set(flats.split(',')))
-            print("id to be delete===>", wing_obj_to_delete)
 
             # Update the attributes of the retrieved instance
             wing_flat_combined_instance.wing_name = wing
@@ -143,7 +140,6 @@ class WingFlatView(viewsets.ModelViewSet):
             for flat in wing_obj_to_delete:
                 unique = f'{wing}-{flat}'
                 object_to_delete = WingFlatUnique.objects.filter(wing_flat_unique=unique)
-                print("FLAT====>", object_to_delete)
                 if object_to_delete:
                     object_to_delete.delete()
 
@@ -172,22 +168,18 @@ class MemberView(viewsets.ModelViewSet):
     parser_classes = (MultipartJsonParser, JSONParser)
 
     def create(self, request, *args, **kwargs):
-        print("ALL DATA=========================", request.data)
-
         try:
             member_data = Members.objects.get(
                 wing_flat=request.data.get('wing_flat'),
                 member_is_primary=True,
                 date_of_cessation__isnull=True
             ).same_flat_member_identification
-            print("ALL member_data=========================", member_data)
         except Members.DoesNotExist:
             member_data = None
             print("No member data found")
 
         nominees_data = request.POST.getlist('nominees')[0]
         # nominees_data = request.POST.getlist('nominees')
-        print("NOM----", nominees_data)
 
         modified_data = request.data
         if member_data:
@@ -200,7 +192,6 @@ class MemberView(viewsets.ModelViewSet):
 
             # Loop through nominee data and save each nominee
             for nominee_dict in nominees_data:
-                print("NOMINEE", nominee_dict)
                 nominee_serializer = NomineesSerializer(data=nominee_dict)
                 if nominee_serializer.is_valid():
                     # Associate the nominee with the member instance
@@ -219,14 +210,13 @@ class MemberView(viewsets.ModelViewSet):
         if wing_flat_id:
             try:
                 queryset = queryset.get(wing_flat=wing_flat_id, member_is_primary=True, date_of_cessation__isnull=True)
-                print("NUMBER================1", queryset)
             except Exception as e:
                 print("NOT EXISTS")
                 return Response({"error": "Object not found."})
         return queryset
 
     def list(self, request, *args, **kwargs):
-        print("NUMBER================2")
+        print('list of members===============================')
         # queryset = Members.objects.filter(member_is_primary=True, date_of_cessation__isnull=True)
         queryset = Members.objects.filter(member_is_primary=True, date_of_cessation__isnull=True)
         serializer = MembersSerializer(queryset, many=True)
@@ -239,13 +229,11 @@ class MemberView(viewsets.ModelViewSet):
             try:
                 instance = Members.objects.get(pk=instance_id, date_of_cessation__isnull=True)
                 identification_name = instance.same_flat_member_identification
-                print("INST=====>", identification_name)
                 instance = Members.objects.filter(same_flat_member_identification=identification_name)
             except Members.DoesNotExist:
                 return Response(data={"message": "Member not found"})
 
             serializer = MembersSerializer(instance, many=True)
-            print("DATA====", serializer.data)
             return Response(serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -253,11 +241,9 @@ class MemberView(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def member_history_retrieve(self, request, *args, **kwargs):
-        print("NUMBER================4")
         wing_flat_id = self.request.query_params.get('wing_flat__id')
         try:
             instances = Members.objects.filter(wing_flat=wing_flat_id, date_of_cessation__isnull=False)
-            print("INSTANCE:", instances)
         except Members.DoesNotExist:
             return Response(data={"message": "Member not found"})
 
@@ -267,7 +253,6 @@ class MemberView(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
-        print("NOM---->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", request.data)
         nominees_data = request.POST.getlist('nominees')[0]
         member_serializer = self.get_serializer(instance, data=request.data, partial=True)
         if member_serializer.is_valid():
@@ -278,7 +263,6 @@ class MemberView(viewsets.ModelViewSet):
                 # Loop through nominee data and either create or update each nominee
                 for nominee_dict in nominees_data:
                     nominee_id = nominee_dict.get('id')  # Assuming nominee has an 'id' field
-                    print("NOMINEE UPDATE=====", nominee_id)
                     if nominee_id:
                         # If nominee has an id, try to get existing nominee
                         nominee_instance = Nominees.objects.get(pk=nominee_id)
@@ -331,7 +315,6 @@ def hide_non_primary_member_checkbox(request, id):
     )
 
     if member:
-        print("MEMBER NAME==", member)
         member_status = False
     data = {
         "member_status": member_status,
@@ -347,11 +330,10 @@ class FlatSharesView(viewsets.ModelViewSet):
         try:
             instance_id = kwargs.get('pk')
             instance = FlatShares.objects.get(unique_member_shares=instance_id, date_of_cessation__isnull=True)
-            print("INSTANCE==>", instance)
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
         except FlatShares.DoesNotExist:
-            pass
+            return Response({"error": "Shares details not added!"}, status=status.HTTP_404_NOT_FOUND)
 
     def create(self, request, *args, **kwargs):
         unique_member_share = None
@@ -376,12 +358,22 @@ class FlatDetailView(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         try:
             instance_id = kwargs.get('pk')
-            instance = FlatDetail.objects.get(wing_flat=instance_id, date_of_cessation__isnull=True)
-            print("INSTANCE==>", instance)
+            instance = FlatDetail.objects.get(wing_flat=instance_id)
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
         except FlatDetail.DoesNotExist:
-            pass
+            return Response({"error": "Details for this flat not added!"}, status=status.HTTP_404_NOT_FOUND)
+
+    # def partial_update(self, request, *args, **kwargs):
+    #     try:
+    #         instance_id = kwargs.get('pk')
+    #         instance = FlatDetail.objects.get(wing_flat=instance_id)
+    #         serializer = self.get_serializer(instance, data=request.data, partial=True)
+    #         serializer.is_valid(raise_exception=True)
+    #         serializer.save()
+    #         return super().partial_update(request, *args, **kwargs)
+    #     except FlatDetail.DoesNotExist:
+    #         return Response({"error": "FlatDetail not found."}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['get'])
     def get_flat_status_dropdown(self, request, *args, **kwargs):
@@ -390,22 +382,26 @@ class FlatDetailView(viewsets.ModelViewSet):
         ]
         return Response(choices)
 
-    def create(self, request, *args, **kwargs):
-        unique_member_share = None
-        if request.data.get('wing_flat'):
-            unique_member_share = Members.objects.get(
-                wing_flat=request.data.get('wing_flat'), member_is_primary=True,
-                date_of_cessation__isnull=True
-            ).pk
+    # def create(self, request, *args, **kwargs):
+    #     unique_member_share = None
+    #     if request.data.get('wing_flat'):
+    #         unique_member_share = Members.objects.get(
+    #             wing_flat=request.data.get('wing_flat'), member_is_primary=True,
+    #             date_of_cessation__isnull=True
+    #         ).pk
 
-        modified_data = request.data.copy()
-        modified_data['unique_member_shares'] = unique_member_share
-        serializer = self.get_serializer(data=modified_data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     modified_data = request.data.copy()
+    #     modified_data['unique_member_shares'] = unique_member_share
+    #     serializer = self.get_serializer(data=modified_data)
+    #     serializer.is_valid(raise_exception=True)
+    #     self.perform_create(serializer)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+# REQUIRED FOR UNIT MASTER
+class FlatDetailMasterView(viewsets.ModelViewSet):
+    queryset = FlatDetail.objects.all()
+    serializer_class = FlatDetailSerializers
 
 
 class FlatHomeLoanView(viewsets.ModelViewSet):
@@ -416,11 +412,10 @@ class FlatHomeLoanView(viewsets.ModelViewSet):
         try:
             instance_id = kwargs.get('pk')
             instance = FlatHomeLoan.objects.get(unique_member_shares=instance_id, date_of_cessation__isnull=True)
-            print("INSTANCE==>", instance)
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
         except FlatHomeLoan.DoesNotExist:
-            pass
+            return Response({"error": "Home loan detail not added."}, status=status.HTTP_404_NOT_FOUND)
 
     def create(self, request, *args, **kwargs):
         unique_member_share = None
@@ -446,11 +441,10 @@ class FlatGSTView(viewsets.ModelViewSet):
         try:
             instance_id = kwargs.get('pk')
             instance = FlatGST.objects.get(unique_member_shares=instance_id, date_of_cessation__isnull=True)
-            print("INSTANCE==>", instance)
             serializer = self.get_serializer(instance)
             return Response(serializer.data)
         except FlatGST.DoesNotExist:
-            pass
+            return Response({"error": "GST detail not added."}, status=status.HTTP_404_NOT_FOUND)
 
     def create(self, request, *args, **kwargs):
         unique_member_share = None
@@ -477,7 +471,6 @@ class FlatMemberVehicleView(viewsets.ModelViewSet):
         try:
             instance_id = kwargs.get('pk')
             instance = FlatMemberVehicle.objects.filter(unique_member_shares=instance_id, date_of_cessation__isnull=True)
-            print("INSTANCE==>", instance)
             serializer = self.get_serializer(instance, many=True)
             return Response(serializer.data)
         except FlatMemberVehicle.DoesNotExist:
@@ -511,7 +504,6 @@ class HouseHelpAllocationView(viewsets.ModelViewSet):
     serializer_class = HouseHelpAllocationSerializer
 
     def create(self, request, *args, **kwargs):
-        print("d==============", request.data)
         return super().create(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
@@ -528,7 +520,6 @@ class HouseHelpAllocationView(viewsets.ModelViewSet):
             wing_flat = WingFlatUnique.objects.get(id=wing_flat).wing_flat_unique
             house_help_obj['wing_flat'] = wing_flat
 
-            print(house_help_obj)
             # Code to get member name
             member_name = house_help_obj['member_name']
             member_name = Members.objects.get(id=member_name).member_name
@@ -540,7 +531,6 @@ class HouseHelpAllocationView(viewsets.ModelViewSet):
                 Q(aadhar_pan=aadhar_pan) #| Q(house_help_aadhar_number=aadhar_pan)
             ).values("aadhar_pan__house_help_pan_number", "aadhar_pan__house_help_aadhar_number", "aadhar_pan__house_help_name").first()
 
-            print("DATA===", aadhar_pan_obj)
             # print(aadhar_pan.len())
             # aadhar_pan = HouseHelp.objects.get(id=aadhar_pan).house_help_aadhar_number
             house_help_obj['aadhar_pan'] = aadhar_pan_obj['aadhar_pan__house_help_pan_number']
@@ -568,7 +558,6 @@ class TenantAllocationView(viewsets.ModelViewSet):
     serializer_class = TenantAllocationSerializers
 
     def create(self, request, *args, **kwargs):
-        print("DOCUMENTS===>", request.data)
         return super().create(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
@@ -600,7 +589,6 @@ class TenantAllocationView(viewsets.ModelViewSet):
             # Code to get tenant name
             tenant_name = house_help_obj['tenant_name']
             tenant_name_obj = TenantAllocation.objects.filter(tenant_name=tenant_name).values("tenant_name__tenant_name").first()
-            print("tenant_name_obj", tenant_name_obj)
             house_help_obj['tenant_name'] = tenant_name_obj['tenant_name__tenant_name']
 
             # Additional aadhar field

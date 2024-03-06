@@ -78,11 +78,23 @@ class NomineesSerializer(serializers.ModelSerializer):
 
 
 class MembersSerializer(serializers.ModelSerializer):
+    flat_name = serializers.SerializerMethodField()
+    member_position_formatted = serializers.SerializerMethodField()
     nominees = NomineesSerializer(many=True, required=False)
 
     class Meta:
         model = Members
         fields = '__all__'
+
+    # FORMAT FLAT NO.
+    def get_flat_name(self, obj):
+        flat = obj.wing_flat
+        return flat.wing_flat_unique
+
+    # FORMAT MEMBER POSITION
+    def get_member_position_formatted(self, obj):
+        member_position_choices = dict(Members._meta.get_field('member_position').choices)
+        return member_position_choices.get(obj.member_position, '')
 
 
 class FlatSharesSerializers(serializers.ModelSerializer):
@@ -244,9 +256,22 @@ class SuggestionSerializers(serializers.ModelSerializer):
 
 
 class FlatDetailSerializers(serializers.ModelSerializer):
+    wing_flat_name = serializers.CharField(source='wing_flat.wing_flat_unique', read_only=True)
+    is_having_pet = serializers.SerializerMethodField()
+
     class Meta:
         model = FlatDetail
-        fields = '__all__'
+        fields = [
+            'id', 'wing_flat', 'wing_flat_name', 'unit_area', 'unit_type', 'unit_of_mesurement', 'property_tax_no',
+            'electricity_connection_no', 'is_having_pet', 'gas_connection_no', 'water_connection_no',
+            'flat_status'
+        ]
+
+    def get_is_having_pet(self, obj):
+        if obj.is_having_pet:
+            return "Yes"
+        else:
+            return "No"
 
 
 

@@ -91,11 +91,17 @@ class WingFlatUnique(models.Model):
         return self.wing_flat_unique
 
 
+position_choices = [
+        ('nominal_member', 'Nominal Member'),
+        ('comittee_member', 'Comittee Member'),
+        ('member', 'Member'),
+    ]
+
 class Members(models.Model):
     wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE, related_name='members')
     member_name = models.CharField(max_length=200)
     ownership_percent = models.IntegerField()
-    member_position = models.CharField(max_length=200)
+    member_position = models.CharField(max_length=200, choices=position_choices)
     member_dob = models.DateField()
     member_pan_no = models.CharField(max_length=200)
     member_aadhar_no = models.CharField(max_length=200)
@@ -173,7 +179,7 @@ class FlatDetail(models.Model):
     gas_connection_no = models.CharField(max_length=300)
     water_connection_no = models.CharField(max_length=300)
     flat_status = models.CharField(max_length=200, choices=flat_choices)
-    date_of_cessation = models.DateField(null=True, blank=True)
+    # date_of_cessation = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return self.wing_flat.wing_flat_unique

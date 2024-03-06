@@ -22,24 +22,57 @@
         </div>
     </div>
     <div id="memberMasterTableVue">
+        {% comment %} <th v-for="(value, key) in members[0]" :key="key">{{ key }}</th> {% endcomment %}
         {% verbatim %}
         <table id="example" class="display dt-table order-column" style="width:100%">
             <!-- <table id="houseHelpDataTable"> -->
             <thead>
                 <tr>
                     <th>Actions</th>
-                    <th v-for="(value, key) in members[0]" :key="key">{{ key }}</th>
+                    <th>Id</th>
+                    <th>Flat No.</th>
+                    <th>Position</th>
+                    <th>Name</th>
+                    <th>Ownership (%)</th>
+                    <th>DOB</th>
+                    <th>PAN No.</th>
+                    <th>Aadhar No.</th>
+                    <th>Address</th>
+                    <th>State</th>
+                    <th>Pin Code</th>
+                    <th>Email</th>
+                    <th>Contact</th>
+                    <th>Emergency Contact</th>
+                    <th>Occupation</th>
+                    <th>Primary</th>
+                    <th>Date Of Admission</th>
+                    <th>Age At The Time of Admission</th>
+                    <th>Sales Agreement</th>
+                    <th>Other Attachment</th>
+                    <th>Date Of Entrance Fee</th>
+                    <th>Flat Status</th>
+                    <th>Extra</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(members, index) in members" :key="index">
                     <td>
-                        <span @click="viewMemberData(members.id, members.wing_flat)" class="me-3"><i class="fa-solid fa-eye"></i></span>
-                        <span @click="editMemberData(members.id, members.wing_flat)" class="me-3"><i class="fa-solid fa-pen-to-square"></i></span>
-                        <span @click="addMemberData(members.id)" class="me-3"><i class="fa-solid fa-user-plus"></i></span>
-                        <span @click="memberHistoryData(members.wing_flat)" class="me-3"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                        <span @click="viewMemberData(members.id, members.wing_flat, members.flat_name)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                        <span @click="editMemberData(members.id, members.wing_flat, members.flat_name)" class="me-3"><i class="fa-solid fa-pen-to-square"></i></span>
+                        <span @click="addMemberData(members.id, members.wing_flat, members.flat_name)" class="me-3"><i class="fa-solid fa-user-plus"></i></span>
+                        <span @click="memberHistoryData(members.wing_flat, members.flat_name)" class="me-3"><i class="fa-solid fa-clock-rotate-left"></i></span>
                     </td>
-                    <td v-for="(value, key) in members" :key="key">{{ value }}</td>
+                    <td v-for="(value, key) in members" :key="key">
+                        <span v-if="key === 'member_address'">{{ sliceAddress(value) }}</span>
+                        <span v-else-if="key === 'member_is_primary'">
+                            <i v-if="value" class="fas fa-check"></i> <!-- Tick icon -->
+                            <i v-else class="fas fa-times"></i>        <!-- Cross icon -->
+                        </span>
+                        <span v-else-if="key === 'ownership_percent'">
+                            <span :class="{ 'red-background': value < 100, 'blue-background': value >= 100 }">{{ value }}</span>
+                        </span>
+                        <span v-else>{{ value }}</span>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -50,8 +83,11 @@
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
+                        {% verbatim %}
                         <h1 class="modal-title fs-5" style="font-family: 'Calibri', sans-serif;" id="viewMemberModalLabel">
-                            Details of Flat No. A-1103</h1>
+                            Details of Flat No. {{ flatName }}
+                        </h1>
+                        {% endverbatim %}
                     </div>
                     <div class="modal-body p-0 m-0 " style="margin-inline: 30px;">
                         <div class="abs">
@@ -93,7 +129,7 @@
                                 tabindex="0">
                                 {% verbatim %}
                                 <div class="container-fluid">
-                                    <div class="row mt-3" id="">
+                                    <div class="row mt-3" v-if="flatData && Object.keys(flatData).length > 0">
                                         <div class="col-lg-6">
                                             <div class="row">
                                                 <div class="col-lg-6">
@@ -186,6 +222,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div v-else>
+                                        <h2 class="m-4 text-center">{{ flatDataFoundErrorMsg }}</h2>
+                                    </div>
                                 </div>
                                 {% endverbatim %}
                             </div>
@@ -195,6 +234,9 @@
                                 aria-labelledby="member-tab" tabindex="0">
                                 {% verbatim %}
                                 <div v-for="(member, index) in memberData" :key="index">
+                                    <div class="seven mt-4">
+                                        <h1 id="heading">{{ member.member_name }}</h1>
+                                      </div>
                                     <div class="accordion" :id="'accordionExample' + index">
                                         <div class="accordion-item">
                                           <h2 class="accordion-header">
@@ -368,7 +410,7 @@
 
                                                 <div v-for="(nominee, nIndex) in member.nominees" :key="nIndex">
                                                     <div class="accordion" id="accordionExample">
-                                                        <div class="accordion-item ms-2 me-2">
+                                                        <div class="accordion-item ms-2 me-2 mt-2">
                                                         <h2 class="accordion-header">
                                                             <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_nominee' + nominee.id" aria-expanded="true" aria-controls="collapseOne" style="background-color: white;">
                                                                 {{ nominee.nominee_name }}
@@ -525,7 +567,7 @@
                                 tabindex="0">
                                 {% verbatim %}
                                     <div class="container-fluid">
-                                        <div class="row mt-3" id="sharedContent">
+                                        <div class="row mt-3" id="sharedContent" v-if="sharesData && Object.keys(sharesData).length > 0">
                                             <div class="col-lg-6">
                                                 <div class="row">
                                                     <div class="col-lg-6">
@@ -652,6 +694,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div v-else>
+                                            <h2 class="m-4 text-center">{{ sharesDataNotFoundErrorMsg }}</h2>
+                                        </div>
                                     </div>
                                 {% endverbatim %}
                             </div>
@@ -660,7 +705,7 @@
                                 tabindex="0">
                                 {% verbatim %}
                                 <div class="container-fluid">
-                                    <div class="row mt-3" id="">
+                                    <div class="row mt-3" v-if="sharesData && Object.keys(sharesData).length > 0">
                                         <div class="col-lg-6">
                                             <div class="row">
                                                 <div class="col-lg-6">
@@ -759,6 +804,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div v-else>
+                                        <h2 class="m-4 text-center">{{ homeLoanDataNotFoundMsg }}</h2>
+                                    </div>
                                 </div>
                                 {% endverbatim %}
                             </div>
@@ -767,7 +815,7 @@
                                 tabindex="0">
                                 {% verbatim %}
                                 <div class="container-fluid">
-                                    <div class="row mt-3" id="">
+                                    <div class="row mt-3" v-if="gstData && Object.keys(gstData).length > 0">
                                         <div class="col-lg-6">
                                             <div class="row">
                                                 <div class="col-lg-6">
@@ -823,6 +871,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div v-else>
+                                        <h2 class="m-4 text-center">{{ gstDataNotFoundMsg }}</h2>
                                     </div>
                                 </div>
                                 {% endverbatim %}
@@ -969,37 +1020,45 @@
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
+                        {% verbatim %}
                         <h1 class="modal-title fs-5" style="font-family: 'Calibri', sans-serif;" id="editMemberModalLabel">Edit
-                            Flat No. A-1103</h1>
+                            Flat No. {{ flatName }}
+                        </h1>
+                        {% endverbatim %}
                     </div>
 
                     <div class="modal-body p-0 m-0 " style="margin-inline: 30px;">
                         <div class="abs" style="z-index: 100;">
                             <ul class="nav nav-justified aaa nav-tabs" id="myTab" role="tablist">
-                                <li class="nav-item " role="presentation">
+                                {% comment %} <li class="nav-item " role="presentation">
+                                    <button class="nav-link abc active" id="flat-edit-tab" data-bs-toggle="tab"
+                                        data-bs-target="#flat-edit-tab-pane" type="button" role="tab"
+                                        aria-controls="flat-edit-tab-pane" aria-selected="true">Flat</button>
+                                </li> {% endcomment %}
+                                <li class="nav-item" role="presentation">
                                     <button class="nav-link abc active" id="member-edit-tab" data-bs-toggle="tab"
                                         data-bs-target="#member-edit-tab-pane" type="button" role="tab"
-                                        aria-controls="member-edit-tab-pane" aria-selected="true">Members Details</button>
+                                        aria-controls="member-edit-tab-pane" aria-selected="false">Member</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link abc" id="shares-edit-tab" data-bs-toggle="tab"
                                         data-bs-target="#shares-edit-tab-pane" type="button" role="tab"
-                                        aria-controls="shares-edit-tab-pane" aria-selected="false">Shares Details</button>
+                                        aria-controls="shares-edit-tab-pane" aria-selected="false">Shares</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link abc" id="loan-edit-tab" data-bs-toggle="tab"
                                         data-bs-target="#loan-edit-tab-pane" type="button" role="tab"
-                                        aria-controls="loan-edit-tab-pane" aria-selected="false">Home Loan Details</button>
+                                        aria-controls="loan-edit-tab-pane" aria-selected="false">Home Loan</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link abc" id="gst-edit-tab" data-bs-toggle="tab"
                                         data-bs-target="#gst-edit-tab-pane" type="button" role="tab"
-                                        aria-controls="gst-edit-tab-pane" aria-selected="false">GST Details</button>
+                                        aria-controls="gst-edit-tab-pane" aria-selected="false">GST</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link abc" id="vehicle-edit-tab" data-bs-toggle="tab"
                                         data-bs-target="#vehicle-edit-tab-pane" type="button" role="tab"
-                                        aria-controls="vehicle-edit-tab-pane" aria-selected="false">Vehicle Details</button>
+                                        aria-controls="vehicle-edit-tab-pane" aria-selected="false">Vehicle</button>
                                 </li>
                                 <!-- <li class="nav-item" role="presentation">
                             <button class="nav-link" id="disabled-tab" data-bs-toggle="tab" data-bs-target="#disabled-tab-pane" type="button" role="tab" aria-controls="disabled-tab-pane" aria-selected="false" disabled>Disabled</button>
@@ -1009,20 +1068,145 @@
                         <!-- </div> -->
                         <!-- <div class="container-fluid"> -->
                         <div class="tab-content w-100" id="myTabContent">
+                            {% comment %} <div class="tab-pane fade show active" id="flat-edit-tab-pane" role="tabpanel" aria-labelledby="flat-edit-tab"
+                                tabindex="0">
+                                <div class="container-fluid mt-3">
+                                    {% verbatim %}
+                                        <form enctype="multipart/form-data" @submit.prevent="submitFlatDetailForm(flatFormData.wing_flat)">
+                                            <div class="row">
+
+                                                <div class="col-lg-4 mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <select v-model="flatFormData.wing_flat" class="w-100 sty-inp form-control">
+                                                        <option :value="flatFormData.wing_flat">{{ flatFormData.wing_flat }}</option>
+                                                    </select>
+                                                    <label class="sty-label">Wing & Flat No.</label>
+                                                    <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                </div>
+
+                                                <div class="col-lg-4 mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="text" class="w-100 sty-inp" v-model="flatFormData.unit_area" />
+                                                    <label class="sty-label">Unit Area</label>
+                                                    <span v-if="errors.unit_area" class="error">{{ errors.unit_area[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                </div>
+
+                                                <div class="col-lg-4 mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="text" class="w-100 sty-inp" v-model="flatFormData.unit_type" />
+                                                    <label class="sty-label">Unit Type</label>
+                                                    <span v-if="errors.unit_type" class="error">{{ errors.unit_type[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                </div>
+
+
+                                                <div class="col-lg-4 mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="text" class="w-100 sty-inp" v-model="flatFormData.unit_of_mesurement" />
+                                                    <label class="sty-label">Unit Of Mesurement</label>
+                                                    <span v-if="errors.unit_of_mesurement" class="error">{{ errors.unit_of_mesurement[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                </div>
+
+
+                                                <div class="col-lg-4 mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="number" class="w-100 sty-inp" v-model="flatFormData.property_tax_no" />
+                                                    <label class="sty-label">Property Tax No</label>
+                                                    <span v-if="errors.property_tax_no" class="error">{{ errors.property_tax_no[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                </div>
+
+                                                <div class="col-lg-4 mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="number" class="w-100 sty-inp" v-model="flatFormData.electricity_connection_no" />
+                                                    <label class="sty-label">Electricity Connection No</label>
+                                                    <span v-if="errors.electricity_connection_no" class="error">{{ errors.electricity_connection_no[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                </div>
+
+                                                <div class="col-lg-4 mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <select class="w-100 sty-inp form-control" name="pet" id="pet" v-model="flatFormData.is_having_pet">
+                                                    <option value="No">No</option>
+                                                    <option value="Yes">Yes</option>
+                                                    </select>
+                                                    <label class="sty-label">Having Pet</label>
+                                                    <span v-if="errors.is_having_pet" class="error">{{ errors.is_having_pet[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                </div>
+
+                                                <div class="col-lg-4 mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="number" class="w-100 sty-inp" v-model="flatFormData.gas_connection_no" />
+                                                    <label class="sty-label">Gas Connection No</label>
+                                                    <span v-if="errors.gas_connection_no" class="error">{{ errors.gas_connection_no[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                </div>
+
+                                                <div class="col-lg-4 mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <input type="number" class="w-100 sty-inp" v-model="flatFormData.water_connection_no" />
+                                                    <label class="sty-label">Water Connection No</label>
+                                                    <span v-if="errors.water_connection_no" class="error">{{ errors.water_connection_no[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                </div>
+
+                                                <div class="col-lg-4 mb-3">
+                                                <div class="w-100 sty-input-wrapper">
+                                                    <select class="w-100 sty-inp form-control" v-model="flatFormData.flat_status" />
+                                                    <option v-for="choice in flat_status" :key="choice.value" :value="choice.value">
+                                                        {{ choice.label }}
+                                                    </option>
+                                                    </select>
+                                                    <label class="sty-label">Flat Status</label>
+                                                    <span v-if="errors.flat_status" class="error">{{ errors.flat_status[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                                </div>
+
+                                            </div>
+
+                                            <hr>
+                                            <div class="two-btn float-end pb-3 pe-4">
+                                                <button type="submit" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Update</button>
+                                            </div>
+                                        </form>
+                                        {% endverbatim %}
+                                </div>
+
+                            </div> {% endcomment %}
+
                             <div class="tab-pane fade show active" id="member-edit-tab-pane" role="tabpanel"
                                 aria-labelledby="member-edit-tab" tabindex="0">
                                 <div class="accordion" id="memberEditForm">
                                     <!-- start -->
                                     {% verbatim %}
                                         <div v-for="(member, index) in memberformData" :key="index">
-                                            <div class="accordion" id="accordionExample">
+                                            <div class="seven mt-4">
+                                                <h1 id="heading">{{ member.member_name }}</h1>
+                                              </div>
+                                            <div class="accordion" :id="'accordionExample' + index">
                                                 <div class="accordion-item">
                                                     <h2 class="accordion-header">
                                                             <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" aria-expanded="true" aria-controls="collapseOne">
                                                                 {{ member.member_name }}
                                                             </button>
                                                     </h2>
-                                                    <div :id="'collapse' + index" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                                    <div :id="'collapse' + index" class="accordion-collapse collapse show" :data-bs-parent="'#accordionExample' + index">
                                                         <div class="accordion-body">
                                                             <form enctype="multipart/form-data">
                                                                 <div class="row mt-3" style="text-align: left">
@@ -1251,320 +1435,151 @@
                                                                     </div>
                                                                 </div>
 
+                                                                <div style="display: flex; justify-content: space-between; align-items: center;" class="m-3">
+                                                                    <h3 id="heading">Nominees Details</h3>
+                                                                    <button class="btn btn-primary" @click="addNomineeOnEdit(member.id, member.member_name)" type="button">Add Nominee</button>
+                                                                </div>
+
                                                                 <div v-for="(nominee, nIndex) in member.nominees" :key="nIndex">
-                                                                    <div class="accordion-item ms-2 me-2 mb-3">
-                                                                        <h2 class="accordion-header">
-                                                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_nominee' + nIndex" aria-expanded="true" aria-controls="collapseOne">
-                                                                                {{ nominee.nominee_name }}
-                                                                            </button>
-                                                                        </h2>
-                                                                        <div :id="'collapse_nominee' + nIndex" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-                                                                            <div class="row mt-3" style="text-align: left">
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input type="text" class="w-100 sty-inp" v-model="nominee.id" />
-                                                                                        <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_name" />
-                                                                                        <label for="" class="sty-label">Nominee's Name</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                    <div class="accordion" :id="'accordionExample_Nominee' + index">
+                                                                        <div class="accordion-item ms-2 me-2 mb-3">
+                                                                            <h2 class="accordion-header">
+                                                                                <button class="accordion-button" style="background-color: white;" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_nominee' + nIndex" aria-expanded="true" aria-controls="collapseOne">
+                                                                                    {{ nominee.nominee_name }}
+                                                                                </button>
+                                                                            </h2>
+                                                                            <div :id="'collapse_nominee' + nIndex" class="accordion-collapse collapse m-3" :data-bs-parent="'#accordionExample_Nominee' + index">
+                                                                                <div class="row mt-3" style="text-align: left">
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input type="text" class="w-100 sty-inp" v-model="nominee.id" hidden />
+                                                                                            <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_name" />
+                                                                                            <label for="" class="sty-label">Nominee's Name</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input type="date" class="w-100 sty-inp form-control" v-model="nominee.date_of_nomination"  />
-                                                                                        <label for="" class="sty-label">Date of Nomination</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input type="date" class="w-100 sty-inp form-control" v-model="nominee.date_of_nomination"  />
+                                                                                            <label for="" class="sty-label">Date of Nomination</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input class="w-100 sty-inp form-control" type="text" v-model="nominee.relation_with_nominee"  />
-                                                                                        <label for="" class="sty-label">Relation with Nominator</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input class="w-100 sty-inp form-control" type="text" v-model="nominee.relation_with_nominee"  />
+                                                                                            <label for="" class="sty-label">Relation with Nominator</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input type="text" class="w-100 sty-inp form-control percentage-input" v-model="nominee.nominee_sharein_percent" />
-                                                                                        <label for="" class="sty-label">Nominee Sharein %</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input type="text" class="w-100 sty-inp form-control percentage-input" v-model="nominee.nominee_sharein_percent" />
+                                                                                            <label for="" class="sty-label">Nominee Sharein %</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input type="date" class="w-100 sty-inp"v-model="nominee.nominee_dob" />
-                                                                                        <label for="" class="sty-label">Nominee DOB</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input type="date" class="w-100 sty-inp"v-model="nominee.nominee_dob" />
+                                                                                            <label for="" class="sty-label">Nominee DOB</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_aadhar_no" />
-                                                                                        <label for="" class="sty-label">Nominee Aadhaar No</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_aadhar_no" />
+                                                                                            <label for="" class="sty-label">Nominee Aadhaar No</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_pan_no" />
-                                                                                        <label for="" class="sty-label">Nominee PAN No</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_pan_no" />
+                                                                                            <label for="" class="sty-label">Nominee PAN No</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_email" />
-                                                                                        <label for="id_nominee_email" class="sty-label">Nominee Email</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_email" />
+                                                                                            <label for="id_nominee_email" class="sty-label">Nominee Email</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="nominee.nominee_address" ></textarea>
-                                                                                        <label for="" class="sty-label">Nominee Permanent Address</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="nominee.nominee_address" ></textarea>
+                                                                                            <label for="" class="sty-label">Nominee Permanent Address</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <select name="state" class="w-100 sty-inp" v-model="nominee.nominee_state" >
-                                                                                        </select>
-                                                                                        <label for="" class="sty-label">State</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <select name="state" class="w-100 sty-inp" v-model="nominee.nominee_state" >
+                                                                                            </select>
+                                                                                            <label for="" class="sty-label">State</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_pin_code" />
-                                                                                        <label for="" class="sty-label">Pin Code</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_pin_code" />
+                                                                                            <label for="" class="sty-label">Pin Code</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input type="number" class="w-100 sty-inp form-control" v-model="nominee.nominee_contact" />
-                                                                                        <label for="" class="sty-label">Nominee Contact No.</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input type="number" class="w-100 sty-inp form-control" v-model="nominee.nominee_contact" />
+                                                                                            <label for="" class="sty-label">Nominee Contact No.</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
 
-                                                                                <div class="col-lg-4 mb-3">
-                                                                                    <div class="w-100 sty-input-wrapper">
-                                                                                        <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_emergency_contact" />
-                                                                                        <label for="" class="sty-label">Emergency Contact No.</label>
-                                                                                        <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                        <span v-else></span>
+                                                                                    <div class="col-lg-4 mb-3">
+                                                                                        <div class="w-100 sty-input-wrapper">
+                                                                                            <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_emergency_contact" />
+                                                                                            <label for="" class="sty-label">Emergency Contact No.</label>
+                                                                                            <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                                                                            <span v-else></span>
+                                                                                        </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                <button class="btn btn-primary mt-3 ms-2" @click="addNomineeOnEdit(member.id)" type="button">Add Nominee</button>
                                                             </form>
                                                         </div>
-
-                                                        <!-- ADD NOMINEE MODAL -->
-                                                        <div class="modal fade" id="addNomineeModal" tabindex="-1" aria-labelledby="addNomineeModalLabel" aria-hidden="true">
-                                                            <div class="modal-dialog modal-xl">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                <h1 class="modal-title fs-5" id="addNomineeModalLabel">Add Nominee</h1>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                    <div class="row mt-3" style="text-align: left">
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_name" />
-                                                                                <label for="" class="sty-label">Nominee's Name</label>
-                                                                                <span v-if="errors.nominee_name" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input type="date" class="w-100 sty-inp form-control" v-model="nominee.date_of_nomination"  />
-                                                                                <label for="" class="sty-label">Date of Nomination</label>
-                                                                                <span v-if="errors.date_of_nomination" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input class="w-100 sty-inp form-control" type="text" v-model="nominee.relation_with_nominee"  />
-                                                                                <label for="" class="sty-label">Relation with Nominator</label>
-                                                                                <span v-if="errors.relation_with_nominee" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input type="text" class="w-100 sty-inp form-control percentage-input" v-model="nominee.nominee_sharein_percent" />
-                                                                                <label for="" class="sty-label">Nominee Sharein %</label>
-                                                                                <span v-if="errors.nominee_sharein_percent" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input type="date" class="w-100 sty-inp"v-model="nominee.nominee_dob" />
-                                                                                <label for="" class="sty-label">Nominee DOB</label>
-                                                                                <span v-if="errors.nominee_dob" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_aadhar_no" />
-                                                                                <label for="" class="sty-label">Nominee Aadhaar No</label>
-                                                                                <span v-if="errors.nominee_aadhar_no" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_pan_no" />
-                                                                                <label for="" class="sty-label">Nominee PAN No</label>
-                                                                                <span v-if="errors.nominee_pan_no" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_email" />
-                                                                                <label for="id_nominee_email" class="sty-label">Nominee Email</label>
-                                                                                <span v-if="errors.nominee_email" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="nominee.nominee_address" ></textarea>
-                                                                                <label for="" class="sty-label">Nominee Permanent Address</label>
-                                                                                <span v-if="errors.nominee_address" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <select name="state" class="w-100 sty-inp" v-model="nominee.nominee_state" >
-                                                                                    <option value="">Select State</option>
-                                                                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                                                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                                                                    <option value="Assam">Assam</option>
-                                                                                    <option value="Bihar">Bihar</option>
-                                                                                    <option value="Chhattisgarh">Chhattisgarh</option>
-                                                                                    <option value="Goa">Goa</option>
-                                                                                    <option value="Gujarat">Gujarat</option>
-                                                                                    <option value="Haryana">Haryana</option>
-                                                                                    <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                                                                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                                                                    <option value="Jharkhand">Jharkhand</option>
-                                                                                    <option value="Karnataka">Karnataka</option>
-                                                                                    <option value="Kerala">Kerala</option>
-                                                                                    <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                                                                    <option value="Maharashtra">Maharashtra</option>
-                                                                                    <option value="Manipur">Manipur</option>
-                                                                                    <option value="Meghalaya">Meghalaya</option>
-                                                                                    <option value="Mizoram">Mizoram</option>
-                                                                                    <option value="Nagaland">Nagaland</option>
-                                                                                    <option value="Odisha">Odisha</option>
-                                                                                    <option value="Punjab">Punjab</option>
-                                                                                    <option value="Rajasthan">Rajasthan</option>
-                                                                                    <option value="Sikkim">Sikkim</option>
-                                                                                    <option value="Tamil Nadu">Tamil Nadu</option>
-                                                                                    <option value="Telangana">Telangana</option>
-                                                                                    <option value="Tripura">Tripura</option>
-                                                                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                                                                    <option value="Uttarakhand">Uttarakhand</option>
-                                                                                    <option value="West Bengal">West Bengal</option>
-                                                                                    <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
-                                                                                    <option value="Islands">Islands</option>
-                                                                                    <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                                                                                    <option value="Daman and Diu">Daman and Diu</option>
-                                                                                    <option value="Delhi">Delhi</option>
-                                                                                    <option value="Ladakh">Ladakh</option>
-                                                                                    <option value="Lakshadweep">Lakshadweep</option>
-                                                                                    <option value="Puducherry">Puducherry</option>
-                                                                                </select>
-                                                                                <label for="" class="sty-label">State</label>
-                                                                                <span v-if="errors.nominee_state" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_pin_code" />
-                                                                                <label for="" class="sty-label">Pin Code</label>
-                                                                                <span v-if="errors.nominee_pin_code" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input type="number" class="w-100 sty-inp form-control" v-model="nominee.nominee_contact" />
-                                                                                <label for="" class="sty-label">Nominee Contact No.</label>
-                                                                                <span v-if="errors.nominee_contact" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-
-                                                                        <div class="col-lg-4 mb-3">
-                                                                            <div class="w-100 sty-input-wrapper">
-                                                                                <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_emergency_contact" />
-                                                                                <label for="" class="sty-label">Emergency Contact No.</label>
-                                                                                <span v-if="errors.nominee_emergency_contact" class="error">{{ errors.member_name[0] }}</span>
-                                                                                <span v-else></span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary" @click="addNomineeOnClick(member.id)">Add Nominee</button>
-                                                                </div>
-                                                            </div>
-                                                            </div>
-                                                        </div>
-
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
                                         <hr>
                                         <div class="two-btn float-end pb-3 pe-4">
                                             <button type="submit" class="btn btn-secondary"
@@ -2000,105 +2015,6 @@
                                         </div>
                                         <button v-if="!addVehicleOnEdit" type="submit" class="btn btn-primary" style="width: max-content;" @click="addVehicleOnEditModal">Add Vehicle</button>
 
-
-                                        <!-- Add Vehicle trigger modal -->
-                                        <div class="modal fade" id="addVehicleModal" tabindex="-1" aria-labelledby="addVehicleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-xl">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="addVehicleModalLabel">Modal title</h1>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form enctype="multipart/form-data">
-                                                        <div v-for="(form, index) in forms" :key="index">
-                                                            <h3>Form {{ getFormNumber(index) }}</h3>
-                                                            <div class="row p-2 mt-2">
-                                                                <div class="col-lg-4 mb-3">
-                                                                    <div class="w-100 sty-input-wrapper">
-                                                                    <input type="text" class="w-100 sty-inp" v-model="form.parking_lot" />
-                                                                    <label for="id_parking_lot0" class="sty-label">Parking Lot</label>
-                                                                    <span class="error" v-if="hasError(index, 'parking_lot')">{{ getError(index, 'parking_lot') }}</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-lg-4 mb-3">
-                                                                    <div class="w-100 sty-input-wrapper">
-                                                                    <input type="text" class="w-100 sty-inp" v-model="form.vehicle_type" />
-                                                                    <label for="id_vehicle_type0" class="sty-label">Vehicle Type</label>
-                                                                    <span class="error" v-if="hasError(index, 'vehicle_type')">{{ getError(index, 'vehicle_type') }}</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-lg-4 mb-3">
-                                                                    <div class="w-100 sty-input-wrapper">
-                                                                    <input type="text" class="w-100 sty-inp" v-model="form.vehicle_number" />
-                                                                    <label for="id_vehicle_number0" class="sty-label">Vehicle Number</label>
-                                                                    <span class="error" v-if="hasError(index, 'vehicle_number')">{{ getError(index, 'vehicle_number') }}</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-lg-4 mb-3">
-                                                                    <div class="w-100 sty-input-wrapper">
-                                                                    <input type="text" class="w-100 sty-inp" v-model="form.vehicle_brand" />
-                                                                    <label for="id_vehicle_brand0" class="sty-label">Brand & Model</label>
-                                                                    <span class="error" v-if="hasError(index, 'vehicle_brand')">{{ getError(index, 'vehicle_brand') }}</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-lg-4 mb-3">
-                                                                    <div class="w-100 sty-input-wrapper">
-                                                                    <input type="file" class="w-100 sty-inp form-control" :ref="'rc_copy_' + index" />
-                                                                    <label for="" class="sty-label">RC Copy</label>
-                                                                    <span class="error" v-if="hasError(index, 'rc_copy')">{{ getError(index, 'rc_copy') }}</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-lg-4 mb-3">
-                                                                    <div class="w-100 sty-input-wrapper">
-                                                                    <input type="text" class="w-100 sty-inp form-control" v-model="form.sticker_number" />
-                                                                    <label for="" class="sty-label">Sticker Number</label>
-                                                                    <span class="error" v-if="hasError(index, 'sticker_number')">{{ getError(index, 'sticker_number') }}</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-lg-4 mb-3">
-                                                                    <div class="w-100 sty-input-wrapper">
-                                                                    <select class="w-100 sty-inp" v-model="form.select_charge">
-                                                                        <option value="#" selected>YES / NO</option>
-                                                                        <option id="optN0" value="no">NO</option>
-                                                                        <option id="optY0" value="yes">YES</option>
-                                                                    </select>
-                                                                    <label for="id_select_charge0" class="sty-label">Vehicle Chargeable</label>
-                                                                    <span class="error" v-if="hasError(index, 'select_charge')">{{ getError(index, 'select_charge') }}</span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-lg-4 mb-3" v-if="form.select_charge === 'yes'">
-                                                                    <div class="w-100 sty-input-wrapper">
-                                                                        <input type="text" class="w-100 sty-inp form-control" v-model="form.chargable" />
-                                                                        <label class="sty-label">Charge Amount</label>
-                                                                        <span class="error" v-if="hasError(index, 'chargable')">{{ getError(index, 'new_vehicle_id_select_charge') }}</span>
-                                                                    </div>
-                                                                </div>
-
-
-                                                                <div class="col-lg-4 mb-4 gap-3 align-items-center">
-                                                                    <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <span @click.prevent="addForm" class="add-mem-btn float-start">Add Form</span>
-                                                    </form>
-                                                </div>
-                                                <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary" @click="addVehicleOnEditButton">Add Vehicle</button>
-                                                </div>
-                                            </div>
-                                            </div>
-                                        </div>
-
                                         <div class="text-center" v-if="addVehicleOnEdit">
                                             <h3>Vehicle Data Not Added For This Flat</h3>
                                             <p>Pls Fill Below Form To Add Vehicle</p>
@@ -2120,12 +2036,292 @@
             </div>
         </div>
 
+        <!-- Add Vehicle trigger modal -->
+        {% verbatim %}
+            <div class="modal fade" id="addVehicleModal" tabindex="-1" aria-labelledby="addVehicleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="addVehicleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="hideVehicleOpenMemberModal()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form enctype="multipart/form-data">
+                            <div v-for="(form, index) in forms" :key="index">
+                                <h3>Form {{ getFormNumber(index) }}</h3>
+                                <div class="row p-2 mt-2">
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="w-100 sty-input-wrapper">
+                                        <input type="text" class="w-100 sty-inp" v-model="form.parking_lot" />
+                                        <label for="id_parking_lot0" class="sty-label">Parking Lot</label>
+                                        <span class="error" v-if="hasError(index, 'parking_lot')">{{ getError(index, 'parking_lot') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="w-100 sty-input-wrapper">
+                                        <input type="text" class="w-100 sty-inp" v-model="form.vehicle_type" />
+                                        <label for="id_vehicle_type0" class="sty-label">Vehicle Type</label>
+                                        <span class="error" v-if="hasError(index, 'vehicle_type')">{{ getError(index, 'vehicle_type') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="w-100 sty-input-wrapper">
+                                        <input type="text" class="w-100 sty-inp" v-model="form.vehicle_number" />
+                                        <label for="id_vehicle_number0" class="sty-label">Vehicle Number</label>
+                                        <span class="error" v-if="hasError(index, 'vehicle_number')">{{ getError(index, 'vehicle_number') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="w-100 sty-input-wrapper">
+                                        <input type="text" class="w-100 sty-inp" v-model="form.vehicle_brand" />
+                                        <label for="id_vehicle_brand0" class="sty-label">Brand & Model</label>
+                                        <span class="error" v-if="hasError(index, 'vehicle_brand')">{{ getError(index, 'vehicle_brand') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="w-100 sty-input-wrapper">
+                                        <input type="file" class="w-100 sty-inp form-control" :ref="'rc_copy_' + index" />
+                                        <label for="" class="sty-label">RC Copy</label>
+                                        <span class="error" v-if="hasError(index, 'rc_copy')">{{ getError(index, 'rc_copy') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="w-100 sty-input-wrapper">
+                                        <input type="text" class="w-100 sty-inp form-control" v-model="form.sticker_number" />
+                                        <label for="" class="sty-label">Sticker Number</label>
+                                        <span class="error" v-if="hasError(index, 'sticker_number')">{{ getError(index, 'sticker_number') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="w-100 sty-input-wrapper">
+                                        <select class="w-100 sty-inp" v-model="form.select_charge">
+                                            <option value="#" selected>YES / NO</option>
+                                            <option id="optN0" value="no">NO</option>
+                                            <option id="optY0" value="yes">YES</option>
+                                        </select>
+                                        <label for="id_select_charge0" class="sty-label">Vehicle Chargeable</label>
+                                        <span class="error" v-if="hasError(index, 'select_charge')">{{ getError(index, 'select_charge') }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3" v-if="form.select_charge === 'yes'">
+                                        <div class="w-100 sty-input-wrapper">
+                                            <input type="text" class="w-100 sty-inp form-control" v-model="form.chargable" />
+                                            <label class="sty-label">Charge Amount</label>
+                                            <span class="error" v-if="hasError(index, 'chargable')">{{ getError(index, 'new_vehicle_id_select_charge') }}</span>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-lg-4 mb-4 gap-3 align-items-center">
+                                        <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <span @click.prevent="addForm" class="add-mem-btn float-start">Add Form</span>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="hideVehicleOpenMemberModal()">Close</button>
+                    <button type="button" class="btn btn-primary" @click="addVehicleOnEditButton">Add Vehicle</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        {% endverbatim %}
+
+
+        {% verbatim %}
+        <!-- ADD NOMINEE MODAL -->
+            <div class="modal fade" id="addNomineeModal" tabindex="-1" aria-labelledby="addNomineeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="addNomineeModalLabel">Add Nominee Of {{ addNewNomineeMemberName }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="openMemberModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mt-3" style="text-align: left">
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_name" />
+                                    <label for="" class="sty-label">Nominee's Name</label>
+                                    <span v-if="errors.nominee_name" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="date" class="w-100 sty-inp form-control" v-model="nominee.date_of_nomination"  />
+                                    <label for="" class="sty-label">Date of Nomination</label>
+                                    <span v-if="errors.date_of_nomination" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input class="w-100 sty-inp form-control" type="text" v-model="nominee.relation_with_nominee"  />
+                                    <label for="" class="sty-label">Relation with Nominator</label>
+                                    <span v-if="errors.relation_with_nominee" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp form-control percentage-input" v-model="nominee.nominee_sharein_percent" />
+                                    <label for="" class="sty-label">Nominee Sharein %</label>
+                                    <span v-if="errors.nominee_sharein_percent" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="date" class="w-100 sty-inp"v-model="nominee.nominee_dob" />
+                                    <label for="" class="sty-label">Nominee DOB</label>
+                                    <span v-if="errors.nominee_dob" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_aadhar_no" />
+                                    <label for="" class="sty-label">Nominee Aadhaar No</label>
+                                    <span v-if="errors.nominee_aadhar_no" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_pan_no" />
+                                    <label for="" class="sty-label">Nominee PAN No</label>
+                                    <span v-if="errors.nominee_pan_no" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="nominee.nominee_email" />
+                                    <label for="id_nominee_email" class="sty-label">Nominee Email</label>
+                                    <span v-if="errors.nominee_email" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="nominee.nominee_address" ></textarea>
+                                    <label for="" class="sty-label">Nominee Permanent Address</label>
+                                    <span v-if="errors.nominee_address" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <select name="state" class="w-100 sty-inp" v-model="nominee.nominee_state" >
+                                        <option value="">Select State</option>
+                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                        <option value="Assam">Assam</option>
+                                        <option value="Bihar">Bihar</option>
+                                        <option value="Chhattisgarh">Chhattisgarh</option>
+                                        <option value="Goa">Goa</option>
+                                        <option value="Gujarat">Gujarat</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                        <option value="Jharkhand">Jharkhand</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="Kerala">Kerala</option>
+                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                        <option value="Maharashtra">Maharashtra</option>
+                                        <option value="Manipur">Manipur</option>
+                                        <option value="Meghalaya">Meghalaya</option>
+                                        <option value="Mizoram">Mizoram</option>
+                                        <option value="Nagaland">Nagaland</option>
+                                        <option value="Odisha">Odisha</option>
+                                        <option value="Punjab">Punjab</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        <option value="Sikkim">Sikkim</option>
+                                        <option value="Tamil Nadu">Tamil Nadu</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Tripura">Tripura</option>
+                                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                        <option value="Uttarakhand">Uttarakhand</option>
+                                        <option value="West Bengal">West Bengal</option>
+                                        <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
+                                        <option value="Islands">Islands</option>
+                                        <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                        <option value="Daman and Diu">Daman and Diu</option>
+                                        <option value="Delhi">Delhi</option>
+                                        <option value="Ladakh">Ladakh</option>
+                                        <option value="Lakshadweep">Lakshadweep</option>
+                                        <option value="Puducherry">Puducherry</option>
+                                    </select>
+                                    <label for="" class="sty-label">State</label>
+                                    <span v-if="errors.nominee_state" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_pin_code" />
+                                    <label for="" class="sty-label">Pin Code</label>
+                                    <span v-if="errors.nominee_pin_code" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp form-control" v-model="nominee.nominee_contact" />
+                                    <label for="" class="sty-label">Nominee Contact No.</label>
+                                    <span v-if="errors.nominee_contact" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="nominee.nominee_emergency_contact" />
+                                    <label for="" class="sty-label">Emergency Contact No.</label>
+                                    <span v-if="errors.nominee_emergency_contact" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="openMemberModal">Close</button>
+                    <button type="button" class="btn btn-primary" @click="addNomineeOnClick(member.id)">Add Nominee</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        {% endverbatim %}
+
         <!-- Add Member Modal -->
         <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="addMemberModalLabel">Add Member in Flat A-1103</h1>
+                        {% verbatim %}
+                            <h1 class="modal-title fs-5" id="addMemberModalLabel">Add Member in Flat {{ flatName }}</h1>
+                        {% endverbatim %}
                         <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
                     </div>
                     <div class="modal-body">
@@ -2431,8 +2627,11 @@
                 <div id="appendHistory">
                     <div class="modal-content">
                         <div class="modal-header">
+                            {% verbatim %}
                             <h1 class="modal-title fs-5" style="font-family: 'Calibri', sans-serif;" id="memberHistoryModalLabel">
-                                History of Flat No. A-1103</h1>
+                                History of Flat No. {{ flatName }}
+                            </h1>
+                            {% endverbatim %}
                         </div>
                         <div class="modal-body p-0 m-0 " style="margin-inline: 30px;">
                             <div class="abs">
@@ -2483,6 +2682,9 @@
                                             <div v-for="(primary, index) in primaryMembers" :key="index">
                                                 <div class="accordion" id="accordionExample">
                                                     <div class="accordion-item">
+                                                        <div class="seven mt-4">
+                                                            <h1 id="heading">{{ primary.member_name }} (Primary)({{ primary.date_of_admission }} - {{ primary.date_of_cessation }})</h1>
+                                                          </div>
                                                       <h2 class="accordion-header">
                                                             <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" aria-expanded="true" aria-controls="collapseOne">
                                                                 {{ primary.member_name }}
@@ -2651,11 +2853,11 @@
                                                                 <div class="accordion" id="accordionExample" v-for="(pnom, nIndex) in primary.nominees" :key="nIndex">
                                                                     <div class="accordion-item ms-2 me-2">
                                                                       <h2 class="accordion-header">
-                                                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_nominee' + nIndex" aria-expanded="true" aria-controls="collapseOne">
+                                                                        <button class="accordion-button" style="background-color: white;" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_nominee' + nIndex" aria-expanded="true" aria-controls="collapseOne">
                                                                             {{ pnom.nominee_name }}
                                                                         </button>
                                                                       </h2>
-                                                                      <div :id="'collapse_nominee' + nIndex" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                                                      <div :id="'collapse_nominee' + nIndex" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                                                         <div class="row mt-3">
                                                                             <div class="col-lg-3">
                                                                                 <p class="ms-3 view-label">Nominee's Name</p>
@@ -2803,12 +3005,15 @@
                                                     <div v-if="primary.same_flat_member_identification == secondary.same_flat_member_identification">
                                                         <div class="accordion" id="accordionExample">
                                                             <div class="accordion-item">
+                                                                <div class="seven mt-4">
+                                                                    <h1 id="heading">{{ secondary.member_name }} (Secondary)</h1>
+                                                                  </div>
                                                               <h2 class="accordion-header">
-                                                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" aria-expanded="true" aria-controls="collapseOne">
-                                                                        {{ secondary.member_name }} CHILD
+                                                                    <button class="accordion-button" style="background-color: white;" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" aria-expanded="true" aria-controls="collapseOne">
+                                                                        {{ secondary.member_name }}
                                                                     </button>
                                                               </h2>
-                                                                <div :id="'collapse' + index" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                                                <div :id="'collapse' + index" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                                                     <div class="accordion-body">
 
                                                                         <div class="row mt-3">
@@ -2971,11 +3176,11 @@
                                                                         <div class="accordion" id="accordionExample" v-for="(snom, nIndex) in secondary.nominees" :key="nIndex">
                                                                             <div class="accordion-item ms-2 me-2">
                                                                               <h2 class="accordion-header">
-                                                                                <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_nominee' + nIndex" aria-expanded="true" aria-controls="collapseOne">
+                                                                                <button class="accordion-button" style="background-color: white;" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse_nominee' + nIndex" aria-expanded="true" aria-controls="collapseOne">
                                                                                     {{ snom.nominee_name }}
                                                                                 </button>
                                                                               </h2>
-                                                                              <div :id="'collapse_nominee' + nIndex" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                                                              <div :id="'collapse_nominee' + nIndex" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                                                                 <div class="row mt-3">
                                                                                     <div class="col-lg-3">
                                                                                         <p class="ms-3 view-label">Nominee's Name</p>
@@ -3120,9 +3325,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <p>====================</p>
-
-
                                             </div>
                                         <!-- </ul> -->
                                         {% endverbatim %}
@@ -3139,14 +3341,17 @@
                                                 <div class="accordion" id="sharesHistory">
                                                     <div class="accordion-item">
                                                         <div class="accordion-item">
+                                                            <div class="seven mt-4">
+                                                                <h1 id="heading">{{ primary.member_name }} ({{ primary.date_of_admission }} - {{ primary.date_of_cessation }})</h1>
+                                                            </div>
                                                             <h2 class="accordion-header">
-                                                                <button class="accordion-button collapsed" type="button"
+                                                                <button class="accordion-button" type="button"
                                                                     data-bs-toggle="collapse" data-bs-target="#collapsesharesTwo"
-                                                                    aria-expanded="false" id="heading" aria-controls="collapseTwo">
-                                                                    {{primary.member_name}} &nbsp; <span>(12/02/2015 - 30/10/2022)</span>
+                                                                    aria-expanded="true" id="heading" aria-controls="collapseTwo">
+                                                                    {{primary.member_name}}</span>
                                                                 </button>
                                                             </h2>
-                                                            <div id="collapsesharesTwo" class="accordion-collapse collapse"
+                                                            <div id="collapsesharesTwo" class="accordion-collapse collapse show"
                                                                 data-bs-parent="#sharesHistory">
                                                                 <div class="accordion-body">
 
@@ -3306,6 +3511,9 @@
                                             <div v-if="primary.id == homeLoan.unique_member_shares">
                                                 <div class="accordion" id="loanHistory">
                                                     <div class="accordion-item">
+                                                        <div class="seven mt-4">
+                                                            <h1 id="heading">{{ primary.member_name }} ({{ primary.date_of_admission }} - {{ primary.date_of_cessation }})</h1>
+                                                        </div>
                                                         <h2 class="accordion-header">
                                                             <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapseloanOne" aria-expanded="true"
@@ -3442,6 +3650,9 @@
 
                                                 <div class="accordion" id="gstHistory">
                                                     <div class="accordion-item">
+                                                        <div class="seven mt-4">
+                                                            <h1 id="heading">{{ primary.member_name }} ({{ primary.date_of_admission }} - {{ primary.date_of_cessation }})</h1>
+                                                        </div>
                                                         <h2 class="accordion-header">
                                                             <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapseHistoryOne" aria-expanded="true"
@@ -3533,6 +3744,9 @@
 
                                                 <div class="accordion" id="vehicleHistory">
                                                     <div class="accordion-item">
+                                                        <div class="seven mt-4">
+                                                            <h1 id="heading">{{ primary.member_name }} ({{ primary.date_of_admission }} - {{ primary.date_of_cessation }})</h1>
+                                                        </div>
                                                         <h2 class="accordion-header">
                                                             <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                                                 data-bs-target="#collapseVehicleOne" aria-expanded="true"

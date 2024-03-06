@@ -284,3 +284,8 @@ def form_j_view(request):
             })
     # return JsonResponse({'flats': data})
     return render(request, 'register/form_j.html', {'datatable_columns': datatable_columns, 'members': data})
+
+
+def unit_master(request):
+    datatable_columns = [0, 9, 2, 3, 4, 5, 6]
+    return render(request, 'unit_master.html', {'datatable_columns': datatable_columns})

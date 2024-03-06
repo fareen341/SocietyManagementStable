@@ -35,6 +35,7 @@ router.register('members', apiviews.MemberView, basename='members')
 router.register('add-nominee', apiviews.AddNomineesView, basename='add_nominee')
 router.register('shares', apiviews.FlatSharesView, basename='shares')
 router.register('flat_detail', apiviews.FlatDetailView, basename='flat_detail')
+router.register('flat_master_detail', apiviews.FlatDetailMasterView, basename='flat_master_detail')
 router.register('home-loan', apiviews.FlatHomeLoanView, basename='home_loan')
 router.register('flat-gst', apiviews.FlatGSTView, basename='flat_gst')
 router.register('vehicle', apiviews.FlatMemberVehicleView, basename='vehicle')
@@ -65,6 +66,7 @@ urlpatterns = [
     path('allocate-tenant/', views.allocate_tenant, name='allocate_tenant'),
     path('meetings/', views.meetings_view, name="meetings"),
     path('extra/', views.extra, name='extra'),
+    path('unit-master/', views.unit_master, name='unit_master'),
 
     # REGISTERS
     path('nominee-register/', views.nominee_register_view, name='nominee_register_view'),

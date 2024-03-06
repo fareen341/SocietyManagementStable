@@ -973,3 +973,21 @@ text-align: center;
       /* / Usually an anti-A11Y practice but set to remove an annoyance just for this demo / */
     outline: 0;
   }
+
+
+  .red-background {
+    background-color: rgb(141, 20, 20);
+    font-size: 14px;
+    color: white;
+    border-radius: 4px;
+    padding: 5px;
+
+  }
+
+  .blue-background {
+    background-color: rgb(25, 134, 25);
+    font-size: 14px;
+    color: white;
+    border-radius: 4px;
+    padding: 5px;
+  }

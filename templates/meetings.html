@@ -222,9 +222,6 @@
   </div>
 
 
-
-
-
 <div id="meetingTableDiv" class="container" style="font-family: 'Calibri', sans-serif !important;">
     {% verbatim %}
     <table id="example" class="display dt-table table-sm order-column" style="width:100%">
@@ -239,6 +236,7 @@
                 <th>Agenda</th>
                 <th>Minutes</th>
                 <th>Place of Meeting</th>
+
             </tr>
         </thead>
         <tbody>
@@ -253,7 +251,7 @@
                         </span>
                     </div>
                 </td>
-                <td>{{ user.meeting_type }}</td>
+                <td>{{ user.meeting_type_formatted }}</td>
                 <!--  <td>{{ user.date_of_meeting }}</td> -->
                 <td>{{ user.date_of_meeting }}, {{ user.time_of_meeting }}</td>
                 <td><i class="fa-solid fa-check" style="color: #37ff00;"></i></td>
