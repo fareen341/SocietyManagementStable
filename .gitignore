@@ -3,6 +3,6 @@
 # **/migrations/
 **/migrations/__pycache__/
 **/venv/
-*.sqlite3
+# *.sqlite3
 **/media/
 info.txt

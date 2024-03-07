@@ -77,6 +77,7 @@ class NomineesSerializer(serializers.ModelSerializer):
         ]
 
 
+# SERIALIZER FOR MEMBER TABLE VIEW
 class MembersSerializer(serializers.ModelSerializer):
     flat_name = serializers.SerializerMethodField()
     member_position_formatted = serializers.SerializerMethodField()
@@ -147,7 +148,11 @@ class HouseHelpSerializer(serializers.ModelSerializer):
 class HouseHelpAllocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = HouseHelpAllocationMaster
-        fields = '__all__'
+        # Taking list instead of all to maintain the order in datatable
+        fields = [
+            'wing_flat', 'member_name', 'house_help_name',
+            'role', 'house_help_period_from', 'house_help_period_to', 'aadhar_pan'
+        ]
 
 
 class TenantMasterSerializers(serializers.ModelSerializer):
@@ -161,7 +166,11 @@ class TenantAllocationSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = TenantAllocation
-        fields = '__all__'
+        # Taking list instead of all to maintain the order in datatable
+        fields = [
+            'wing_flat', 'member_name', 'tenant_name', 'tenant_from_date',
+            'tenant_to_date', 'tenant_agreement', 'tenant_noc', 'no_of_members', 'aadhar_pan',
+        ]
 
 
 class MeetingsSerializer(serializers.ModelSerializer):

@@ -51,7 +51,7 @@
                     <th>Other Attachment</th>
                     <th>Date Of Entrance Fee</th>
                     <th>Flat Status</th>
-                    <th>Extra</th>
+                    <th style="display: none;">Extra</th>
                 </tr>
             </thead>
             <tbody>
@@ -71,6 +71,7 @@
                         <span v-else-if="key === 'ownership_percent'">
                             <span :class="{ 'red-background': value < 100, 'blue-background': value >= 100 }">{{ value }}</span>
                         </span>
+                        <span v-if="key === 'wing_flat'" :style="{ display: 'none' }"></span>
                         <span v-else>{{ value }}</span>
                     </td>
                 </tr>
@@ -2634,7 +2635,7 @@
                             {% endverbatim %}
                         </div>
                         <div class="modal-body p-0 m-0 " style="margin-inline: 30px;">
-                            <div class="abs">
+                            <div class="abs" v-if="memberHistory && memberHistory.length > 0">
                                 <ul class="nav nav-justified aaa nav-tabs" id="myTab" role="tablist">
                                     <li class="nav-item " role="presentation">
                                         <button class="nav-link abc active" id="member-tab" data-bs-toggle="tab"
@@ -2678,7 +2679,7 @@
                                     <div id="flat_member_history">
                                         <!-- start -->
                                         {% verbatim %}
-                                        <!-- <ul> -->
+                                        <div v-if="memberHistory && memberHistory.length > 0">
                                             <div v-for="(primary, index) in primaryMembers" :key="index">
                                                 <div class="accordion" id="accordionExample">
                                                     <div class="accordion-item">
@@ -3326,6 +3327,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <h3 class="text-center m-2" v-else>No History For This Flat</h3>
+
                                         <!-- </ul> -->
                                         {% endverbatim %}
                                     </div>
@@ -3741,7 +3745,6 @@
                                     <div v-for="(primary, index) in primaryMembers" :key="index">
                                         <div v-for="(vehicle, index) in vehicleHistoryData" :key="index">
                                             <div v-if="primary.id == vehicle.unique_member_shares">
-
                                                 <div class="accordion" id="vehicleHistory">
                                                     <div class="accordion-item">
                                                         <div class="seven mt-4">

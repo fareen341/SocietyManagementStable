@@ -41,7 +41,7 @@ def create_house_help(request):
 
 
 def allocate_house_help(request):
-    datatable_columns = [0, 2, 3, 4, 5, 6, 7]
+    datatable_columns = [0, 1, 2, 3, 4, 5, 6, 7]
     return render(request, 'house_help_allocation.html', {'datatable_columns': datatable_columns})
 
 
@@ -51,12 +51,12 @@ def create_tenant(request):
 
 
 def allocate_tenant(request):
-    datatable_columns = [0, 2, 3, 4]
+    datatable_columns = [0, 1, 2, 3, 4]
     return render(request, 'tenent_allocation.html', {'datatable_columns': datatable_columns})
 
 
 def meetings_view(request):
-    datatable_columns = [0, 2, 3, 4, 5, 6, 7]
+    datatable_columns = [0, 1, 2, 3, 4, 5]
     return render(request, 'meetings.html', {'datatable_columns': datatable_columns})
 
 
@@ -287,5 +287,5 @@ def form_j_view(request):
 
 
 def unit_master(request):
-    datatable_columns = [0, 9, 2, 3, 4, 5, 6]
+    datatable_columns = [0, 3, 4, 5, 6]
     return render(request, 'unit_master.html', {'datatable_columns': datatable_columns})
