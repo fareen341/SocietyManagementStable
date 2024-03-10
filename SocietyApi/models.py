@@ -93,7 +93,7 @@ class WingFlatUnique(models.Model):
 
 position_choices = [
         ('nominal_member', 'Nominal Member'),
-        ('comittee_member', 'Comittee Member'),
+        ('associate_member', 'Associate Member'),
         ('member', 'Member'),
     ]
 
@@ -121,7 +121,7 @@ class Members(models.Model):
     date_of_cessation = models.DateField(null=True, blank=True)
     reason_for_cessation = models.CharField(max_length=200, null=True, blank=True)
     # NEED TO REMOVE BELOE FIELD
-    flat_status = models.CharField(max_length=200, null=True, blank=True)
+    # flat_status = models.CharField(max_length=200, null=True, blank=True)
     same_flat_member_identification = models.CharField(max_length=100, null=True, blank=True)
 
     def save(self, *args, **kwargs):
@@ -206,6 +206,11 @@ class FlatShares(models.Model):
         return self.wing_flat.wing_flat_unique
 
 
+loan_status = [
+        ('active', 'Active'),
+        ('closed', 'Closed')
+    ]
+
 class FlatHomeLoan(models.Model):
     unique_member_shares = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='banks')
     wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
@@ -215,7 +220,7 @@ class FlatHomeLoan(models.Model):
     bank_loan_value = models.CharField(max_length=300)
     bank_loan_acc_no = models.CharField(max_length=300)
     bank_loan_installment = models.CharField(max_length=300)
-    bank_loan_status = models.BooleanField(default=False)
+    bank_loan_status = models.CharField(max_length=200, choices=loan_status, default='active')
     bank_loan_remark = models.CharField(max_length=300)
     bank_noc_file = models.FileField(upload_to='files/', null=True, blank=True)
     date_of_cessation = models.DateField(null=True, blank=True)
@@ -238,6 +243,11 @@ class FlatGST(models.Model):
         return self.wing_flat.wing_flat_unique
 
 
+vehicle_chargable = [
+        ('no', 'No'),
+        ('yes', 'Yes')
+    ]
+
 class FlatMemberVehicle(models.Model):
     unique_member_shares = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='vehicles')
     wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
@@ -247,7 +257,8 @@ class FlatMemberVehicle(models.Model):
     vehicle_brand = models.CharField(max_length=200)
     rc_copy = models.FileField(upload_to='files/')
     sticker_number = models.CharField(max_length=200, null=True, blank=True)
-    chargable = models.CharField(max_length=200, default='')
+    select_charge = models.CharField(max_length=200, choices=vehicle_chargable, default='no')
+    chargable = models.CharField(max_length=200, null=True, blank=True)
     date_of_cessation = models.DateField(null=True, blank=True)
 
     def __str__(self):

@@ -1,6 +1,6 @@
 from .models import *
 from rest_framework import serializers
-
+import os
 
 
 class SocietyCreationSerializer(serializers.ModelSerializer):
@@ -79,7 +79,7 @@ class NomineesSerializer(serializers.ModelSerializer):
 
 # SERIALIZER FOR MEMBER TABLE VIEW
 class MembersSerializer(serializers.ModelSerializer):
-    flat_name = serializers.SerializerMethodField()
+    flat_name_formatted = serializers.SerializerMethodField()
     member_position_formatted = serializers.SerializerMethodField()
     nominees = NomineesSerializer(many=True, required=False)
 
@@ -88,7 +88,7 @@ class MembersSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     # FORMAT FLAT NO.
-    def get_flat_name(self, obj):
+    def get_flat_name_formatted(self, obj):
         flat = obj.wing_flat
         return flat.wing_flat_unique
 
@@ -99,9 +99,16 @@ class MembersSerializer(serializers.ModelSerializer):
 
 
 class FlatSharesSerializers(serializers.ModelSerializer):
+    flat_name_formatted = serializers.SerializerMethodField()
+
     class Meta:
         model = FlatShares
         fields = '__all__'
+
+    # FORMAT FLAT NO.
+    def get_flat_name_formatted(self, obj):
+        flat = obj.wing_flat
+        return flat.wing_flat_unique
 
 
 class FlatDetailSerializers(serializers.ModelSerializer):
@@ -122,21 +129,44 @@ class FlatDetailSerializers(serializers.ModelSerializer):
 
 
 class FlatHomeLoanSerializers(serializers.ModelSerializer):
+    flat_name_formatted = serializers.SerializerMethodField()
+
     class Meta:
         model = FlatHomeLoan
         fields = '__all__'
 
+    # FORMAT FLAT NO.
+    def get_flat_name_formatted(self, obj):
+        flat = obj.wing_flat
+        return flat.wing_flat_unique
+
 
 class FlatGSTSerializers(serializers.ModelSerializer):
+    flat_name_formatted = serializers.SerializerMethodField()
+
     class Meta:
         model = FlatGST
         fields = '__all__'
 
+    # FORMAT FLAT NO.
+    def get_flat_name_formatted(self, obj):
+        flat = obj.wing_flat
+        return flat.wing_flat_unique
+
+
 
 class FlatMemberVehicleSerializer(serializers.ModelSerializer):
+    flat_name_formatted = serializers.SerializerMethodField()
+
     class Meta:
         model = FlatMemberVehicle
         fields = '__all__'
+
+    # FORMAT FLAT NO.
+    def get_flat_name_formatted(self, obj):
+        flat = obj.wing_flat
+        return flat.wing_flat_unique
+
 
 
 class HouseHelpSerializer(serializers.ModelSerializer):
@@ -150,8 +180,8 @@ class HouseHelpAllocationSerializer(serializers.ModelSerializer):
         model = HouseHelpAllocationMaster
         # Taking list instead of all to maintain the order in datatable
         fields = [
-            'wing_flat', 'member_name', 'house_help_name',
-            'role', 'house_help_period_from', 'house_help_period_to', 'aadhar_pan'
+            'id', 'wing_flat', 'member_name', 'house_help_name',
+            'role', 'house_help_period_from', 'house_help_period_to', 'aadhar_pan',
         ]
 
 
@@ -163,15 +193,21 @@ class TenantMasterSerializers(serializers.ModelSerializer):
 
 class TenantAllocationSerializers(serializers.ModelSerializer):
     wing_flat_unique = WingFlatUnique()
+    tenant_noc_filename = serializers.SerializerMethodField()
 
     class Meta:
         model = TenantAllocation
         # Taking list instead of all to maintain the order in datatable
         fields = [
-            'wing_flat', 'member_name', 'tenant_name', 'tenant_from_date',
-            'tenant_to_date', 'tenant_agreement', 'tenant_noc', 'no_of_members', 'aadhar_pan',
+            'id', 'wing_flat', 'member_name', 'tenant_name', 'tenant_from_date',
+            'tenant_to_date', 'tenant_agreement', 'tenant_noc_filename', 'no_of_members', 'aadhar_pan',
+            'tenant_noc'
         ]
 
+    def get_tenant_noc_filename(self, obj):
+        if obj.tenant_noc:
+            return os.path.basename(obj.tenant_noc.name)
+        return None
 
 class MeetingsSerializer(serializers.ModelSerializer):
     # Define a custom serializer field for meeting_type
@@ -184,7 +220,11 @@ class MeetingsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meetings
-        fields = ['id', 'date_of_meeting', 'time_of_meeting', 'place_of_meeting', 'agenda', 'financials', 'other', 'content', 'meeting_type', 'meeting_type_formatted']
+        fields = ['id', 'date_of_meeting', 'time_of_meeting',
+                  'place_of_meeting', 'agenda', 'financials', 'other',
+                  'content', 'meeting_type', 'meeting_type_formatted',
+                  'minutes_content', 'minutes_document', 'minutes_otehr_doc'
+                ]
 
 
 class SuggestionSerializer(serializers.ModelSerializer):

@@ -19,7 +19,7 @@
         <!-- <form> -->
             <div class="modal-header">
             <label class="form-label dataTable-Text" id="exampleModalLabel">Meeting Type:-</label>
-            <select id="toggleSelect" ref="meeting_type" @change="get_meetingtype" v-model="formData.meeting_type" class="form-control ms-3" style="width: max-content;">
+            <select id="toggleSelect" ref="meeting_type" v-model="formData.meeting_type" class="form-control ms-3" style="width: max-content;">
                 <option value="">Select Meeting Type</option>
                 <option value="first_general_meeting">First General Meeting</option>
                 <option value="annual_general_meeting">Annual General Meeting</option>
@@ -207,7 +207,6 @@
                             </div>
                             <button class="btn btn-primary ms-auto me-3 mb-3" style="width: max-content;" type="submit">Submit</button>
                         </div>
-
                     </form>
                 </div>
                 {% endverbatim %}
@@ -274,10 +273,11 @@
     <div class="modal fade" id="attendanceModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
           <div class="modal-content">
-            <div class="modal-header" id="heading">
-              <!-- <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1> -->
-
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header" id="">
+                {% verbatim %}
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Mark Attendance For Meeting {{ singleMeeting.meeting_type_formatted }}</h1>
+                {% endverbatim %}
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                     {% verbatim %}
@@ -344,141 +344,166 @@
     <!-- View Modal -->
   <div class="modal fade" id="viewMeetingModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header" id="heading">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title {{ id }}</h1>
+        <div class="modal-content">
+            <div class="modal-header" id="heading">
+                {% verbatim %}
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">{{ singleMeeting.meeting_type_formatted }}</h1>
+                {% endverbatim %}
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0 m-0 " style="margin-inline: 30px;">
+                <div class="abs" style="z-index: 100;">
+                    <ul class="nav nav-justified aaa nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link abc active" id="meeting-view-tab" data-bs-toggle="tab"
+                                data-bs-target="#meeting-view-tab-pane" type="button" role="tab"
+                                aria-controls="meeting-view-tab-pane" aria-selected="false">Meeting</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link abc" id="minutes-view-tab" data-bs-toggle="tab"
+                                data-bs-target="#minutes-view-tab-pane" type="button" role="tab"
+                                aria-controls="minutes-view-tab-pane" aria-selected="false">Minutes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link abc" id="attendance-view-tab" data-bs-toggle="tab"
+                                data-bs-target="#attendance-view-tab-pane" type="button" role="tab"
+                                aria-controls="attendance-view-tab-pane" aria-selected="false">Attendance</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content w-100" id="myTabContent">
+                    {% verbatim %}
+                        <div class="tab-pane fade show active container" id="meeting-view-tab-pane" role="tabpanel" aria-labelledby="meeting-view-tab" tabindex="0">
+                            <div class="row m-2">
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <p class="lead"><b>Date of Meeting</b></p>
+                                        </div>
+                                        <div class="col-9">
+                                            <p class="lead">{{ singleMeeting.date_of_meeting }}, {{ singleMeeting.time_of_meeting }}</p>
+                                        </div>
+                                    </div>
+                                </div>
 
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <div class="col-lg-12">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <p class="lead">Place of Meeting</p>
+                                        </div>
+                                        <div class="col-9">
+                                            <p class="lead" id="place">{{ singleMeeting.place_of_meeting }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 mb-3" style="border: 1px solid grey;">
+                                    <div class="row">
+                                        <div class="col-12" style="text-align: center;">
+                                            <p class="lead">Agenda</p>
+                                        </div>
+                                        <div class="col-12">
+                                            <div v-html="singleMeeting.content"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <p class="lead">Agenda Document</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <a :href="singleMeeting.agenda" target="_blank">Doc</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <p class="lead">Financals Document</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <a :href="singleMeeting.financials" target="_blank">Doc</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <p class="lead">Other Document</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <a :href="singleMeeting.other" target="_blank">Doc</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade container" id="minutes-view-tab-pane" role="tabpanel" aria-labelledby="minutes-view-tab" tabindex="0">
+                            <div class="row m-2" v-if="singleMeeting.minutes_content">
+                                <div class="col-lg-12 mb-3" style="border: 1px solid grey;">
+                                    <div class="row">
+                                        <div class="col-12" style="text-align: center;">
+                                            <p class="lead">Minutes</p>
+                                        </div>
+                                        <div class="col-12">
+                                            <div v-html="singleMeeting.minutes_content"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <p class="lead">Minutes Document</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <a :href="singleMeeting.minutes_document" target="_blank">Doc</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <p class="lead">Minutes Other Document</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <a :href="singleMeeting.minutes_document" target="_blank">Doc</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h3 class="text-center m-3" v-else>Minutes Content Not Added!</h3>
+                        </div>
+
+                        <div class="tab-pane fade container" id="attendance-view-tab-pane" role="tabpanel" aria-labelledby="attendance-view-tab" tabindex="0">
+                            <div class="row">
+                                <table id="viewAttendanceTable" class="display" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Age</th>
+                                            <th>City</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <td v-for="(value, key) in attendanceViewData" :key="key">{{ value }}</td>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% endverbatim %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-            {% verbatim %}
-         <!-- <p><strong>Date of Meeting:</strong> <span id="dateOfMeeting"></span></p> -->
-
-         <div class="row">
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-6">
-                        <p class="view-label">Date of Meeting</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="view-inps" id="date" v-html="sanitizeHTML(singleMeeting.date_of_meeting)"> </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-6">
-                        <p class="view-label">Time of Meeting</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="view-inps" id="time"></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-12">
-                <div class="row">
-                    <div class="col-3">
-                        <p class="view-label">Place of Meeting</p>
-                    </div>
-                    <div class="col-9">
-                        <p class="view-inps" id="place"></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-12 mb-3" style="border: 1px solid grey;">
-                <div class="row">
-                    <div class="col-12" style="text-align: center;">
-                        <p class="view-label">Agenda</p>
-                    </div>
-                    <div class="col-12">
-                        <div v-html="singleMeeting.content"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-6">
-                        <p class="view-label">Agenda Document</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="view-inps" id="agendaDoc"></p>
-                        <!-- <div id="agendaDoc">
-
-                        </div> -->
-                        <!-- <p class="view-inps"><a href="${this.singleMeeting.documentUrl}" target="_blank">View Document</a></p> -->
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-6">
-                        <p class="view-label">Financals Document</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="view-inps" id="financialsDoc"></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-6">
-                        <p class="view-label">Other Document</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="view-inps" id="otherDoc"></p>
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- <hr style="height: 2px; background: #000 !important; border: 1px solid #000;"> -->
-
-            <div class="col-lg-12 mb-3" style="border: 1px solid grey;">
-                <div class="row">
-                    <div class="col-12" style="text-align: center;">
-                        <p class="view-label">Minutes</p>
-                    </div>
-                    <div class="col-12">
-                        <div v-html="singleMeeting.minutes_content"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-6">
-                        <p class="view-label">Minutes Document</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="view-inps" id="minutes_document"></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-6">
-                        <p class="view-label">Minutes Other Document</p>
-                    </div>
-                    <div class="col-6">
-                        <p class="view-inps" id="minutes_other"></p>
-                    </div>
-                </div>
-            </div>
-         </div>
-         {% endverbatim %}
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
-        </div>
-      </div>
     </div>
   </div>
 
@@ -488,12 +513,14 @@
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header" id="heading">
-              <!-- <h1 class="modal-title fs-5">{{ form.edit }}</h1> -->
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                {% verbatim %}
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">{{ form.meeting_type_formatted }}</h1>
+                {% endverbatim %}
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 {% verbatim %}
-                <form @submit.prevent="minutesForm(form.id)" class="mb-3" enctype="multipart/form-data" ref="minutesForms">
+                <form @submit.prevent="minutesForm(singleMeeting.id)" class="mb-3" enctype="multipart/form-data" ref="minutesForms">
                     <div class="accordion accordion-flush" id="accordionFlushExample">
                         <div class="accordion-item" style="border: 1px solid grey;">
                           <h2 class="accordion-header">
@@ -503,57 +530,69 @@
                           </h2>
                             <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
                                 <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-lg-4">
-                                            <div class="mb-3 w-100 sty-input-wrapper">
-                                                <input type="text" class="sty-inp form-control notEditable" id="editdate" readonly v-model="form.date_of_meeting">
-                                                <label class="sty-label">Date of Meeting</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4">
-                                            <div class="mb-3 w-100 sty-input-wrapper">
-                                                <input type="text" class="sty-inp form-control notEditable" id="edittime" readonly v-model="form.time_of_meeting">
-                                                <label class=" sty-label">Time of Meeting</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4">
-                                            <div class="mb-3 w-100 sty-input-wrapper">
-                                                <input type="text" class="sty-inp form-control notEditable" id="editplace" readonly v-model="form.place_of_meeting">
-                                                <label class="sty-label">Place of Meeting</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12 mb-3 d-flex" style="flex-direction: column;">
-                                            <label style="text-transform: uppercase; color: #2b96f1; font-family: 'Calibri', sans-serif;">Agenda of Meeting</label>
-                                            <p id="editContnet" class="sty-inp notEditable" v-html="sanitizeHTML(form.sanitizedContent)" readonly></p>
-                                        </div>
-
-
-                                        <div class="col-lg-4">
-                                            <div class="d-flex mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <input type="text" class="sty-inp form-control notEditable" id="editAgenda" v-model="form.agenda" readonly>
-                                                    <label class="sty-label">Agenda Document</label>
+                                    <div class="row m-2">
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <p class="lead"><b>Date of Meeting</b></p>
+                                                </div>
+                                                <div class="col-9">
+                                                    <p class="lead">{{ singleMeeting.date_of_meeting }}, {{ singleMeeting.time_of_meeting }}</p>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="col-lg-4">
-                                            <div class="d-flex mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <input type="text" class="sty-inp form-control notEditable" id="editFinancials" v-model="form.financials" >
-                                                    <label class="sty-label">Financals Document</label>
+                                        <div class="col-lg-12">
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <p class="lead">Place of Meeting</p>
+                                                </div>
+                                                <div class="col-9">
+                                                    <p class="lead" id="place">{{ singleMeeting.place_of_meeting }}</p>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="col-lg-4">
-                                            <div class="d-flex mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <input type="text" class="sty-inp form-control notEditable" id="editOther" v-model="form.other">
-                                                    <label class="sty-label">Other Document</label>
+                                        <div class="col-lg-12 mb-3" style="border: 1px solid grey;">
+                                            <div class="row">
+                                                <div class="col-12" style="text-align: center;">
+                                                    <p class="lead">Agenda</p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div v-html="singleMeeting.content"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <p class="lead">Agenda Document</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <a :href="singleMeeting.agenda" target="_blank">Doc</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <p class="lead">Financals Document</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <a :href="singleMeeting.financials" target="_blank">Doc</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <p class="lead">Other Document</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <a :href="singleMeeting.other" target="_blank">Doc</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -595,7 +634,7 @@
                                         <div class="col-lg-4">
                                             <div class="d-flex">
                                                 <div class="w-100 sty-input-wrapper">
-                                                    <input type="file" class="sty-inp form-control" id="minutes_other" ref="minutes_other" @change="handleFileChange1">
+                                                    <input type="file" class="sty-inp form-control" id="minutes_other" ref="minutes_other">
                                                     <label class="sty-label">Other Document</label>
                                                 </div>
                                                 <div class="prev">
@@ -650,7 +689,7 @@
                 </div>
                 <div v-if="previousSuggestions.length > 0">
                     <h4>Previous Suggestions:</h4>
-                    <p v-for="(suggestion, index) in previousSuggestions" :key="index">
+                    <p v-for="(suggestion, index) in previousSuggestions" :key="index" class="suggestionStyle">
                         {{ suggestion.suggestions }}
                     </p>
                 </div>

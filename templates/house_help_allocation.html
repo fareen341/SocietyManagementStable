@@ -7,10 +7,10 @@
 
 <div class="container">
     <div class="member-title mt-4 d-flex" style="justify-content: space-between;">
-        <h3 class="lead" style="font-size: 27px;">House Help Details</h3>
+        <h3 class="lead" style="font-size: 27px;">Allocated House Help</h3>
         <div class="gap-4">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                data-bs-target="#houseHelpAllocationCreation">Create House Help</button>
+                data-bs-target="#houseHelpAllocationCreation">Allocate House Help</button>
         </div>
     </div>
     <div class="mt-4">
@@ -21,6 +21,7 @@
                 <thead>
                     <tr>
                         <th>Actions</th>
+                        <th>Id</th>
                         <th>Unit</th>
                         <th>Unit Owner Name</th>
                         <th>House Help Name</th>
@@ -58,9 +59,8 @@
                                     <div class="row">
                                         <div class="col-lg-4 mb-4">
                                             <div class="sty-input-wrapper w-100">
-                                                <select v-model="formData.wing_flat" class="w-100 sty-inp form-control">
-                                                    <option value="key">value</option>
-                                                    <option value="key">value</option>
+                                                <select v-model="formData.wing_flat" class="w-100 sty-inp form-control notEditable">
+                                                    <option :value="formData.wing_flat">{{ formData.wing_flat }}</option>
                                                 </select>
                                                 <label for="id_get_hh_flat_owner_name" class="sty-label">Wing & Flat No.</label>
                                                 <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
@@ -70,25 +70,34 @@
 
                                         <div class="col-lg-4 mb-4">
                                             <div class="sty-input-wrapper w-100">
-                                                <input type="text" class="sty-inp form-control w-100" v-model="formData.owner_name">
+                                                <input type="text" class="sty-inp form-control w-100 notEditable" v-model="formData.member_name">
                                                 <label for="id_flat_primary_owner_hh" class="sty-label">Owner Name</label>
-                                                <span v-if="errors.owner_name" class="error">{{ errors.owner_name[0] }}</span>
+                                                <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
                                                 <span v-else></span>
                                             </div>
                                         </div>
 
                                         <div class="col-lg-4 mb-4">
                                             <div class="sty-input-wrapper w-100">
-                                                <input type="text" class="sty-inp form-control w-100" v-model="formData.house_help_pan">
-                                                <label for="" class="sty-label">Aadhaar / PAN No.</label>
-                                                <span v-if="errors.house_help_pan" class="error">{{ errors.house_help_pan[0] }}</span>
+                                                <input type="text" class="sty-inp form-control w-100 notEditable" v-model="formData.aadhar">
+                                                <label for="" class="sty-label">Aadhaar</label>
+                                                <span v-if="errors.aadhar" class="error">{{ errors.aadhar[0] }}</span>
                                                 <span v-else></span>
                                             </div>
                                         </div>
 
                                         <div class="col-lg-4 mb-4">
                                             <div class="sty-input-wrapper w-100">
-                                                <input type="text" class="sty-inp form-control w-100" v-model="formData.house_help_name" />
+                                                <input type="text" class="sty-inp form-control w-100 notEditable" v-model="formData.aadhar_pan">
+                                                <label for="" class="sty-label">PAN No.</label>
+                                                <span v-if="errors.aadhar_pan" class="error">{{ errors.aadhar_pan[0] }}</span>
+                                                <span v-else></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 mb-4">
+                                            <div class="sty-input-wrapper w-100">
+                                                <input type="text" class="sty-inp form-control w-100 notEditable" v-model="formData.house_help_name" />
                                                 <label for="" class="sty-label">House Help Name</label>
                                                 <span v-if="errors.house_help_name" class="error">{{ errors.house_help_name[0] }}</span>
                                                 <span v-else></span>
@@ -97,9 +106,9 @@
 
                                         <div class="col-lg-4 mb-4">
                                             <div class="sty-input-wrapper w-100">
-                                                <input type="text" class="sty-inp form-control w-100" v-model="formData.house_help_role">
-                                                <label for="id_hh_role" class="sty-label">House Help Role</label>
-                                                <span v-if="errors.house_help_role" class="error">{{ errors.house_help_role[0] }}</span>
+                                                <input type="text" class="sty-inp form-control w-100 notEditable" v-model="formData.role">
+                                                <label class="sty-label">House Help Role</label>
+                                                <span v-if="errors.role" class="error">{{ errors.role[0] }}</span>
                                                 <span v-else></span>
                                             </div>
                                         </div>
@@ -145,13 +154,14 @@
                         <div class="modal-body">
                             {% verbatim %}
                                 <h1>View Data</h1>
-                                <p>wing_flat: {{houseHelpAllocationData.wing_flat_together }}</p>
-                                <p>owner_name: {{houseHelpAllocationData.owner_name_house_help_name }}</p>
-                                <p>house_help_aadhar: {{houseHelpAllocationData.house_help_aadhar_num }}</p>
-                                <p>house_help_period_from: {{houseHelpAllocationData.house_help_pan_num }}</p>
-                                <p>house_help_pan: {{houseHelpAllocationData.house_help_period_from }}</p>
-                                <p>house_help_name: {{houseHelpAllocationData.house_help_period_to }}</p>
-                                <p>house_help_role: {{houseHelpAllocationData.house_help_role }}</p>
+                                <p>wing_flat: {{houseHelpAllocationData.wing_flat }}</p>
+                                <p>owner_name: {{houseHelpAllocationData.member_name}}</p>
+                                <p>house_help_aadhar: {{houseHelpAllocationData.aadhar }}</p>
+                                <p>house_help_pan : {{houseHelpAllocationData.aadhar_pan }}</p>
+                                <p>house_help_period_from: {{houseHelpAllocationData.house_help_period_from }}</p>
+                                <p>house_help_period_to: {{houseHelpAllocationData.house_help_period_to }}</p>
+                                <p>house_help_role: {{houseHelpAllocationData.role }}</p>
+                                <p>house_help_name: {{houseHelpAllocationData.house_help_name }}</p>
                             {% endverbatim %}
                         </div>
                     </div>
@@ -185,8 +195,8 @@
                             <div class="col-lg-4 mb-4">
                                 <div class="sty-input-wrapper w-100">
                                     <input type="text" class="sty-inp form-control w-100" v-model="formData.member_name">
-                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.pk">
-                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.aadharPanPk">
+                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.pk" hidden>
+                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.aadharPanPk" hidden>
 
                                     <label for="" class="sty-label">Owner Name</label>
                                     <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>

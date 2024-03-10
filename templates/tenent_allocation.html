@@ -19,6 +19,7 @@
                 <thead>
                     <tr>
                         <th>Actions</th>
+                        <th>Id</th>
                         <th>Unit</th>
                         <th>Unit Owner Name</th>
                         <th>Tenant Name</th>
@@ -28,6 +29,7 @@
                         <th>NOC</th>
                         <th>No. Of Members</th>
                         <th>Tenant PAN No.</th>
+                        <th>Tenant Aadhar No.</th>
                         <th>Tenant Aadhar No.</th>
                         <!-- <th v-for="(value, key) in tenantData[0]" :key="key">{{ key }}</th> -->
                     </tr>
@@ -108,7 +110,7 @@
 
                             <div class="col-lg-4 mb-4">
                                 <div class="sty-input-wrapper w-100">
-                                    <input type="date" class="sty-inp form-control w-100" v-model="formData.tenant_to_date" disabled>
+                                    <input type="date" class="sty-inp form-control w-100" v-model="formData.tenant_to_date">
                                     <label for="id_tenant_period_to" class="sty-label">Period To</label>
                                     <span v-if="errors.tenant_to_date" class="error">{{ errors.tenant_to_date[0] }}</span>
                                     <span v-else></span>
@@ -217,7 +219,7 @@
 
                             <div class="col-lg-4 mb-4">
                                 <div class="sty-input-wrapper w-100">
-                                    <input type="date" class="sty-inp form-control w-100 notEditable" v-model="formData.tenant_from_date" readonly>
+                                    <input type="date" class="sty-inp form-control w-100" v-model="formData.tenant_from_date" readonly>
                                     <label for="id_tenant_period_from" class="sty-label">Period From</label>
                                     <span v-if="errors.tenant_from_date" class="error">{{ errors.tenant_from_date[0] }}</span>
                                     <span v-else></span>

@@ -544,6 +544,30 @@ class HouseHelpAllocationView(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        updated_serializers = serializer.data
+
+        # Code to customize the serialized data
+        wing_flat_id = updated_serializers['wing_flat']
+        wing_flat = WingFlatUnique.objects.get(id=wing_flat_id).wing_flat_unique
+        updated_serializers['wing_flat'] = wing_flat
+
+        member_id = updated_serializers['member_name']
+        member_name = Members.objects.get(id=member_id).member_name
+        updated_serializers['member_name'] = member_name
+
+        aadhar_pan = updated_serializers['aadhar_pan']
+        aadhar_pan_obj = HouseHelpAllocationMaster.objects.filter(
+            Q(aadhar_pan=aadhar_pan)
+        ).values("aadhar_pan__house_help_pan_number", "aadhar_pan__house_help_aadhar_number", "aadhar_pan__house_help_name").first()
+
+        updated_serializers['aadhar_pan'] = aadhar_pan_obj['aadhar_pan__house_help_pan_number']
+        updated_serializers['house_help_name'] = aadhar_pan_obj['aadhar_pan__house_help_name']
+        updated_serializers['aadhar'] = aadhar_pan_obj['aadhar_pan__house_help_aadhar_number']
+        return Response(updated_serializers)
+
 
 class TenantMasterView(viewsets.ModelViewSet):
     queryset = TenantMaster.objects.all()
@@ -595,6 +619,37 @@ class TenantAllocationView(viewsets.ModelViewSet):
             house_help_obj['aadhar'] = aadhar_pan_obj['aadhar_pan__tenant_aadhar_number']
 
         return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        updated_serializers = serializer.data
+
+        wing_flat = updated_serializers['wing_flat']
+        wing_flat = WingFlatUnique.objects.get(id=wing_flat).wing_flat_unique
+        updated_serializers['wing_flat'] = wing_flat
+
+        # Code to get member name
+        member_name = updated_serializers['member_name']
+        member_name = Members.objects.get(id=member_name).member_name
+        updated_serializers['member_name'] = member_name
+
+        # Code to get aadhar/pan
+        aadhar_pan = updated_serializers['aadhar_pan']
+        aadhar_pan_obj = TenantAllocation.objects.filter(
+            Q(aadhar_pan=aadhar_pan)
+        ).values("aadhar_pan__tenant_pan_number", "aadhar_pan__tenant_aadhar_number").first()
+        updated_serializers['aadhar_pan'] = aadhar_pan_obj['aadhar_pan__tenant_pan_number']
+
+        # Code to get tenant name
+        tenant_name = updated_serializers['tenant_name']
+        tenant_name_obj = TenantAllocation.objects.filter(tenant_name=tenant_name).values("tenant_name__tenant_name").first()
+        updated_serializers['tenant_name'] = tenant_name_obj['tenant_name__tenant_name']
+
+        # Additional aadhar field
+        updated_serializers['aadhar'] = aadhar_pan_obj['aadhar_pan__tenant_aadhar_number']
+
+        return Response(updated_serializers)
 
 
 def get_owner_name(request, flat_id):
@@ -679,6 +734,15 @@ class SaveAttendanceView(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        try:
+            instance_id = kwargs.get('pk')
+            queryset = Attendance.objects.filter(meeting_id=instance_id)
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        except Attendance.DoesNotExist:
+            return Response({"error": "Attendance not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
 def get_flat_with_members(request):

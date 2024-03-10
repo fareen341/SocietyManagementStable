@@ -10,7 +10,7 @@ $(document).ready(function () {
 
 
     // $(".next").click(function (e) {
-    $("#nextBtn, #nextBtn2, #nextBtn3, #redirectToShares, #hLoan, #redirectToGst, #addGstNext").click(function (e) {
+    $("#nextBtn, #nextBtn2, #nextBtn3, #redirectToMember, #redirectToShares, #hLoan, #redirectToGst, #addGstNext").click(function (e) {
         e.preventDefault(); // Prevent default form submission behavior
         e.stopPropagation();
 
@@ -962,9 +962,12 @@ var app = new Vue({
         formData2: {
             folio_number: '',
         },
-        homeLoanData: {},
+        homeLoanData: {
+            bank_loan_status: ''
+        },
         members: [],
         errors: {},
+        flatData: {},
         memberData: {},
         memberHistory: [],
         primaryMembers: [],
@@ -976,9 +979,8 @@ var app = new Vue({
             member_name: ''
         },
         sharesData: {},
-        homeLoanData: {},
+        // homeLoanData: {},
         gstData: {},
-        vehicleData: [],
         addSharesOnEdit: false,
         addHomeLoanOnEdit: false,
         addGSTOnEdit: false,
@@ -994,7 +996,20 @@ var app = new Vue({
         gstHistoryData: [],
         vehicleHistoryData: [],
         addNewNomineeMemberId: '',
+        addNewNomineeMemberName: '',
         addNomineeError: {},
+        flat_status: [],
+        flatFormData: {},
+
+        // Not Found Error Msg:
+        flatDataFoundErrorMsg: {},
+        sharesDataNotFoundErrorMsg: {},
+        homeLoanDataNotFoundMsg: {},
+        gstDataNotFoundMsg: {},
+
+
+        // Flat Name
+        flatName: '',
     },
     methods: {
         // ADD VEHICLE START
@@ -1016,8 +1031,21 @@ var app = new Vue({
         getFormNumber: index => index + 1,
         // ADD VEHICLE END
 
-        viewMemberData(id) {
+        viewMemberData(id, flat_id, flat_name) {
+            this.flatName = flat_name;
             $('#viewMemberModal').modal('show');
+            axios.get(`http://127.0.0.1:8000/api/flat_detail/${flat_id}`)
+                .then(response => {
+                    this.flatData = response.data;
+                    console.log("FLAT STATUS1111111111===========000000000000000000", this.flatData);
+                })
+                .catch(error => {
+                    console.error('Error fetching data S1111111111===========0000000000000000:', error.response.data.error);
+                    this.flatData = false;
+                    this.flatDataFoundErrorMsg = error.response.data.error;
+                    // console.log("FLAT DETAILS====?????", this.flatData);
+                });
+
             axios.get(`http://127.0.0.1:8000/api/members/${id}`)
                 .then(response => {
                     this.memberData = response.data;
@@ -1032,6 +1060,8 @@ var app = new Vue({
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
+                    this.homeLoanData = false;
+                    this.homeLoanDataNotFoundMsg = error.response.data.error;
                 });
 
             axios.get(`http://127.0.0.1:8000/api/shares/${id}`)
@@ -1040,6 +1070,8 @@ var app = new Vue({
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
+                    this.sharesData = false;
+                    this.sharesDataNotFoundErrorMsg = error.response.data.error;
                 });
 
             axios.get(`http://127.0.0.1:8000/api/flat-gst/${id}`)
@@ -1048,21 +1080,35 @@ var app = new Vue({
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
+                    this.gstData = false;
+                    this.gstDataNotFoundMsg = error.response.data.error;
                 });
 
             axios.get(`http://127.0.0.1:8000/api/vehicle/${id}/`)
                 .then(response => {
                     this.vehicleData = response.data;
-                    console.log("VEHICLE ID=>>---------------->>>->>>", this.vehicleData);
+                    console.log("VEHICLE ID=>>---------------->>>->>>", response.data.length > 0);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
         },
-        editMemberData(id, wing_flat) {
+        editMemberData(id, wing_flat, flat_name) {
             this.wing_flat = wing_flat;
+            this.flatName = flat_name;
             $('#editMemberModal').modal('show');
-            console.log("id:===", id);
+            console.log("id:===", this.wing_flat);
+            // FETCH FLAT DETAILS
+            axios.get(`http://127.0.0.1:8000/api/flat_detail/${this.wing_flat}/`)
+                .then(response => {
+                    this.flatFormData = response.data;
+                    console.log("Flat EDIT MODAL===>", this.flatFormData);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    this.flatFormData = {};
+                });
+
             axios.get(`http://127.0.0.1:8000/api/members/${id}/`)
                 .then(response => {
                     this.memberformData = response.data;
@@ -1098,6 +1144,7 @@ var app = new Vue({
                     this.addHomeLoanOnEdit = true;
                     this.homeLoanData = {
                         wing_flat: wing_flat,
+                        bank_loan_status: ''
                     }
                 });
 
@@ -1130,7 +1177,6 @@ var app = new Vue({
                 });
         },
         addSharesVue() {
-            alert("calling");
             const formData = new FormData();
             for (const key in this.formData) {
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
@@ -1141,28 +1187,46 @@ var app = new Vue({
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             axios.post('http://127.0.0.1:8000/api/shares/', formData)
                 .then(response => {
-                    console.log('Form submitted successfully:', response.data);
-                    // this.nextAction();
-                    alert("success");
+                    toastr.success(response.message, "Shares Added Successfully!");
+                    $('#editMemberModal').modal('hide');
                 })
                 .catch(error => {
                     this.errors = error.response.data
                 });
         },
         updateSharesData(id) {
-            console.log("id===>", id);
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             const formData = new FormData();
             for (const key in this.formData) {
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-                    console.log(key);
-                    formData.append(key, this.formData[key]);
+                    if(key !== 'date_of_cessation'){
+                        formData.append(key, this.formData[key]);
+                    }
                 }
             }
             axios.patch(`http://127.0.0.1:8000/api/shares/${id}/`, formData)
                 .then(response => {
-                    console.log("Shares data uPdated", response.data);
+                    toastr.success(response.message, "Shares Updated Successfully!");
+                    $('#editMemberModal').modal('hide');
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        submitFlatDetailForm(){
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            const flatFormSubmit = new FormData();
+            for (const key in this.flatFormData) {
+                if (Object.prototype.hasOwnProperty.call(this.flatFormData, key)) {
+                    console.log(key);
+                    flatFormSubmit.append(key, this.flatFormData[key]);
+                }
+            }
+            axios.patch(`http://127.0.0.1:8000/api/flat_detail/${this.wing_flat}/`, flatFormSubmit)
+                .then(response => {
+                    console.log("Flat data uPdated", response.data);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -1188,21 +1252,35 @@ var app = new Vue({
                 }
             })
                 .then(response => {
-                    console.log('Form submitted successfully:', response.data);
-                    this.nextAction();
+                    toastr.success(response.message, "Home Loan Added Successfully!");
+                    $('#editMemberModal').modal('hide');
                 })
                 .catch(error => {
                     this.errors = error.response.data
-                    console.log("Error: ->", error.response.data.folio_number[0]);
+                    console.log("Error: ->", this.errors);
                 });
         },
-        addNomineeOnEdit(member_id) {
+        addNomineeOnEdit(member_id, member_name) {
             this.addNewNomineeMemberId = member_id;
+            this.addNewNomineeMemberName = member_name;
+            $('#editMemberModal').modal('hide');
             $('#addNomineeModal').modal('show');
+        },
+        openMemberModal(){
+            $('#addNomineeModal').modal('hide');
+            $('#editMemberModal').modal('show');
+        },
+        addNewData(newData) {
+            /* THIS FUNCTION GETS CALL TO UPDATE THE NOMINEES WITHOUT PAGE REFRESH */
+            const memberData = this.memberformData.find(data => data.id === newData.member_name);
+            if (memberData) {
+                memberData.nominees.push(newData);
+            }
+            $('#addNomineeModal').modal('hide');
+            $('#editMemberModal').modal('show');
         },
         addNomineeOnClick(member_id) {
             const nominee = new FormData();
-
             nominee.append("member_name", this.addNewNomineeMemberId);
             for (const key in this.nominee) {
                 if (Object.prototype.hasOwnProperty.call(this.nominee, key)) {
@@ -1213,12 +1291,11 @@ var app = new Vue({
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             axios.post('http://127.0.0.1:8000/api/add-nominee/', nominee)
                 .then(response => {
-                    console.log('Form submitted successfully:', response.data);
-                    this.nextAction();
+                    this.addNewData(response.data);
+                    toastr.success(response.message, "Nominee Added!");
                 })
                 .catch(error => {
-                    this.addNomineeError = error.response.data
-                    console.log("Errors=000=>", this.addNomineeError);
+                    console.log("Errors -->", error);
                 });
         },
         addGST() {
@@ -1232,8 +1309,8 @@ var app = new Vue({
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             axios.post('http://127.0.0.1:8000/api/flat-gst/', gstData)
                 .then(response => {
-                    console.log('Form submitted successfully:', response.data);
-                    this.nextAction();
+                    toastr.success(response.message, "GST Data Added Successfully!");
+                    $('#editMemberModal').modal('hide');
                 })
                 .catch(error => {
                     this.errors = error.response.data
@@ -1241,18 +1318,20 @@ var app = new Vue({
                 });
         },
         loanFormSubmit(id) {
-            console.log("Bank LOan", id);
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             const formData = new FormData();
             for (const key in this.homeLoanData) {
                 if (Object.prototype.hasOwnProperty.call(this.homeLoanData, key)) {
-                    formData.append(key, this.homeLoanData[key]);
+                    if(key !== 'date_of_cessation'){
+                        formData.append(key, this.homeLoanData[key]);
+                    }
                 }
             }
             axios.patch(`http://127.0.0.1:8000/api/home-loan/${id}/`, formData)
                 .then(response => {
-                    console.log("Shares data uPdated", response.data);
+                    toastr.success(response.message, "Home Loan Updated Successfully!");
+                    $('#editMemberModal').modal('hide');
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -1264,19 +1343,23 @@ var app = new Vue({
             const formData = new FormData();
             for (const key in this.gstData) {
                 if (Object.prototype.hasOwnProperty.call(this.gstData, key)) {
-                    formData.append(key, this.gstData[key]);
+                    if(key !== 'date_of_cessation'){
+                        formData.append(key, this.gstData[key]);
+                    }
                 }
             }
             axios.patch(`http://127.0.0.1:8000/api/flat-gst/${id}/`, formData)
                 .then(response => {
-                    console.log("Shares data uPdated", response.data);
+                    toastr.success(response.message, "GST Data Updated Successfully!");
+                    $('#editMemberModal').modal('hide');
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
         },
         vehicleEditSubmit() {
-            console.log("VEHICLE COMPLETE DATA->", this.vehicleData);
+            let successfulSubmissions = 0;
+            let failedSubmissions = 0;
             this.vehicleData.forEach((form, index) => {
                 const formData = new FormData();
 
@@ -1287,7 +1370,9 @@ var app = new Vue({
                     vehicle_number: form.vehicle_number,
                     vehicle_brand: form.vehicle_brand,
                     sticker_number: form.sticker_number,
-                    chargable: form.chargable ? form.chargable : '',
+                    // chargable: form.chargable ? form.chargable : '',
+                    chargable: form.select_charge === 'no' ? '' : form.chargable,
+                    select_charge: form.select_charge,
                 }
 
                 formData.append('data', JSON.stringify(payload));
@@ -1307,19 +1392,30 @@ var app = new Vue({
                     }
                 })
                     .then(response => {
-                        console.log('Form data submitted successfully:', response.data);
+                        successfulSubmissions++;
+                        if (successfulSubmissions === this.vehicleData.length) {
+                            toastr.success(response.message, "Vehicle Data Updated Successfully!");
+                            $('#editMemberModal').modal('hide');
+                        }
                     })
                     .catch(errors => {
-                        console.error('Error submitting form data:', errors);
-                        this.errors = errors.response.data.errors;
+                        failedSubmissions++;
+                        toastr.error("Please Correct All Errors!");
+                        console.log("Error: ", errors);
                     });
             });
         },
         addVehicleOnEditModal() {
+            this.forms = [{}];
+            $('#editMemberModal').modal('hide');
             $('#addVehicleModal').modal('show');
         },
+        hideVehicleOpenMemberModal(){
+            $('#addVehicleModal').modal('hide');
+            $('#editMemberModal').modal('show');
+        },
         addVehicleOnEditButton() {
-            // console.log("GET WING FLAT!!!!!!!!!!!!!!!!==========", this.wing_flat)
+            let successfulSubmissions = 0;
             this.forms.forEach((form, index) => {
                 const vehicleDataOnEdit = new FormData();
 
@@ -1331,6 +1427,7 @@ var app = new Vue({
                     vehicle_brand: form.vehicle_brand,
                     sticker_number: form.sticker_number,
                     chargable: form.chargable ? form.chargable : '',
+                    select_charge: form.select_charge,
                 }
 
                 vehicleDataOnEdit.append('data', JSON.stringify(payload));
@@ -1351,7 +1448,13 @@ var app = new Vue({
                     }
                 })
                     .then(response => {
-                        console.log('Form data submitted successfully:', response.data);
+                        successfulSubmissions++;
+                        if (successfulSubmissions === this.forms.length) {
+                            toastr.success(response.message, "Vehicle Data Added Successfully!");
+                            $('#addVehicleModal').modal('hide');
+                            $('#editMemberModal').modal('show');
+                            this.vehicleData.push(response.data);
+                        }
                     })
                     .catch(errors => {
                         console.error('Error submitting form data:', errors);
@@ -1360,6 +1463,9 @@ var app = new Vue({
             });
         },
         submitEditedMemberData() {
+            let successfulSubmissions = 0;
+            let failedSubmissions = 0;
+
             console.log("MEMBER COMPLETE DATA->", this.memberData);
             let cessation = ''
             this.memberformData.forEach((form, index) => {
@@ -1372,10 +1478,10 @@ var app = new Vue({
             console.log(cessation);
 
             this.memberformData.forEach((form, index) => {
+                console.log("MEMER ID-//////////////////>", form);
                 const formData = new FormData();
                 delete form.sales_agreement;
                 delete form.other_attachment;
-                console.log("MEMER ID->", form.id);
                 console.log("ONLY FORM->", form);
                 console.log("ONLY FORM->", form.sales_agreement);
                 const payload = {};
@@ -1421,25 +1527,39 @@ var app = new Vue({
                     }
                 })
                     .then(response => {
-                        console.log('Form data submitted successfully. Proceeding to the next action.', response.data);
-                        this.nextAction();
+                        successfulSubmissions++;
+                        if (successfulSubmissions === this.memberformData.length) {
+                            toastr.success(response.message, "Member Updated Successfully!");
+                            $('#editMemberModal').modal('hide');
+                        }
+                        // Update Datatable, DONT DELETE USEFULL LATER.
+                        // console.log("RESPONSE DATA===>", response.data);
+                        // const index = this.members.findIndex(item => item.id === form.id);
+                        // if (index !== -1) {
+                        //     this.$set(this.members, index, response.data);
+                        // }
+                        // console.log("LOG LOG LOG", this.members);
                     })
                     .catch(error => {
+                        failedSubmissions++;
+                        toastr.error("Please Correct All Errors!");
                         this.required_docs_errors = error.response
                     });
             });
         },
-        addMemberData(id) {
+        addMemberData(id, flat_id, flat_name) {
+            this.flatName = flat_name;
             $('#addMemberModal').modal('show');
         },
-        memberHistoryData(wing_flat) {
-            console.log("wing_flat=======", wing_flat);
+        memberHistoryData(wing_flat, flat_name) {
+            this.flatName = flat_name;
+            console.log("wing_flat=======", this.flatName );
             $('#memberHistoryModal').modal('show');
             axios.get(`http://127.0.0.1:8000/api/history/?wing_flat__id=${wing_flat}`)
                 .then(response => {
                     if (response.data) {
-                        console.log("RESPONSE ~~~~~~~~~~~~~~~~~~~~~~~~==>", response.data[0]['same_flat_member_identification']);
                         this.memberHistory = response.data;
+                        console.log("RESPONSE ~~~~~~~~~~~~~~~~~~~~~~~~==>", this.memberHistory.length > 0);
 
                         if (this.memberHistory.length != 0) {
                             this.primaryMembers = [];
@@ -1458,7 +1578,7 @@ var app = new Vue({
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching data:', error);
+                    console.error('Error fetching data member history data~~~~~~~~~~~~~~~~:', error);
                 });
 
             // GET SHARES DATA
@@ -1510,19 +1630,31 @@ var app = new Vue({
         },
         loanStatus(event) {
             this.attach_noc = false;
-            if (event.target.value == 'yes') {
+            if (event.target.value == 'closed') {
                 this.attach_noc = true;
             }
         },
-        hasError() {
-
-        }
+        hasError() {},
+        sliceAddress(address) {
+            const words = address.split(' '); // Split the address into words
+            if (words.length > 5) {
+              return words.slice(0, 5).join(' ') + '...'; // Join the first 10 words and add ellipsis
+            } else {
+              return address; // If the address has less than 10 words, return as it is
+            }
+          }
     },
     mounted() {
         axios.get('http://127.0.0.1:8000/api/members/')
             .then(response => {
                 console.log("DATA===", response.data);
                 response.data.forEach(element => {
+                    console.log("MEMBER====FAREEN====>", element);
+                    delete element.date_of_cessation;
+                    delete element.reason_for_cessation;
+                    delete element.same_flat_member_identification;
+                    // delete element.wing_flat;
+                    delete element.member_position;
                     delete element.nominees;
                 });
 
@@ -1530,6 +1662,15 @@ var app = new Vue({
                 $(document).ready(function () {
                     $('#example').DataTable();
                 });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // GET FLAT STATUS DROPDOWN
+        axios.get(`http://127.0.0.1:8000/api/get_flats_status/`)
+            .then(response => {
+                this.flat_status = response.data;
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -1660,6 +1801,72 @@ new Vue({
     },
 });
 
+
+
+// Add Flat Details
+new Vue({
+    el: '#flatDetailVue',
+    data: {
+        flat_status: [],
+        units: [],
+        formData: {},
+        errors: {},
+        attach_noc: false,
+    },
+    methods: {
+        submitFlatDetailForm() {
+            this.errors = {};
+            const formData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    formData.append(key, this.formData[key]);
+                }
+            }
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/flat_master_detail/', formData)
+                .then(response => {
+                    console.log('Form submitted successfully:', response.data);
+                    this.nextAction();
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error: ->", this.errors);
+                });
+            // $("#redirectToMember").trigger("click");
+        },
+        loanStatus(event) {
+            this.attach_noc = false;
+            if (event.target.value == 'yes') {
+                this.attach_noc = true;
+            }
+        },
+        nextAction() {
+            console.log('Form data submitted successfully. Proceeding to the next action.');
+            $("#redirectToMember").trigger("click");
+        },
+    },
+    mounted() {
+        // GET FLATS DROPDOWN
+        axios.get(`http://127.0.0.1:8000/api/wing/`)
+            .then(response => {
+                this.units = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // GET FLAT STATUS DROPDOWN
+        axios.get(`http://127.0.0.1:8000/api/get_flats_status/`)
+            .then(response => {
+                this.flat_status = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    },
+});
 
 // Add Shares Details
 new Vue({
@@ -1914,13 +2121,50 @@ new Vue({
 var app = new Vue({
     el: '#houseHelpTableDiv',
     data: {
-        formData: {
-        },
+        formData: {},
+        formInput: new FormData(),
         houseHelp: [],
         errors: {},
         houseHelpData: {},
     },
     methods: {
+        submitHouseHelp() {
+            const formData = new FormData();
+            this.errors = {};
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    if (this.formData[key] !== null) {
+                        formData.append(key, this.formData[key]);
+                    }
+                }
+            }
+            if (this.$refs.house_help_pan_doc.files[0]) {
+                this.formData.house_help_pan_doc = this.$refs.house_help_pan_doc.files[0]
+            }
+            if (this.$refs.house_help_aadhar_doc.files[0]) {
+                this.formData.house_help_aadhar_doc = this.$refs.house_help_aadhar_doc.files[0]
+            }
+            if (this.$refs.other_doc.files[0]) {
+                this.formData.other_doc = this.$refs.other_doc.files[0];
+            }
+            console.log("formdata", this.formData);
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/househelp/', this.formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(response => {
+                    this.submitted = true;
+                    toastr.success(response.message, "House Help Data Added Successfully!");
+                    $('#houseHelpCreation').modal('hide');
+                    // this.tenantData.push(newData);
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                });
+        },
         editRequestedData(id) {
             console.log('Clicked!', id);
             $('#houseHelpUpdation').modal('show');
@@ -1947,38 +2191,36 @@ var app = new Vue({
                 });
         },
         submitForm(id) {
-            this.errors = {};
-            const formData = new FormData();
-            formData.append('transfer_to_folio_no', this.formData.transfer_to_folio_no);
-            formData.append('house_help_name', this.formData.house_help_name)
-            formData.append('house_help_pan_number', this.formData.house_help_pan_number)
-            formData.append('house_help_contact', this.formData.house_help_contact)
-            formData.append('house_help_aadhar_number', this.formData.house_help_aadhar_number)
-            formData.append('house_help_address', this.formData.house_help_address)
-            formData.append('house_help_city', this.formData.house_help_city)
-            formData.append('house_help_state', this.formData.house_help_state)
-            formData.append('house_help_pin', this.formData.house_help_pin)
-            formData.append('other_document_specifications', this.formData.other_document_specifications)
+            this.formInput.append('transfer_to_folio_no', this.formData.transfer_to_folio_no);
+            this.formInput.append('house_help_name', this.formData.house_help_name)
+            this.formInput.append('house_help_pan_number', this.formData.house_help_pan_number)
+            this.formInput.append('house_help_contact', this.formData.house_help_contact)
+            this.formInput.append('house_help_aadhar_number', this.formData.house_help_aadhar_number)
+            this.formInput.append('house_help_address', this.formData.house_help_address)
+            this.formInput.append('house_help_city', this.formData.house_help_city)
+            this.formInput.append('house_help_state', this.formData.house_help_state)
+            this.formInput.append('house_help_pin', this.formData.house_help_pin)
+            this.formInput.append('other_document_specifications', this.formData.other_document_specifications)
 
-            // Append files if they are present
-            if (this.$refs.house_help_pan_doc.files[0]) {
-                formData.append('house_help_pan_doc', this.$refs.house_help_pan_doc.files[0]);
-            }
-            if (this.$refs.house_help_aadhar_doc.files[0]) {
-                formData.append('house_help_aadhar_doc', this.$refs.house_help_aadhar_doc.files[0]);
-            }
-            if (this.$refs.other_doc.files[0]) {
-                formData.append('other_doc', this.$refs.other_doc.files[0]);
-            }
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.patch(`http://127.0.0.1:8000/api/househelp/${id}/`, formData, {
+            axios.patch(`http://127.0.0.1:8000/api/househelp/${id}/`, this.formInput, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             })
                 .then(response => {
                     this.submitted = true;
+                    toastr.success(response.message, "House Help Data Updated Successfully!");
+                    $('#houseHelpUpdation').modal('hide');
+                    // Refresh Data
+                    // setTimeout(function() {
+                    //     location.reload();
+                    // }, 600);
+                    const index = this.houseHelp.findIndex(item => item.id === id);
+                    if (index !== -1) {
+                        this.$set(this.houseHelp, index, response.data);
+                    }
                 })
                 .catch(error => {
                     this.errors = error.response.data
@@ -2014,6 +2256,13 @@ var app = new Vue({
             })
                 .then(response => {
                     this.submitted = true;
+                    toastr.success(response.message, "House Help Data Added Successfully!");
+                    $('#houseHelpCreation').modal('hide');
+                    // TO ADD DATA IN DATATABLE, WITHOUT PAGE REFRESH:
+                    // this.houseHelp.push(response.data);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
                 })
                 .catch(error => {
                     this.errors = error.response.data
@@ -2021,6 +2270,12 @@ var app = new Vue({
         },
         clearErrors() {
             this.errors = {};
+        },
+        handleFileChange(event, refName) {
+            const selectedFile = event.target.files[0];
+            if (selectedFile) {
+                this.formInput.append(refName, selectedFile);
+            }
         },
     },
     mounted() {
@@ -2035,8 +2290,9 @@ var app = new Vue({
                 console.error('Error fetching data:', error);
             });
 
-        $('#houseHelpUpdation').on('hidden.bs.modal', () => {
+        $('#houseHelpUpdation, #houseHelpCreation').on('hidden.bs.modal', () => {
             this.clearErrors();
+            this.formData = {}
         });
     },
 });
@@ -2065,15 +2321,6 @@ new Vue({
         addHouseHelpAllocation() {
             this.errors = {};
             const formData = new FormData();
-            // for (const key in this.formData) {
-            //     if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-            //         if (this.formData[key] !== null) {
-            //             formData.append(key, this.formData[key]);
-            //         }
-            //     }
-            // }
-            console.log("--------------------=======", this.formData.wing_flat);
-
             formData.append('wing_flat', this.formData.wing_flat);
             formData.append('member_name', this.formData.pk);
             formData.append('aadhar_pan', this.formData.aadharPanPk);
@@ -2088,7 +2335,11 @@ new Vue({
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             axios.post('http://127.0.0.1:8000/api/househelpallocation/', formData)
                 .then(response => {
-                    this.submitted = true;
+                    $('#houseHelpAllocationCreation').modal('hide');
+                    toastr.success(response.message, "House Help Allocated Successfully!");
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
                 })
                 .catch(error => {
                     this.errors = error.response.data
@@ -2137,10 +2388,6 @@ new Vue({
         },
     },
     mounted() {
-        // $('#houseHelpAllocationCreation').on('hidden.bs.modal', () => {
-        //     this.clearErrors();
-        // });
-
         axios.get(`http://127.0.0.1:8000/api/wing/`)
             .then(response => {
                 this.units = response.data;
@@ -2148,6 +2395,11 @@ new Vue({
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
+
+        $('#houseHelpAllocationUpdation, #houseHelpAllocationCreation').on('hidden.bs.modal', () => {
+            this.clearErrors();
+            this.formData = {};
+        });
     }
 });
 
@@ -2179,7 +2431,7 @@ new Vue({
                     console.error('Error fetching data:', error);
                 });
         },
-        updateTenant() {
+        updateTenant(tenantIdToUpdate) {
             for (const key in this.formData) {
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
                     if (this.formData[key] !== null) {
@@ -2197,10 +2449,21 @@ new Vue({
             })
                 .then(response => {
                     console.log("Form Submitted:", response.data);
+                    toastr.success(response.message, "Tenent Updated Successfully!");
+                    $('#tenentUpdateModal').modal('hide');
+
+                    // Update the tenantData after successful update
+                    // const index = this.tenantData.findIndex(item => item.id === tenantIdToUpdate);
+                    // if (index !== -1) {
+                    //     this.$set(this.tenantData, index, response.data);
+                    // }
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
                 })
                 .catch(error => {
-                    this.errors = error.response.data
-                    console.log("Error Submitting:", this.errors);
+                    // this.errors = error.response.data
+                    console.log("Error Submitting:", error);
                 });
         },
         viewRequestedData(id) {
@@ -2212,6 +2475,10 @@ new Vue({
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
+        },
+        addNewData(newData) {
+            // Logic to add new data to the DataTable
+
         },
         submitTenant() {
             for (const key in this.formData) {
@@ -2231,6 +2498,13 @@ new Vue({
             })
                 .then(response => {
                     console.log("Form Submitted:", response.data);
+                    toastr.success(response.message, "Tenent Created!");
+                    $('#tenentCreation').modal('hide');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
+                    // TO REFRESH DATATABLE
+                    // this.tenantData.push(response.data);
                 })
                 .catch(error => {
                     this.errors = error.response.data
@@ -2247,6 +2521,14 @@ new Vue({
         },
         clearErrors() {
             this.errors = {};
+        },
+        sliceAddress(address) {
+            const words = address.split(' '); // Split the address into words
+            if (words.length > 5) {
+              return words.slice(0, 5).join(' ') + '...'; // Join the first 10 words and add ellipsis
+            } else {
+              return address; // If the address has less than 10 words, return as it is
+            }
         },
     },
     mounted() {
@@ -2332,9 +2614,10 @@ new Vue({
             axios.get(`http://127.0.0.1:8000/api/tenant_allocation/${id}/`)
                 .then(response => {
                     let newResponse = response.data
-                    delete newResponse.tenant_pan_doc;
-                    delete newResponse.tenant_aadhar_doc;
-                    delete newResponse.tenant_other_doc;
+                    // delete newResponse.tenant_noc;
+                    // delete newResponse.aadhar_pan;
+                    // delete newResponse.member_name;
+                    // delete newResponse.tenant_name;
                     this.formData = newResponse;
                 })
                 .catch(error => {
@@ -2342,16 +2625,39 @@ new Vue({
                 });
         },
         updateTenant() {
-            this.formInput.append('tenant_to_date', this.formData.tenant_to_date);
+            this.formInput.append('tenant_to_date', this.formData.tenant_to_date ? this.formData.tenant_to_date : '');
+            this.formInput.append('tenant_from_date', this.formData.tenant_from_date ? this.formData.tenant_from_date : '');
 
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             axios.patch(`http://127.0.0.1:8000/api/tenant_allocation/${this.tenantIdToUpdate}/`, this.formInput)
                 .then(response => {
-                    console.log("Form Submitted:", response.data);
+                    toastr.success(response.message, "Tenent Allocation Updated Successfully!");
+                    $('#tenentUpdateModal').modal('hide');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
+
+                    // Update the tenantData after successful update
+                    // const index = this.tenantData.findIndex(item => item.id === this.tenantIdToUpdate);
+                    // if (index !== -1) {
+                    //     const existingItem = this.tenantData[index];
+                    //     existingItem.tenant_to_date = response.data.tenant_to_date;
+                    //     existingItem.tenant_from_date = response.data.tenant_from_date;
+                    //     existingItem.tenant_noc_filename = response.data.tenant_noc_filename;
+                    //     existingItem.tenant_agreement = response.data.tenant_agreement;
+                    //     this.$set(this.tenantData, index, existingItem);
+                    // }
+
+                    // SOLVED ERROR OF SAME FILE GETTING SAVED ON EACH UPDATE MODAL
+                    // const fileInput = this.$refs.tenant_agreement;
+                    // if (fileInput) {
+                    //     fileInput.value = ''; // Reset file input value to clear selected file
+                    // }
+                    // this.formInput = new FormData();
                 })
                 .catch(error => {
-                    this.errors = error.response.data
+                    this.errors = error.response
                     console.log("Error Submitting:", this.errors);
                 });
         },
@@ -2385,6 +2691,12 @@ new Vue({
             })
                 .then(response => {
                     console.log("Form Submitted:", response.data);
+                    toastr.success(response.message, "Tenent Allocated Successfully!");
+                    $('#tenentCreation').modal('hide');
+                    // this.tenantData.push(newData);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
                 })
                 .catch(error => {
                     this.errors = error.response.data
@@ -2405,7 +2717,11 @@ new Vue({
     mounted() {
         axios.get('http://127.0.0.1:8000/api/tenant_allocation/')
             .then(response => {
+                // delete response.data.tenant_noc_filename;
                 this.tenantData = response.data;
+                console.log("==[[[[[[[[[[[[[[[[[[", this.tenantData);
+                // let newResponse = response.data
+
                 $(document).ready(function () {
                     $('#example').DataTable();
                 });
@@ -2434,17 +2750,14 @@ new Vue({
 new Vue({
     el: '#houseHelpAllocationTableDiv',
     data: {
-        formData: {
-        },
+        formData: {},
         houseHelpAllocation: [],
         errors: {},
         houseHelpAllocationData: {},
     },
     methods: {
         editRequestedData(id) {
-            console.log('Clicked!', id);
             $('#houseHelpAllocationUpdation').modal('show');
-            var self = this;
             axios.get(`http://127.0.0.1:8000/api/househelpallocation/${id}/`)
                 .then(response => {
                     this.formData = response.data;
@@ -2459,54 +2772,41 @@ new Vue({
             axios.get(`http://127.0.0.1:8000/api/househelpallocation/${id}/`)
                 .then(response => {
                     this.houseHelpAllocationData = response.data;
-                    console.log("view========", response.data);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
         },
         submitHoseHelpAllocationForm(id) {
-            this.errors = {};
             const formData = new FormData();
-            formData.append('transfer_to_folio_no', this.formData.transfer_to_folio_no);
-            formData.append('house_help_name', this.formData.house_help_name)
-            formData.append('house_help_pan_number', this.formData.house_help_pan_number)
-            formData.append('house_help_contact', this.formData.house_help_contact)
-            formData.append('house_help_aadhar_number', this.formData.house_help_aadhar_number)
-            formData.append('house_help_address', this.formData.house_help_address)
-            formData.append('house_help_city', this.formData.house_help_city)
-            formData.append('house_help_state', this.formData.house_help_state)
-            formData.append('house_help_pin', this.formData.house_help_pin)
-            formData.append('other_document_specifications', this.formData.other_document_specifications)
+            formData.append('house_help_period_from', this.formData.house_help_period_from);
+            formData.append('house_help_period_to', this.formData.house_help_period_to);
 
-            // Append files if they are present
-            if (this.$refs.house_help_pan_doc.files[0]) {
-                formData.append('house_help_pan_doc', this.$refs.house_help_pan_doc.files[0]);
-            }
-            if (this.$refs.house_help_aadhar_doc.files[0]) {
-                formData.append('house_help_aadhar_doc', this.$refs.house_help_aadhar_doc.files[0]);
-            }
-            if (this.$refs.other_doc.files[0]) {
-                formData.append('other_doc', this.$refs.other_doc.files[0]);
-            }
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.patch(`http://127.0.0.1:8000/api/househelpallocation/${id}/`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
+            axios.patch(`http://127.0.0.1:8000/api/househelpallocation/${id}/`, formData)
                 .then(response => {
                     this.submitted = true;
+                    toastr.success("House Help Allocatted Successfully!");
+                    $('#houseHelpAllocationUpdation').modal('hide');
+
+                    // UPDATING JUST FROM AND TO DATE ON DATATABLE
+                    const index = this.houseHelpAllocation.findIndex(item => item.id === id);
+                    if (index !== -1) {
+                        const existingItem = this.houseHelpAllocation[index];
+                        existingItem.house_help_period_from = response.data.house_help_period_from;
+                        existingItem.house_help_period_to = response.data.house_help_period_to;
+                        this.$set(this.houseHelpAllocation, index, existingItem);
+                    }
                 })
                 .catch(error => {
-                    this.errors = error.response.data
+                    this.errors = error.response.data;
+                    console.log("Error: ", this.errors);
                 });
         },
         submitHouseHelp() {
             $('#houseHelpCreation').modal('show');
             const formData = new FormData();
-            this.errors = {};
             for (const key in this.formData) {
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
                     if (this.formData[key] !== null) {
@@ -2546,7 +2846,6 @@ new Vue({
         axios.get('http://127.0.0.1:8000/api/househelpallocation/')
             .then(response => {
                 this.houseHelpAllocation = response.data;
-                console.log("view all", this.houseHelpAllocation)
                 $(document).ready(function () {
                     $('#example').DataTable();
                 });
@@ -2554,79 +2853,78 @@ new Vue({
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-
-        $('#houseHelpAllocationUpdation').on('hidden.bs.modal', () => {
-            this.clearErrors();
-        });
     },
 });
 
 
 // HOUSE HELP
-new Vue({
-    el: '#househelpcreationForm',
-    data: {
-        formData: {
-            house_help_name: '',
-            house_help_pan_number: '',
-            house_help_contact: '',
-            house_help_aadhar_number: '',
-            house_help_address: '',
-            house_help_city: '',
-            house_help_state: '',
-            house_help_pin: '',
-            other_doc: null,
-            other_document_specifications: '',
-        },
-        submitted: false,
-        error: null,
-        errors: {},
-    },
-    methods: {
-        submitHouseHelp() {
-            const formData = new FormData();
-            this.errors = {};
-            for (const key in this.formData) {
-                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-                    if (this.formData[key] !== null) {
-                        formData.append(key, this.formData[key]);
-                    }
-                }
-            }
-            if (this.$refs.house_help_pan_doc.files[0]) {
-                this.formData.house_help_pan_doc = this.$refs.house_help_pan_doc.files[0]
-            }
-            if (this.$refs.house_help_aadhar_doc.files[0]) {
-                this.formData.house_help_aadhar_doc = this.$refs.house_help_aadhar_doc.files[0]
-            }
-            if (this.$refs.other_doc.files[0]) {
-                this.formData.other_doc = this.$refs.other_doc.files[0];
-            }
-            console.log("formdata", this.formData);
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.post('http://127.0.0.1:8000/api/househelp/', this.formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-                .then(response => {
-                    this.submitted = true;
-                })
-                .catch(error => {
-                    this.errors = error.response.data
-                });
-        },
-        clearErrors() {
-            this.errors = {};
-        },
-    },
-    mounted() {
-        $('#houseHelpCreation').on('hidden.bs.modal', () => {
-            this.clearErrors();
-        });
-    }
-});
+// new Vue({
+//     el: '#househelpcreationForm',
+//     data: {
+//         formData: {
+//             house_help_name: '',
+//             house_help_pan_number: '',
+//             house_help_contact: '',
+//             house_help_aadhar_number: '',
+//             house_help_address: '',
+//             house_help_city: '',
+//             house_help_state: '',
+//             house_help_pin: '',
+//             other_doc: null,
+//             other_document_specifications: '',
+//         },
+//         submitted: false,
+//         error: null,
+//         errors: {},
+//     },
+//     methods: {
+//         // submitHouseHelp() {
+//         //     const formData = new FormData();
+//         //     this.errors = {};
+//         //     for (const key in this.formData) {
+//         //         if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+//         //             if (this.formData[key] !== null) {
+//         //                 formData.append(key, this.formData[key]);
+//         //             }
+//         //         }
+//         //     }
+//         //     if (this.$refs.house_help_pan_doc.files[0]) {
+//         //         this.formData.house_help_pan_doc = this.$refs.house_help_pan_doc.files[0]
+//         //     }
+//         //     if (this.$refs.house_help_aadhar_doc.files[0]) {
+//         //         this.formData.house_help_aadhar_doc = this.$refs.house_help_aadhar_doc.files[0]
+//         //     }
+//         //     if (this.$refs.other_doc.files[0]) {
+//         //         this.formData.other_doc = this.$refs.other_doc.files[0];
+//         //     }
+//         //     console.log("formdata", this.formData);
+//         //     axios.defaults.xsrfCookieName = 'csrftoken';
+//         //     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+//         //     axios.post('http://127.0.0.1:8000/api/househelp/', this.formData, {
+//         //         headers: {
+//         //             'Content-Type': 'multipart/form-data'
+//         //         }
+//         //     })
+//         //         .then(response => {
+//         //             this.submitted = true;
+//         //             toastr.success(response.message, "House Help Data Added Successfully!");
+//         //             $('#houseHelpCreation').modal('hide');
+//         //             this.tenantData.push(newData);
+//         //         })
+//         //         .catch(error => {
+//         //             this.errors = error.response.data
+//         //         });
+//         // },
+//         clearErrors() {
+//             this.errors = {};
+//         },
+//     },
+//     mounted() {
+//         $('#houseHelpCreation').on('hidden.bs.modal', () => {
+//             this.clearErrors();
+//         });
+//     }
+// });
 
 
 // HOUSE HELP END
@@ -2664,85 +2962,16 @@ var app = new Vue({
         sameer: {},
 
         minutesFormData: {
-            minutes_content: '',
-            minutes_file: null,
-            minutes_other: null,
+            minutes_content: ''
         },
         attendanceData: [],
         meetingId: '',
-
+        currentUser: '',
+        suggestion_input_data: '',
+        previousSuggestions: [],
+        attendanceViewData: [],
+        setMeetingsData: {},
     },
-
-    mounted() {
-        axios.get('http://127.0.0.1:8000/api/meetings/')
-            .then(response => {
-                this.meeting = response.data;
-                console.log("Sameer-----", this.meeting);
-                $(document).ready(function () {
-                    $('#example').DataTable();
-                })
-
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-
-
-        const minutesInitialContent =
-            `
-            <b>NOTICE - ___________________ MEETING</b><br>
-            Notice is hereby given that the 5th _______________ of all primary members of ____________________________________________, will be held on _______, the ____ day of ________ at ______ ___ at the ____________________________ to transact the following agenda. <br><br>
-            <b>Agenda</b>
-            <ol class="m-0 p-0">
-                <li>Agenda 1</li>
-                <li>Agenda 2</li>
-                <li>Agenda 3</li>
-            </ol>
-
-            <b>Note: </b><br>(a) In case any points need to be added or discussed, please provide in writing to society bearer at least seven days before AGM. <br>
-            (b)  No holder of Power of Attorney or proxy eligible to attend the AGM Meeting.
-            `;
-        ClassicEditor
-            .create(document.querySelector('#minutes_editor'), {
-                contentStyles: {
-                    color: 'black',
-                    'font-family': 'Calibri, sans-serif'
-                },
-                // data: {
-                //     value: initialContent
-                // }
-            })
-            .then(editor => {
-
-                editor.setData(minutesInitialContent);
-                // Set the height dynamically
-                const editorElement = editor.ui.getEditableElement();
-                // editorElement.style.height = '400px';
-
-                // Listen for the CKEditor change event and update formData.content
-                editor.model.document.on('change:data', () => {
-                    this.minutesFormData.minutes_content = editor.getData();
-                });
-            })
-            .catch(error => {
-                console.error(error);
-            });
-
-        // Attendance API:
-        console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDd==========");
-        axios.get('http://127.0.0.1:8000/api/get_flat_with_members/')
-            .then(response => {
-                // this.submitted = true;
-                console.log("ATTENDANCE  RESPONSE-->", response.data.flats);
-                this.attendanceData = response.data.flats;
-                this.someVal = 'xyz'
-            })
-            .catch(error => {
-                this.errors = error.response.data
-            });
-
-    },
-
     methods: {
         submitAttendance() {
             const formData = new FormData(this.$refs.submitAttendances);
@@ -2782,114 +3011,50 @@ var app = new Vue({
                         console.error(error);
                     });
             });
-
-            // console.log("TABLE==>", tableData);
-
-
         },
-
-        addMeetingToTop(newMeeting) {
-            this.meeting.unshift(newMeeting);
-        },
-        formatTime(time) {
-            // Assuming time is in HH:mm format (24-hour format)
-            const [hours, minutes] = time.split(':');
-            let formattedTime = `${parseInt(hours, 10) % 12}:${minutes}`;
-
-            // Add AM or PM based on the original hours
-            formattedTime += parseInt(hours, 10) >= 12 ? ' PM' : ' AM';
-
-            return formattedTime;
-        },
-
         viewMeetingDetails(id) {
-            // alert(id);
-
+            $('#viewMeetingModal').modal('show');
             axios.get(`http://127.0.0.1:8000/api/meetings/${id}`)
                 .then(response => {
                     this.singleMeeting = response.data;
-                    // this.selectedRow = response.data;
-                    // this.singleMeeting.formattedTime = this.formatTime(this.singleMeeting.time_of_meeting);
-                    console.log("Sameer123123-----", this.singleMeeting);
-
-                    // CKEDITOR.replace('ckeditor', {
-                    //     // Add any CKEditor configuration options here if needed
-                    // });
-
-                    // // Set CKEditor content with sanitized HTML
-                    // CKEDITOR.instances.ckeditor.setData(sanitizeHTML(this.singleMeeting.content));
-                    $('#viewMeetingModal .modal-header').text(this.singleMeeting.meeting_type);
-
-
-                    $('#date').text(this.singleMeeting.date_of_meeting);
-                    $('#time').text(this.singleMeeting.time_of_meeting);
-                    $('#place').text(this.singleMeeting.place_of_meeting);
-                    // $('#agenda').text(this.singleMeeting.agenda);
-                    $('#financials').text(this.singleMeeting.financials);
-                    // $('#otherDoc').text(this.singleMeeting.other);
-                    $('#content').text(this.singleMeeting.content);
-                    $('#minutes_content').text(this.singleMeeting.minutes_content);
-                    // $('#minutes_document').text(this.singleMeeting.minutes_file);
-                    // $('#minutes_other').text(this.singleMeeting.minutes_other);
-
-
-                    const agendaFileURL = this.singleMeeting.agenda;
-                    const agendaFileName = agendaFileURL.split('/').pop();  // Extract the file name
-                    const truncatedFileName = agendaFileName.length > 15 ? agendaFileName.substring(0, 15) + '...' : agendaFileName;  // Truncate to 15 characters
-                    $('#agendaDoc').html(`<p title="${agendaFileName}"><a href="${agendaFileURL}" style="text-decoration: underline; color: grey" download>${truncatedFileName}</a></p>`);
-
-
-                    // $('#agendaDoc').html(`<p><a href="${agendaFileURL}" style="text-decoration: underline; color: grey" download>Download Agenda</a></p>`);
-
-                    const financialsFileURL = this.singleMeeting.agenda;
-                    const financialsFileName = financialsFileURL.split('/').pop();  // Extract the file name
-                    const truncatedFinancialsFileName = financialsFileName.length > 15 ? financialsFileName.substring(0, 15) + '...' : financialsFileName;  // Truncate to 15 characters
-                    $('#financialsDoc').html(`<p title="${financialsFileName}"><a href="${financialsFileURL}" style="text-decoration: underline; color: grey" download>${truncatedFinancialsFileName}</a></p>`);
-                    // $('#financialsDoc').html(`<p><a href="${financialsFileURL}" style="text-decoration: underline; color: grey" download>Download Financials</a></p>`);
-
-                    const maxLength = 20;
-                    const minutesFileUrl = this.singleMeeting.minutes_file;
-                    if (minutesFileUrl !== null) {
-                        const minutesFileName = minutesFileUrl.split('/').pop();
-                        const truncatedMinutesFileName = minutesFileName.length > maxLength ? minutesFileName.substring(0, maxLength - 4) + '...' + minutesFileName.slice(-4) : minutesFileName;
-                        this.singleMeeting.minutes_file = truncatedMinutesFileName;
-                        $('#minutes_document').html(`<p title="${minutesFileName}"><a href="${minutesFileUrl}" style="text-decoration: underline; color: grey" download>${truncatedMinutesFileName}</a></p>`);
+                    if(this.singleMeeting.date_of_meeting){
+                        const date = new Date(this.singleMeeting.date_of_meeting);
+                        const day = date.getDate();
+                        const month = date.toLocaleString('default', { month: 'long' });
+                        const year = date.getFullYear();
+                        this.singleMeeting.date_of_meeting = `${day}, ${month} ${year}`;
                     }
 
-                    const otherFileUrl = this.singleMeeting.other;
-                    if (otherFileUrl !== null) {
-                        $('#otherDoc').html(`<p><a href="${otherFileUrl}" style="text-decoration: underline; color: grey" download>Download Other</a></p>`);
-                    } else {
-                        $('#otherDoc').html(`<p>Unavailable</p>`);
+                    if(this.singleMeeting.time_of_meeting){
+                        const [hours, minutes] = this.singleMeeting.time_of_meeting.split(':');
+                        let hour = parseInt(hours);
+                        const period = hour >= 12 ? 'PM' : 'AM';
+                        if (hour > 12) {
+                            hour -= 12;
+                        }
+                        hour = hour.toString().padStart(2, '0');
+                        this.singleMeeting.time_of_meeting = `${hour}:${minutes} ${period}`;
                     }
-
-                    const minutesOtherFileUrl = this.singleMeeting.minutes_other;
-                    if (minutesOtherFileUrl !== null) {
-                        // const minutesOtherFileUrl = this.edit.minutes_other;
-                        const minutesOtherFileName = minutesOtherFileUrl.split('/').pop();
-                        const truncatedMinutesOtherFileName = minutesOtherFileName.length > maxLength ? minutesOtherFileName.substring(0, maxLength - 4) + '...' + minutesOtherFileName.slice(-4) : minutesOtherFileName;
-                        this.singleMeeting.minutes_other = truncatedMinutesOtherFileName;
-                        $('#minutes_other').html(`<p title="${minutesOtherFileName}"><a href="${minutesOtherFileUrl}" style="text-decoration: underline; color: grey" download>${truncatedMinutesOtherFileName}</a></p>`);
-                    } else {
-                        this.singleMeeting.minutes_other = 'Unavailable';
-                        $('#minutes_other').html(`<p>Unavailable</p>`);
-                    }
-
-
-                    $('#viewMeetingModal').modal('show');
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
 
+            axios.get(`http://127.0.0.1:8000/api/attendance/${id}`)
+                .then(response => {
+                    this.attendanceViewData = response.data;
+                    $(document).ready(function () {
+                        $('#viewAttendanceTable').DataTable();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
 
         },
-
         attendance(id) {
-            // alert(id);
             this.meetingId = id;
             $('#attendanceModal').modal('show');
-
             axios.get(`http://127.0.0.1:8000/api/meetings/${id}`)
                 .then(response => {
                     this.meetingSuggestion = response.data;
@@ -2906,209 +3071,172 @@ var app = new Vue({
                     console.log("data aagya", response);
                 })
         },
-
         suggestionForm(id) {
-            // alert(id);
+            this.meetingId = id;
             this.form.meeting = id;
             $('#suggestionModal').modal('show');
             axios.get(`http://127.0.0.1:8000/api/meetings/${id}`)
                 .then(response => {
                     this.meetingSuggestion = response.data;
-
                     $('#suggestionModal .modal-header').text(this.meetingSuggestion.meeting_type);
-
-
                 })
-        },
 
-        submitSuggestionForm() {
-            this.errors = {};
-            this.suggestionsError = '';
-
-            const formData = new FormData();
-            formData.append('meeting', this.form.meeting)
-            formData.append('suggestions', this.form.suggestions)
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.post('http://127.0.0.1:8000/api/suggestion/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            })
+            // PREVIOUS SUGGESTION:
+            axios.get(`http://127.0.0.1:8000/api/get_previous_suggestions/${id}`)
                 .then(response => {
-                    this.submitted = true,
-                        console.log("Submitted Successfully.......", response.data);
-
-                    // $('#suggestionModal .modal-header').text(this.meetingSuggestion.meeting_type);
-                    // $('#meeting_type').text(this.meetingSuggestion.meeting_type);
-                    // this.form.meeting_type = this.meetingSuggestion.meeting_type;
-                    this.error = '';
-                    this.suggestionsError = '';
-                    // $('#suggestError').text('');
-                    this.form.suggestions = '';
-                    $('#suggestionModal').modal('hide');
-
+                    // console.log('Form data submitted successfully:', response.user_id);
+                    console.log("User id======", response.data.previous_suggestions);
+                    this.previousSuggestions = response.data.previous_suggestions;
                 })
-                .catch(error => {
+                .catch(errors => {
+                    console.error('Error submitting form data:', errors);
+                });
 
-                    console.log("ddddddd", error);
-                    if (error.response && error.response.status === 400 && error.response.data) {
-
-                        if (error.response.data.suggestions) {
-                            this.suggestionsError = error.response.data.suggestions.join('');
-                            // $('#suggestError').text(error.response.data.suggestions);
-                            // console.log("Doremon===", error.response.data.suggestions);
-
-                        } else {
-                            // $('#suggestError').text('');
-                            this.suggestionsError = '';
-                        }
-                    } else if (error.response && error.response.status) {
-                        this.error = `Error: ${error.response.status}`;
-                    } else {
-                        this.error = 'An error occurred while submitting the form.';
-                    }
-                })
-            // $('#suggestionModal .modal-header').html(`<h5 class="modal-title">${id}</h5>`);
         },
+        submitSuggestionForm() {
+            axios.get('http://127.0.0.1:8000/api/current_user/')
+                .then(response => {
+                    const suggestionData = new FormData()
+                    suggestionData.append('user_id', response.data.user_id)
+                    suggestionData.append('meeting_id', this.meetingId)
+                    suggestionData.append('suggestions', this.suggestion_input_data)
 
+                    // POST SUGGESTION
+                    axios.defaults.xsrfCookieName = 'csrftoken';
+                    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-
+                    axios.post('http://127.0.0.1:8000/api/suggestions/', suggestionData)
+                        .then(response => {
+                            toastr.success(response.message, "Suggestion Added Successfully!");
+                            if (this.previousSuggestions.length > 0) {
+                                this.previousSuggestions.push(response.data);
+                                this.suggestion_input_data = '';
+                            } else {
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 600);
+                            }
+                        })
+                        .catch(errors => {
+                            console.error('Error submitting form data:', errors);
+                        });
+                })
+                .catch(errors => {
+                    console.error('Error submitting form data:', errors);
+                });
+        },
         editForm(id) {
-            // alert(id);
-
-            let newid = id;
-            this.form = {
-                date_of_meeting: "",
-                time_of_meeting: "",
-                place_of_meeting: "",
-                sanitizedContent: "",
-                agenda: "",
-                financials: "",
-                other: "",
-                // ... other form fields
-            };
+            $('#editModal').modal('show');
             axios.get(`http://127.0.0.1:8000/api/meetings/${id}`)
                 .then(response => {
-                    this.edit = response.data;
-                    // console.log("edit ka maamla", this.edit);
-                    $('#editModal .modal-header').text(this.edit.meeting_type);
-                    this.form.id = this.edit.id;
-                    this.form.date_of_meeting = this.edit.date_of_meeting;
-                    this.form.time_of_meeting = this.edit.time_of_meeting;
-                    this.form.place_of_meeting = this.edit.place_of_meeting;
-                    // this.form.content = this.edit.content;
-                    this.form.sanitizedContent = this.edit.content;
-                    $('#editContnet').text(this.form.sanitizedContent);
-                    // console.log("form kla content", this.edit.content);
-                    // const sanitizedContent = this.sanitizeHTML(this.edit.content);
-
-                    const agendaFileURL = this.edit.agenda;
-                    const agendaFileName = agendaFileURL.split('/').pop();  // Extract the file name
-                    const maxLength = 20;
-                    const truncatedAgendaFileName = agendaFileName.length > maxLength
-                        ? agendaFileName.substring(0, maxLength - 4) + '...' + agendaFileName.slice(-4)
-                        : agendaFileName;  // Truncate to 15 characters
-                    this.form.agenda = truncatedAgendaFileName;
-
-                    const financialsFileURL = this.edit.financials;
-                    const financialsFileName = financialsFileURL.split('/').pop();  // Extract the file name
-                    const truncatedDinancialsFileName = financialsFileName.length > maxLength
-                        ? financialsFileName.substring(0, maxLength - 4) + '...' + financialsFileName.slice(-4)
-                        : financialsFileName;  // Truncate to 15 characters
-                    this.form.financials = truncatedDinancialsFileName;
-
-                    if (this.edit.other) {
-                        const otherFileUrl = this.edit.other;
-                        const otherFileName = otherFileUrl.split('/').pop();
-                        const truncatedOtherFileName = otherFileName.length > maxLength ? otherFileName.substring(0, maxLength - 4) + '...' + otherFileName.slice(-4) : otherFileName;
-                        this.form.other = truncatedOtherFileName;
-                    } else {
-                        this.form.other = 'Unavailable';
-                    }
-
-
+                    this.singleMeeting = response.data;
                 })
-            $('#editModal').modal('show');
-
         },
 
-        minutesForm(newid) {
-
-            if (this.isMinutesFormSubmitted) {
-                // If the form is already submitted, do nothing
-                return;
-            }
-
-            if (!this.minutesFormData.minutes_content.trim()) {
-                this.minutes_content_error = 'Please enter content in CKEditor.';
-                return;  // Stop form submission
-            } else {
-                this.minutes_content_error = '';
-            }
-
-            if (!this.$refs.minutes_file.files[0]) {
-                this.minutes_file_error = 'Please select a file.';
-                return;  // Stop form submission
-            } else {
-                this.minutes_file_error = '';
-            }
-
+        minutesForm(id) {
             const minutesFormData = new FormData();
             minutesFormData.append('minutes_content', this.minutesFormData.minutes_content)
 
             if (this.$refs.minutes_file.files[0]) {
-                minutesFormData.append('minutes_file', this.$refs.minutes_file.files[0]);
+                minutesFormData.append('minutes_document', this.$refs.minutes_file.files[0]);
             }
             if (this.$refs.minutes_other) {
                 const minutesOtherFile = this.$refs.minutes_other.files[0];
-                minutesFormData.append('minutes_other', minutesOtherFile || '');  // Append an empty string if otherFile is null
+                minutesFormData.append('minutes_otehr_doc', minutesOtherFile || '');
             }
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-            axios.patch(`http://127.0.0.1:8000/api/meetings/${newid}/`, minutesFormData, {
+            axios.patch(`http://127.0.0.1:8000/api/meetings/${id}/`, minutesFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             })
                 .then(response => {
-                    this.submitted = true;
-                    this.isMinutesFormSubmitted = true;
-                    console.log("Sameer Submitted SUccessfully", response.data);
-                    this.minutesErrors = {};
-
-
-                    // Reset input fields
-                    this.minutesFormData.minutes_content = '';
-                    this.$refs.minutes_file.value = '';
-                    this.$refs.minutes_other.value = '';
-
-                    // Reset error messages
-                    this.minutesErrors = {};
-                    this.minutes_content_error = '';
-                    this.minutes_file_error = '';
-                    location.reload();
+                    toastr.success(response.message, "Meetings Data Updated Successfully!");
+                    $('#editModal').modal('hide');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
                 })
                 .catch(error => {
                     console.log("Minutes ka Error", error);
 
                 })
-
-
-            // $('#date').text(this.singleMeeting.date_of_meeting);
         },
-        handleFileChange1(event) {
-            this.minutes_other = event.target.files[0];
-        },
+    },
+    mounted() {
+        axios.get('http://127.0.0.1:8000/api/meetings/')
+            .then(response => {
+                this.meeting = response.data;
+                this.meeting.forEach((meeting, index) => {
+                    // TO CHANGE THE FORMAT OF THE MEETING TIME
+                    if (meeting.time_of_meeting) {
+                        let formatted_time;
+                        const [hours, minutes] = meeting.time_of_meeting.split(':');
+                        let hour = parseInt(hours);
+                        const period = hour >= 12 ? 'PM' : 'AM';
+                        if (hour > 12) {
+                            hour -= 12;
+                        }
+                        hour = hour.toString().padStart(2, '0');
+                        formatted_time = `${hour}:${minutes} ${period}`;
+                        this.meeting[index].time_of_meeting = formatted_time;
+                    }
+                });
+                $(document).ready(function () {
+                    $('#example').DataTable();
+                })
 
-        sanitizeHTML(html) {
-            // Use DOMPurify to sanitize HTML content
-            return DOMPurify.sanitize(html);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
 
-        },
 
+        const minutesInitialContent =
+            `
+            <b>NOTICE - ___________________ MEETING</b><br>
+            Notice is hereby given that the 5th _______________ of all primary members of ____________________________________________, will be held on _______, the ____ day of ________ at ______ ___ at the ____________________________ to transact the following agenda. <br><br>
+            <b>Agenda</b>
+            <ol class="m-0 p-0">
+                <li>Agenda 1</li>
+                <li>Agenda 2</li>
+                <li>Agenda 3</li>
+            </ol>
 
+            <b>Note: </b><br>(a) In case any points need to be added or discussed, please provide in writing to society bearer at least seven days before AGM. <br>
+            (b)  No holder of Power of Attorney or proxy eligible to attend the AGM Meeting.
+            `;
+        ClassicEditor
+            .create(document.querySelector('#minutes_editor'), {
+                contentStyles: {
+                    color: 'black',
+                    'font-family': 'Calibri, sans-serif'
+                },
+            })
+            .then(editor => {
+                editor.setData(minutesInitialContent);
+                const editorElement = editor.ui.getEditableElement();
+                editor.model.document.on('change:data', () => {
+                    this.minutesFormData.minutes_content = editor.getData();
+                });
+            })
+            .catch(error => {
+                console.error(error);
+            });
+
+        // ATTENDANCE API:
+        axios.get('http://127.0.0.1:8000/api/get_nominees_details/')
+            .then(response => {
+                // this.submitted = true;
+                console.log("ATTENDANCE  RESPONSE-->", response.data.flats);
+                this.attendanceData = response.data.flats;
+                this.someVal = 'xyz'
+            })
+            .catch(error => {
+                this.errors = error.response.data
+            });
     },
 });
 
@@ -3119,10 +3247,8 @@ new Vue({
     el: "#meetingApp",
     data: {
         selectedMeetingType: '',
-        // meetingTypeValidation: {
         error: false,
         message: '',
-        // },
         formData: {
             meeting_type: '',
             date_of_meeting: '',
@@ -3189,45 +3315,15 @@ new Vue({
     },
 
     methods: {
-        get_meetingtype(event) {
-            const selectedOptionText = event.target.options[event.target.selectedIndex].text;
-            // console.log("type:", this.selectedOptionText);
-
-        },
         submitForm() {
-            this.errors = {};
-
-
-            // validateMeetingType() {
-            if (!this.selectedMeetingType) {
-                console.log("Meeting type present");
-            } else {
-                this.meetingTypeValidation.error = false;
-                this.meetingTypeValidation.message = '';
-            }
-            // }
-
-            // if (!this.selectedMeetingType) {
-            //     this.meetingTypeValidation.error = true;
-            //     this.meetingTypeValidation.message = 'Please select a meeting type.';
-            //     return;
-            // } else {
-            //     this.meetingTypeValidation.error = true;
-            // }
-
-
             if (!this.formData.content.trim()) {
                 this.contentError = 'Please enter content in CKEditor.';
-                return;  // Stop form submission
+                return;
             } else {
                 this.contentError = '';
             }
 
-            this.selectedOptionText = this.$refs.meeting_type.options[this.$refs.meeting_type.selectedIndex].text;
-            console.log("meeting type===>", this.formData.meeting_type);
-
             const formData = new FormData();
-            formData.append('meeting_type', this.selectedOptionText);
             formData.append('date_of_meeting', this.formData.date_of_meeting);
             formData.append('time_of_meeting', this.formData.time_of_meeting);
             formData.append('place_of_meeting', this.formData.place_of_meeting);
@@ -3240,13 +3336,6 @@ new Vue({
                 formData.append('other', otherFile || '');
             }
 
-
-            // for (const key in this.formData) {
-            //     if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-            //         console.log(key);
-            //         formData.append(key, this.formData[key]);
-            //     }
-            // }
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             axios.post('http://127.0.0.1:8000/api/meetings/', formData, {
@@ -3255,83 +3344,18 @@ new Vue({
                 },
             })
                 .then(response => {
-
-                    this.submitted = true;
-
-                    console.log("Form Submitted Successfully", response.data);
-                    location.reload();
+                    toastr.success(response.message, "Shares Added Successfully!");
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
                 })
                 .catch(error => {
-                    // console.log("form ka data",formData)
-                    // console.log("form 2ka data", error)
-                    // this.errors = error.response.data
-                    // console.log("Error: ->", error.response.data);
-                    this.error = error.response.status;
-
-                    if (error.response && error.response.status === 400 && error.response.data) {
-                        // console.log("============================errors.date_of_meeting");
-                        // console.log(error.response.data.date_of_meeting);
-                        // console.log(error.response.status);
-                        // console.log(error.response.data);
-
-                        if (error.response.data.date_of_meeting) {
-                            this.dateOfMeetingError = error.response.data.date_of_meeting.join('');
-                            // console.log("METING========", this.dateOfMeetingError);
-                        } else {
-                            this.dateOfMeetingError = '';
-                        }
-
-                        if (error.response.data.meeting_type) {
-                            this.meeting_type_error = error.response.data.meeting_type.join('');
-                        } else {
-                            this.meeting_type_error = '';
-                        }
-
-                        if (error.response.data.time_of_meeting) {
-                            this.timeOfMeetingError = error.response.data.time_of_meeting.join('');
-                        } else {
-                            this.timeOfMeetingError = '';
-                        }
-
-                        if (error.response.data.place_of_meeting) {
-                            this.placeOfMeetingError = error.response.data.place_of_meeting.join('');
-                        } else {
-                            this.placeOfMeetingError = '';
-                        }
-
-                        if (error.response.data.agenda) {
-                            this.agendaError = error.response.data.agenda.join('');
-                        } else {
-                            this.agendaError = '';
-                        }
-
-                        if (error.response.data.financials) {
-                            this.financialsError = error.response.data.financials.join('');
-                        } else {
-                            this.financialsError = '';
-                        }
-
-                        if (error.response.data.content) {
-                            this.contentError = error.response.data.content.join('');
-                        } else {
-                            this.contentError = '';
-                        }
-
-                        // if(error.response.other) {
-                        //     this.errors.other = error.response.data.other[0];
-                        // }
-                        // this.error = 'Please fix the error';
-                    } else if (error.response && error.response.status) {
-                        this.error = `Error: ${error.response.status}`;
-                    } else {
-                        this.error = 'An error occurred while submitting the form.';
-                    }
+                    console.log("Error-->",error.response)
                 });
         },
         handleFileChange() {
             this.formData.agenda = this.$refs.agendaInput.files[0];
             this.formData.financials = this.$refs.financialsInput.files[0];
-            // this.formData.other = this.$refs.other.files[0];
         },
     },
 });
@@ -3499,7 +3523,7 @@ $(document).ready(function () {
 
 
 
-
+    // MARK ATTENDANCE DATATABLE
     var attendanceTable = $('#attendanceTable').DataTable({
         // dom: 'Bfrtip', // Include the buttons extension
         "dom": '<"dt-buttons"Br><"clear">ftipl',         //Qlfrtip
@@ -3545,7 +3569,7 @@ $(document).ready(function () {
 
         columnDefs: [
 
-            { "visible": true, "targets": [0, 1, 2, 3, 4] },
+            { "visible": true, "targets": [0, 1, 2, 3, 4, 5] },
             { "visible": false, "targets": '_all' },
         ],
         fixedColumns: {
@@ -3562,14 +3586,6 @@ $(document).ready(function () {
         scrollX: true
     });
 
-    // let statusDD1 = $(
-    //     '<select class="dt-button ms-2 dt-button-custom dataTable-Text" id="statusFilterDropdown"><option value="all">All</option><option value="Active">Active</option><option value="Inactive">Inactive</option></select>')
-    //     .on('change', function () {
-    //         attendanceTable.draw();
-    //     });
-
-    // $('#attendanceTable_filter').append(statusDD1);
-
     // Set the DataTable info text to be centered
     $('#attendanceTable_info').css({
         'text-align': 'center',
@@ -3583,6 +3599,88 @@ $(document).ready(function () {
     // Adjust the info text position when the table is redrawn
     attendanceTable.on('draw.dt', function () {
         $('#attendanceTable_info').css({
+            'text-align': 'center',
+            'margin-left': 'auto',
+            'margin-right': 'auto'
+        });
+    });
+
+    // VIEW ATTENDANCE DATATABEL
+    var viewAttendanceTable = $('#viewAttendanceTable').DataTable({
+        // dom: 'Bfrtip', // Include the buttons extension
+        "dom": '<"dt-buttons"Br><"clear">ftipl',         //Qlfrtip
+        // buttons: ['copy', 'csv', 'excel', 'pdf', 'print'],
+        responsive: true,
+
+        buttons: [
+            {
+                extend: 'colvis',
+                text: 'More Column',
+                postfixButtons: [
+                    'colvisRestore'
+                ]
+            },
+            {
+                extend: 'searchBuilder',
+                text: 'Filter'
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    // columns: ':visible',
+                    columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                    modifier: { search: 'applied', order: 'applied' },
+
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print All',
+                exportOptions: {
+                    columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                    // modifier: { search: 'applied', order: 'applied' },
+
+                }
+            },
+
+
+        ],
+
+        order: [],
+        "stripeClasses": [],
+
+        columnDefs: [
+
+            { "visible": true, "targets": [0, 1, 2, 3, 4, 5] },
+            { "visible": false, "targets": '_all' },
+        ],
+        fixedColumns: {
+            left: 2
+        },
+        // "paging": true,
+        // 'pageLength': '5',
+        pagingType: "simple",
+        paginate: {
+            previous: "<",
+            next: ">"
+        },
+        scrollCollapse: false,
+        scrollX: true
+    });
+
+    // Set the DataTable info text to be centered
+    $('#viewAttendanceTable_info').css({
+        'text-align': 'center',
+        'position': 'relative',
+        'left': '40%',
+        'padding-top': '20px',
+        // 'margin-right': 'auto',
+        'display': 'block'
+    });
+
+    // Adjust the info text position when the table is redrawn
+    attendanceTable.on('draw.dt', function () {
+        $('#viewAttendanceTable_info').css({
             'text-align': 'center',
             'margin-left': 'auto',
             'margin-right': 'auto'
@@ -3665,4 +3763,129 @@ $(document).ready(function () {
             memberTypeInput.value = "proxy";
         }
     });
+
+
+// * ===========================FORM MH START ==================== * //
+// GET VALUE FOR FORM MH:
+
+// MAKE member_id AS GLOBAL VARIABLE TO USE IT IN VUE.
+
 });
+
+// Define the function to set the member ID and redirect
+// let memberIdForVue = null;
+
+// function view_form_MH(member_id) {
+//     memberIdForVue = member_id;
+//     console.log("Value of memberIdForVue:", memberIdForVue); // Log the value here
+//     redirectToForm();
+// }
+
+// // Function to redirect to the form
+// function redirectToForm() {
+//     window.location.href = "/form-I-MH/";
+// }
+
+// console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ", memberIdForVue);
+
+// new Vue({
+//     el: '#formMHVue',
+//     data: {
+//         memberId: document.getElementById('formMHVue').getAttribute('data-member-id')
+//     },
+//     methods: {
+//     },
+//     mounted() {
+//         console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+//         console.log("MOUNT CALLING FORM MH FORM===============================", memberIdForVue)
+//         // axios.get(`http://127.0.0.1:8000/api/member/${member_id}`)
+//         //     .then(response => {
+//         //         console.log("WINGS  DIWSPLAY===", response.data);
+//         //     })
+//         //     .catch(error => {
+//         //         console.error('Error fetching data:', error);
+//         //     });
+//     },
+// });
+
+
+// UNIT MASTER (Display, Update)
+new Vue({
+    el: '#unitMasterVue',
+    data: {
+        viewUnitData: {},
+        unitData: [],
+        errors: {},
+        flatFormData: {},
+        filteredOptions: ['Yes', 'No'],
+        filteredOptions: {'yes': 'Yes', 'no': 'No'}
+    },
+    methods: {
+        editRequestedData(id) {
+            $('#unitUpdateModal').modal('show');
+            axios.get(`http://127.0.0.1:8000/api/flat_master_detail/${id}/`)
+                .then(response => {
+                    this.flatFormData = response.data;
+                    console.log("Success Response:", this.flatFormData);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        updateUnit(id) {
+            const unitFormData = new FormData();
+            for (const key in this.flatFormData) {
+                if (Object.prototype.hasOwnProperty.call(this.flatFormData, key)) {
+                    if (this.flatFormData[key] !== null) {
+                        unitFormData.append(key, this.flatFormData[key]);
+                    }
+                }
+            }
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.patch(`http://127.0.0.1:8000/api/flat_master_detail/${id}/`, unitFormData)
+                .then(response => {
+                    console.log("Form Submitted:", response.data);
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error Submitting:", this.errors);
+                });
+        },
+        viewRequestedData(id) {
+            $('#unitViewModal').modal('show');
+            axios.get(`http://127.0.0.1:8000/api/flat_master_detail/${id}/`)
+                .then(response => {
+                    this.viewUnitData = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+    },
+    mounted() {
+        axios.get('http://127.0.0.1:8000/api/flat_detail/')
+            .then(response => {
+                this.unitData = response.data;
+                $(document).ready(function () {
+                    $('#example').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // $('#tenentCreation, #tenentUpdateModal').on('hidden.bs.modal', () => {
+        //     this.clearErrors();
+        //     this.formData = {};
+        // });
+    },
+})
+
+
+
+
+
+
+

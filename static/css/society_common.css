@@ -991,3 +991,17 @@ text-align: center;
     border-radius: 4px;
     padding: 5px;
   }
+
+
+.accordianColor{
+    background-color: white;
+}
+
+
+.suggestionStyle {
+    border-left: 3px solid blue;
+    border-radius: 12px;
+    padding: 6px;
+    /* background-color: #ededed; */
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+}
