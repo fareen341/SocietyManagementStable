@@ -5,9 +5,9 @@
 
 
 
-p {
+/* p {
     color: grey
-}
+} */
 
 #heading {
     text-transform: uppercase;
@@ -437,53 +437,53 @@ p {
     background: #fff;
 
 }
-    th, td { white-space: nowrap; }
+th, td { white-space: nowrap; }
 
 /* Custom styles to fix double appearance issue */
 .dataTables_wrapper .dataTables_filter,
 .dataTables_wrapper .dataTables_paginate {
-margin-top: 0; /* Adjust as needed */
+    margin-top: 0; /* Adjust as needed */
 }
 
 /* Custom style to adjust spacing between controls and the table */
 .custom-controls {
-margin-bottom: 10px; /* Adjust as needed */
+    margin-bottom: 10px; /* Adjust as needed */
 }
 
 .dt-buttons {
-float: right;
-font-family: 'Calibri', sans-serif;
-/* padding:5px !important; */
+    float: right;
+    font-family: 'Calibri', sans-serif;
+    /* padding:5px !important; */
 }
 
 .dt-button-custom {
-        position: relative;
-        display: inline-block;
-        box-sizing: border-box;
-        margin-left: .167em;
-        margin-right: .167em;
-        margin-bottom: .333em;
-        padding: .5em 1em;
-        border: 1px solid rgba(0, 0, 0, 0.3);
-        border-radius: 2px;
-        cursor: pointer;
-        font-size: .88em;
-        line-height: 1.6em;
-        color: inherit;
-        white-space: nowrap;
-        overflow: hidden;
-        background-color: rgba(0, 0, 0, 0.1);
-        background: linear-gradient(to bottom, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
-        /* filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr="rgba(230, 230, 230, 0.1)", EndColorStr="rgba(0, 0, 0, 0.1)"); */
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-        text-decoration: none;
-        outline: none;
-        text-overflow: ellipsis;
-    }
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    margin-left: .167em;
+    margin-right: .167em;
+    margin-bottom: .333em;
+    padding: .5em 1em;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: .88em;
+    line-height: 1.6em;
+    color: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.1);
+    background: linear-gradient(to bottom, rgba(230, 230, 230, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    /* filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,StartColorStr="rgba(230, 230, 230, 0.1)", EndColorStr="rgba(0, 0, 0, 0.1)"); */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-decoration: none;
+    outline: none;
+    text-overflow: ellipsis;
 }
+
 
 .custom-dropdown {
 float: right;
@@ -549,13 +549,13 @@ font-weight: bold;
 
 
 /* Custom styles for the first and second columns */
-thead th:nth-child(1),
+/* thead th:nth-child(1),
 thead th:nth-child(2) {
 
 position: sticky;
 left: 0;
 z-index: 2;
-}
+} */
 
 /* Custom styles for DataTable buttons */
 .dt-button {
@@ -686,9 +686,7 @@ cursor: not-allowed !important;
 }
 
 /* Add a subtle shadow to the pagination container */
-.dataTables_paginate {
-/* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important; */
-}
+
 
 
 
@@ -990,4 +988,26 @@ text-align: center;
     color: white;
     border-radius: 4px;
     padding: 5px;
+  }
+
+
+  .cols {
+    border: 1px solid black !important;
+  }
+  .add-width{
+    width: 100px !important;
+  }
+
+  
+  @media print{
+    .no-print{
+      display: none !important;
+    }
+    .cols {
+      border: 1px solid black !important;
+    } 
+
+    .ss {
+      background-color: #d61c1c !important;
+    }
   }

@@ -226,7 +226,7 @@
                         <div class="modal-body">
                             {% verbatim %}
                                 <h1>View Data</h1>
-                                <p>house_help_name: {{ houseHelpData.house_help_name }}</p>
+                                <!-- <p>house_help_name: {{ houseHelpData.house_help_name }}</p>
                                 <p>house_help_pan_number: {{ houseHelpData.house_help_pan_number }}</p>
                                 <p>house_help_pan_doc: {{ houseHelpData.house_help_pan_doc }}</p>
                                 <p>house_help_contact: {{ houseHelpData.house_help_contact }}</p>
@@ -237,7 +237,143 @@
                                 <p>house_help_state: {{ houseHelpData.house_help_state }}</p>
                                 <p>house_help_pin: {{ houseHelpData.house_help_pin }}</p>
                                 <p>other_doc: {{ houseHelpData.other_doc }}</p>
-                                <p>other_document_specifications: {{ houseHelpData.other_document_specifications }}</p>
+                                <p>other_document_specifications: {{ houseHelpData.other_document_specifications }}</p> -->
+
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <p class="view-label">Name: </p>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <p class="view-inps">{{ houseHelpData.house_help_name }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <p class="view-label">Contact Number: </p>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <p class="view-inps">{{ houseHelpData.house_help_contact }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <p class="view-label">PAN Number: </p>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <p class="view-inps">{{ houseHelpData.house_help_pan_number }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <p class="view-label">Pan Doc: </p>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <p class="view-inps">{{ houseHelpData.house_help_pan_doc }}</p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <p class="view-label">Aadhaar Number: </p>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <p class="view-inps">{{ houseHelpData.house_help_aadhar_number }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <p class="view-label">Aadhaar Doc: </p>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <p class="view-inps">{{ houseHelpData.house_help_aadhar_doc }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12">
+                                        <div class="row">
+                                            <div class="col-lg-3">
+                                                <p class="view-label">Address: </p>
+                                            </div>
+                                            <div class="col-lg-9">
+                                                <p class="view-inps">{{ houseHelpData.house_help_address }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <p class="view-label">City: </p>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <p class="view-inps">{{ houseHelpData.house_help_city }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <p class="view-label">State: </p>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <p class="view-inps">{{ houseHelpData.house_help_state }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <p class="view-label">Pin Code: </p>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <p class="view-inps">{{ houseHelpData.house_help_pin }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <p class="view-label">Other Doc: </p>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <p class="view-inps">{{ houseHelpData.other_doc }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <p class="view-label">Other Doc Specification: </p>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <p class="view-inps">{{ houseHelpData.other_document_specifications }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
                             {% endverbatim %}
                         </div>
                     </div>
@@ -395,7 +531,7 @@
                                 </div>
                                 <div class="col-lg-6 mb-3 d-flex">
                                     <div class="w-100 sty-input-wrapper">
-                                        <input type="file" class="w-100 sty-inp form-control" ref="other_doc" />
+                                        <input type="file" id="houseHelpOtherDoc" class="w-100 sty-inp form-control" ref="other_doc" />
                                         <label for="id_other_doc" class="sty-label">Other Documents</label>
                                         <span v-if="errors.other_doc" class="error">{{ errors.other_doc[0] }}</span>
                                         <span v-else></span>
