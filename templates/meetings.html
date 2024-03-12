@@ -305,7 +305,7 @@
                                         <td>
                                             <input class="form-control" :list="'options-' + index" :id="'editable-dropdown-' + index" name="editable-dropdown">
                                             <datalist :id="'options-' + index">
-                                                <option v-for="(member, mIndex) in item.members" :key="mIndex" :value="member.member_name" :data-id="member.id" :data-status="member.member_is_primary ? 'primary' : 'secondary'">
+                                                <option v-for="(member, mIndex) in item.members" :key="mIndex" :value="member.member_name + ' (' + member.member_position_formatted + ')'" :data-id="member.id" :data-status="member.member_is_primary ? 'primary' : 'secondary'">
                                                 </option>
                                             </datalist>
                                         </td>

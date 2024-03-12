@@ -18,15 +18,15 @@
           <div name="main-member-form" id="msform">
             <!-- progressbar -->
             <ul id="progressbar" class="col-10 ms-auto me-auto" style="padding: 0 !important">
-              <li id="flat" class="active" style="width: 20% !important;"><strong>Flat Details</strong></li>
-              <li id="member" style="width: 20% !important;"><strong>Members Details</strong></li>
+              <!-- <li id="flat" class="active" style="width: 20% !important;"><strong>Flat Details</strong></li> -->
+              <li id="member" class="active" style="width: 20% !important;"><strong>Members Details</strong></li>
               <li id="shares" style="width: 20% !important;"><strong>Shares Details</strong></li>
               <li id="homeLoan" style="width: 20% !important;"><strong>Home Loan Details</strong></li>
               <li id="gst" style="width: 20% !important;"><strong>GST Details</strong></li>
               <li id="vehicle" style="width: 20% !important;"><strong>Vehicle Details</strong></li>
             </ul>
 
-            <fieldset>
+            <!-- <fieldset>
               <div id="flatDetailVue">
                 {% verbatim %}
                 <form enctype="multipart/form-data">
@@ -139,7 +139,7 @@
                 {% endverbatim %}
               </div>
               <p id="redirectToMember"></p>
-            </fieldset>
+            </fieldset> -->
 
 
             <fieldset>
@@ -182,9 +182,10 @@
                           <select class="w-100 sty-inp" v-model="formData.member_position">
                             <option value="">Select Member Position</option>
                             <option value="nominal_member">Nominal Member</option>
-                            <option value="committe_member">Committe Member</option>
+                            <option value="associate_member">Associate Member</option>
                             <option value="member">Member</option>
                           </select>
+                          <label class="sty-label">Member Position</label>
                           <span v-if="errors.member_position" class="error">{{ errors.member_position[0] }}</span>
                           <span v-else></span>
                         </div>
@@ -366,7 +367,7 @@
                         </div>
                       </div>
 
-                      <div class="col-lg-4 mb-3" id="id_flat_status_div_container" v-if="flat_having_primary_mem">
+                      <!-- <div class="col-lg-4 mb-3" id="id_flat_status_div_container" v-if="flat_having_primary_mem">
                         <div class="w-100 sty-input-wrapper" id="id_flat_status_div">
                           <select class="w-100 sty-inp" v-model="formData.flat_status">
                             <option value="">Select Flat Status</option>
@@ -380,7 +381,7 @@
                           <span v-if="errors.flat_status" class="error">{{ errors.flat_status[0] }}</span>
                           <span v-else></span>
                         </div>
-                      </div>
+                      </div> -->
 
                       <div class="col-lg-4 d-flex align-items-center" id="id_is_primary_container" v-if="flat_having_primary_mem">
                         <small id="id_is_primary">
@@ -392,10 +393,13 @@
                         </small>
                       </div>
                     </div>
-                    <hr>
-                    <h1>Nominee</h1>
+
+                    <div class="seven my-3">
+                      <h1>Add Nominee</h1>
+                    </div>
+
                     <div v-for="(form, index) in forms" :key="index">
-                      <h3>Form {{ getFormNumber(index) }}</h3>
+                      <p class="lead">Nominee {{ getFormNumber(index) }}</p>
 
                       <div class="row abcd" id="cloneNominee">
                         <div class="col-lg-4 mb-3">
@@ -537,9 +541,9 @@
                         <hr />
                       </div>
                     </div>
-                    <span @click.prevent="addForm" class="add-mem-btn float-start">Add Form</span>
-                    <input type="button" class="add-mem-btn" @click="submitBothDocs" value="Submit All Forms">
-                    <hr>
+                    <span @click.prevent="addForm" class="add-mem-btn float-start">Add Nominee</span>
+                    <input type="button" class="add-mem-btn" @click="submitMembers(false)" value="Save & Next">
+                    <input type="button" class="add-mem-btn" @click="submitMembers(true)" value="Save & Add Another">
                   </form>
                 {% endverbatim %}
               </div>

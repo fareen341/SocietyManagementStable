@@ -82,6 +82,7 @@ class MembersSerializer(serializers.ModelSerializer):
     flat_name_formatted = serializers.SerializerMethodField()
     member_position_formatted = serializers.SerializerMethodField()
     nominees = NomineesSerializer(many=True, required=False)
+    member_is_primary_formatted = serializers.SerializerMethodField()
 
     class Meta:
         model = Members
@@ -96,6 +97,23 @@ class MembersSerializer(serializers.ModelSerializer):
     def get_member_position_formatted(self, obj):
         member_position_choices = dict(Members._meta.get_field('member_position').choices)
         return member_position_choices.get(obj.member_position, '')
+
+    def get_member_is_primary_formatted(self, obj):
+        # Assuming member_is_primary is a field of the Members model
+        if obj.member_is_primary:
+            return "Primary"
+        else:
+            return "Secondary"
+
+    def to_representation(self, instance):
+        # Call the parent class method to get the default representation
+        data = super().to_representation(instance)
+
+        # Check if the action is list, if so, exclude member_is_primary_formatted field
+        if self.context['view'].action == 'list':
+            data.pop('member_is_primary_formatted', None)
+
+        return data
 
 
 class FlatSharesSerializers(serializers.ModelSerializer):
@@ -277,11 +295,12 @@ class MemberSerializersForNominees(serializers.ModelSerializer):
     vehicles = FlatMemberVehicleSerializer(many=True, required=False)
     banks = FlatHomeLoanSerializers(many=True, required=False)
     member_is_primary = serializers.SerializerMethodField()
+    member_position_formatted = serializers.SerializerMethodField()
 
     class Meta:
         model = Members
         fields = [
-            'id', 'member_name', 'member_is_primary', 'date_of_admission', 'date_of_entrance_fees',
+            'id', 'member_name', 'member_is_primary', 'member_position_formatted', 'date_of_admission', 'date_of_entrance_fees',
             'member_address', 'member_occupation', 'age_at_date_of_admission', 'date_of_cessation',
             'reason_for_cessation',
             'nominees',
@@ -296,6 +315,10 @@ class MemberSerializersForNominees(serializers.ModelSerializer):
         else:
             return "Secondary"
 
+    # FORMAT MEMBER POSITION
+    def get_member_position_formatted(self, obj):
+        member_position_choices = dict(Members._meta.get_field('member_position').choices)
+        return member_position_choices.get(obj.member_position, '')
 
 
 class SuggestionSerializers(serializers.ModelSerializer):

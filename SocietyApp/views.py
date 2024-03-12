@@ -69,7 +69,7 @@ def nominee_register_view(request):
     print("QUERY URL-->", status)
 
     datatable_columns = []
-    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct().order_by('wing_flat_unique')
     data = []
     for flat in flats:
         members = Members.objects.filter(
@@ -100,21 +100,21 @@ def form_i_view(request):
     print("QUERY URL-->", status)
 
     datatable_columns = []
-    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct().order_by('wing_flat_unique')
     data = []
     for flat in flats:
         members = Members.objects.filter(
+                wing_flat__wing_flat_unique=flat['wing_flat_unique']
+            )
+        if status == 'history':
+            members = Members.objects.filter(
                 wing_flat__wing_flat_unique=flat['wing_flat_unique'],
                 date_of_cessation__isnull=False,
             )
-        if status == 'current':
-                members = Members.objects.filter(
+        elif status == 'current':
+            members = Members.objects.filter(
                 wing_flat__wing_flat_unique=flat['wing_flat_unique'],
                 date_of_cessation__isnull=True,
-            )
-        elif status == 'all':
-            members = Members.objects.filter(
-                wing_flat__wing_flat_unique=flat['wing_flat_unique']
             )
         if(members):
             serialized_members = MemberSerializersForNominees(members, many=True).data
@@ -152,7 +152,7 @@ def vehicle_register(request):
     print("QUERY URL-->", status)
 
     datatable_columns = []
-    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct().order_by('wing_flat_unique')
     data = []
     for flat in flats:
         members = Members.objects.filter(
@@ -184,7 +184,7 @@ def hypotication_register(request):
     print("QUERY URL-->", status)
 
     datatable_columns = []
-    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct().order_by('wing_flat_unique')
     data = []
     for flat in flats:
         members = Members.objects.filter(
@@ -250,7 +250,7 @@ def form_j_view(request):
         AND ONLY MEMBER WILL BE SHOWN IN FORM J
     '''
 
-    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
+    flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct().order_by('wing_flat_unique')
     for flat in flats:
         print("FLATS==========", flat)
         # annual_general_meeting

@@ -7,12 +7,12 @@
 
 <div class="container">
     <div id="unitMasterVue">
-        {% comment %} <div class="member-title mt-4 d-flex" style="justify-content: space-between;">
-            <h3 class="lead" style="font-size: 27px;">Tenant Details</h3>
+        <div class="member-title mt-4 d-flex" style="justify-content: space-between;">
+            <h3 class="lead" style="font-size: 27px;">Unit Details</h3>
             <div class="gap-4">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tenentCreation">Create Tenant</button>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#unitCreation">Create Unit</button>
             </div>
-        </div> {% endcomment %}
+        </div>
         {% verbatim %}
         <div class="mt-3">
             <table id="example" class="display dt-table order-column" style="width:100%">
@@ -48,139 +48,131 @@
         </div>
         {% endverbatim %}
 
-        <!-- Tenant CREATE modal -->
-        {% comment %} <div class="modal fade" id="tenentCreation" tabindex="-1" aria-labelledby="tenentCreationLabel" aria-hidden="true">
+        <!-- UNIT CREATE modal -->
+        <div class="modal fade" id="unitCreation" tabindex="-1" aria-labelledby="unitCreationLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                <h1 class="modal-title fs-5" id="tenentCreationLabel">Create Tenant</h1>
+                <h1 class="modal-title fs-5" id="unitCreationLabel">Create Unit Detail</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     {% verbatim %}
-                                        <form enctype="multipart/form-data" @submit.prevent="submitFlatDetailForm(flatFormData.wing_flat)">
-                                            <div class="row">
+                    <form enctype="multipart/form-data">
+                        <div class="row">
 
-                                                <div class="col-lg-4 mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <select v-model="flatFormData.wing_flat" class="w-100 sty-inp form-control">
-                                                        <option :value="flatFormData.wing_flat">{{ flatFormData.wing_flat }}</option>
-                                                    </select>
-                                                    <label class="sty-label">Wing & Flat No.</label>
-                                                    <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                </div>
+                          <div class="col-lg-4 mb-3">
+                            <div class="w-100 sty-input-wrapper">
+                              <select class="w-100 sty-inp form-control" v-model="formData.wing_flat" />
+                                <option v-for="unit in units" :value="unit[0]">{{ unit[1] }}</option>
+                              </select>
+                              <label class="sty-label">Wing & Flat No.</label>
+                              <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
+                              <span v-else></span>
+                            </div>
+                          </div>
 
-                                                <div class="col-lg-4 mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <input type="text" class="w-100 sty-inp" v-model="flatFormData.unit_area" />
-                                                    <label class="sty-label">Unit Area</label>
-                                                    <span v-if="errors.unit_area" class="error">{{ errors.unit_area[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                </div>
+                          <div class="col-lg-4 mb-3">
+                            <div class="w-100 sty-input-wrapper">
+                              <input type="text" class="w-100 sty-inp" v-model="formData.unit_area" />
+                              <label class="sty-label">Unit Area</label>
+                              <span v-if="errors.unit_area" class="error">{{ errors.unit_area[0] }}</span>
+                              <span v-else></span>
+                            </div>
+                          </div>
 
-                                                <div class="col-lg-4 mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <input type="text" class="w-100 sty-inp" v-model="flatFormData.unit_type" />
-                                                    <label class="sty-label">Unit Type</label>
-                                                    <span v-if="errors.unit_type" class="error">{{ errors.unit_type[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                </div>
-
-
-                                                <div class="col-lg-4 mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <input type="text" class="w-100 sty-inp" v-model="flatFormData.unit_of_mesurement" />
-                                                    <label class="sty-label">Unit Of Mesurement</label>
-                                                    <span v-if="errors.unit_of_mesurement" class="error">{{ errors.unit_of_mesurement[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                </div>
+                          <div class="col-lg-4 mb-3">
+                            <div class="w-100 sty-input-wrapper">
+                              <input type="text" class="w-100 sty-inp" v-model="formData.unit_type" />
+                              <label class="sty-label">Unit Type</label>
+                              <span v-if="errors.unit_type" class="error">{{ errors.unit_type[0] }}</span>
+                              <span v-else></span>
+                            </div>
+                          </div>
 
 
-                                                <div class="col-lg-4 mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <input type="number" class="w-100 sty-inp" v-model="flatFormData.property_tax_no" />
-                                                    <label class="sty-label">Property Tax No</label>
-                                                    <span v-if="errors.property_tax_no" class="error">{{ errors.property_tax_no[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                </div>
+                          <div class="col-lg-4 mb-3">
+                            <div class="w-100 sty-input-wrapper">
+                              <input type="text" class="w-100 sty-inp" v-model="formData.unit_of_mesurement" />
+                              <label class="sty-label">Unit Of Mesurement</label>
+                              <span v-if="errors.unit_of_mesurement" class="error">{{ errors.unit_of_mesurement[0] }}</span>
+                              <span v-else></span>
+                            </div>
+                          </div>
 
-                                                <div class="col-lg-4 mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <input type="number" class="w-100 sty-inp" v-model="flatFormData.electricity_connection_no" />
-                                                    <label class="sty-label">Electricity Connection No</label>
-                                                    <span v-if="errors.electricity_connection_no" class="error">{{ errors.electricity_connection_no[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                </div>
 
-                                                <div class="col-lg-4 mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <select class="w-100 sty-inp form-control" name="pet" id="pet" v-model="flatFormData.is_having_pet">
-                                                    <option value="No">No</option>
-                                                    <option value="Yes">Yes</option>
-                                                    </select>
-                                                    <label class="sty-label">Having Pet</label>
-                                                    <span v-if="errors.is_having_pet" class="error">{{ errors.is_having_pet[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                </div>
+                          <div class="col-lg-4 mb-3">
+                            <div class="w-100 sty-input-wrapper">
+                              <input type="number" class="w-100 sty-inp" v-model="formData.property_tax_no" />
+                              <label class="sty-label">Property Tax No</label>
+                              <span v-if="errors.property_tax_no" class="error">{{ errors.property_tax_no[0] }}</span>
+                              <span v-else></span>
+                            </div>
+                          </div>
 
-                                                <div class="col-lg-4 mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <input type="number" class="w-100 sty-inp" v-model="flatFormData.gas_connection_no" />
-                                                    <label class="sty-label">Gas Connection No</label>
-                                                    <span v-if="errors.gas_connection_no" class="error">{{ errors.gas_connection_no[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                </div>
+                          <div class="col-lg-4 mb-3">
+                            <div class="w-100 sty-input-wrapper">
+                              <input type="number" class="w-100 sty-inp" v-model="formData.electricity_connection_no" />
+                              <label class="sty-label">Electricity Connection No</label>
+                              <span v-if="errors.electricity_connection_no" class="error">{{ errors.electricity_connection_no[0] }}</span>
+                              <span v-else></span>
+                            </div>
+                          </div>
 
-                                                <div class="col-lg-4 mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <input type="number" class="w-100 sty-inp" v-model="flatFormData.water_connection_no" />
-                                                    <label class="sty-label">Water Connection No</label>
-                                                    <span v-if="errors.water_connection_no" class="error">{{ errors.water_connection_no[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                </div>
+                          <div class="col-lg-4 mb-3">
+                            <div class="w-100 sty-input-wrapper">
+                              <select class="w-100 sty-inp form-control" name="pet" id="pet" v-model="formData.is_having_pet">
+                                <option value="No">No</option>
+                                <option value="Yes">Yes</option>
+                              </select>
+                              <label class="sty-label">Having Pet</label>
+                              <span v-if="errors.is_having_pet" class="error">{{ errors.is_having_pet[0] }}</span>
+                              <span v-else></span>
+                            </div>
+                          </div>
 
-                                                <div class="col-lg-4 mb-3">
-                                                <div class="w-100 sty-input-wrapper">
-                                                    <select class="w-100 sty-inp form-control" v-model="flatFormData.flat_status" />
-                                                    <option v-for="choice in flat_status" :key="choice.value" :value="choice.value">
-                                                        {{ choice.label }}
-                                                    </option>
-                                                    </select>
-                                                    <label class="sty-label">Flat Status</label>
-                                                    <span v-if="errors.flat_status" class="error">{{ errors.flat_status[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                </div>
+                          <div class="col-lg-4 mb-3">
+                            <div class="w-100 sty-input-wrapper">
+                              <input type="number" class="w-100 sty-inp" v-model="formData.gas_connection_no" />
+                              <label class="sty-label">Gas Connection No</label>
+                              <span v-if="errors.gas_connection_no" class="error">{{ errors.gas_connection_no[0] }}</span>
+                              <span v-else></span>
+                            </div>
+                          </div>
 
-                                            </div>
+                          <div class="col-lg-4 mb-3">
+                            <div class="w-100 sty-input-wrapper">
+                              <input type="number" class="w-100 sty-inp" v-model="formData.water_connection_no" />
+                              <label class="sty-label">Water Connection No</label>
+                              <span v-if="errors.water_connection_no" class="error">{{ errors.water_connection_no[0] }}</span>
+                              <span v-else></span>
+                            </div>
+                          </div>
 
-                                            <hr>
-                                            <div class="two-btn float-end pb-3 pe-4">
-                                                <button type="submit" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary">Update</button>
-                                            </div>
-                                        </form>
-                                        {% endverbatim %}
-                    <hr>
+                          <div class="col-lg-4 mb-3">
+                            <div class="w-100 sty-input-wrapper">
+                              <select class="w-100 sty-inp form-control" v-model="formData.flat_status" />
+                                <option v-for="choice in flat_status" :key="choice.value" :value="choice.value">
+                                  {{ choice.label }}
+                                </option>
+                              </select>
+                              <label class="sty-label">Flat Status</label>
+                              <span v-if="errors.flat_status" class="error">{{ errors.flat_status[0] }}</span>
+                              <span v-else></span>
+                            </div>
+                          </div>
+
+                        </div>
+                    </form>
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" value="Submit" @click="submitTenant">Save changes</button>
+                    <input type="button" class="btn btn-primary" value="Save" @click="submitFlatDetailForm">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
+                {% endverbatim %}
             </div>
             </div>
-        </div> {% endcomment %}
+        </div>
 
         <!-- Tenant UPDATE modal -->
         <div class="modal fade" id="unitUpdateModal" tabindex="-1" aria-labelledby="unitUpdateModalLabel" aria-hidden="true">

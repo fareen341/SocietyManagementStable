@@ -219,7 +219,7 @@ class MemberView(viewsets.ModelViewSet):
         print('list of members===============================')
         # queryset = Members.objects.filter(member_is_primary=True, date_of_cessation__isnull=True)
         queryset = Members.objects.filter(member_is_primary=True, date_of_cessation__isnull=True)
-        serializer = MembersSerializer(queryset, many=True)
+        serializer = MembersSerializer(queryset, many=True, context={'request': request, 'view': self})
         return Response(serializer.data)
 
 
@@ -233,7 +233,7 @@ class MemberView(viewsets.ModelViewSet):
             except Members.DoesNotExist:
                 return Response(data={"message": "Member not found"})
 
-            serializer = MembersSerializer(instance, many=True)
+            serializer = MembersSerializer(instance, many=True, context={'request': request, 'view': self})
             return Response(serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -247,7 +247,7 @@ class MemberView(viewsets.ModelViewSet):
         except Members.DoesNotExist:
             return Response(data={"message": "Member not found"})
 
-        serializer = MembersSerializer(instances, many=True)
+        serializer = MembersSerializer(instances, many=True, context={'request': request, 'view': self})
         return Response(serializer.data)
 
 
@@ -281,19 +281,25 @@ class MemberView(viewsets.ModelViewSet):
             member_id = request.data.get("id")
             if request.data.get('date_of_cessation', None):
                 # MAKE SHARES AS HISTORY
-                shares_data = FlatShares.objects.get(unique_member_shares=member_id)
-                shares_data.date_of_cessation = request.data.get('date_of_cessation')
-                shares_data.save()
+                check = FlatShares.objects.filter(unique_member_shares=member_id).exists()
+                if check:
+                    shares_data = FlatShares.objects.get(unique_member_shares=member_id)
+                    shares_data.date_of_cessation = request.data.get('date_of_cessation')
+                    shares_data.save()
 
                 # # MAKE HOME-LOAN AS HISTORY
-                home_loan = FlatHomeLoan.objects.get(unique_member_shares=member_id)
-                home_loan.date_of_cessation = request.data.get('date_of_cessation')
-                home_loan.save()
+                check = FlatHomeLoan.objects.filter(unique_member_shares=member_id).exists()
+                if check:
+                    home_loan = FlatHomeLoan.objects.get(unique_member_shares=member_id)
+                    home_loan.date_of_cessation = request.data.get('date_of_cessation')
+                    home_loan.save()
 
                 # # MAKE GST AS HISTORY
-                gst = FlatGST.objects.get(unique_member_shares=member_id)
-                gst.date_of_cessation = request.data.get('date_of_cessation')
-                gst.save()
+                check = FlatGST.objects.filter(unique_member_shares=member_id).exists()
+                if check:
+                    gst = FlatGST.objects.get(unique_member_shares=member_id)
+                    gst.date_of_cessation = request.data.get('date_of_cessation')
+                    gst.save()
 
                 # MAKE VEHICLE AS HISTORY
                 vehicle_obj = FlatMemberVehicle.objects.filter(unique_member_shares=member_id)
@@ -759,7 +765,7 @@ def get_flat_with_members(request):
     return JsonResponse({"flats": data})
 
 
-# BELOW CODE TO GET THE NOMINEES DATA FOR NOMINEE - REGISTER, BELOW CODE IS NOT GETTING USED, USING JINJA FOR IT.
+# BELOW CODE TO GET THE NOMINEES DATA FOR NOMINEE - REGISTER
 def get_nominees_details(request):
     flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct()
     data = []

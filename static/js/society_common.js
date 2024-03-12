@@ -1531,6 +1531,9 @@ var app = new Vue({
                         if (successfulSubmissions === this.memberformData.length) {
                             toastr.success(response.message, "Member Updated Successfully!");
                             $('#editMemberModal').modal('hide');
+                            setTimeout(function() {
+                                location.reload();
+                            }, 600);
                         }
                         // Update Datatable, DONT DELETE USEFULL LATER.
                         // console.log("RESPONSE DATA===>", response.data);
@@ -1549,6 +1552,8 @@ var app = new Vue({
         },
         addMemberData(id, flat_id, flat_name) {
             this.flatName = flat_name;
+            $('#flatDropdown').val(flat_id);
+            $('#selectedFlat').html(flat_name);
             $('#addMemberModal').modal('show');
         },
         memberHistoryData(wing_flat, flat_name) {
@@ -1642,7 +1647,10 @@ var app = new Vue({
             } else {
               return address; // If the address has less than 10 words, return as it is
             }
-          }
+        },
+        redirectToUnit(){
+            window.location.href = "/unit-master";
+        },
     },
     mounted() {
         axios.get('http://127.0.0.1:8000/api/members/')
@@ -1706,6 +1714,7 @@ new Vue({
             this.errors = this.errors.filter(error => error.index !== newIndex);
         },
         removeForm(index) {
+            this.formData.wing_flat = $('#flatDropdown').val();
             this.forms.splice(index, 1);
         },
         hasError(index, field) {
@@ -1715,7 +1724,9 @@ new Vue({
             const error = this.errors.find(error => error.index === index);
             return error ? error[field][0] : '';
         },
-        submitBothDocs() {
+        submitMembers(addAnother) {
+            this.formData.wing_flat = $('#flatDropdown').val();
+
             const payload = {};
             for (const key in this.formData) {
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
@@ -1737,8 +1748,14 @@ new Vue({
                 }
             })
                 .then(response => {
-                    console.log('Form data submitted successfully. Proceeding to the next action.', response.data);
-                    this.nextAction();
+                    toastr.success(response.message, "Member Added Successfully!");
+                    if(addAnother === true){
+                        setTimeout(function() {
+                            location.reload();
+                        }, 600);
+                    }else{
+                        this.nextAction();
+                    }
                 })
                 .catch(error => {
                     this.required_docs_errors = error.response.data
@@ -1790,7 +1807,6 @@ new Vue({
         getFormNumber: index => index + 1
     },
     mounted() {
-        console.log("mounted===========");
         axios.get(`http://127.0.0.1:8000/api/wing/`)
             .then(response => {
                 this.units = response.data;
@@ -3818,9 +3834,41 @@ new Vue({
         errors: {},
         flatFormData: {},
         filteredOptions: ['Yes', 'No'],
-        filteredOptions: {'yes': 'Yes', 'no': 'No'}
+        filteredOptions: {'yes': 'Yes', 'no': 'No'},
+        formData: {},
+        flat_status: [],
+        units: [],
+        attach_noc: false,
     },
     methods: {
+        submitFlatDetailForm() {
+            this.errors = {};
+            const formData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    formData.append(key, this.formData[key]);
+                }
+            }
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/flat_master_detail/', formData)
+                .then(response => {
+                    console.log('Form submitted successfully:', response.data);
+                    this.nextAction();
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error: ->", this.errors);
+                });
+            // $("#redirectToMember").trigger("click");
+        },
+        loanStatus(event) {
+            this.attach_noc = false;
+            if (event.target.value == 'yes') {
+                this.attach_noc = true;
+            }
+        },
         editRequestedData(id) {
             $('#unitUpdateModal').modal('show');
             axios.get(`http://127.0.0.1:8000/api/flat_master_detail/${id}/`)
@@ -3865,6 +3913,24 @@ new Vue({
         },
     },
     mounted() {
+        // GET FLATS DROPDOWN
+        axios.get(`http://127.0.0.1:8000/api/wing/`)
+            .then(response => {
+                this.units = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // GET FLAT STATUS DROPDOWN
+        axios.get(`http://127.0.0.1:8000/api/get_flats_status/`)
+            .then(response => {
+                this.flat_status = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
         axios.get('http://127.0.0.1:8000/api/flat_detail/')
             .then(response => {
                 this.unitData = response.data;
@@ -3876,10 +3942,10 @@ new Vue({
                 console.error('Error fetching data:', error);
             });
 
-        // $('#tenentCreation, #tenentUpdateModal').on('hidden.bs.modal', () => {
-        //     this.clearErrors();
-        //     this.formData = {};
-        // });
+        $('#unitCreation, #unitUpdateModal').on('hidden.bs.modal', () => {
+            this.errors = {};
+            this.formData = {};
+        });
     },
 })
 

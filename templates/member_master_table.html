@@ -8,16 +8,16 @@
 
 
 <div class="container">
-    <div class="member-title mt-4 d-flex" style="justify-content: space-between;">
+    <div class="member-title mt-4 mb-3 d-flex" style="justify-content: space-between;">
         <h3 class="lead" style="font-size: 27px;">Member Details</h3>
         <div class="gap-4">
             <a href="{% url 'create_member' %}" class="btn me-3" style="background-color: #6ebbff; color:white;">
-                <!-- Create member -->
-                <i class="fa-solid fa-square-plus fa-xl"></i>
+                Create member
+                <!-- <i class="fa-solid fa-square-plus fa-xl"></i> -->
             </a>
             <a href="" class="btn" style="background-color: #6ebbff; color:white;">
-                <!-- create member -->
-                <i class="fa-solid fa-file-import fa-xl"></i>
+                Bulk Upload
+                <!-- <i class="fa-solid fa-file-import fa-xl"></i> -->
             </a>
         </div>
     </div>
@@ -50,16 +50,16 @@
                     <th>Sales Agreement</th>
                     <th>Other Attachment</th>
                     <th>Date Of Entrance Fee</th>
-                    <th style="display: none;">Extra</th>
+                    <th style="display: none;">WIng Flat Id</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(members, index) in members" :key="index">
                     <td>
-                        <span @click="viewMemberData(members.id, members.wing_flat, members.flat_name)" class="me-3"><i class="fa-solid fa-eye"></i></span>
-                        <span @click="editMemberData(members.id, members.wing_flat, members.flat_name)" class="me-3"><i class="fa-solid fa-pen-to-square"></i></span>
-                        <span @click="addMemberData(members.id, members.wing_flat, members.flat_name)" class="me-3"><i class="fa-solid fa-user-plus"></i></span>
-                        <span @click="memberHistoryData(members.wing_flat, members.flat_name)" class="me-3"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                        <span @click="viewMemberData(members.id, members.wing_flat, members.flat_name_formatted)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                        <span @click="editMemberData(members.id, members.wing_flat, members.flat_name_formatted)" class="me-3"><i class="fa-solid fa-pen-to-square"></i></span>
+                        <span @click="addMemberData(members.id, members.wing_flat, members.flat_name_formatted)" class="me-3"><i class="fa-solid fa-user-plus"></i></span>
+                        <span @click="memberHistoryData(members.wing_flat, members.flat_name_formatted)" class="me-3"><i class="fa-solid fa-clock-rotate-left"></i></span>
                     </td>
                     <td v-for="(value, key) in members" :key="key">
                         <span v-if="key === 'member_address'">{{ sliceAddress(value) }}</span>
@@ -70,7 +70,7 @@
                         <span v-else-if="key === 'ownership_percent'">
                             <span :class="{ 'red-background': value < 100, 'blue-background': value >= 100 }">{{ value }}</span>
                         </span>
-                        <span v-if="key === 'wing_flat'" :style="{ display: 'none' }"></span>
+                        <span v-else-if="key === 'wing_flat'" :style="{ display: 'none' }"></span>
                         <span v-else>{{ value }}</span>
                     </td>
                 </tr>
@@ -222,8 +222,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div v-else>
-                                        <h2 class="m-4 text-center">{{ flatDataFoundErrorMsg }}</h2>
+                                    <div class="m-4 text-center" v-else>
+                                        <h2 >{{ flatDataFoundErrorMsg }}</h2>
+                                        <span style="cursor: pointer;" @click="redirectToUnit">Add Now <i class="fa-solid fa-square-plus fa-xl"></i></span>
                                     </div>
                                 </div>
                                 {% endverbatim %}
@@ -235,7 +236,7 @@
                                 {% verbatim %}
                                 <div v-for="(member, index) in memberData" :key="index">
                                     <div class="seven mt-4">
-                                        <h1 id="heading">{{ member.member_name }}</h1>
+                                        <h1 id="heading">{{ member.member_name }} ({{ member.member_is_primary_formatted }})</h1>
                                       </div>
                                     <div class="accordion" :id="'accordionExample' + index">
                                         <div class="accordion-item">
@@ -260,7 +261,7 @@
                                                                     <p class="ms-3 view-label">Flat Number</p>
                                                                 </div>
                                                                 <div class="col-lg-6">
-                                                                    <p class="view-inps">A-1001</p>
+                                                                    <p class="view-inps">{{ member.flat_name_formatted }}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -270,7 +271,7 @@
                                                                     <p class="ms-3 view-label">Ownership %</p>
                                                                 </div>
                                                                 <div class="col-lg-8">
-                                                                    <p class="view-inps">{{ member.ownership_percent }}</p>
+                                                                    <p class="view-inps">{{ member.ownership_percent }} %</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -317,22 +318,22 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-lg-6">
+                                                        <div class="col-lg-12">
                                                             <div class="row">
-                                                                <div class="col-lg-6">
+                                                                <div class="col-lg-3">
                                                                     <p class="ms-3 view-label">Permanent Address</p>
                                                                 </div>
-                                                                <div class="col-lg-6">
+                                                                <div class="col-lg-7">
                                                                     <p class="view-inps">{{ member.member_address }}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <div class="row">
-                                                                <div class="col-lg-4">
+                                                                <div class="col-lg-6">
                                                                     <p class="ms-3 view-label">State</p>
                                                                 </div>
-                                                                <div class="col-lg-3">
+                                                                <div class="col-lg-6">
                                                                     <p class="view-inps">{{ member.member_state }}</p>
                                                                 </div>
                                                             </div>
@@ -351,10 +352,10 @@
 
                                                         <div class="col-lg-6">
                                                             <div class="row">
-                                                                <div class="col-lg-3">
+                                                                <div class="col-lg-6">
                                                                     <p class="ms-3 view-label">Pincode</p>
                                                                 </div>
-                                                                <div class="col-lg-2">
+                                                                <div class="col-lg-6">
                                                                     <p class="view-inps">{{ member.member_pin_code }}</p>
                                                                 </div>
                                                             </div>
@@ -362,10 +363,10 @@
 
                                                         <div class="col-lg-6">
                                                             <div class="row">
-                                                                <div class="col-lg-4">
+                                                                <div class="col-lg-6">
                                                                     <p class="ms-3 view-label">Occupation</p>
                                                                 </div>
-                                                                <div class="col-lg-8">
+                                                                <div class="col-lg-6">
                                                                     <p class="view-inps">{{ member.member_occupation }}</p>
                                                                 </div>
                                                             </div>
@@ -383,21 +384,21 @@
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <div class="row">
-                                                                <div class="col-lg-4">
+                                                                <div class="col-lg-6">
                                                                     <p class="ms-3 view-label">Emergency Contact Number</p>
                                                                 </div>
-                                                                <div class="col-lg-8">
+                                                                <div class="col-lg-6">
                                                                     <p class="view-inps">{{ member.member_emergency_contact }}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <div class="row">
-                                                                <div class="col-lg-4">
+                                                                <div class="col-lg-6">
                                                                     <p class="ms-3 view-label">Primary Member:</p>
                                                                 </div>
-                                                                <div class="col-lg-8">
-                                                                    <p class="view-inps">{{ member.member_is_primary }}</p>
+                                                                <div class="col-lg-6">
+                                                                    <p class="view-inps">{{ member.member_is_primary_formatted }}</p>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1002,6 +1003,9 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="text-center m-3 " v-if="vehicleData.length === 0">
+                                        <h2>No vehicle added!</h2>
                                     </div>
                                     {% endverbatim %}
                                 </div>
@@ -2009,16 +2013,20 @@
                                                     </form>
                                                 </div>
                                             </div>
-
-                                            <div class="text-center" v-if="addVehicleOnEdit && vehicleData.length === 0">
-                                                <h3>Vehicle Data Not Added For This Flat</h3>
-                                                <p>Pls Click Below Button To Add Vehicle For This Flat.</p>
-                                                <button type="submit" class="btn btn-primary" style="width: max-content;" @click="addVehicleOnEditModal">Add Vehicle</button>
+                                        </div>
+                                        <div class="text-center" v-if="addVehicleOnEdit && vehicleData.length === 0">
+                                            <h3>Vehicle Data Not Added For This Flat</h3>
+                                            <p>Pls Click Below Button To Add Vehicle For This Flat.</p>
+                                            <button type="submit" class="btn btn-primary" style="width: max-content;" @click="addVehicleOnEditModal">Add Vehicle</button>
+                                            <hr>
+                                            <div style="display: flex; justify-content: flex-end;" class="me-3">
+                                                <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                             </div>
                                         </div>
 
                                         <div class="my-3">
-                                        <button v-if="vehicleData.length > 0" type="submit" class="btn btn-primary" style="width: max-content;" @click="addVehicleOnEditModal">Add Vehicle</button>
+                                            <hr>
+                                            <button v-if="vehicleData.length > 0" type="submit" class="btn btn-primary" style="width: max-content;" @click="addVehicleOnEditModal">Add Vehicle</button>
                                             <div class="two-btn float-end pb-3 pe-4" v-if="vehicleData.length > 0">
                                                 <button type="submit" class="btn btn-secondary"
                                                     data-bs-dismiss="modal">Close</button>
@@ -2310,298 +2318,6 @@
             </div>
         {% endverbatim %}
 
-        <!-- Add Member Modal -->
-        <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        {% verbatim %}
-                            <h1 class="modal-title fs-5" id="addMemberModalLabel">Add Member in Flat {{ flatName }}</h1>
-                        {% endverbatim %}
-                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
-                    </div>
-                    <div class="modal-body">
-                        <form id="forms-container">
-                            <div class="form-container">
-                                <div class="row mt-3" style="text-align: left">
-                                    <h2 id="heading" class="mb-3">Member Details</h2>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <!-- <input type="text" class="w-100 sty-inp "> -->
-                                            <select name="wing_flat_select" id="id_wing_flat"
-                                                class="w-100 sty-inp form-control">
-                                                {% for key, value in wing_flat_no.items %}
-                                                <option value="{{ key }}">{{ value }}</option>
-                                                {% endfor %}
-                                            </select>
-
-                                            <label for="wing_flat_select" class="sty-label">Wing & Flat No.</label>
-                                            <small id="id_wing_flat_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="text" class="w-100 sty-inp" id="id_member_name" />
-                                            <label for="" class="sty-label">Member's Name</label>
-                                        </div>
-                                        <small id="id_member_name_Error" class="error-message"></small>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="number" id="id_member_ownership" min="0" max="100"
-                                                class="w-100 sty-inp percentage-input">
-
-                                            <label for="" class="sty-label">Ownership %</label>
-                                            <small id="id_member_ownership_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <select name="member_position" id="id_member_position" class="w-100 sty-inp">
-                                                {% for key, value in member_position.items %}
-                                                <option value="{{ key }}">{{ value }}</option>
-                                                {% endfor %}
-                                            </select>
-                                            <label for="" class="sty-label">Position</label>
-                                            <small id="id_member_position_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="date" id="id_member_dob" class="w-100 sty-inp form-control" />
-                                            <label for="" class="sty-label">Member DOB</label>
-                                        </div>
-                                        <small id="id_member_dob_Error" class="error-message"></small>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="text" id="id_member_pan_number" class="w-100 sty-inp" />
-                                            <label for="" class="sty-label">Member PAN No</label>
-                                        </div>
-                                        <small id="id_member_pan_number_Error" class="error-message"></small>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="number" id="id_member_aadhar_no" class="w-100 sty-inp" />
-                                            <label for="" class="sty-label">Member Aadhaar No</label>
-                                        </div>
-                                        <small id="id_member_aadhar_no_Error" class="error-message"></small>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <textarea class="w-100 sty-inp form-control" name="" id="id_member_address"
-                                                cols="30" rows="1"></textarea>
-                                            <label for="" class="sty-label">Member Permanent Address</label>
-                                            <small id="id_member_address_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-
-                                        <div class="w-100 sty-input-wrapper">
-                                            <select name="state" id="id_member_state" class="w-100 sty-inp">
-                                                {% for key, value in state_names.items %}
-                                                <option value="{{ key }}">{{ value }}</option>
-                                                {% endfor %}
-                                            </select>
-
-                                            <label for="" class="sty-label">State</label>
-                                        </div>
-                                        <small id="id_member_state_Error" class="error-message"></small>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="number" class="w-100 sty-inp" id="id_member_pin_code" />
-                                            <label for="" class="sty-label">Pin Code</label>
-                                            <small id="id_member_pin_code_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="email" class="w-100 sty-inp" id="id_member_email" />
-                                            <label for="" class="sty-label">Member Email</label>
-                                            <small id="id_member_email_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="number" id="id_member_contact"
-                                                class="w-100 sty-inp form-control" />
-                                            <label for="" class="sty-label">Member Contact No.</label>
-                                            <small id="id_member_contact_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="number" class="w-100 sty-inp" id="id_member_emergency_contact" />
-                                            <label for="" class="sty-label">Emergency Contact No.</label>
-                                            <small id="id_member_emergency_contact_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="text" class="w-100 sty-inp" id="id_member_occupation" />
-                                            <label for="" class="sty-label">Occupation</label>
-                                            <small id="id_member_occupation_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="date" class="w-100 sty-inp" id="id_date_of_admission" />
-                                            <label for="id_date_of_admission" class="sty-label">Date of admission</label>
-                                            <small id="id_date_of_admission_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="w-100 sty-input-wrapper">
-                                            <input type="date" class="w-100 sty-inp" id="id_date_of_entrance_fees" />
-                                            <label for="id_date_of_entrance_fees" class="sty-label">Date of entrance
-                                                fees</label>
-                                            <small id="id_date_of_entrance_fees_Error" class="error-message"></small>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-lg-4 d-flex align-items-center">
-                                        <small id="id_is_primary">
-                                            <span>
-                                                <input type="checkbox" class="sty-inp" id="id_is_primary_val" />
-                                            </span>&nbsp;Make this Member as a Primary Member
-                                        </small>
-                                        <small id="id_is_primary_Error" class="error-message"></small>
-                                    </div>
-
-                                </div>
-                                <hr />
-                                <h2 id="heading" class="mb-3">Nominee Details</h2>
-                                <div id="newNominee">
-                                    <div class="row abcd" id="cloneNominee">
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="text" class="w-100 sty-inp" id="id_nominee_name" />
-                                                <label for="" class="sty-label">Nominee Name</label>
-                                                <small id="id_nominee_name_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="date" class="w-100 sty-inp form-control"
-                                                    id="id_nomination_date" />
-                                                <label for="" class="sty-label">Date of Nomination</label>
-                                                <small id="id_nomination_date_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input class="w-100 sty-inp form-control" type="text" name=""
-                                                    id="id_nominee_relation" />
-                                                <label for="" class="sty-label">Relation with Nominator</label>
-                                                <small id="id_nominee_relation_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="text" class="w-100 sty-inp form-control percentage-input"
-                                                    id="id_naminee_sharein" />
-                                                <label for="" class="sty-label">Nominee Sharein %</label>
-                                                <small id="id_naminee_sharein_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="date" class="w-100 sty-inp" id="id_nominee_dob" />
-                                                <label for="" class="sty-label">Nominee DOB</label>
-                                                <small id="id_nominee_dob_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="number" class="w-100 sty-inp" id="id_nominee_aadhar_no" />
-                                                <label for="" class="sty-label">Nominee Aadhaar No</label>
-                                                <small id="id_nominee_aadhar_no_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="text" class="w-100 sty-inp" id="id_nominee_pan_no" />
-                                                <label for="" class="sty-label">Nominee PAN No</label>
-                                                <small id="id_nominee_pan_no_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="text" class="w-100 sty-inp" id="id_nominee_email" />
-                                                <label for="id_nominee_email" class="sty-label">Nominee Email</label>
-                                                <small id="id_nominee_email_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <textarea class="w-100 sty-inp form-control" name="" id="id_nominee_address"
-                                                    cols="30" rows="1"></textarea>
-                                                <label for="" class="sty-label">Nominee Permanent Address</label>
-                                                <small id="id_nominee_address_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <select name="state" id="id_nominee_state" class="w-100 sty-inp">
-                                                    {% for key, value in state_names.items %}
-                                                    <option value="{{ key }}">{{ value }}</option>
-                                                    {% endfor %}
-                                                </select>
-
-                                                <label for="" class="sty-label">State</label>
-                                                <small id="id_nominee_state_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="number" class="w-100 sty-inp" id="id_nominee_pin_code" />
-                                                <label for="" class="sty-label">Pin Code</label>
-                                                <small id="id_nominee_pin_code_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="number" class="w-100 sty-inp form-control"
-                                                    id="id_nominee_contact_number" />
-                                                <label for="" class="sty-label">Nominee Contact No.</label>
-                                                <small id="id_nominee_contact_number_Error" class="error-message"></small>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="w-100 sty-input-wrapper">
-                                                <input type="number" class="w-100 sty-inp"
-                                                    id="id_nominee_emergency_contact" />
-                                                <label for="" class="sty-label">Emergency Contact No.</label>
-                                                <small id="id_nominee_emergency_contact_Error"
-                                                    class="error-message"></small>
-                                            </div>
-                                        </div>
-                                        <hr />
-                                    </div>
-                                </div>
-                                <input type="button" name="" class="add-mem-btn float-start" id="" value="Add Nominee"
-                                    onclick="addNominee()" />
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- -----History Modal-------   -->
         <div class="modal fade" id="memberHistoryModal" tabindex="-1" aria-labelledby="memberHistoryModalLabel" aria-hidden="true">
@@ -2825,7 +2541,7 @@
                                                                                 <p class="ms-3 view-label">Primary Member:</p>
                                                                             </div>
                                                                             <div class="col-lg-8">
-                                                                                <p class="view-inps">{{ member.member_is_primary }}</p>
+                                                                                <p class="view-inps">{{ member.member_is_primary_formatted }}</p>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -3863,6 +3579,424 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {% verbatim %}
+                        <h1 class="modal-title fs-5" id="addMemberModalLabel">Add Member in Flat <span id="selectedFlat"></span></h1>
+                    {% endverbatim %}
+                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                </div>
+                <div class="modal-body mb-3" id="addMemberDiv">
+                    {% verbatim %}
+                        <form enctype="multipart/form-data">
+                            <div class="row mt-3" style="text-align: left">
+                                <input type="text" v-model="formData.wing_flat" id="flatDropdown" hidden />
+                                <!-- <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                        <select class="w-100 sty-inp form-control" v-model="formData.wing_flat" @change="get_checkbox_value($event)">
+                                        <option v-for="unit in units" :value="unit[0]">{{ unit[1] }}</option>
+                                        </select>
+                                        <label for="wing_flat_select" class="sty-label">Wing & Flat No.</label>
+                                        <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div> -->
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="formData.member_name" />
+                                    <label for="" class="sty-label">Member's Name</label>
+                                    <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" min="0" max="100" class="w-100 sty-inp percentage-input" v-model="formData.ownership_percent" @input="getOwnership(formData.wing_flat, $event)" />
+                                    <label for="" class="sty-label">Ownership %</label>
+                                    <span v-if="ownershipError" style="color: red;">{{ ownershipError }}</span>
+                                    <span v-if="errors.ownership_percent" class="error">{{ errors.ownership_percent[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <select class="w-100 sty-inp" v-model="formData.member_position">
+                                    <option value="">Select Member Position</option>
+                                    <option value="nominal_member">Nominal Member</option>
+                                    <option value="associate_member">Associate Member</option>
+                                    <option value="member">Member</option>
+                                    </select>
+                                    <span v-if="errors.member_position" class="error">{{ errors.member_position[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="date" class="w-100 sty-inp form-control" v-model="formData.member_dob" />
+                                    <label for="" class="sty-label">Member DOB</label>
+                                    <span v-if="errors.member_dob" class="error">{{ errors.member_dob[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="formData.member_pan_no" />
+                                    <label for="" class="sty-label">Member PAN No</label>
+                                    <span v-if="errors.member_pan_no" class="error">{{ errors.member_pan_no[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="formData.member_aadhar_no" />
+                                    <label for="" class="sty-label">Member Aadhaar No</label>
+                                    <span v-if="errors.member_aadhar_no" class="error">{{ errors.member_aadhar_no[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="formData.member_address"></textarea>
+                                    <label for="" class="sty-label">Member Permanent Address</label>
+                                    <span v-if="errors.member_address" class="error">{{ errors.member_address[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <select name="state" class="w-100 sty-inp" v-model="formData.member_state">
+                                    <option value="">Select State</option>
+                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Odisha">Odisha</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                    <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
+                                    <option value="Islands">Islands</option>
+                                    <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                    <option value="Daman and Diu">Daman and Diu</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Ladakh">Ladakh</option>
+                                    <option value="Lakshadweep">Lakshadweep</option>
+                                    <option value="Puducherry">Puducherry</option>
+                                    </select>
+                                    <label for="" class="sty-label">State</label>
+                                    <span v-if="errors.member_state" class="error">{{ errors.member_state[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="formData.member_pin_code" />
+                                    <label for="" class="sty-label">Pin Code</label>
+                                    <span v-if="errors.member_pin_code" class="error">{{ errors.member_pin_code[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="email" class="w-100 sty-inp" v-model="formData.member_email" />
+                                    <label for="" class="sty-label">Member Email</label>
+                                    <span v-if="errors.member_email" class="error">{{ errors.member_email[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp form-control" v-model="formData.member_contact" />
+                                    <label for="" class="sty-label">Member Contact No.</label>
+                                    <span v-if="errors.member_contact" class="error">{{ errors.member_contact[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="formData.member_emergency_contact" />
+                                    <label for="" class="sty-label">Emergency Contact No.</label>
+                                    <span v-if="errors.member_emergency_contact" class="error">{{ errors.member_emergency_contact[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="formData.member_occupation" />
+                                    <label for="" class="sty-label">Occupation</label>
+                                    <span v-if="errors.member_occupation" class="error">{{ errors.member_occupation[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="date" class="w-100 sty-inp" v-model="formData.date_of_admission" />
+                                    <label for="id_date_of_admission" class="sty-label">Date of admission</label>
+                                    <span v-if="errors.date_of_admission" class="error">{{ errors.date_of_admission[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-6 mb-2 d-flex">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="file" class="w-100 sty-inp form-control" ref="sales_agreement" @change="handleChangeFile" />
+                                    <label for="id_sales_agreement" class="sty-label">Sales Agreement</label>
+                                    <span v-if="errors.sales_agreement" class="error">{{ errors.sales_agreement[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                <div class="prev">
+                                    <button type="button" class="sty-inp form-control"
+                                        onclick="PreviewImage('id_sales_agreement')">
+                                        <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                    </button>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-6 mb-2 d-flex">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="file" class="w-100 sty-inp form-control" ref="other_attachment" @change="handleChangeFile"  />
+                                    <label for="id_other_attachment" class="sty-label">Other Attachment</label>
+                                    <span v-if="errors.other_attachment" class="error">{{ errors.other_attachment[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                <div class="prev">
+                                    <button type="button" class="sty-inp form-control" onclick="PreviewImage('id_tenant_noc')">
+                                        <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                    </button>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <input type="date" class="w-100 sty-inp" v-model="formData.date_of_entrance_fees" />
+                                    <label for="id_date_of_entrance_fees" class="sty-label">Date of entrance fees</label>
+                                    <span v-if="errors.date_of_entrance_fees" class="error">{{ errors.date_of_entrance_fees[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div>
+
+                                <!-- <div class="col-lg-4 mb-3" id="id_flat_status_div_container" v-if="flat_having_primary_mem">
+                                <div class="w-100 sty-input-wrapper" id="id_flat_status_div">
+                                    <select class="w-100 sty-inp" v-model="formData.flat_status">
+                                    <option value="">Select Flat Status</option>
+                                    <option value="occupied">Occupied</option>
+                                    <option value="Not Occupied">Not Occupied</option>
+                                    <option value="Rented">Rented</option>
+                                    <option value="Japti">Japti</option>
+                                    <option value="Builder Possession">Builder Possession</option>
+                                    </select>
+                                    <label for="id_flat_status_status" class="sty-label">Flat Status</label>
+                                    <span v-if="errors.flat_status" class="error">{{ errors.flat_status[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                                </div> -->
+
+                                <!-- <div class="col-lg-4 d-flex align-items-center" id="id_is_primary_container" v-if="flat_having_primary_mem">
+                                <small id="id_is_primary">
+                                    <span>
+                                    <input type="checkbox" class="sty-inp" v-model="formData.member_is_primary"/>
+                                    </span>&nbsp;Make Primary Member
+                                    <span v-if="errors.member_is_primary" class="error">{{ errors.member_is_primary[0] }}</span>
+                                    <span v-else></span>
+                                </small>
+                                </div> -->
+                            </div>
+
+                            <div class="seven my-3">
+                                <h1>Add Nominee</h1>
+                            </div>
+
+                            <div v-for="(form, index) in forms" :key="index">
+                                <p class="lead">Nominee {{ getFormNumber(index) }}</p>
+
+                                <div class="row abcd" id="cloneNominee">
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="form.nominee_name" />
+                                    <label for="" class="sty-label">Nominee Name</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_name')">{{ getError(index, 'nominee_name') }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input type="date" class="w-100 sty-inp form-control" v-model="form.date_of_nomination"  />
+                                    <label for="" class="sty-label">Date of Nomination</label>
+                                    <span class="error" v-if="hasError(index, 'date_of_nomination')">{{ getError(index, 'date_of_nomination') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input class="w-100 sty-inp form-control" type="text" v-model="form.relation_with_nominee"  />
+                                    <label for="" class="sty-label">Relation with Nominator</label>
+                                    <span class="error" v-if="hasError(index, 'relation_with_nominee')">{{ getError(index, 'relation_with_nominee') }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp form-control percentage-input" v-model="form.nominee_sharein_percent" />
+                                    <label for="" class="sty-label">Nominee Sharein %</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_sharein_percent')">{{ getError(index, 'nominee_sharein_percent') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input type="date" class="w-100 sty-inp"v-model="form.nominee_dob" />
+                                    <label for="" class="sty-label">Nominee DOB</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_dob')">{{ getError(index, 'nominee_dob') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="form.nominee_aadhar_no" />
+                                    <label for="" class="sty-label">Nominee Aadhaar No</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_aadhar_no')">{{ getError(index, 'nominee_aadhar_no') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="form.nominee_pan_no" />
+                                    <label for="" class="sty-label">Nominee PAN No</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_pan_no')">{{ getError(index, 'nominee_pan_no') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input type="text" class="w-100 sty-inp" v-model="form.nominee_email" />
+                                    <label for="id_nominee_email" class="sty-label">Nominee Email</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_email')">{{ getError(index, 'nominee_email') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="form.nominee_address" ></textarea>
+                                    <label for="" class="sty-label">Nominee Permanent Address</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_address')">{{ getError(index, 'nominee_address') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <select name="state" class="w-100 sty-inp" v-model="form.nominee_state" >
+                                        <option value="">Select State</option>
+                                        <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                        <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                        <option value="Assam">Assam</option>
+                                        <option value="Bihar">Bihar</option>
+                                        <option value="Chhattisgarh">Chhattisgarh</option>
+                                        <option value="Goa">Goa</option>
+                                        <option value="Gujarat">Gujarat</option>
+                                        <option value="Haryana">Haryana</option>
+                                        <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                        <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                        <option value="Jharkhand">Jharkhand</option>
+                                        <option value="Karnataka">Karnataka</option>
+                                        <option value="Kerala">Kerala</option>
+                                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                        <option value="Maharashtra">Maharashtra</option>
+                                        <option value="Manipur">Manipur</option>
+                                        <option value="Meghalaya">Meghalaya</option>
+                                        <option value="Mizoram">Mizoram</option>
+                                        <option value="Nagaland">Nagaland</option>
+                                        <option value="Odisha">Odisha</option>
+                                        <option value="Punjab">Punjab</option>
+                                        <option value="Rajasthan">Rajasthan</option>
+                                        <option value="Sikkim">Sikkim</option>
+                                        <option value="Tamil Nadu">Tamil Nadu</option>
+                                        <option value="Telangana">Telangana</option>
+                                        <option value="Tripura">Tripura</option>
+                                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                        <option value="Uttarakhand">Uttarakhand</option>
+                                        <option value="West Bengal">West Bengal</option>
+                                        <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
+                                        <option value="Islands">Islands</option>
+                                        <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                        <option value="Daman and Diu">Daman and Diu</option>
+                                        <option value="Delhi">Delhi</option>
+                                        <option value="Ladakh">Ladakh</option>
+                                        <option value="Lakshadweep">Lakshadweep</option>
+                                        <option value="Puducherry">Puducherry</option>
+                                    </select>
+                                    <label for="" class="sty-label">State</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_state')">{{ getError(index, 'nominee_state') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="form.nominee_pin_code" />
+                                    <label for="" class="sty-label">Pin Code</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_pin_code')">{{ getError(index, 'nominee_pin_code') }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp form-control" v-model="form.nominee_contact" />
+                                    <label for="" class="sty-label">Nominee Contact No.</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_contact')">{{ getError(index, 'nominee_contact') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                    <input type="number" class="w-100 sty-inp" v-model="form.nominee_emergency_contact" />
+                                    <label for="" class="sty-label">Emergency Contact No.</label>
+                                    <span class="error" v-if="hasError(index, 'nominee_emergency_contact')">{{ getError(index, 'nominee_emergency_contact') }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 mb-4 gap-3 align-items-center">
+                                    <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
+                                </div>
+                                <hr />
+                                </div>
+                            </div>
+                            <span @click.prevent="addForm" class="add-mem-btn float-start">Add Nominee</span>
+                            <!-- <input type="button" class="add-mem-btn" @click="submitMembers(false)" value="Save & Next"> -->
+                            <input type="button" class="add-mem-btn" @click="submitMembers(true)" value="Add">
+                        </form>
+                    {% endverbatim %}
                 </div>
             </div>
         </div>

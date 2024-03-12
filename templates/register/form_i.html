@@ -30,22 +30,35 @@
 
 
 <div class='container-fluid'>
-  <div style="text-align: right;" class="mt-3">
-    <select class="dt-button ms-2 dt-button-custom dataTable-Text" id="statusFilterDropdown">
-        <option value="history">History</option>
-      <option value="current">Current</option>
-      <option value="all">All</option>
-    </select>
-    <button class="ms-4 btn btn-primary">Print</button>
+  <div class="row">
+    <div class="col-lg-5 ms-auto me-auto">
+
+      <div class="text-center mt-2" id="print-head">
+        <h3 id="heading" style="color: #000 !important; font-family: 'Calibri', sans-serif;"><b>SITA PARK CO-OP. HSG. SOC. LTD</b></h3>
+        <p style="font-family: 'Calibri', sans-serif;" class="mt-3 p-0 mb-0 print-head-content"><b>Registraion Number: </b> <span>TNA/(TNA)/HSG/t(TC)/14951/2003-04</span></p>
+        <p style="font-family: 'Calibri', sans-serif;" class="print-head-content">SURVEY NO. 518(OLD),59(NEW) HISSA NO.4 LODHA ROAD, NAYA NAGAR, MIRA-ROAD(E), THANE 401107</p>
+      </div>
+    </div>
   </div>
 
-    <div class="shares-table-J mt-3">
-      <center><h5 class="report_h m-0 p-0">List of Nominees of Sita Park D, E, F CO-OP. HSG. SOC. LTD.</h5></center>
+  <div style="text-align: right;" class="mt-3 no-print">
+    <select class="dt-button ms-2 dt-button-custom dataTable-Text" id="statusFilterDropdown">
+      <option value="all">All</option>
+      <option value="current">Current</option>
+        <option value="history">History</option>
+    </select>
+    <button class="ms-4 dt-button btn-primary dt-button-custom no-print" onclick="printTable()">Print</button>
+  </div>
+
+    <div class="shares-table-J mt-3" id="table-container">
+      <center><h3 class="mt-3 mb-0 p-0">Form I</h3></center>
+      <hr class="mb-3 mt-0">
       <div class="table-responsive" style="font-family: 'Calibri',sans-serif !important; font-size: 15px;">
         <table class="table table-sm table-bordered" style="align-items: center !important; vertical-align: middle;">
           <thead class="table-dark">
             <th>Sr No.</th>
             <th>Flat No.</th>
+            <th class="no-print">Form-MH</th>
             <th>Date Of Addmission</th>
             <th>Date Of Enterance Fees</th>
             <th>Member Full Name</th>
@@ -57,8 +70,7 @@
             <th>Date Nomination</th>
             <th>Date of Cessation of Membership</th>
             <th>Reason of Cessation</th>
-            <th>Remark</th>
-            <th>Form-MH</th>
+            <!-- <th class="no-print">Remark</th> -->
           </thead>
           <tbody>
             {% for data1 in nominees %}
@@ -72,9 +84,10 @@
                             <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>-</td>
                             <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>-</td>
                           {% endif %}
+                          <td class="no-print" {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %} onclick="view_form_MH(`{{ data2.id }}`)"><i class="fa-solid fa-eye" style="color: #2b96f1 !important; cursor: pointer;"></i></td>
                           <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.date_of_admission }}</td>
                           <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.date_of_entrance_fees }}</td>
-                          <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.member_name }}({{ data2.member_is_primary }})</td>
+                          <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.member_name }}<br>({{ data2.member_is_primary }})</td>
                           <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.member_address }}</td>
                           <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.member_occupation }}</td>
                           <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.age_at_date_of_admission }}</td>
@@ -84,9 +97,7 @@
 
                           <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.date_of_cessation }}</td>
                           <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>{{ data2.reason_for_cessation }}</td>
-                          <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>-</td>
-                          <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %} onclick="view_form_MH(`{{ data2.id }}`)"><button>View</button></td>
-
+                          <!-- <td {% if rowspan_value > 0 %} rowspan="{{ rowspan_value }}" {% endif %}>-</td> -->
                         </tr>
                         {% for data3 in data2.nominees|slice:"1:" %}
                             <tr>
@@ -136,5 +147,18 @@ function view_form_MH(member_id){
         memberIdForVue = member_id;
         window.open("/form-I-MH/" + member_id + "/", '_blank');
     }
+</script>
+
+<script>
+  function printTable() {
+    var printWindow = window.open('', '_blank');
+    printWindow.document.write('<html><head><title>Form I</title></head><body>');
+    printWindow.document.write(document.getElementById('print-head').innerHTML);
+    printWindow.document.write('<style>@media print { #table-container { overflow-x: visible; border: 1px solid #000;/ } .no-print { display: none } #print-head { position: fixed; top: 0; left: 0; right: 0; } .print-head-content { margin-top: 10px; padding: 0px 0px; margin-bottom: 0px; text-align: center } #heading { text-align: center;  } .cols { border: 1px solid #000; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #000; padding: 8px; } thead { background-color: #212529; color: white; } .add-width { width: 400px !important; } }</style>');
+    printWindow.document.write(document.getElementById('table-container').innerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+  }
 </script>
 {% endblock body %}
