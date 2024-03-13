@@ -3951,7 +3951,81 @@ new Vue({
 
 
 
+/* LEDGER CREATION DATATABLE, COMMON FOR ALL 4 DATATABLE ON LEDGER PAGE */
+$(document).ready(function() {
+    var table = $('#led_groupDatatable, #led_ledgerDatatable, #led_costCenterDatatable, #led_voucherTypeDatatable').DataTable({
+        "dom": '<"dt-buttons"Br><"clear">ftipl',
+        responsive: true,
+        buttons: [
+            {
+                extend: 'colvis',
+                text: 'More Column',
+                postfixButtons: [
+                    'colvisRestore'
+                ]
+            },
+            {
+                extend: 'searchBuilder',
+                text: 'Filter'
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    // columns: ':visible',
+                    columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                    modifier: { search: 'applied', order: 'applied' },
 
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print All',
+                exportOptions: {
+                    columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                    // modifier: { search: 'applied', order: 'applied' },
 
+                }
+            },
+        ],
 
+        order: [],
+        "stripeClasses": [],
 
+        columnDefs: [
+
+            { "visible": true, "targets": datatable_columns },
+            { "visible": false, "targets": '_all' },
+        ],
+        fixedColumns: {
+            left: 2
+        },
+        // "paging": true,
+        // 'pageLength': '5',
+        pagingType: "simple",
+        paginate: {
+            previous: "<",
+            next: ">"
+        },
+        scrollCollapse: false,
+        scrollX: true
+    });
+
+    // Set the DataTable info text to be centered
+    $('#led_groupDatatable_info, #led_ledgerDatatable_info, #led_costCenterDatatable_info, #led_voucherTypeDatatable_info').css({
+        'text-align': 'center',
+        'position': 'relative',
+        'left': '40%',
+        'padding-top': '20px',
+        // 'margin-right': 'auto',
+        'display': 'block'
+    });
+
+    // Adjust the info text position when the table is redrawn
+    table.on('draw.dt', function () {
+        $('#led_groupDatatable_info, #led_ledgerDatatable_info, #led_costCenterDatatable_info, #led_voucherTypeDatatable_info').css({
+            'text-align': 'center',
+            'margin-left': 'auto',
+            'margin-right': 'auto'
+        });
+    });
+});

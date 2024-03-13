@@ -1,0 +1,725 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<div id="exTab2" class="container">
+    <ul class="nav nav-tabs">
+        <li class="me-5" class="active"><a href="#1" data-toggle="tab">Group</a></li>
+        <li class="me-5"><a href="#2" data-toggle="tab">Ledger</a></li>
+        <li class="me-5"><a href="#3" data-toggle="tab">Cost Center</a></li>
+        <li class="me-5"><a href="#4" data-toggle="tab">Voucher Type</a></li>
+    </ul>
+
+    <div class="tab-content ">
+        <div class="tab-pane active" id="1">
+            <div class="tab-pane show fade active" id="home" role="tabpanel">
+
+                <div class="d-flex" style="flex-direction: column;">
+                    <!-- Button trigger modal -->
+                    <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#groupCreationModal">
+                        Create Group
+                    </button>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="groupCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Group Creation</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="sty-input-wrapper w-100 mb-3">
+                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <label class="sty-label">Group Name</label>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100 mb-3">
+                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <label class="sty-label">Under Group</label>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100 mb-3">
+                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <label class="sty-label">Sub Group</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <!-- included code -->
+                <div class="container mt-3 mb-4">
+                    <div class="table-responsive" id="groupTableDiv">
+                        {% verbatim %}
+                        <table id="led_groupDatatable" class="order-column dt-table display table-sm w-100">
+                            <thead>
+                                <tr>
+                                    <th>Actions</th>
+                                    <th>Ledger Name</th>
+                                    <th>Alias</th>
+                                    <th>Group Name</th>
+                                    <th>Contact Person Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>Test</td>
+                                    <td>Abcd</td>
+                                    <td>Group A</td>
+                                    <td>Sameer</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>Test</td>
+                                    <td>Abcd</td>
+                                    <td>Group A</td>
+                                    <td>Fareen</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>Test</td>
+                                    <td>Abcd</td>
+                                    <td>Group A</td>
+                                    <td>Nazim</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>Test</td>
+                                    <td>Abcd</td>
+                                    <td>Group A</td>
+                                    <td>Mohammad</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>Test</td>
+                                    <td>Abcd</td>
+                                    <td>Group A</td>
+                                    <td>Atul</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        {% endverbatim %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane" id="2">
+            <div class="d-flex" style="flex-direction: column;">
+                <button type="button" style="width: max-content;" class="ms-auto me-4 add-mem-btn" data-bs-toggle="modal" data-bs-target="#ledgerCreation">
+                    Create Ledger
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="ledgerCreation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Ledger Creation Form</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="ledgerAppVue">
+                                {% verbatim %}
+                                <form @submit.prevent="submitLedger" enctype="multipart/form-data">
+                                    <div class="row">
+                                        <div class="col-lg-4 pe-3 mb-3" style="border-right: 1px solid grey;">
+                                            <div class="sty-input-wrapper w-100 mb-2">
+                                                <input type="text" class="sty-inp form-control w-100 ">
+                                                <label class="sty-label">Ledger Name</label>
+                                            </div>
+
+                                            <div class="sty-input-wrapper w-100 mb-2">
+                                                <input type="text" class="sty-inp form-control w-100 ">
+                                                <label class="sty-label">Alias</label>
+                                            </div>
+
+                                            <div class="sty-input-wrapper w-100 mb-2">
+                                                <input type="text" class="sty-inp form-control w-100 ">
+                                                <label class="sty-label">Group Name</label>
+                                            </div>
+
+                                            <div class="sty-input-wrapper w-100 mb-2">
+                                                <input type="text" class="sty-inp form-control w-100 ">
+                                                <label class="sty-label">PAN Number</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 mb-3 pe-3" style="border-right: 1px solid grey;">
+                                            <div class="sty-input-wrapper w-100 mb-2">
+                                                <select class="form-control sty-inp w-100">
+                                                    <option value="" selected>Select Nature</option>
+                                                    <option value="">Fixed</option>
+                                                    <option value="">Variable</option>
+                                                </select>
+                                                <label class="sty-label">Nature Type</label>
+                                            </div>
+
+                                            <div class="sty-input-wrapper w-100 mb-2">
+                                                <select v-model="selectedType" class="form-control sty-inp w-100">
+                                                    <option value="" selected>Select Type</option>
+                                                    <option value="area">Area</option>
+                                                    <option value="fixed">Fixed</option>
+                                                </select>
+                                                <label class="sty-label">Based On</label>
+                                            </div>
+
+                                            <div v-show="selectedType === 'area'" class="sty-input-wrapper w-100">
+                                                <input type="number" name="" id="" class="form-control sty-inp w-100">
+                                                <label class="sty-label">Area</label>
+                                            </div>
+                                            <div v-show="selectedType === 'fixed'" class="sty-input-wrapper w-100 ">
+                                                <input type="number" name="" id="" class="form-control sty-inp w-100">
+                                                <label class="sty-label">Fixed</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 mb-3">
+
+
+                                            <div class="sty-input-wrapper w-100 mb-2">
+                                                <input type="text" class="sty-inp form-control w-100 ">
+                                                <label class="sty-label">GST Number</label>
+                                            </div>
+
+                                            <div class="sty-input-wrapper w-100 mb-2">
+                                                <input type="text" class="sty-inp form-control w-100 ">
+                                                <label class="sty-label">Contact Person Name</label>
+                                            </div>
+
+                                            <div class="sty-input-wrapper w-100">
+                                                <input type="text" class="sty-inp form-control w-100 ">
+                                                <label class="sty-label">Contact Person Number</label>
+                                            </div>
+
+                                            <div class="sty-input-wrapper w-100">
+                                                <input type="email" class="sty-inp form-control w-100 ">
+                                                <label class="sty-label">Contact Person Email ID</label>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="col-lg-12">
+                                            <div class="sty-input-wrapper mb-3 w-100">
+                                                <textarea class="sty-inp form-control w-100" name="" id="" cols="30" rows="1"></textarea>
+                                                <label class="sty-label">Address</label>
+                                            </div>
+                                            <div class="row gap-3 mb-3 justify-content-center">
+                                                <div class="col-lg-2">
+                                                    <div class="sty-input-wrapper mb-3">
+                                                        <input type="text" class="sty-inp" name="" id="">
+                                                        <label class="sty-label">City</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-2">
+                                                    <div class="sty-input-wrapper mb-3">
+                                                        <input type="text" class="sty-inp" name="" id="">
+                                                        <label class="sty-label">District</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-2">
+                                                    <div class="sty-input-wrapper mb-3 w-100">
+                                                        <select class="custom-dropdown   w-100" name="">
+                                                            <option value="#">Select State</option>
+                                                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                                            <option value="Assam">Assam</option>
+                                                            <option value="Bihar">Bihar</option>
+                                                            <option value="Chhattisgarh">Chhattisgarh</option>
+                                                            <option value="Goa">Goa</option>
+                                                            <option value="Gujarat">Gujarat</option>
+                                                            <option value="Haryana">Haryana</option>
+                                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                                            <option value="Jharkhand">Jharkhand</option>
+                                                            <option value="Karnataka">Karnataka</option>
+                                                            <option value="Kerala">Kerala</option>
+                                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                                            <option value="Maharashtra">Maharashtra</option>
+                                                            <option value="Manipur">Manipur</option>
+                                                            <option value="Meghalaya">Meghalaya</option>
+                                                            <option value="Mizoram">Mizoram</option>
+                                                            <option value="Nagaland">Nagaland</option>
+                                                            <option value="Odisha">Odisha</option>
+                                                            <option value="Punjab">Punjab</option>
+                                                            <option value="Rajasthan">Rajasthan</option>
+                                                            <option value="Sikkim">Sikkim</option>
+                                                            <option value="Tamil Nadu">Tamil Nadu</option>
+                                                            <option value="Telangana">Telangana</option>
+                                                            <option value="Tripura">Tripura</option>
+                                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                                            <option value="Uttarakhand">Uttarakhand</option>
+                                                            <option value="West Bengal">West Bengal</option>
+                                                            <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
+                                                            <option value="Islands">Islands</option>
+                                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                                            <option value="Daman and Diu">Daman and Diu</option>
+                                                            <option value="Delhi">Delhi</option>
+                                                            <option value="Ladakh">Ladakh</option>
+                                                            <option value="Lakshadweep">Lakshadweep</option>
+                                                            <option value="Puducherry">Puducherry</option>
+                                                        </select>
+                                                        <label class="sty-label">State</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-2">
+                                                    <div class="sty-input-wrapper mb-3">
+                                                        <input type="text" class="sty-inp" name="" id="">
+                                                        <label class="sty-label">Country</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-2">
+                                                    <div class="sty-input-wrapper mb-3">
+                                                        <input type="number" class="sty-inp" name="" id="">
+                                                        <label class="sty-label">Pin Code</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="col-lg-4 mb-3">
+                                            <div class="sty-input-wrapper w-100">
+                                                <input type="text" class="sty-inp form-control w-100">
+                                                <label class="sty-label">Beneficiary Name</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 mb-3">
+                                            <div class="sty-input-wrapper w-100">
+                                                <input type="number" class="sty-inp form-control w-100">
+                                                <label class="sty-label">Account Number</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 mb-3">
+                                            <div class="sty-input-wrapper w-100">
+                                                <input type="text" class="sty-inp form-control w-100">
+                                                <label class="sty-label">IFSC Code</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 mb-3">
+                                            <div class="sty-input-wrapper w-100">
+                                                <input type="text" class="sty-inp form-control w-100">
+                                                <label class="sty-label">Bank Name & Branch</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 mb-3 ">
+                                            <div class="sty-input-wrapper d-flex w-100">
+                                                <input type="number" class="sty-inp form-control w-100">
+                                                <label class="sty-label">Opening Balance</label>
+                                                <select class="sty-inp form-control w-25">
+                                                    <option value="">Dr/Cr</option>
+                                                    <option value="">Dr</option>
+                                                    <option value="">Cr</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                {% endverbatim %}
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="container mt-3 mb-4">
+                    <div class="table-responsive" id="ledgerTableDiv" style="font-family: 'Calibri', sans-serif !important; height: max-content;">
+                        <table id="led_ledgerDatatable" class="display order-column dt-table table-sm w-100">
+                            <thead>
+                                <tr>
+                                    <th>Actions</th>
+                                    <th>Ledger Name</th>
+                                    <th>Alias</th>
+                                    <th>Group Name</th>
+                                    <th>Contact Person Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>Test</td>
+                                    <td>Abcd</td>
+                                    <td>Group A</td>
+                                    <td>Sameer</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>Test</td>
+                                    <td>Abcd</td>
+                                    <td>Group A</td>
+                                    <td>Fareen</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>Test</td>
+                                    <td>Abcd</td>
+                                    <td>Group A</td>
+                                    <td>Nazim</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>Test</td>
+                                    <td>Abcd</td>
+                                    <td>Group A</td>
+                                    <td>Mohammad</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex">
+                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>Test</td>
+                                    <td>Abcd</td>
+                                    <td>Group A</td>
+                                    <td>Atul</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane" id="3">
+            <div class="d-flex" style="flex-direction: column;">
+                <!-- Button trigger modal -->
+                <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#costCenterCreationModal">
+                    Create Cost Center
+                </button>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="costCenterCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Cost Center Creation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="sty-input-wrapper w-100 mb-3">
+                                <input type="text" class="sty-inp form-control" name="" id="">
+                                <label class="sty-label">Cost Center Name</label>
+                            </div>
+
+                            <div class="sty-input-wrapper w-100 mb-3">
+                                <input type="text" class="sty-inp form-control" name="" id="">
+                                <label class="sty-label">Under Group</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="container mt-3 mb-4">
+                <div class="table-responsive" id="costCenterTableDiv">
+                    {% verbatim %}
+                    <table id="led_costCenterDatatable" class="order-column dt-table display table-sm w-100">
+                        <thead>
+                            <tr>
+                                <th>Actions</th>
+                                <th>Ledger Name</th>
+                                <th>Alias</th>
+                                <th>Group Name</th>
+                                <th>Contact Person Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    </div>
+                                </td>
+                                <td>Test</td>
+                                <td>Abcd</td>
+                                <td>Group A</td>
+                                <td>Sameer</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    </div>
+                                </td>
+                                <td>Test</td>
+                                <td>Abcd</td>
+                                <td>Group A</td>
+                                <td>Fareen</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    </div>
+                                </td>
+                                <td>Test</td>
+                                <td>Abcd</td>
+                                <td>Group A</td>
+                                <td>Nazim</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    </div>
+                                </td>
+                                <td>Test</td>
+                                <td>Abcd</td>
+                                <td>Group A</td>
+                                <td>Mohammad</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    </div>
+                                </td>
+                                <td>Test</td>
+                                <td>Abcd</td>
+                                <td>Group A</td>
+                                <td>Atul</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {% endverbatim %}
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane" id="4">
+            <div class="d-flex" style="flex-direction: column;">
+                <!-- Button trigger modal -->
+                <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#voucherTypeCreationModal">
+                    Create Voucher Type
+                </button>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="voucherTypeCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Voucher Type Creation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="sty-input-wrapper w-100 mb-3">
+                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <label class="sty-label">Voucher Name</label>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="sty-input-wrapper w-100 mb-3">
+                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <label class="sty-label">Short Name of Voucher</label>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="sty-input-wrapper w-100 mb-3">
+                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <label class="sty-label">Prefix</label>
+                                </div>
+                            </div>
+
+                            <div class="col-6">
+                                <div class="sty-input-wrapper w-100 mb-3">
+                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <label class="sty-label">Suffix</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="container mt-3 mb-4" style="margin-bottom: 200px !important;">
+                <div class="table-responsive" id="voucherTypeTableDiv">
+                    {% verbatim %}
+                    <table id="led_voucherTypeDatatable" class="order-column dt-table display table-sm w-100">
+                        <thead>
+                            <tr>
+                                <th>Actions</th>
+                                <th>Ledger Name</th>
+                                <th>Alias</th>
+                                <th>Group Name</th>
+                                <th>Contact Person Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    </div>
+                                </td>
+                                <td>Test</td>
+                                <td>Abcd</td>
+                                <td>Group A</td>
+                                <td>Sameer</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    </div>
+                                </td>
+                                <td>Test</td>
+                                <td>Abcd</td>
+                                <td>Group A</td>
+                                <td>Fareen</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    </div>
+                                </td>
+                                <td>Test</td>
+                                <td>Abcd</td>
+                                <td>Group A</td>
+                                <td>Nazim</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    </div>
+                                </td>
+                                <td>Test</td>
+                                <td>Abcd</td>
+                                <td>Group A</td>
+                                <td>Mohammad</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex">
+                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    </div>
+                                </td>
+                                <td>Test</td>
+                                <td>Abcd</td>
+                                <td>Group A</td>
+                                <td>Atul</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    {% endverbatim %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+
+<script>
+    let datatable_columns = {{ datatable_columns }};
+</script>
+
+
+{% endblock body %}

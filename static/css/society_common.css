@@ -205,7 +205,7 @@ p {
     content: "\f1b9"
 }
 
-/ ------Income / Expense Creation------ /
+/* / ------Income / Expense Creation------ / */
 #progressbar #income:before {
     font-family: FontAwesome;
     content: "\f53d"
@@ -483,7 +483,7 @@ font-family: 'Calibri', sans-serif;
         outline: none;
         text-overflow: ellipsis;
     }
-}
+/* } */
 
 .custom-dropdown {
 float: right;

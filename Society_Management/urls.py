@@ -67,6 +67,8 @@ urlpatterns = [
     path('meetings/', views.meetings_view, name="meetings"),
     path('extra/', views.extra, name='extra'),
     path('unit-master/', views.unit_master, name='unit_master'),
+    path('ledger-creation/', views.ledger_creation, name='ledger_creation'),
+
 
     # REGISTERS
     path('nominee-register/', views.nominee_register_view, name='nominee_register_view'),

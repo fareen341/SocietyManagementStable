@@ -289,3 +289,9 @@ def form_j_view(request):
 def unit_master(request):
     datatable_columns = [0, 3, 4, 5, 6]
     return render(request, 'unit_master.html', {'datatable_columns': datatable_columns})
+
+
+def ledger_creation(request):
+    datatable_columns = [0, 1, 2, 3]
+    return render(request, 'ledger_creation.html', {'datatable_columns': datatable_columns})
+
