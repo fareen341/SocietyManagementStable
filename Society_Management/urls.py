@@ -79,6 +79,9 @@ urlpatterns = [
     path('form-J/', views.form_j_view, name='form_j_view'),
     path('form-I-MH/<int:pk>/', views.form_i_MH_view, name='form_i_MH_view/<int:pk>/'),
 
+    path('group', views.account_group, name='group'),
+
+
     path('non-primary/<int:id>/', apiviews.hide_non_primary_member_checkbox, name='non-primary'),
     path('api/history/', apiviews.MemberView.as_view({'get': 'member_history_retrieve'}), name='history'),
     path('api/owner_name/<int:flat_id>/', apiviews.get_owner_name, name="owner_name"),

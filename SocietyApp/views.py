@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from  SocietyApi.models import *
 from SocietyApi.serializers import *
+from .models import *
 
 # Create your views here.
 
@@ -295,3 +296,31 @@ def ledger_creation(request):
     datatable_columns = [0, 1, 2, 3]
     return render(request, 'ledger_creation.html', {'datatable_columns': datatable_columns})
 
+
+
+
+def get_all_child_investments(parent):
+    all_childs = []
+    def traverse_children(investment, depth=0):
+        children = investment.children.all()
+        if children:
+            for child in children:
+                show = f" {'---' * depth} {child}"
+                all_childs.append(show)
+                traverse_children(child, depth + 1)
+    traverse_children(parent)
+    return all_childs
+    
+
+# parent_investment = Childs.objects.get(name="Jwellery")
+# all_child_investments = get_all_child_investments(parent_investment)
+# all_child_investments
+
+
+def account_group(request):    
+    # under_grp = "Investment"
+    under_grp = "Jwellery"
+    parent_investment = Childs.objects.get(name=under_grp)
+    all_child_investments = get_all_child_investments(parent_investment)
+    
+    return render(request, 'account.html', {'all_child_investments': all_child_investments, "under_grp": under_grp})
