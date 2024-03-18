@@ -125,6 +125,8 @@ class Members(models.Model):
     same_flat_member_identification = models.CharField(max_length=100, null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        # OLD CODE
+
         if not self.pk and self.member_is_primary == True:
             # Only update the field if the instance is being saved for the first time
             super(Members, self).save(*args, **kwargs)
@@ -132,6 +134,21 @@ class Members(models.Model):
             self.save(update_fields=['same_flat_member_identification'])
         else:
             super(Members, self).save(*args, **kwargs)
+
+        # NEW CODE
+        # if self.member_dob and self.date_of_admission:
+        #     dob = self.member_dob
+        #     admission_date = self.date_of_admission
+        #     age_at_admission = admission_date.year - dob.year - ((admission_date.month, admission_date.day) < (dob.month, dob.day))
+        #     self.age_at_date_of_admission = age_at_admission
+
+        # # Check if it's a new instance and member_is_primary is True
+        # if not self.pk and self.member_is_primary == True:
+        #     # Set same_flat_member_identification
+        #     self.same_flat_member_identification = f"{self.wing_flat.wing_flat_unique}MEM{self.pk}"
+
+        # # Call the parent save method
+        # super().save(*args, **kwargs)
 
 
     def __str__(self):
@@ -263,6 +280,9 @@ class FlatMemberVehicle(models.Model):
 
     def __str__(self):
         return self.wing_flat.wing_flat_unique
+
+    # class Meta:
+    #     unique_together = [['wing_flat', 'vehicle_number']]
 
 
 

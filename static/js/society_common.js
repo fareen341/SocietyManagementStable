@@ -481,7 +481,6 @@ new Vue({
     mounted() {
         axios.get('http://127.0.0.1:8000/api/wing-flat/')
             .then(response => {
-                console.log("WINGS  DIWSPLAY===", response.data);
                 this.wingFlatData = response.data;
             })
             .catch(error => {
@@ -582,19 +581,22 @@ new Vue({
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-            society_id = document.getElementById('society_id').value;
+            society_id = document.getElementById('society_id')
 
-            axios.patch(`http://127.0.0.1:8000/api/society-creation/${society_id}/`, this.formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-                .then(response => {
-                    console.log("RESPONSE->", response.data);
+            if(society_id){
+                society_id = society_id.value;
+                axios.patch(`http://127.0.0.1:8000/api/society-creation/${society_id}/`, this.formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
                 })
-                .catch(error => {
-                    this.errors = error.response.data;
-                });
+                    .then(response => {
+                        // console.log("RESPONSE->", response.data);
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data;
+                    });
+            }
         },
         nextAction() {
             // Your logic for the next action after form submission
@@ -608,20 +610,22 @@ new Vue({
         },
     },
     mounted() {
-        console.log("Society Details Mounted Calling!");
-        society_id = document.getElementById('society_id').value;
-        axios.get(`http://127.0.0.1:8000/api/society-creation/`)
-            .then(response => {
-                console.log("RESPONSE==>", response.data);
-                this.item = response.data;
-                this.formData = response.data;
-                console.log("ITEM==>", this.item);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-        const myModal = new bootstrap.Modal(document.getElementById('myModal'));
-        myModal.show();
+        society_id = document.getElementById('society_id');
+        if(society_id){
+            society_id = society_id.value;
+            axios.get(`http://127.0.0.1:8000/api/society-creation/`)
+                .then(response => {
+                    console.log("RESPONSE==>", response.data);
+                    this.item = response.data;
+                    this.formData = response.data;
+                    console.log("ITEM==>", this.item);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+        // const myModal = new bootstrap.Modal(document.getElementById('myModal'));
+        // myModal.show();
     },
 });
 
@@ -717,7 +721,7 @@ new Vue({
     mounted() {
         axios.get('http://127.0.0.1:8000/api/wing/')
             .then(response => {
-                console.log("WINGS  DIWSPLAY===", response.data);
+                // console.log("Response->", response.data);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -933,7 +937,6 @@ new Vue({
         axios.get('http://127.0.0.1:8000/api/society_bank/')
             .then(response => {
                 this.bankData = response.data;
-                console.log("BANK DATA FROM MOUNT==>", this.bankData);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -1655,9 +1658,7 @@ var app = new Vue({
     mounted() {
         axios.get('http://127.0.0.1:8000/api/members/')
             .then(response => {
-                console.log("DATA===", response.data);
                 response.data.forEach(element => {
-                    console.log("MEMBER====FAREEN====>", element);
                     delete element.date_of_cessation;
                     delete element.reason_for_cessation;
                     delete element.same_flat_member_identification;
@@ -1920,7 +1921,6 @@ new Vue({
         },
     },
     mounted() {
-        console.log("mounted calling");
         axios.get(`http://127.0.0.1:8000/api/wing/`)
             .then(response => {
                 this.units = response.data;
@@ -1984,7 +1984,6 @@ new Vue({
         },
     },
     mounted() {
-        console.log("mounted calling");
         axios.get(`http://127.0.0.1:8000/api/wing/`)
             .then(response => {
                 this.units = response.data;
@@ -2033,7 +2032,6 @@ new Vue({
         },
     },
     mounted() {
-        console.log("mounted calling");
         axios.get(`http://127.0.0.1:8000/api/wing/`)
             .then(response => {
                 this.units = response.data;
@@ -2200,7 +2198,6 @@ var app = new Vue({
                 .then(response => {
                     // this.formData = response.data;
                     this.houseHelpData = response.data;
-                    console.log("DATA===", response.data);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -2735,7 +2732,6 @@ new Vue({
             .then(response => {
                 // delete response.data.tenant_noc_filename;
                 this.tenantData = response.data;
-                console.log("==[[[[[[[[[[[[[[[[[[", this.tenantData);
                 // let newResponse = response.data
 
                 $(document).ready(function () {
@@ -3246,7 +3242,6 @@ var app = new Vue({
         axios.get('http://127.0.0.1:8000/api/get_nominees_details/')
             .then(response => {
                 // this.submitted = true;
-                console.log("ATTENDANCE  RESPONSE-->", response.data.flats);
                 this.attendanceData = response.data.flats;
                 this.someVal = 'xyz'
             })
@@ -3704,8 +3699,9 @@ $(document).ready(function () {
     });
 
 
+/* DATA LIST FUNCTIONALITY START */
     // DATA LIST OPTION JS
-    var input = document.getElementById('editable-dropdown');
+    // var input = document.getElementById('editable-dropdown');
 
     // Event listener for when the input value changes
     // input.addEventListener('input', function() {
@@ -3733,97 +3729,56 @@ $(document).ready(function () {
     //     }
     // })
 
-    var input = document.getElementById('editable-dropdown');
+    // var input = document.getElementById('editable-dropdown');
 
-    input.addEventListener('input', function () {
-        var selectedOption = null;
-        var enteredValue = input.value;
-        var dataList = document.getElementById('options');
+    // input.addEventListener('input', function () {
+    //     var selectedOption = null;
+    //     var enteredValue = input.value;
+    //     var dataList = document.getElementById('options');
 
-        // for (var i = 0; i < dataList.options.length; i++) {
-        //     if (dataList.options[i].value === enteredValue) {
-        //         var nomineeId = dataList.options[i].getAttribute('data-id');
-        //         console.log('Selected Nominee ID:', nomineeId);
-        //         break;
-        //     }
-        // }
+    //     // for (var i = 0; i < dataList.options.length; i++) {
+    //     //     if (dataList.options[i].value === enteredValue) {
+    //     //         var nomineeId = dataList.options[i].getAttribute('data-id');
+    //     //         console.log('Selected Nominee ID:', nomineeId);
+    //     //         break;
+    //     //     }
+    //     // }
 
-        // Loop through the options in the datalist
-        for (var i = 0; i < dataList.options.length; i++) {
-            // Check if the entered value matches any option value
-            if (dataList.options[i].value === enteredValue) {
-                selectedOption = dataList.options[i];
-                break;
-            }
-        }
+    //     // Loop through the options in the datalist
+    //     for (var i = 0; i < dataList.options.length; i++) {
+    //         // Check if the entered value matches any option value
+    //         if (dataList.options[i].value === enteredValue) {
+    //             selectedOption = dataList.options[i];
+    //             break;
+    //         }
+    //     }
 
-        // If a matching option is found, log its value and data-info attribute
-        var memberTypeInput = document.getElementById('member_type_dropdown');
-        if (selectedOption) {
-            var id = selectedOption.getAttribute('data-id');
-            var status = selectedOption.getAttribute('data-status');
-            console.log('Selected option:', selectedOption.value);
-            console.log('ID:', id);
-            console.log('Status:', status);
-
-
-            if (status === 'secondary') {
-                console.log("TYPE=======>>>>>>", status);
-                memberTypeInput.value = "secondary";
-            } else if (status === 'primary') {
-                memberTypeInput.value = "primary";
-            }
-
-        } else {
-            console.log('Custom value entered:', enteredValue);
-            memberTypeInput.value = "proxy";
-        }
-    });
+    //     // If a matching option is found, log its value and data-info attribute
+    //     var memberTypeInput = document.getElementById('member_type_dropdown');
+    //     if (selectedOption) {
+    //         var id = selectedOption.getAttribute('data-id');
+    //         var status = selectedOption.getAttribute('data-status');
+    //         console.log('Selected option:', selectedOption.value);
+    //         console.log('ID:', id);
+    //         console.log('Status:', status);
 
 
-// * ===========================FORM MH START ==================== * //
-// GET VALUE FOR FORM MH:
+    //         if (status === 'secondary') {
+    //             console.log("TYPE=======>>>>>>", status);
+    //             memberTypeInput.value = "secondary";
+    //         } else if (status === 'primary') {
+    //             memberTypeInput.value = "primary";
+    //         }
 
-// MAKE member_id AS GLOBAL VARIABLE TO USE IT IN VUE.
+    //     } else {
+    //         console.log('Custom value entered:', enteredValue);
+    //         memberTypeInput.value = "proxy";
+    //     }
+    // });
+
+/* DATA LIST FUNCTIONALITY END */
 
 });
-
-// Define the function to set the member ID and redirect
-// let memberIdForVue = null;
-
-// function view_form_MH(member_id) {
-//     memberIdForVue = member_id;
-//     console.log("Value of memberIdForVue:", memberIdForVue); // Log the value here
-//     redirectToForm();
-// }
-
-// // Function to redirect to the form
-// function redirectToForm() {
-//     window.location.href = "/form-I-MH/";
-// }
-
-// console.log("QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ", memberIdForVue);
-
-// new Vue({
-//     el: '#formMHVue',
-//     data: {
-//         memberId: document.getElementById('formMHVue').getAttribute('data-member-id')
-//     },
-//     methods: {
-//     },
-//     mounted() {
-//         console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//         console.log("MOUNT CALLING FORM MH FORM===============================", memberIdForVue)
-//         // axios.get(`http://127.0.0.1:8000/api/member/${member_id}`)
-//         //     .then(response => {
-//         //         console.log("WINGS  DIWSPLAY===", response.data);
-//         //     })
-//         //     .catch(error => {
-//         //         console.error('Error fetching data:', error);
-//         //     });
-//     },
-// });
-
 
 // UNIT MASTER (Display, Update)
 new Vue({
@@ -4028,4 +3983,26 @@ $(document).ready(function() {
             'margin-right': 'auto'
         });
     });
+});
+
+
+
+new Vue({
+    el: '#societyHead',
+    data: {
+        society: {},
+        error: {},
+    },
+    mounted() {
+        axios.defaults.xsrfCookieName = 'csrftoken';
+        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+        axios.get(`http://127.0.0.1:8000/api/society-creation/`)
+            .then(response => {
+                console.log('sameer Shaikh', response.data);
+                this.society = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
 });

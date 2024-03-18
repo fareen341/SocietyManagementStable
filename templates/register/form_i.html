@@ -30,15 +30,17 @@
 
 
 <div class='container-fluid'>
-  <div class="row">
-    <div class="col-lg-5 ms-auto me-auto">
-
-      <div class="text-center mt-2" id="print-head">
-        <h3 id="heading" style="color: #000 !important; font-family: 'Calibri', sans-serif;"><b>SITA PARK CO-OP. HSG. SOC. LTD</b></h3>
-        <p style="font-family: 'Calibri', sans-serif;" class="mt-3 p-0 mb-0 print-head-content"><b>Registraion Number: </b> <span>TNA/(TNA)/HSG/t(TC)/14951/2003-04</span></p>
-        <p style="font-family: 'Calibri', sans-serif;" class="print-head-content">SURVEY NO. 518(OLD),59(NEW) HISSA NO.4 LODHA ROAD, NAYA NAGAR, MIRA-ROAD(E), THANE 401107</p>
+    {% verbatim %}
+    <div class="row" id="societyHead">
+      <div class="col-lg-5 ms-auto me-auto" >
+        <div class="text-center mt-2" id="print-head">
+          <h3 id="heading" style="color: #000 !important; font-family: 'Calibri', sans-serif;"><b>{{ society.society_name }}</b></h3>
+          <p style="font-family: 'Calibri', sans-serif;" class="mt-3 p-0 mb-0 print-head-content"><b>Registraion Number: </b> <span>{{ society.registration_number }}</span></p>
+          <p style="font-family: 'Calibri', sans-serif;" class="print-head-content">{{ society.society_reg_address }}, {{ society.socity_state }}, {{ society.pin_code }}</p>
+        </div>
       </div>
     </div>
+    {% endverbatim %}
   </div>
 
   <div style="text-align: right;" class="mt-3 no-print">
