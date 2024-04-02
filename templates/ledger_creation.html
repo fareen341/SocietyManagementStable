@@ -27,7 +27,8 @@
                 <!-- Modal -->
                 <div class="modal fade" id="groupCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-                    <div class="modal-content">
+                    <div class="modal-content" id="groupCreationVue">
+                        {% verbatim %}
                         <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalLabel">Group Creation</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -36,25 +37,41 @@
 
                             <div class="row">
                                 <div class="sty-input-wrapper w-100 mb-3">
-                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <input type="text" class="sty-inp form-control" v-model="name" :style="{ borderColor: errors.group_name || errors.already_exist ? 'red' : '' }">
                                     <label class="sty-label">Group Name</label>
+                                    <span v-if="errors.group_name || errors.already_exist" class="error">{{ errors.group_name || errors.already_exist }}</span>
+                                    <span v-else></span>
                                 </div>
 
                                 <div class="sty-input-wrapper w-100 mb-3">
-                                    <input type="text" class="sty-inp form-control" name="" id="">
-                                    <label class="sty-label">Under Group</label>
+                                    <div class="w-100 sty-input-wrapper">
+                                        <select class="w-100 sty-inp" style="background-color: white;" @change="updateSubGroups($event)" v-model="superParent">
+                                            <option value="">Select Under Group</option>
+                                            <option value="Assets">Assets</option>
+                                            <option value="Liabilities">Liabilities</option>
+                                            <option value="Income">Income</option>
+                                            <option value="Expenses">Expenses</option>
+                                        </select>
+                                        <label class="sty-label">Under Group</label>
+                                    </div>
                                 </div>
 
                                 <div class="sty-input-wrapper w-100 mb-3">
-                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <select class="js-example-basic-single w-100 sty-inp" style="background-color: white;" v-model="parent" :style="{ borderColor: errors.under_group ? 'red' : '' }">
+                                        <option value="">Select Sub Group</option>
+                                        <option v-for="item in subGroups" :value="item">{{ item }}</option>
+                                    </select>
                                     <label class="sty-label">Sub Group</label>
+                                    <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
+                                    <span v-else></span>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" @click="submitGroup">Add Group</button>
                         </div>
+                        {% endverbatim %}
                     </div>
                     </div>
                 </div>
@@ -142,312 +159,279 @@
         </div>
 
         <div class="tab-pane" id="2">
-            <div class="d-flex" style="flex-direction: column;">
-                <button type="button" style="width: max-content;" class="ms-auto me-4 add-mem-btn" data-bs-toggle="modal" data-bs-target="#ledgerCreation">
-                    Create Ledger
-                </button>
+            <div id="ledgerAppVue">
+                <div class="d-flex" style="flex-direction: column;">
+                    <button type="button" style="width: max-content;" class="ms-auto me-4 add-mem-btn" data-bs-toggle="modal" data-bs-target="#ledgerCreation">
+                        Create Ledger
+                    </button>
 
-                <!-- Modal -->
-                <div class="modal fade" id="ledgerCreation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Ledger Creation Form</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div id="ledgerAppVue">
-                                {% verbatim %}
-                                <form @submit.prevent="submitLedger" enctype="multipart/form-data">
-                                    <div class="row">
-                                        <div class="col-lg-4 pe-3 mb-3" style="border-right: 1px solid grey;">
-                                            <div class="sty-input-wrapper w-100 mb-2">
-                                                <input type="text" class="sty-inp form-control w-100 ">
-                                                <label class="sty-label">Ledger Name</label>
-                                            </div>
-
-                                            <div class="sty-input-wrapper w-100 mb-2">
-                                                <input type="text" class="sty-inp form-control w-100 ">
-                                                <label class="sty-label">Alias</label>
-                                            </div>
-
-                                            <div class="sty-input-wrapper w-100 mb-2">
-                                                <input type="text" class="sty-inp form-control w-100 ">
-                                                <label class="sty-label">Group Name</label>
-                                            </div>
-
-                                            <div class="sty-input-wrapper w-100 mb-2">
-                                                <input type="text" class="sty-inp form-control w-100 ">
-                                                <label class="sty-label">PAN Number</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4 mb-3 pe-3" style="border-right: 1px solid grey;">
-                                            <div class="sty-input-wrapper w-100 mb-2">
-                                                <select class="form-control sty-inp w-100">
-                                                    <option value="" selected>Select Nature</option>
-                                                    <option value="">Fixed</option>
-                                                    <option value="">Variable</option>
-                                                </select>
-                                                <label class="sty-label">Nature Type</label>
-                                            </div>
-
-                                            <div class="sty-input-wrapper w-100 mb-2">
-                                                <select v-model="selectedType" class="form-control sty-inp w-100">
-                                                    <option value="" selected>Select Type</option>
-                                                    <option value="area">Area</option>
-                                                    <option value="fixed">Fixed</option>
-                                                </select>
-                                                <label class="sty-label">Based On</label>
-                                            </div>
-
-                                            <div v-show="selectedType === 'area'" class="sty-input-wrapper w-100">
-                                                <input type="number" name="" id="" class="form-control sty-inp w-100">
-                                                <label class="sty-label">Area</label>
-                                            </div>
-                                            <div v-show="selectedType === 'fixed'" class="sty-input-wrapper w-100 ">
-                                                <input type="number" name="" id="" class="form-control sty-inp w-100">
-                                                <label class="sty-label">Fixed</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4 mb-3">
-
-
-                                            <div class="sty-input-wrapper w-100 mb-2">
-                                                <input type="text" class="sty-inp form-control w-100 ">
-                                                <label class="sty-label">GST Number</label>
-                                            </div>
-
-                                            <div class="sty-input-wrapper w-100 mb-2">
-                                                <input type="text" class="sty-inp form-control w-100 ">
-                                                <label class="sty-label">Contact Person Name</label>
-                                            </div>
-
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="text" class="sty-inp form-control w-100 ">
-                                                <label class="sty-label">Contact Person Number</label>
-                                            </div>
-
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="email" class="sty-inp form-control w-100 ">
-                                                <label class="sty-label">Contact Person Email ID</label>
-                                            </div>
-                                        </div>
-
-                                        <hr>
-
-                                        <div class="col-lg-12">
-                                            <div class="sty-input-wrapper mb-3 w-100">
-                                                <textarea class="sty-inp form-control w-100" name="" id="" cols="30" rows="1"></textarea>
-                                                <label class="sty-label">Address</label>
-                                            </div>
-                                            <div class="row gap-3 mb-3 justify-content-center">
-                                                <div class="col-lg-2">
-                                                    <div class="sty-input-wrapper mb-3">
-                                                        <input type="text" class="sty-inp" name="" id="">
-                                                        <label class="sty-label">City</label>
-                                                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="ledgerCreation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Ledger Creation Form</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                    {% verbatim %}
+                                    <form @submit.prevent="submitLedger" enctype="multipart/form-data">
+                                        <div class="row">
+                                            <div class="col-lg-4 pe-3 mb-3" style="border-right: 1px solid grey;">
+                                                <div class="sty-input-wrapper w-100 mb-2">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.ledger_name" :class="{ 'error-message': errors.ledger_name }">
+                                                    <label class="sty-label">Ledger Name</label>
+                                                    <span v-if="errors.ledger_name" class="error">{{ errors.ledger_name[0] }}</span>
+                                                    <span v-else></span>
                                                 </div>
 
-                                                <div class="col-lg-2">
-                                                    <div class="sty-input-wrapper mb-3">
-                                                        <input type="text" class="sty-inp" name="" id="">
-                                                        <label class="sty-label">District</label>
-                                                    </div>
+                                                <div class="sty-input-wrapper w-100 mb-2">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.alis" :class="{ 'error-message': errors.alis }">
+                                                    <label class="sty-label">Alias</label>
+                                                    <span v-if="errors.alis" class="error">{{ errors.alis[0] }}</span>
+                                                    <span v-else></span>
                                                 </div>
 
-                                                <div class="col-lg-2">
-                                                    <div class="sty-input-wrapper mb-3 w-100">
-                                                        <select class="custom-dropdown   w-100" name="">
-                                                            <option value="#">Select State</option>
-                                                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                                            <option value="Assam">Assam</option>
-                                                            <option value="Bihar">Bihar</option>
-                                                            <option value="Chhattisgarh">Chhattisgarh</option>
-                                                            <option value="Goa">Goa</option>
-                                                            <option value="Gujarat">Gujarat</option>
-                                                            <option value="Haryana">Haryana</option>
-                                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                                            <option value="Jharkhand">Jharkhand</option>
-                                                            <option value="Karnataka">Karnataka</option>
-                                                            <option value="Kerala">Kerala</option>
-                                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                                            <option value="Maharashtra">Maharashtra</option>
-                                                            <option value="Manipur">Manipur</option>
-                                                            <option value="Meghalaya">Meghalaya</option>
-                                                            <option value="Mizoram">Mizoram</option>
-                                                            <option value="Nagaland">Nagaland</option>
-                                                            <option value="Odisha">Odisha</option>
-                                                            <option value="Punjab">Punjab</option>
-                                                            <option value="Rajasthan">Rajasthan</option>
-                                                            <option value="Sikkim">Sikkim</option>
-                                                            <option value="Tamil Nadu">Tamil Nadu</option>
-                                                            <option value="Telangana">Telangana</option>
-                                                            <option value="Tripura">Tripura</option>
-                                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                                            <option value="Uttarakhand">Uttarakhand</option>
-                                                            <option value="West Bengal">West Bengal</option>
-                                                            <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
-                                                            <option value="Islands">Islands</option>
-                                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                                                            <option value="Daman and Diu">Daman and Diu</option>
-                                                            <option value="Delhi">Delhi</option>
-                                                            <option value="Ladakh">Ladakh</option>
-                                                            <option value="Lakshadweep">Lakshadweep</option>
-                                                            <option value="Puducherry">Puducherry</option>
-                                                        </select>
-                                                        <label class="sty-label">State</label>
-                                                    </div>
+                                                <div class="sty-input-wrapper w-100 mb-2">
+                                                    <select class="w-100 sty-inp" style="background-color: white;" v-model="formData.group_name" id="ledgerSelection">
+                                                        <option value="">Select Sub Group</option>
+                                                        <option v-for="item in subGroups" :value="item">{{ item }}</option>
+                                                    </select>
+                                                    <label class="sty-label">Group Name</label>
                                                 </div>
 
-                                                <div class="col-lg-2">
-                                                    <div class="sty-input-wrapper mb-3">
-                                                        <input type="text" class="sty-inp" name="" id="">
+                                                <div class="sty-input-wrapper w-100 mb-2">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.pan_number" :class="{ 'error-message': errors.pan_number }">
+                                                    <label class="sty-label">PAN Number</label>
+                                                    <span v-if="errors.pan_number" class="error">{{ errors.pan_number[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 mb-3 pe-3" style="border-right: 1px solid grey;">
+                                                <div class="sty-input-wrapper w-100 mb-2">
+                                                    <select class="form-control sty-inp w-100" v-model="formData.nature" :class="{ 'error-message': errors.nature }">
+                                                        <option value="" selected>Select Nature</option>
+                                                        <option value="fixed_nature">Fixed</option>
+                                                        <option value="variable_nature">Variable</option>
+                                                    </select>
+                                                    <label class="sty-label">Nature Type</label>
+                                                    <span v-if="errors.nature" class="error">{{ errors.nature[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+
+                                                <div class="sty-input-wrapper w-100 mb-2">
+                                                    <select class="form-control sty-inp w-100" v-model="formData.based_on" :class="{ 'error-message': errors.based_on }">
+                                                        <option value="" selected>Select Type</option>
+                                                        <option value="area">Area</option>
+                                                        <option value="fixed">Fixed</option>
+                                                    </select>
+                                                    <label class="sty-label">Based On</label>
+                                                    <span v-if="errors.based_on" class="error">{{ errors.based_on[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+
+                                                <div v-show="formData.based_on === 'area'" class="sty-input-wrapper w-100" v-model="formData.area" :class="{ 'error-message': errors.area }">
+                                                    <input type="number" class="form-control sty-inp w-100">
+                                                    <label class="sty-label">Area</label>
+                                                    <span v-if="errors.area" class="error">{{ errors.area[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+
+                                                <div v-show="formData.based_on === 'fixed'" class="sty-input-wrapper w-100" v-model="formData.fixed" :class="{ 'error-message': errors.fixed }">
+                                                    <input type="number" class="form-control sty-inp w-100">
+                                                    <label class="sty-label">Fixed</label>
+                                                    <span v-if="errors.fixed" class="error">{{ errors.fixed[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="sty-input-wrapper w-100 mb-2">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.gst_number" :class="{ 'error-message': errors.gst_number }">
+                                                    <label class="sty-label">GST Number</label>
+                                                    <span v-if="errors.gst_number" class="error">{{ errors.gst_number[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+
+                                                <div class="sty-input-wrapper w-100 mb-2">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.contact_person_name" :class="{ 'error-message': errors.contact_person_name }">
+                                                    <label class="sty-label">Contact Person Name</label>
+                                                    <span v-if="errors.contact_person_name" class="error">{{ errors.contact_person_name[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+
+                                                <div class="sty-input-wrapper w-100">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.contact_person_number" :class="{ 'error-message': errors.contact_person_number }">
+                                                    <label class="sty-label">Contact Person Number</label>
+                                                    <span v-if="errors.contact_person_number" class="error">{{ errors.contact_person_number[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+
+                                                <div class="sty-input-wrapper w-100">
+                                                    <input type="email" class="sty-inp form-control w-100" v-model="formData.contact_person_email" :class="{ 'error-message': errors.contact_person_email }">
+                                                    <label class="sty-label">Contact Person Email ID</label>
+                                                    <span v-if="errors.contact_person_email" class="error">{{ errors.contact_person_email[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+
+                                            <hr>
+
+                                            <div class="col-lg-12">
+                                                <div class="sty-input-wrapper mb-3 w-100">
+                                                    <textarea class="sty-inp form-control w-100" cols="30" rows="1" v-model="formData.address" :class="{ 'error-message': errors.address }"></textarea>
+                                                    <label class="sty-label">Address</label>
+                                                    <span v-if="errors.address" class="error">{{ errors.address[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+
+                                                <div class="row mb-3">
+
+                                                    <div class="col-lg-3 sty-input-wrapper">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.country" :class="{ 'error-message': errors.country }">
+
+                                                    <!-- </select> -->
                                                         <label class="sty-label">Country</label>
+                                                        <span v-if="errors.country" class="error">{{ errors.country[0] }}</span>
+                                                    <span v-else></span>
+                                                    </div>
+                                                    <div class="col-lg-3 sty-input-wrapper">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.state" :class="{ 'error-message': errors.state }">
+
+                                                    <!-- </select> -->
+                                                        <label for="" class="sty-label">State</label>
+                                                        <span v-if="errors.state" class="error">{{ errors.state[0] }}</span>
+                                                    <span v-else></span>
+                                                    </div>
+                                                    <div class="col-lg-3 sty-input-wrapper">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.city" :class="{ 'error-message': errors.city }">
+
+                                                    <!-- </select> -->
+                                                        <label for="" class="sty-label">City</label>
+                                                        <span v-if="errors.city" class="error">{{ errors.city[0] }}</span>
+                                                    <span v-else></span>
+                                                    </div>
+                                                    <div class="col-lg-3 sty-input-wrapper">
+                                                        <input type="text" class="sty-inp form-control w-100" v-model="formData.pin_code" :class="{ 'error-message': errors.pin_code }">
+                                                        <label class="sty-label">Pincode</label>
+                                                        <span v-if="errors.pin_code" class="error">{{ errors.pin_code[0] }}</span>
+                                                    <span v-else></span>
                                                     </div>
                                                 </div>
+                                            </div>
 
-                                                <div class="col-lg-2">
-                                                    <div class="sty-input-wrapper mb-3">
-                                                        <input type="number" class="sty-inp" name="" id="">
-                                                        <label class="sty-label">Pin Code</label>
-                                                    </div>
+                                            <hr>
+
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.beneficiary_name" :class="{ 'error-message': errors.beneficiary_name }">
+                                                    <label class="sty-label">Beneficiary Name</label>
+                                                    <span v-if="errors.beneficiary_name" class="error">{{ errors.beneficiary_name[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <input type="number" class="sty-inp form-control w-100" v-model="formData.account_no" :class="{ 'error-message': errors.account_no }">
+                                                    <label class="sty-label">Account Number</label>
+                                                    <span v-if="errors.account_no" class="error">{{ errors.account_no[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.ifsc_code" :class="{ 'error-message': errors.ifsc_code }">
+                                                    <label class="sty-label">IFSC Code</label>
+                                                    <span v-if="errors.ifsc_code" class="error">{{ errors.ifsc_code[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.bank_branch_name" :class="{ 'error-message': errors.bank_branch_name }">
+                                                    <label class="sty-label">Bank Name & Branch</label>
+                                                    <span v-if="errors.bank_branch_name" class="error">{{ errors.bank_branch_name[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 mb-3 ">
+                                                <div class="sty-input-wrapper d-flex w-100">
+                                                    <input type="number" class="sty-inp form-control w-100" v-model="formData.opening_balance" :class="{ 'error-message': errors.opening_balance }">
+                                                    <label class="sty-label">Opening Balance</label>
+                                                    <span v-if="errors.opening_balance" class="error">{{ errors.opening_balance[0] }}</span>
+                                                    <span v-else></span>
+
+                                                    <select class="sty-inp form-control w-25" v-model="formData.dr_cr" :class="{ 'error-message': errors.dr_cr }">
+                                                        <option value="">Dr/Cr</option>
+                                                        <option value="dr">Dr</option>
+                                                        <option value="cr">Cr</option>
+                                                    </select>
+                                                    <span v-if="errors.dr_cr" class="error">{{ errors.dr_cr[0] }}</span>
+                                                    <span v-else></span>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <hr>
-
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="text" class="sty-inp form-control w-100">
-                                                <label class="sty-label">Beneficiary Name</label>
-                                            </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="submit" class="btn btn-primary">Submit</button>
                                         </div>
-
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control w-100">
-                                                <label class="sty-label">Account Number</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="text" class="sty-inp form-control w-100">
-                                                <label class="sty-label">IFSC Code</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="text" class="sty-inp form-control w-100">
-                                                <label class="sty-label">Bank Name & Branch</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4 mb-3 ">
-                                            <div class="sty-input-wrapper d-flex w-100">
-                                                <input type="number" class="sty-inp form-control w-100">
-                                                <label class="sty-label">Opening Balance</label>
-                                                <select class="sty-inp form-control w-25">
-                                                    <option value="">Dr/Cr</option>
-                                                    <option value="">Dr</option>
-                                                    <option value="">Cr</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                                {% endverbatim %}
+                                    </form>
+                                    {% endverbatim %}
+                                </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
                     </div>
-                    </div>
-                </div>
 
-                <div class="container mt-3 mb-4">
-                    <div class="table-responsive" id="ledgerTableDiv" style="font-family: 'Calibri', sans-serif !important; height: max-content;">
-                        <table id="led_ledgerDatatable" class="display order-column dt-table table-sm w-100">
-                            <thead>
-                                <tr>
-                                    <th>Actions</th>
-                                    <th>Ledger Name</th>
-                                    <th>Alias</th>
-                                    <th>Group Name</th>
-                                    <th>Contact Person Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>Test</td>
-                                    <td>Abcd</td>
-                                    <td>Group A</td>
-                                    <td>Sameer</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>Test</td>
-                                    <td>Abcd</td>
-                                    <td>Group A</td>
-                                    <td>Fareen</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>Test</td>
-                                    <td>Abcd</td>
-                                    <td>Group A</td>
-                                    <td>Nazim</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>Test</td>
-                                    <td>Abcd</td>
-                                    <td>Group A</td>
-                                    <td>Mohammad</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>Test</td>
-                                    <td>Abcd</td>
-                                    <td>Group A</td>
-                                    <td>Atul</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="container mt-3 mb-4">
+                        <div class="table-responsive" id="ledgerTableDiv" style="font-family: 'Calibri', sans-serif !important; height: max-content;">
+                            {% verbatim %}
+                            <table id="led_ledgerDatatable" class="display order-column dt-table table-sm w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Actions</th>
+                                        <th>id</th>
+                                        <th>ledger_name</th>
+                                        <th>nature</th>
+                                        <th>gst_number</th>
+                                        <th>alis</th>
+                                        <th>based_on</th>
+                                        <th>contact_person_name</th>
+                                        <th>group_name</th>
+                                        <th>area</th>
+                                        <th>contact_person_number</th>
+                                        <th>pan_number</th>
+                                        <th>fixed</th>
+                                        <th>contact_person_email</th>
+                                        <th>address</th>
+                                        <th>country</th>
+                                        <th>state</th>
+                                        <th>city</th>
+                                        <th>pin_code</th>
+                                        <th>beneficiary_name</th>
+                                        <th>account_no</th>
+                                        <th>ifsc_code</th>
+                                        <th>bank_branch_name</th>
+                                        <th>opening_balance</th>
+                                        <th>dr_cr</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(ledgerData, index) in ledgerData" :key="index">
+                                        <td>
+                                            <span @click="viewRequestedData(ledgerData.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                            <span @click="editRequestedData(ledgerData.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                                        </td>
+                                        <td v-for="(value, key) in ledgerData" :key="key">{{ value }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            {% endverbatim %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -469,24 +453,33 @@
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Cost Center Creation</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-
+                    <div class="modal-body" id="costCenterCreationVue">
+                        {% verbatim %}
                         <div class="row">
                             <div class="sty-input-wrapper w-100 mb-3">
-                                <input type="text" class="sty-inp form-control" name="" id="">
+                                <input type="text" class="sty-inp form-control" v-model="name">
                                 <label class="sty-label">Cost Center Name</label>
+                                <span v-if="errors.group_name || errors.already_exist" class="error">{{ errors.group_name || errors.already_exist }}</span>
+                                <span v-else></span>
                             </div>
 
                             <div class="sty-input-wrapper w-100 mb-3">
-                                <input type="text" class="sty-inp form-control" name="" id="">
+                                <select class="w-100 sty-inp" style="background-color: white;" id="costCreationSelection">
+                                    <option value="">Select Under Group</option>
+                                    <option v-for="item in costCenterList" :value="item">{{ item }}</option>
+                                </select>
                                 <label class="sty-label">Under Group</label>
+                                <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
+                                <span v-else></span>
                             </div>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" @click="submitCostCenter">Save changes</button>
+                        </div>
+                        {% endverbatim %}
                     </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                    </div>
+
                 </div>
                 </div>
             </div>
@@ -573,142 +566,119 @@
         </div>
 
         <div class="tab-pane" id="4">
-            <div class="d-flex" style="flex-direction: column;">
-                <!-- Button trigger modal -->
-                <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#voucherTypeCreationModal">
-                    Create Voucher Type
-                </button>
-            </div>
+            <div id="voucherTypeVue">
+                <div class="d-flex" style="flex-direction: column;">
+                    <!-- Button trigger modal -->
+                    <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#voucherTypeCreationModal">
+                        Create Voucher Type
+                    </button>
+                </div>
 
-            <!-- Modal -->
-            <div class="modal fade" id="voucherTypeCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Voucher Type Creation</h1>
-                    <br>
-                    add -> from and to date
-                    <br>
-                    add new for different dates
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="sty-input-wrapper w-100 mb-3">
-                                    <input type="text" class="sty-inp form-control" name="" id="">
-                                    <label class="sty-label">Voucher Name</label>
+                <!-- Modal -->
+                <div class="modal fade" id="voucherTypeCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        {% verbatim %}
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Voucher Type Creation</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-5">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="text" class="sty-inp form-control" v-model="formData.voucher_type" :class="{ 'error-message': errors.voucher_type }">
+                                        <label class="sty-label">Voucher Type</label>
+                                        <span v-if="errors.voucher_type" class="error">{{ errors.voucher_type[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="col-6">
-                                <div class="sty-input-wrapper w-100 mb-3">
-                                    <input type="text" class="sty-inp form-control" name="" id="">
-                                    <label class="sty-label">Short Name of Voucher</label>
+                                <div class="col-5">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="text" class="sty-inp form-control" v-model="formData.voucher_short_name" :class="{ 'error-message': errors.voucher_short_name }">
+                                        <label class="sty-label">Short Name of Voucher</label>
+                                        <span v-if="errors.voucher_short_name" class="error">{{ errors.voucher_short_name[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="col-6">
-                                <div class="sty-input-wrapper w-100 mb-3">
-                                    <input type="text" class="sty-inp form-control" name="" id="">
-                                    <label class="sty-label">Prefix</label>
-                                </div>
-                            </div>
+                                <div class="row" v-for="(form, index) in forms" :key="index">
+                                    <p class="lead text-center">Voucher Date {{ getFormNumber(index) }}</p>
 
-                            <div class="col-6">
-                                <div class="sty-input-wrapper w-100 mb-3">
-                                    <input type="text" class="sty-inp form-control" name="" id="">
-                                    <label class="sty-label">Suffix</label>
+                                    <div class="col-1 mt-2">
+                                        <div @click.prevent="addForm">
+                                            <i class="fa-solid fa-circle-plus"></i>
+                                            <span>Add</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2">
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <input type="date" class="sty-inp form-control" v-model="form.from_date" v-validate="'required'">
+                                            <label class="sty-label">From Date</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2">
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <input type="date" class="sty-inp form-control" v-model="form.to_date" v-validate="'required|date_range'">
+                                            <label class="sty-label">To Date</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3">
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <input type="text" class="sty-inp form-control" v-model="form.prefix" >
+                                            <label class="sty-label">Prefix</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-3">
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <input type="text" class="sty-inp form-control" v-model="form.suffix" >
+                                            <label class="sty-label">Suffix</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-1 mt-2">
+                                        <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" @click="submitVoucherData">Save changes</button>
+                        </div>
+                        {% endverbatim %}
                     </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                     </div>
                 </div>
-                </div>
-            </div>
 
-            <div class="container mt-3 mb-4" style="margin-bottom: 200px !important;">
-                <div class="table-responsive" id="voucherTypeTableDiv">
-                    {% verbatim %}
-                    <table id="led_voucherTypeDatatable" class="order-column dt-table display table-sm w-100">
-                        <thead>
-                            <tr>
-                                <th>Actions</th>
-                                <th>Ledger Name</th>
-                                <th>Alias</th>
-                                <th>Group Name</th>
-                                <th>Contact Person Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="d-flex">
-                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
-                                <td>Test</td>
-                                <td>Abcd</td>
-                                <td>Group A</td>
-                                <td>Sameer</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex">
-                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
-                                <td>Test</td>
-                                <td>Abcd</td>
-                                <td>Group A</td>
-                                <td>Fareen</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex">
-                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
-                                <td>Test</td>
-                                <td>Abcd</td>
-                                <td>Group A</td>
-                                <td>Nazim</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex">
-                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
-                                <td>Test</td>
-                                <td>Abcd</td>
-                                <td>Group A</td>
-                                <td>Mohammad</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex">
-                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
-                                <td>Test</td>
-                                <td>Abcd</td>
-                                <td>Group A</td>
-                                <td>Atul</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    {% endverbatim %}
+                <div class="container mt-3 mb-4" style="margin-bottom: 200px !important;">
+                    <div class="table-responsive" id="voucherTypeTableDiv">
+                        {% verbatim %}
+                        <table id="led_costCenterDatatable" class="order-column dt-table display table-sm w-100">
+                            <thead>
+                                <tr>
+                                    <th>Actions</th>
+                                    <th>Ledger Name</th>
+                                    <th>Ledger Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(voucherData, index) in voucherType" :key="index">
+                                    <td>
+                                        <span @click="viewRequestedData(voucherData.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                        <span @click="editRequestedData(voucherData.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                                    </td>
+                                    <td v-for="(value, key) in voucherData" :key="key">{{ value }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        {% endverbatim %}
+                    </div>
                 </div>
             </div>
         </div>

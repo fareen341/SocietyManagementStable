@@ -3998,11 +3998,261 @@ new Vue({
         axios.defaults.xsrfHeaderName = 'X-CSRFToken';
         axios.get(`http://127.0.0.1:8000/api/society-creation/`)
             .then(response => {
-                console.log('sameer Shaikh', response.data);
                 this.society = response.data;
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
+    }
+});
+
+
+// GROUP CREATION FOR LEDGER
+new Vue({
+    el: '#groupCreationVue',
+    data: {
+        subGroups: ['Select Sub Group'],
+        name: '',
+        parent: '',
+        superParent: '',
+        errors: {},
+    },
+    methods: {
+        updateSubGroups(event){
+            this.subGroups = [];
+            if(!event.target.value){
+                this.subGroups = '';
+                return;
+            }
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.get(`http://127.0.0.1:8000/api/ledger_group/${event.target.value}`)
+            .then(response => {
+                    this.subGroups = response.data.sub_group;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        submitGroup(){
+            let selectElement = $('.js-example-basic-single').val();
+            data = {
+                "name": this.name,
+                "superParent": this.superParent,
+                "parent": selectElement
+            }
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/leadger_group_creation/', data)
+                .then(response => {
+                    console.log("Response-->", response.data);
+                    $(".js-example-basic-single").val('').trigger('change');
+                    this.name = '';
+                    this.errors = {}
+                    toastr.success(response.message, "Group Added Successfully!");
+                    this.subGroups.push(response.data.name);
+                })
+                .catch(error => {
+                    console.log("Errors -->", error.response.data);
+                    this.errors = error.response.data;
+                });
+        },
+    },
+});
+
+
+// FOR GROUP SELECTION
+$('.js-example-basic-single').select2({
+    dropdownParent: $('#groupCreationModal'),
+    width: '100%',
+    // height: '200px !important;',
+    // 'overflow-y': 'auto'
+});
+
+
+// LEDGER CREATION
+new Vue({
+    el: '#ledgerAppVue',
+    data: {
+        based_on: '',
+        formData: {},
+        errors: {},
+        subGroups: '',
+        ledgerData: [],
+    },
+    methods: {
+        submitLedger(){
+            let ledgerData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    if (this.formData[key] !== null) {
+                        console.log(key);
+                        ledgerData.append(key, this.formData[key]);
+                    }
+                }
+            }
+            let selectElement = $('#ledgerSelection').val();
+            ledgerData.append('group_name', selectElement)
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/ledger_creation/', ledgerData)
+                .then(response => {
+                    console.log('Form submitted successfully:', response.data);
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error: ->", this.errors);
+                });
+        }
+    },
+    mounted() {
+            axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
+            .then(response => {
+                this.subGroups = response.data.sub_group;
+                $('#ledgerSelection').select2({
+                    dropdownParent: $('#ledgerCreation'),
+                    width: '100%',
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+            // LEDGER DTATABLE
+            axios.get(`http://127.0.0.1:8000/api/ledger_creation/`)
+            .then(response => {
+                console.log("ledger data====in table", response.data);
+                this.ledgerData = response.data;
+                $(document).ready(function () {
+                    $('#led_ledgerDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching ledger data:', error);
+            });
+    }
+});
+
+
+// COST CENTER GROUP CREATION
+new Vue({
+    el: '#costCenterCreationVue',
+    data: {
+        costCenterList: ['Select Under Group'],
+        name: '',
+        parent: '',
+        errors: {},
+    },
+    methods: {
+        submitCostCenter(){
+            let selectElement = $('#costCreationSelection').val();
+            data = {
+                "name": this.name,
+                "parent": selectElement
+            }
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/cost_center/', data)
+                .then(response => {
+                    this.errors = {}
+                    this.name = '';
+                    $("#costCreationSelection").val('').trigger('change');
+                    toastr.success(response.message, "Group Added Successfully!");
+                    this.costCenterList.push(response.data.name);
+                })
+                .catch(error => {
+                    console.log("Errors -->", error.response.data);
+                    this.errors = error.response.data;
+                });
+        },
+    },
+    mounted(){
+        axios.get(`http://127.0.0.1:8000/api/get_all_cost_centers/`)
+            .then(response => {
+                this.costCenterList = response.data.cost_centers;
+                $('#costCreationSelection').select2({
+                    dropdownParent: $('#costCenterCreationModal'),
+                    width: '100%',
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        $('#costCenterCreationModal').on('hidden.bs.modal', () => {
+            this.errors = {};
+            this.name = '';
+            $("#costCreationSelection").val('').trigger('change');
+        });
+    }
+});
+
+
+// VOUCHER TYPE CREATION
+var app = new Vue({
+    el: '#voucherTypeVue',
+    data: {
+        forms: [
+            {}
+        ],
+        formData: {},
+        errors: {},
+        voucherType: [],
+    },
+    methods: {
+        addForm() {
+            this.forms.push({});
+        },
+        removeForm(index) {
+            this.forms.splice(index, 1);
+        },
+        getFormNumber: index => index + 1,
+        submitVoucherData(){
+            if(this.forms){
+                this.formData['voucher_indexing'] = this.forms;
+            }
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+            axios.post(`http://127.0.0.1:8000/api/voucher_type/`, this.formData)
+                .then(response => {
+                    toastr.success(response.message, "Voucher Details Added!");
+                    $('#voucherTypeCreationModal').modal('hide');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                    console.error('Error fetching data:', this.errors);
+                });
+        },
+        viewRequestedData(){
+            alert('view');
+        },
+        editRequestedData(){
+            alert('edit');
+        },
+    },
+    mounted() {
+        axios.get('http://127.0.0.1:8000/api/voucher_type/')
+            .then(response => {
+                this.voucherType = response.data;
+                $(document).ready(function () {
+                    $('#led_costCenterDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        $('#voucherTypeCreationModal').on('hidden.bs.modal', () => {
+            this.formData = {};
+            this.forms = [{}];
+            this.errors = {};
+        });
     }
 });

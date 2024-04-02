@@ -392,9 +392,46 @@ class Suggestion(models.Model):
 
 
 
-'''
-For attendance:
-ID    TYPE    FLATS(MULTIPLE)
-1.    AGM     FLATS
-2.    AGM     FLATS
-'''
+class Ledger(models.Model):
+    ledger_name = models.CharField(max_length=200)
+    nature = models.CharField(max_length=200)
+    gst_number = models.CharField(max_length=200)
+    alis = models.CharField(max_length=200)
+    based_on = models.CharField(max_length=200)
+    contact_person_name = models.CharField(max_length=200)
+    group_name = models.CharField(max_length=200)
+    area = models.CharField(max_length=200, null=True, blank=True)
+    contact_person_number = models.CharField(max_length=200)
+    pan_number = models.CharField(max_length=200)
+    fixed = models.CharField(max_length=200, null=True, blank=True)
+    contact_person_email = models.CharField(max_length=200)
+    address = models.CharField(max_length=200)
+    country = models.CharField(max_length=200)
+    state = models.CharField(max_length=200)
+    city = models.CharField(max_length=200)
+    pin_code = models.CharField(max_length=200)
+    beneficiary_name = models.CharField(max_length=200)
+    account_no = models.CharField(max_length=200)
+    ifsc_code = models.CharField(max_length=200)
+    bank_branch_name = models.CharField(max_length=200)
+    opening_balance = models.CharField(max_length=200)
+    dr_cr = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.ledger_name
+
+
+class VoucherType(models.Model):
+    voucher_type = models.CharField(max_length=200)
+    voucher_short_name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.voucher_type
+
+
+class VoucherIndexing(models.Model):
+    voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
+    from_date = models.DateField()
+    to_date = models.DateField()
+    prefix = models.CharField(max_length=200)
+    suffix = models.CharField(max_length=200)

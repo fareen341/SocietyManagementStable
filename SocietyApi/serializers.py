@@ -1,6 +1,7 @@
 from .models import *
 from rest_framework import serializers
 import os
+from SocietyApp.models import *
 
 
 class SocietyCreationSerializer(serializers.ModelSerializer):
@@ -386,3 +387,47 @@ class UnitRegisterSerializers(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['members'] = MemberForUnitSerializer(active_members, many=True).data
         return representation
+
+
+class CreateGroupForLedgerSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Childs
+        fields = '__all__'
+
+
+class LedgerSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Ledger
+        fields = '__all__'
+
+
+class CostCenterSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = CostCenter
+        fields = '__all__'
+
+class CostCenterSerializersList(serializers.ModelSerializer):
+    class Meta:
+        model = CostCenter
+        fields = ['name']
+
+
+class VoucherIndexingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VoucherIndexing
+        fields = ['from_date', 'to_date', 'prefix', 'suffix']
+
+class VoucherTypeSerializer(serializers.ModelSerializer):
+    voucher_indexing = VoucherIndexingSerializer(many=True, required=False)
+
+    class Meta:
+        model = VoucherType
+        fields = ['voucher_type', 'voucher_short_name', 'voucher_indexing']
+
+    def create(self, validated_data):
+        indexing_data = validated_data.pop('voucher_indexing', None)
+        voucher_type = VoucherType.objects.create(**validated_data)
+        if indexing_data:
+            for indexing_item in indexing_data:
+                VoucherIndexing.objects.create(voucher_type=voucher_type, **indexing_item)
+        return voucher_type

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from  SocietyApi.models import *
 from SocietyApi.serializers import *
+from .models import *
 
 # Create your views here.
 
@@ -292,6 +293,62 @@ def unit_master(request):
 
 
 def ledger_creation(request):
-    datatable_columns = [0, 1, 2, 3]
+    datatable_columns = [0, 1]
     return render(request, 'ledger_creation.html', {'datatable_columns': datatable_columns})
 
+
+
+def get_all_child_investments_2(parent):
+    last_child = None
+    immediate_parent = None
+    super_parent = None
+
+    def traverse_children(investment, depth=0):
+        nonlocal last_child, immediate_parent, super_parent
+
+        children = investment.children.all()
+        print("children ==", children)
+        if children:
+            for child in children:
+                if not child.children.exists():
+                    last_child = child
+                    immediate_parent = investment
+                    super_parent = investment.parent
+                traverse_children(child, depth + 1)
+
+    traverse_children(parent)
+    return last_child, immediate_parent, super_parent
+
+
+
+def get_all_child_investments(parent):
+    last_child, immediate_parent, super_parent = get_all_child_investments_2(parent)
+
+    if last_child:
+        print("Last Child:", last_child)
+    if immediate_parent:
+        print("Immediate Parent:", immediate_parent)
+    if super_parent:
+        print("Super Parent:", super_parent)
+
+    all_childs = []
+    def traverse_children(investment, depth=0):
+        children = investment.children.all()
+        if children:
+            for child in children:
+                show = f" {'---' * depth} {child}"
+                # show = f"{child}"
+                all_childs.append(show)
+                traverse_children(child, depth + 1)
+    traverse_children(parent)
+    return all_childs
+
+
+def account_group(request):
+    # under_grp = "Assets"
+    under_grp = "Expenses"
+    # under_grp = "Liabilities"
+    # under_grp = "Jwellery"
+    parent_investment = Childs.objects.get(name=under_grp)
+    all_child_investments = get_all_child_investments(parent_investment)
+    return render(request, 'account.html', {'all_child_investments': all_child_investments, "under_grp": under_grp})

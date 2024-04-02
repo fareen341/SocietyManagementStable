@@ -47,7 +47,11 @@ router.register('meetings', apiviews.MeetingsView, basename='meetings')
 router.register('suggestion', apiviews.SuggestionsView, basename='suggestion')
 router.register('attendance', apiviews.SaveAttendanceView, basename='attendance')
 router.register('suggestions', apiviews.SuggestionView, basename='suggestions')
-
+router.register('leadger_group_creation', apiviews.CreateGroupForLedgerView, basename='leadger_group_creation')
+router.register('ledger_creation', apiviews.LedgerView, basename='ledger_creation')
+router.register('cost_center', apiviews.CostCenterView, basename='cost_center')
+router.register('voucher_type', apiviews.VoucherTypeView, basename='voucher_type')
+router.register('voucher_indexing', apiviews.VoucherIndexingView, basename='voucher_indexing')
 
 
 
@@ -68,6 +72,7 @@ urlpatterns = [
     path('extra/', views.extra, name='extra'),
     path('unit-master/', views.unit_master, name='unit_master'),
     path('ledger-creation/', views.ledger_creation, name='ledger_creation'),
+    path('group', views.account_group, name='group'),
 
 
     # REGISTERS
@@ -91,6 +96,8 @@ urlpatterns = [
 
     path('api/get_flats_status/', apiviews.FlatDetailView.as_view({'get': 'get_flat_status_dropdown'}), name='get_flats_status'),
 
+    path('api/ledger_group/<str:group_name>/', apiviews.CreateGroupForLedgerView.as_view({'get': 'select_ledger_group'}), name='ledger_group'),
+    path('api/get_all_cost_centers/', apiviews.CostCenterView.as_view({'get': 'select_cost_center'}), name='get_all_cost_centers'),
 
 ]
 if settings.DEBUG:

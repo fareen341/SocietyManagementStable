@@ -12,6 +12,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
+from SocietyApp.models import *
 
 
 
@@ -688,7 +689,6 @@ class SuggestionsView(viewsets.ModelViewSet):
     serializer_class = SuggestionSerializer
 
 
-
 class AddNomineesView(viewsets.ModelViewSet):
     queryset = Nominees.objects.all()
     serializer_class = AddNomineesSerializer
@@ -799,4 +799,153 @@ def get_current_logged_in_user(request):
 def get_previous_suggestions(request, meeting_id):
     previous_suggestions = Suggestion.objects.filter(meeting_id=meeting_id)
     serialized_suggestions = SuggestionSerializer(previous_suggestions, many=True)
-    return JsonResponse({"previous_suggestions": serialized_suggestions.data})  # Return serialized data
+    return JsonResponse({"previous_suggestions": serialized_suggestions.data})
+
+
+def select_ledger_group(request, group_name):
+    sub_group = []
+    if group_name == 'assets':
+        sub_group = ['Fixed Assets', 'Investment', 'Curren Assest', 'Misc Assets']
+    elif group_name == 'liabilities':
+        sub_group = ['Capital', 'Reserve', 'Loan', 'Current Liabilities', 'Misc Liabilities']
+    elif group_name == 'income':
+        sub_group = ['Direct Income', 'Indirect Income']
+    elif group_name == 'expenses':
+        sub_group = ['Direct Expenses', 'Indirect Expenses']
+    return JsonResponse({"sub_group": sub_group})
+
+
+def get_all_child_investments(parent):
+    all_childs = []
+    def traverse_children(investment, depth=0):
+        children = investment.children.all()
+        if children:
+            for child in children:
+                # show = f" {'---' * depth} {child}"
+                show = f"{child}"
+                all_childs.append(show)
+                traverse_children(child, depth + 1)
+    traverse_children(parent)
+    return all_childs
+
+class CreateGroupForLedgerView(viewsets.ModelViewSet):
+    queryset = Childs.objects.all()
+    serializer_class = CreateGroupForLedgerSerializers
+
+    @action(detail=False, methods=['get'])
+    def select_ledger_group(self, request, group_name):
+        try:
+            parent_investment = Childs.objects.get(name=group_name)
+            all_child_investments = get_all_child_investments(parent_investment)
+            sub_group = sorted(list(all_child_investments))
+        except Childs.DoesNotExist:
+            sub_group = []
+
+        if group_name == 'all':
+            sub_group = sorted(list(Childs.objects.all().values_list('name', flat=True)))
+        return JsonResponse({"sub_group": sub_group})
+
+
+    def create(self, request, *args, **kwargs):
+        errors = {}
+        go_further = True
+        name = request.data.get('name')
+        parent_name = request.data.get('parent')
+        super_parent = request.data.get('superParent')
+        already_exists = Childs.objects.filter(name=name, parent__name=parent_name)
+
+        # if not name or not parent_name or not super_parent_name:
+        if not name:
+            errors['group_name'] = 'Group Name Is Required'
+        if already_exists:
+            errors['already_exist'] = 'Group Already Exists'
+
+        try:
+            super_parent_obj = Childs.objects.get(name=super_parent)
+            print("super_parent_obj===", super_parent_obj)
+        except Childs.DoesNotExist:
+            print("does not exists===")
+            super_parent_obj = Childs.objects.create(name=super_parent)
+
+        if not parent_name:
+            go_further = False
+            child = Childs.objects.create(name=name, parent=super_parent_obj)
+
+        # elif not parent_name:
+        #     errors['under_group'] = 'Please Select Under Group'
+
+        if errors:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Check if the parent already exists under the superParent
+            parent = Childs.objects.get(name=parent_name)
+        except Childs.DoesNotExist:
+            if go_further:
+                # If the parent doesn't exist under the superParent, create it
+                parent = Childs.objects.create(name=parent_name)
+
+        # Create the child under the parent
+        if go_further:
+            print("Go further ===", go_further)
+            child = Childs.objects.create(name=name, parent=parent)
+
+        serializer = self.get_serializer(child)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class LedgerView(viewsets.ModelViewSet):
+    queryset = Ledger.objects.all()
+    serializer_class = LedgerSerializers
+
+
+class CostCenterView(viewsets.ModelViewSet):
+    queryset = CostCenter.objects.all()
+    serializer_class = CostCenterSerializers
+
+    @action(detail=False, methods=['get'])
+    def select_cost_center(self, request):
+        all_cost_centers = CostCenter.objects.all().values_list('name', flat=True).order_by('name')
+        return JsonResponse({"cost_centers": list(all_cost_centers)})
+
+    def create(self, request, *args, **kwargs):
+        errors = {}
+        name = request.data.get('name')
+        parent_name = request.data.get('parent')
+
+        already_exists = CostCenter.objects.filter(name=name, parent__name=parent_name)
+
+        if not name:
+            errors['group_name'] = 'Cost Center Name Is Required'
+        if already_exists:
+            errors['already_exist'] = 'Group Already Exists'
+
+        # if not CostCenter.objects.all().exists():
+        if not parent_name:
+            errors['under_group'] = 'Please Select Under Group'
+
+        if errors:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            parent = CostCenter.objects.get(name=parent_name)
+        except CostCenter.DoesNotExist:
+            parent = None
+
+        child = CostCenter.objects.create(name=name, parent=parent)
+        serialized_data = CostCenterSerializers(child).data
+        return Response(serialized_data, status=status.HTTP_201_CREATED)
+
+
+class VoucherTypeView(viewsets.ModelViewSet):
+    queryset = VoucherType.objects.all()
+    serializer_class = VoucherTypeSerializer
+
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+
+class VoucherIndexingView(viewsets.ModelViewSet):
+    queryset = VoucherIndexing.objects.all()
+    serializer_class = VoucherIndexingSerializer

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Child Investments</title>
+</head>
+<body>
+    <h1>Investments Child</h1>
+    <p>Groups Under {{ under_grp }}</p>
+    <ul>
+        {% for child_investment in all_child_investments %}
+            <li>{{ child_investment }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
