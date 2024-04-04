@@ -322,18 +322,18 @@ def get_all_child_investments_2(parent):
 
 
 def get_all_child_investments(parent):
-    last_child, immediate_parent, super_parent = get_all_child_investments_2(parent)
+    # last_child, immediate_parent, super_parent = get_all_child_investments_2(parent)
 
-    if last_child:
-        print("Last Child:", last_child)
-    if immediate_parent:
-        print("Immediate Parent:", immediate_parent)
-    if super_parent:
-        print("Super Parent:", super_parent)
+    # if last_child:
+    #     print("Last Child:", last_child)
+    # if immediate_parent:
+    #     print("Immediate Parent:", immediate_parent)
+    # if super_parent:
+    #     print("Super Parent:", super_parent)
 
     all_childs = []
     def traverse_children(investment, depth=0):
-        children = investment.children.all()
+        children = investment.cost_center.all()
         if children:
             for child in children:
                 show = f" {'---' * depth} {child}"
@@ -345,10 +345,11 @@ def get_all_child_investments(parent):
 
 
 def account_group(request):
-    # under_grp = "Assets"
-    under_grp = "Expenses"
+    under_grp = "Primary"
+    # under_grp = "Expenses"
     # under_grp = "Liabilities"
     # under_grp = "Jwellery"
-    parent_investment = Childs.objects.get(name=under_grp)
+    # parent_investment = Childs.objects.get(name=under_grp)
+    parent_investment = CostCenter.objects.get(name=under_grp)
     all_child_investments = get_all_child_investments(parent_investment)
     return render(request, 'account.html', {'all_child_investments': all_child_investments, "under_grp": under_grp})

@@ -6,12 +6,15 @@
 {% block body %}
 
 <div id="exTab2" class="container">
-    <ul class="nav nav-tabs">
-        <li class="me-5" class="active"><a href="#1" data-toggle="tab">Group</a></li>
-        <li class="me-5"><a href="#2" data-toggle="tab">Ledger</a></li>
-        <li class="me-5"><a href="#3" data-toggle="tab">Cost Center</a></li>
-        <li class="me-5"><a href="#4" data-toggle="tab">Voucher Type</a></li>
-    </ul>
+    <div>
+        <ul class="nav nav-tabs circular-tabs w-75 ms-auto me-auto">
+            <hr style="z-index: -1; width: 100%; top: 45px !important; position: relative; left: 0%;">
+            <li class="active" tooltip="Group Creation"><a href="#1" data-toggle="tab"><i class="fa-solid fa-g"></i></a></li>
+            <li class=""><a href="#2" data-toggle="tab"><i class="fa-solid fa-l"></i></a></li>
+            <li class=""><a href="#3" data-toggle="tab"><i class="fa-solid fa-c"></i></a></li>
+            <li class=""><a href="#4" data-toggle="tab"><i class="fa-solid fa-v"></i></a></li>
+        </ul>
+    </div>
 
     <div class="tab-content ">
         <div class="tab-pane active" id="1">
@@ -289,29 +292,35 @@
                                                 <div class="row mb-3">
 
                                                     <div class="col-lg-3 sty-input-wrapper">
-                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.country" :class="{ 'error-message': errors.country }">
-
-                                                    <!-- </select> -->
+                                                        <select id="country" @change="getStates" class="sty-inp form-control w-100" v-model="formData.country" :class="{ 'error-message': errors.country }">
+                                                            <option value="">Select Country</option>
+                                                            <option v-for="country in countries" :value="country.iso2">{{ country.name }}</option>
+                                                        </select>
                                                         <label class="sty-label">Country</label>
                                                         <span v-if="errors.country" class="error">{{ errors.country[0] }}</span>
-                                                    <span v-else></span>
+                                                        <span v-else></span>
                                                     </div>
-                                                    <div class="col-lg-3 sty-input-wrapper">
-                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.state" :class="{ 'error-message': errors.state }">
 
-                                                    <!-- </select> -->
+                                                    <div class="col-lg-3 sty-input-wrapper">
+                                                        <select class="sty-inp form-control w-100" id="state" @change="getCities" :disabled="!formData.country" v-model="formData.state" :class="{ 'error-message': errors.state }">
+                                                            <option value="">Select State</option>
+                                                            <option v-for="state in states" :value="state.iso2">{{ state.name }}</option>
+                                                        </select>
                                                         <label for="" class="sty-label">State</label>
                                                         <span v-if="errors.state" class="error">{{ errors.state[0] }}</span>
-                                                    <span v-else></span>
+                                                        <span v-else></span>
                                                     </div>
-                                                    <div class="col-lg-3 sty-input-wrapper">
-                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.city" :class="{ 'error-message': errors.city }">
 
-                                                    <!-- </select> -->
+                                                    <div class="col-lg-3 sty-input-wrapper">
+                                                        <select id="city" class="sty-inp form-control w-100" :disabled="!formData.state" v-model="formData.city" :class="{ 'error-message': errors.city }">
+                                                            <option value="">Select City</option>
+                                                            <option v-for="city in cities" :value="city.name">{{ city.name }}</option>
+                                                        </select>
                                                         <label for="" class="sty-label">City</label>
                                                         <span v-if="errors.city" class="error">{{ errors.city[0] }}</span>
-                                                    <span v-else></span>
+                                                        <span v-else></span>
                                                     </div>
+
                                                     <div class="col-lg-3 sty-input-wrapper">
                                                         <input type="text" class="sty-inp form-control w-100" v-model="formData.pin_code" :class="{ 'error-message': errors.pin_code }">
                                                         <label class="sty-label">Pincode</label>
@@ -343,7 +352,7 @@
 
                                             <div class="col-lg-4 mb-3">
                                                 <div class="sty-input-wrapper w-100">
-                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.ifsc_code" :class="{ 'error-message': errors.ifsc_code }">
+                                                    <input type="text" v-model="formData.ifsc_code" id="ifsc" name="ifsc" @input="getBranchName" class="sty-inp form-control w-100" :class="{ 'error-message': errors.ifsc_code }">
                                                     <label class="sty-label">IFSC Code</label>
                                                     <span v-if="errors.ifsc_code" class="error">{{ errors.ifsc_code[0] }}</span>
                                                     <span v-else></span>
@@ -352,9 +361,18 @@
 
                                             <div class="col-lg-4 mb-3">
                                                 <div class="sty-input-wrapper w-100">
-                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.bank_branch_name" :class="{ 'error-message': errors.bank_branch_name }">
-                                                    <label class="sty-label">Bank Name & Branch</label>
-                                                    <span v-if="errors.bank_branch_name" class="error">{{ errors.bank_branch_name[0] }}</span>
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.bank_name" id="bank" name="bank" :class="{ 'error-message': errors.bank_name }">
+                                                    <label class="sty-label">Bank Name</label>
+                                                    <span v-if="errors.bank_name" class="error">{{ errors.bank_name[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4 mb-3">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <input type="text" class="sty-inp form-control w-100" v-model="formData.branch_name" id="branch" name="branch">
+                                                    <label class="sty-label">Branch Name</label>
+                                                    <span v-if="errors.branch_name" class="error">{{ errors.branch_name[0] }}</span>
                                                     <span v-else></span>
                                                 </div>
                                             </div>
@@ -415,7 +433,8 @@
                                         <th>beneficiary_name</th>
                                         <th>account_no</th>
                                         <th>ifsc_code</th>
-                                        <th>bank_branch_name</th>
+                                        <th>bank_name</th>
+                                        <th>branch_name</th>
                                         <th>opening_balance</th>
                                         <th>dr_cr</th>
                                     </tr>

@@ -4076,10 +4076,20 @@ new Vue({
     el: '#ledgerAppVue',
     data: {
         based_on: '',
-        formData: {},
+        formData: {
+            country: '',
+            state: '',
+            city: '',
+            ifsc_code: '',
+            bank_branch_name: '',
+            branch_name: ''
+        },
         errors: {},
         subGroups: '',
         ledgerData: [],
+        countries: [],
+        states: [],
+        cities: []
     },
     methods: {
         submitLedger(){
@@ -4105,7 +4115,73 @@ new Vue({
                     this.errors = error.response.data
                     console.log("Error: ->", this.errors);
                 });
-        }
+        },
+        getCountries() {
+            axios.get('https://api.countrystatecity.in/v1/countries', {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+            .then(response => {
+                this.countries = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching countries:', error);
+            });
+        },
+
+        getStates() {
+            if (!this.formData.country) return;
+            axios.get(`https://api.countrystatecity.in/v1/countries/${this.formData.country}/states`, {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+            .then(response => {
+                this.states = response.data;
+                this.cities = [];
+            })
+            .catch(error => {
+                console.error('Error fetching states:', error);
+            });
+        },
+
+        getCities() {
+
+            axios.get(`https://api.countrystatecity.in/v1/countries/${this.formData.country}/states/${this.formData.state}/cities`, {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+            .then(response => {
+                console.log('City Response:', response.data); // Log city data received from the API
+                this.cities = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching cities:', error);
+            });
+        },
+
+
+        getBranchName() {
+            // Make a GET request to the Razorpay IFSC API
+            var apiUrl = "https://ifsc.razorpay.com/" + this.formData.ifsc_code;
+            fetch(apiUrl)
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Failed to fetch branch name. Please check the IFSC code.');
+                }
+                return response.json();
+              })
+              .then(data => {
+                this.formData.bank_branch_name = data.BANK;
+                this.formData.branch_name = data.BRANCH;
+              })
+              .catch(error => {
+                this.formData.bank_branch_name = '';
+                this.formData.branch_name = '';
+              });
+        },
     },
     mounted() {
             axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
@@ -4132,6 +4208,8 @@ new Vue({
             .catch(error => {
                 console.error('Error fetching ledger data:', error);
             });
+
+            this.getCountries();
     }
 });
 
@@ -4256,3 +4334,36 @@ var app = new Vue({
         });
     }
 });
+
+
+
+
+// Print Functionality for Registers and Form I, J
+// This code is been used to print all registers and form I, J
+function printTable() {
+    var printWindow = window.open('', '_blank');
+    printWindow.document.write('<html><head><title></title></head><body>');
+    printWindow.document.write(document.getElementById('print-head').innerHTML);
+    printWindow.document.write('<style>@media print { #table-container { overflow-x: visible; border: 1px solid #000;/ } .no-print { display: none } #print-head { position: fixed; top: 0; left: 0; right: 0; } .print-head-content { margin-top: 10px; padding: 0px 0px; margin-bottom: 0px; text-align: center } #heading { text-align: center;  } .cols { border: 1px solid #000; } table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #000; padding: 8px; } thead { background-color: #212529; color: white; } .add-width { width: 400px !important; } }</style>');
+    printWindow.document.write(document.getElementById('table-container').innerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+}
+
+// Print Funtionality for Form I-MH
+function printForm() {
+    var printWindow = window.open('', '_blank');
+    printWindow.document.write('<html><head><title></title></head><body>');
+    printWindow.document.write(document.getElementById('print-head').innerHTML);
+    printWindow.document.write(document.getElementById('formName').innerHTML);
+    printWindow.document.write(document.getElementById('sectionName').innerHTML);
+    printWindow.document.write('<div id="print-content">');
+    printWindow.document.write(document.getElementById('formContent').innerHTML);
+    printWindow.document.write('</div>');
+    printWindow.document.write('<style>@media print { #table-container { overflow-x: visible; border: 1px solid #000;/ } .no-print { display: none } #print-head {display: flex; flex-direction: column; justify-content: center; align-items: center; } .print-head-content { margin-top: 10px; padding: 0px 0px; margin-bottom: 0px; text-align: center } #heading { text-align: center;  } .form-name { text-align: center;  }  table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid #000; padding: 8px; } thead { background-color: #212529; color: white; } .contentss { display: flex; width: 75%; padding-left: 100px;} .www { width: 50%;} }</style>');
+    printWindow.document.write(document.getElementById('table-container').innerHTML);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+}

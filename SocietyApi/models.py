@@ -413,7 +413,8 @@ class Ledger(models.Model):
     beneficiary_name = models.CharField(max_length=200)
     account_no = models.CharField(max_length=200)
     ifsc_code = models.CharField(max_length=200)
-    bank_branch_name = models.CharField(max_length=200)
+    bank_name = models.CharField(max_length=200)
+    branch_name = models.CharField(max_length=200, null=True, blank=True)
     opening_balance = models.CharField(max_length=200)
     dr_cr = models.CharField(max_length=200)
 

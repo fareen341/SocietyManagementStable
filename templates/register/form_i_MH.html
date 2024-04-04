@@ -5,198 +5,200 @@
 
 {% block body %}
 
+<style>
+  @media print {
+    .no-print {
+      display: none;
+    }
 
-<div class='container-fluid'>
+    #table-container {
+      overflow-x: visible !important;
+    }
+  }
+</style>
+
+
+<div class='container-fluid' id="societyHead">
+  <div class="row">
+    <div class="col-lg-5 ms-auto me-auto">
+      {% verbatim %}
+      <div class="text-center mt-2" id="print-head">
+        <h3 id="heading" style="color: #000 !important; font-family: 'Calibri', sans-serif;"><b>{{ society.society_name
+            }}</b></h3>
+        <p style="font-family: 'Calibri', sans-serif;" class="mt-3 p-0 mb-0 print-head-content"><b>Registraion Number:
+          </b> <span>{{ society.registration_number }}</span></p>
+        <p style="font-family: 'Calibri', sans-serif;" class="print-head-content">{{ society.society_reg_address }}, {{
+          society.socity_state }}, {{ society.pin_code }}</p>
+      </div>
+      {% endverbatim %}
+    </div>
+  </div>
+  <div class="pp float-end mb-2 d-flex gap-2" style="font-family: 'Calibri', sans-serif;">
+    <button class="dt-button btn-primary dt-button-custom no-print me-4" onclick="printForm()">Print</button>
+  </div>
+
+
+  <div class="text-center" id="formName" style="font-family: 'Calibri', sans-serif;">
+    <h4 class="m-0 p-0 form-name">Form I-MH</h4>
+    <p class="m-0 p-0 form-name">SEE RULE 32 and 65(1)</p>
+    <hr>
+  </div>
+  <div class="text-center mt-3" id="sectionName" style="font-family: 'Calibri', sans-serif;">
+    <h4 class="m-0 p-0 form-name">Register of Members</h4>
+    <p class="m-0 p-0 form-name">(Section 38(1)of the Maharashtra Co-Operative Societies' Act 1960)</p>
+  </div>
+
+
   {% if members %}
   <div id="formMHVue">
-    <div class="text-center">
-        <h4 class="report_h">SITA PARK D,E,F CO-OP. HSG. SOC. LTD.</h4>
-        <p class="report_p pt-2 m-0">Registration No.: TNA/(TNA)/HSG/t(TC)/14951/2003-04</p>
-        <p class="report_p p-0 m-0">SURVEY NO. 518(OLD),59(NEW) HISSA NO.4 LODHA ROAD, NAYA NAGAR, MIRA ROAD(E), THANE 401107</p>
-    </div>
-    <div class="pp float-end d-flex gap-2" style="font-family: 'Calibri', sans-serif;">
-      <select name="" id="" class="form-control no-print">
-        <option value="">Select your Flat No.</option>
-        <option value="">A-wing-101</option>
-        <option value="">B-wing-302</option>
-        <option value="">C-wing-503</option>
-      </select>
-      <button class="btn btn-primary no-print" onclick="printForm()">Print</button>
-    </div>
-    <div class="text-center mt-5">
-      <hr class="m-0 p-0" style="border-color: #000;">
-      <h4 class="report_h m-0 p-0">FORM I</h4>
-      <p class="report_p m-0 p-0">SEE RULE 32 and 65(1)</p>
-      <h5 class="report_h m-0 p-0">Register of Members</h5>
-      <p class="report_p m-0 p-0">(Section 38(1)of the Maharashtra Co-Operative Societies' Act 1960)</p>
-      <hr class="m-0 p-0" style="border-color: #000;">
-    </div>
+
     <div class="container mb-3">
-      <div class="row " style="font-family: 'Calibri', sans-serif;">
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>1. Serial No.</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>123</p>
+      <div class="ps-4" id="formContent" style="font-family: 'Calibri', sans-serif;">
+        <hr>
+
+        <div class="d-flex contentss mb-2">
+          <p class="w-50 www">1. Serial No.</p>
+          <p class="w-50 www">123</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>2. Date of Admission</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>{{ members.date_of_admission }}</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">2. Date of Admission</p>
+          <p class="w-50 www">{{ members.date_of_admission }}</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>3. Date of Payment of Enterance Fees</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>{{ members.date_of_entrance_fees }}</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">3. Date of Payment of Enterance Fees</p>
+          <p class="w-50 www">{{ members.date_of_entrance_fees }}</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>4. Full Name</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>{{ members.member_name }}</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">4. Full Name</p>
+          <p class="w-50 www">{{ members.member_name }}</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>5. Permanent Address</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>{{ members.member_address }}</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">5. Permanent Address</p>
+          <p class="w-50 www">{{ members.member_address }}</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p class="ps-3">Resident Address</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>3, DLH Park, S. V. Road, Goregaon (West), Mumbai – 400062. Maharashtra, India.</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www ps-2">Resident Address</p>
+          <p class="w-50 www">{{ members.member_address }}</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>6. Occupation</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>{{ members.member_occupation }}</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">6. Occupation</p>
+          <p class="w-50 www">{{ members.member_occupation }}</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>7. Age on the Date of Nomination</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>{{ members.age_at_date_of_admission }}</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">7. Age on the Date of Nomination</p>
+          <p class="w-50 www">{{ members.age_at_date_of_admission }}</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>8. Full Name and address of the person : </p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>Sameer Nasir Shaikh</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">8. Full Name and address of the person :</p>
+          <p class="w-50 www">{{ members.member_name }}, {{ members.member_address }}</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p class="ps-3">Nominated by the member under Section 30(1) : </p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>{{ members.noninees }}</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www ps-2">Nominated by the member under Section 30(1) :</p>
+          <p class="w-50 www">Undefined</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>9. Date of Nomination</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>04-01-2024</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">9. Date of Nomination</p>
+          <p class="w-50 www">Undefined</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>10. Date of cessation of Membership</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>{{ members.date_of_cessation }}</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">10. Date of cessation of Membership</p>
+          <p class="w-50 www">{{ members.date_of_cessation }}</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>11. Reason for cessation</p>
-        </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>{{ members.reason_for_cessation }}</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">11. Reason for cessation</p>
+          <p class="w-50 www">{{ members.reason_for_cessation }}</p>
         </div>
 
-        <div class="col-lg-4 col-4 m-0 p-0">
-          <p>12. Remarks</p>
+        <div class="d-flex mb-2 contentss">
+          <p class="w-50 www">12. Remarks</p>
+          <p class="w-50 www">Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio necessitatibus minima
+            voluptate esse ipsum. Aliquam ea asperiores voluptatem soluta itaque mollitia dicta aspernatur illum id ut.
+            Iste placeat sint maxime?</p>
         </div>
-        <div class="col-lg-6 col-6 m-0 p-0">
-          <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Assumenda culpa cupiditate molestias repellendus ex voluptatibus, praesentium corporis quia magnam cum ipsam pariatur veritatis reprehenderit dignissimos, est, voluptates quas ab nesciunt?
-          </p>
+
+
+
+
+      </div>
+      <div class="shares-table mt-3" id="table-container">
+        <center>
+          <h5 class="report_h m-0 p-0">Particulars of Shares held</h5>
+        </center>
+        <div class="table-responsive" style="font-family: 'Calibri',sans-serif; font-size: 15px;">
+          <table class="table table-sm table-bordered table-hover" style="vertical-align: middle; align-items: center;">
+            <thead class="table-dark">
+              <th>Sr No.</th>
+              <th>Date of Issue</th>
+              <th>Cash Book Folio</th>
+              <th>Application No. of Share</th>
+              <th>Allotment No. of Share</th>
+              <th>Amount Received On</th>
+              <th>Total Amount Received</th>
+              <th>No. of Shares held</th>
+              <th>Serial No. of Certificate</th>
+            </thead>
+            {% for share in shares_details %}
+            <tbody>
+              <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ share.shares_date }}</td>
+                <td>{{ share.folio_number }}</td>
+                <td>{{ share.application_number }}</td>
+                <td>{{ share.allotment_number }}</td>
+                <td>{{ share.shares_date }}</td>
+                <td>{{ share.shares_date }}</td>
+                <td>{{ share.shares_date }}</td>
+                <td>{{ share.shares_certificate }}</td>
+              </tr>
+            </tbody>
+            {% endfor %}
+          </table>
         </div>
       </div>
-    </div>
-        <div class="shares-table mt-3">
-          <center><h5 class="report_h m-0 p-0">Particulars of Shares held</h5></center>
-          <div class="table-responsive" style="font-family: 'Calibri',sans-serif; font-size: 15px;">
-            <table class="table table-sm table-bordered table-hover" style="vertical-align: middle; align-items: center;">
-              <thead class="table-dark">
-                <th style="width: 100px !important;">Sr No.</th>
-                <th>Date of Issue</th>
-                <th>Cash Book Folio</th>
-                <th>Application No. of Share</th>
-                <th>Allotment No. of Share</th>
-                <th>Amount Received On</th>
-                <th>Total Amount Received</th>
-                <th>No. of Shares held</th>
-                <th>Serial No. of Certificate</th>
-              </thead>
-            {% for share in shares_details %}
-              <tbody>
-                <tr>
-                  <td>{{ forloop.counter }}</td>
-                  <td>{{ share.shares_date }}</td>
-                  <td>{{ share.folio_number }}</td>
-                  <td>{{ share.application_number }}</td>
-                  <td>{{ share.allotment_number }}</td>
-                  <td>{{ share.shares_date }}</td>
-                  <td>{{ share.shares_date }}</td>
-                  <td>{{ share.shares_date }}</td>
-                  <td>{{ share.shares_certificate }}</td>
-                </tr>
-              </tbody>
-              {% endfor %}
-            </table>
-          </div>
-        </div>
       {% else %}
-      <h2 class='text-center'>No Member Found!</h2>
-    {% endif %}
+      <h2 class='text-center'>No Details Found!</h2>
+      {% endif %}
+    </div>
+
   </div>
-</div>
 
-<script>
+  <script>
     let datatable_columns = {{ datatable_columns }};
-</script>
+  </script>
 
-<script>
-    $(document).ready(function() {
-        var dropdown = $('#statusFilterDropdown');
-        console.log("Dropdown value:", dropdown.val());
+  <script>
+    $(document).ready(function () {
+      var dropdown = $('#statusFilterDropdown');
+      console.log("Dropdown value:", dropdown.val());
 
-        // Parse the query string to get the value of the 'selected' parameter
-        var queryString = window.location.search;
-        var urlParams = new URLSearchParams(queryString);
-        var selectedValue = urlParams.get('selected');
+      // Parse the query string to get the value of the 'selected' parameter
+      var queryString = window.location.search;
+      var urlParams = new URLSearchParams(queryString);
+      var selectedValue = urlParams.get('selected');
 
-        // Set the value of the dropdown to the selectedValue
-        if (selectedValue) {
-            dropdown.val(selectedValue);
-        }
+      // Set the value of the dropdown to the selectedValue
+      if (selectedValue) {
+        dropdown.val(selectedValue);
+      }
 
-        // Add an event listener for the change event
-        dropdown.on('change', function() {
-            var selectedValue = dropdown.val();
-            var newUrl = window.location.pathname + '?selected=' + selectedValue;
-            window.location.href = newUrl;
-        });
+      // Add an event listener for the change event
+      dropdown.on('change', function () {
+        var selectedValue = dropdown.val();
+        var newUrl = window.location.pathname + '?selected=' + selectedValue;
+        window.location.href = newUrl;
+      });
     });
-</script>
-{% endblock body %}
+  </script>
+  {% endblock body %}
