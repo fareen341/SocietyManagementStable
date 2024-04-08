@@ -436,3 +436,29 @@ class VoucherIndexing(models.Model):
     to_date = models.DateField()
     prefix = models.CharField(max_length=200)
     suffix = models.CharField(max_length=200)
+
+
+
+# BUGS MODEL
+bug_type = [
+        ('bug', 'Bug'),
+        ('add_feature', 'Add Feature'),
+    ]
+
+bug_status = [
+        ('resolved', 'Resolved'),
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+    ]
+
+review_status = [
+    ('open', 'Open'),
+    ('closed', 'Closed')
+]
+
+class UnitTest(models.Model):
+    test_type = models.CharField(max_length=200, choices=bug_type)
+    test_description = models.TextField()
+    raised_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    test_status = models.CharField(max_length=200, choices=bug_status, default='pending')
+    review = models.CharField(max_length=200, choices=review_status, default='open')

@@ -52,6 +52,7 @@ router.register('ledger_creation', apiviews.LedgerView, basename='ledger_creatio
 router.register('cost_center', apiviews.CostCenterView, basename='cost_center')
 router.register('voucher_type', apiviews.VoucherTypeView, basename='voucher_type')
 router.register('voucher_indexing', apiviews.VoucherIndexingView, basename='voucher_indexing')
+router.register('unit_test_api', apiviews.UnitTestView, basename='unit_test_api')
 
 
 
@@ -73,6 +74,12 @@ urlpatterns = [
     path('unit-master/', views.unit_master, name='unit_master'),
     path('ledger-creation/', views.ledger_creation, name='ledger_creation'),
     path('group', views.account_group, name='group'),
+
+    # UNIT TEST
+    path('unit_test', views.unit_test, name='unit_test'),
+    path('api/get_bug_type/', apiviews.UnitTestView.as_view({'get': 'get_bug_type_dropdown'}), name='get_bug_type'),
+    path('api/bug_status/', apiviews.UnitTestView.as_view({'get': 'get_test_status_dropdown'}), name='bug_status'),
+    path('api/review/', apiviews.UnitTestView.as_view({'get': 'get_review_dropdown'}), name='review'),
 
 
     # REGISTERS

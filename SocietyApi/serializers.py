@@ -431,3 +431,30 @@ class VoucherTypeSerializer(serializers.ModelSerializer):
             for indexing_item in indexing_data:
                 VoucherIndexing.objects.create(voucher_type=voucher_type, **indexing_item)
         return voucher_type
+
+
+# FOR LIST
+class UnitTestSerializer(serializers.ModelSerializer):
+    test_type = serializers.SerializerMethodField()
+    test_status = serializers.SerializerMethodField()
+    review = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UnitTest
+        fields = ['id', 'test_type', 'test_description', 'test_status', 'raised_by', 'review']
+
+    def get_test_type(self, obj):
+        return obj.get_test_type_display()
+
+    def get_test_status(self, obj):
+        return obj.get_test_status_display()
+
+    def get_review(self, obj):
+        return obj.get_review_display()
+
+
+# FOR POST, PUT, PATCH, RETRIVE
+class UnitTestPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UnitTest
+        fields = '__all__'

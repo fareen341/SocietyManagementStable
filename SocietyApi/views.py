@@ -217,7 +217,6 @@ class MemberView(viewsets.ModelViewSet):
         return queryset
 
     def list(self, request, *args, **kwargs):
-        print('list of members===============================')
         # queryset = Members.objects.filter(member_is_primary=True, date_of_cessation__isnull=True)
         queryset = Members.objects.filter(member_is_primary=True, date_of_cessation__isnull=True)
         serializer = MembersSerializer(queryset, many=True, context={'request': request, 'view': self})
@@ -949,3 +948,51 @@ class VoucherTypeView(viewsets.ModelViewSet):
 class VoucherIndexingView(viewsets.ModelViewSet):
     queryset = VoucherIndexing.objects.all()
     serializer_class = VoucherIndexingSerializer
+
+
+class UnitTestView(viewsets.ModelViewSet):
+    queryset = UnitTest.objects.all()
+    serializer_class = UnitTestSerializer
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'retrieve', 'partial_update', 'update']:
+            return UnitTestPostSerializer
+        return UnitTestSerializer
+
+    def create(self, request, *args, **kwargs):
+        modified_data = request.data.copy()
+        modified_data['raised_by'] = self.request.user.pk
+        serializer = self.get_serializer(data=modified_data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        for test_case in serializer.data:
+            raised_by = User.objects.get(id=test_case['raised_by']).username
+            test_case['raised_by'] = raised_by
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def get_bug_type_dropdown(self, request, *args, **kwargs):
+        choices = [
+            {'value': choice[0], 'label': choice[1]} for choice in bug_type
+        ]
+        return Response(choices)
+
+    @action(detail=False, methods=['get'])
+    def get_test_status_dropdown(self, request, *args, **kwargs):
+        choices = [
+            {'value': choice[0], 'label': choice[1]} for choice in bug_status
+        ]
+        return Response(choices)
+
+    @action(detail=False, methods=['get'])
+    def get_review_dropdown(self, request, *args, **kwargs):
+        choices = [
+            {'value': choice[0], 'label': choice[1]} for choice in review_status
+        ]
+        return Response(choices)

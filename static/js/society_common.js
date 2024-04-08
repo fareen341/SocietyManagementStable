@@ -4367,3 +4367,141 @@ function printForm() {
     printWindow.document.close();
     printWindow.print();
 }
+
+
+// UNIT TEST VUE
+new Vue({
+    el: '#unitTestVue',
+    data: {
+        testData: [],
+        formData: {},
+        errors: {},
+        bug_type: {},
+        bug_status: {},
+        review: {},
+        viewTestCaseData: [],
+    },
+    methods: {
+        addTestDetails(id) {
+            const unitTestCaseData = new FormData();
+            unitTestCaseData.append('test_type', this.formData.test_type);
+            unitTestCaseData.append('test_description', this.formData.test_description);
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+            if(id){
+                // UPDATE DATA
+                unitTestCaseData.append('test_status', this.formData.test_status);
+                unitTestCaseData.append('review', this.formData.review);
+
+                axios.patch(`http://127.0.0.1:8000/api/unit_test_api/${id}/`, unitTestCaseData)
+                    .then(response => {
+                        toastr.success(response.message, "Test Case Added Successfully!");
+                        $('#updateTestCase').modal('hide');
+                        // const index = this.testData.findIndex(item => item.id === id);
+                        // if (index !== -1) {
+                        //     this.$set(this.testData, index, response.data);
+                        // }
+                        setTimeout(function() {
+                            location.reload();
+                        }, 600);
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data
+                        console.log("Error: ->", this.errors);
+                    });
+            }else{
+                // ADD DATA
+                axios.post('http://127.0.0.1:8000/api/unit_test_api/', unitTestCaseData)
+                    .then(response => {
+                        toastr.success(response.message, "Test Case Added Successfully!");
+                        $('#addTestCase').modal('hide');
+                        // this.testData.push(response.data);
+                        setTimeout(function() {
+                            location.reload();
+                        }, 600);
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data
+                        console.log("Error: ->", this.errors);
+                    });
+            }
+        },
+        viewTestDetails(id) {
+            $('#testCaseViewModal').modal('show');
+            axios.get(`http://127.0.0.1:8000/api/unit_test_api/${id}/`)
+                .then(response => {
+                    this.formData = response.data;
+                    console.log("Success Response:", this.flatFormData);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        updateTestDetails(id) {
+            $('#updateTestCase').modal('show');
+            axios.get(`http://127.0.0.1:8000/api/unit_test_api/${id}/`)
+                .then(response => {
+                    this.formData = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        sliceDescription(address) {
+            const words = address.split(' ');
+            if (words.length > 5) {
+              return words.slice(0, 5).join(' ') + '...';
+            } else {
+              return address;
+            }
+        },
+    },
+    mounted() {
+        // DATATABLE DATA
+        axios.get('http://127.0.0.1:8000/api/unit_test_api/')
+            .then(response => {
+                this.testData = response.data;
+                $(document).ready(function () {
+                    $('#unitTestTable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // FETCHING THE BUG TYPE:
+        axios.get('http://127.0.0.1:8000/api/get_bug_type/')
+            .then(response => {
+                this.bug_type = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // FETCH TEST STATUS
+        axios.get('http://127.0.0.1:8000/api/bug_status/')
+            .then(response => {
+                this.bug_status = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // FETCH TEST REVIEW
+        axios.get('http://127.0.0.1:8000/api/review/')
+            .then(response => {
+                this.review = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+
+        $('#addTestCase, #updateTestCase').on('hidden.bs.modal', () => {
+            this.errors = {};
+            this.formData = {};
+        });
+    },
+})

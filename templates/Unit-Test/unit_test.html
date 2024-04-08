@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<div class="container">
+    <div id="unitTestVue">
+        <div class="member-title mt-4 d-flex mb-3" style="justify-content: space-between;">
+            <h3 class="lead" style="font-size: 27px;">Testing Details</h3>
+            <div class="gap-4">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTestCase">Add Test Case</button>
+            </div>
+        </div>
+        {% verbatim %}
+        <div>
+            <table id="unitTestTable" class="display dt-table order-column" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th>Id</th>
+                        <th>Test Type</th>
+                        <th>Test Description</th>
+                        <th>Test Status</th>
+                        <th>Raised By</th>
+                        <th>Review</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(testDetail, index) in testData" :key="index">
+                        <td>
+                            <span @click="viewTestDetails(testDetail.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                            <span @click="updateTestDetails(testDetail.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                        </td>
+                        <td v-for="(value, key) in testDetail" :key="key">
+                            <span v-if="key === 'test_description'">{{ sliceDescription(value) }}</span>
+                            <span v-else-if="key === 'test_status'">
+                                <i v-if="value === 'Pending'" class="fa-solid fa-hourglass-half text-danger"></i>
+                                <i v-if="value === 'Resolved'" class="fa-solid fa-check text-success"></i>
+                                <i v-if="value === 'In Progress'" class="fa-solid fa-spinner text-primary"></i>
+                            </span>
+                            <span v-else>{{ value }}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {% endverbatim %}
+
+        <!-- Tenant CREATE modal -->
+        <div class="modal fade" id="addTestCase" tabindex="-1" aria-labelledby="addTestCaseLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addTestCaseLabel">Add Test Case</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% verbatim %}
+                    <form>
+                        <div class="row">
+                            <div class="col-lg-12 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <select class="w-100 sty-inp" style="background-color: white;" v-model="formData.test_type">
+                                        <option v-for="choice in bug_type" :key="choice.value" :value="choice.value">
+                                            {{ choice.label }}
+                                        </option>
+                                    </select>
+                                    <label for="id_tenent_name" class="sty-label">Test Type</label>
+                                    <span v-if="errors.test_type" class="error">{{ errors.test_type[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <textarea class="w-100 sty-inp" cols="30" rows="5" v-model="formData.test_description"></textarea>
+                                    <label for="id_tenent_name" class="sty-label">Test Description</label>
+                                    <span v-if="errors.test_description" class="error">{{ errors.test_description[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" value="Submit" @click="addTestDetails(0)">Add</button>
+                </div>
+                {% endverbatim %}
+            </div>
+            </div>
+        </div>
+
+        <!-- Tenant UPDATE modal -->
+        <div class="modal fade" id="updateTestCase" tabindex="-1" aria-labelledby="updateTestCaseLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="updateTestCaseLabel">Update Test Case</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% verbatim %}
+                    <form>
+                        <div class="row">
+                            <div class="col-lg-12 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <select class="w-100 sty-inp" style="background-color: white;" v-model="formData.test_type">
+                                        <option v-for="choice in bug_type" :key="choice.value" :value="choice.value">
+                                            {{ choice.label }}
+                                        </option>
+                                    </select>
+                                    <label for="id_tenent_name" class="sty-label">Test Type</label>
+                                    <span v-if="errors.test_type" class="error">{{ errors.test_type[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <textarea class="w-100 sty-inp" cols="30" rows="5" v-model="formData.test_description"></textarea>
+                                    <label for="id_tenent_name" class="sty-label">Test Description</label>
+                                    <span v-if="errors.test_description" class="error">{{ errors.test_description[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <select class="w-100 sty-inp" style="background-color: white;" v-model="formData.test_status">
+                                        <option v-for="choice in bug_status" :key="choice.value" :value="choice.value">
+                                            {{ choice.label }}
+                                        </option>
+                                    </select>
+                                    <label for="id_tenent_name" class="sty-label">Test Status</label>
+                                    <span v-if="errors.test_status" class="error">{{ errors.test_status[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <select class="w-100 sty-inp" style="background-color: white;" v-model="formData.review">
+                                        <option v-for="choice in review" :key="choice.value" :value="choice.value">
+                                            {{ choice.label }}
+                                        </option>
+                                    </select>
+                                    <label for="id_tenent_name" class="sty-label">Review</label>
+                                    <span v-if="errors.review" class="error">{{ errors.review[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" value="Submit" @click="addTestDetails(formData.id)">Update</button>
+                </div>
+                {% endverbatim %}
+            </div>
+            </div>
+        </div>
+
+        <!-- Tenant VIEW modal -->
+        <div class="modal fade" id="testCaseViewModal" tabindex="-1" aria-labelledby="testCaseViewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="testCaseViewModalLabel">View Tenant</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-body">
+                        {% verbatim %}
+                            <h1>View Data</h1>
+                            <p>test_type: {{ formData.test_type }}</p>
+                            <p>test_description: {{ formData.test_description }}</p>
+                            <p>raised_by: {{ formData.raised_by }}</p>
+                            <p>test_status: {{ formData.test_status }}</p>
+                        {% endverbatim %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let datatable_columns = {{ datatable_columns }};
+</script>
+{% endblock body %}
