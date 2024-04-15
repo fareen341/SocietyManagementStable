@@ -486,16 +486,16 @@ class VoucherIndexingSerializer(serializers.ModelSerializer):
         model = VoucherIndexing
         fields = ['from_date', 'to_date', 'prefix', 'suffix']
 
-class VoucherTypeCreationSerializer(serializers.ModelSerializer):
+class VoucherTypeSerializer(serializers.ModelSerializer):
     voucher_indexing = VoucherIndexingSerializer(many=True, required=False)
 
     class Meta:
-        model = VoucherTypeCreation
+        model = VoucherType
         fields = ['voucher_type', 'voucher_name', 'voucher_short_name', 'voucher_indexing']
 
     def create(self, validated_data):
         indexing_data = validated_data.pop('voucher_indexing', None)
-        voucher_type = VoucherTypeCreation.objects.create(**validated_data)
+        voucher_type = VoucherType.objects.create(**validated_data)
         if indexing_data:
             for indexing_item in indexing_data:
                 VoucherIndexing.objects.create(voucher_type=voucher_type, **indexing_item)

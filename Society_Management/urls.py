@@ -50,7 +50,7 @@ router.register('suggestions', apiviews.SuggestionView, basename='suggestions')
 router.register('leadger_group_creation', apiviews.CreateGroupForLedgerView, basename='leadger_group_creation')
 router.register('ledger_creation', apiviews.LedgerView, basename='ledger_creation')
 router.register('cost_center', apiviews.CostCenterView, basename='cost_center')
-router.register('voucher_type', apiviews.VoucherTypeCreationView, basename='voucher_type')
+router.register('voucher_type', apiviews.VoucherTypeView, basename='voucher_type')
 router.register('voucher_indexing', apiviews.VoucherIndexingView, basename='voucher_indexing')
 router.register('unit_test_api', apiviews.UnitTestView, basename='unit_test_api')
 

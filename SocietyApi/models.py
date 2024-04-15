@@ -431,7 +431,7 @@ voucher_type = [
     ('receipt', 'Receipt'),
 ]
 
-class VoucherTypeCreation(models.Model):
+class VoucherType(models.Model):
     voucher_type = models.CharField(max_length=200, choices=voucher_type)
     voucher_name = models.CharField(max_length=200)
     voucher_short_name = models.CharField(max_length=200)
@@ -441,7 +441,7 @@ class VoucherTypeCreation(models.Model):
 
 
 class VoucherIndexing(models.Model):
-    voucher_type = models.ForeignKey(VoucherTypeCreation, on_delete=models.CASCADE)
+    voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
     from_date = models.DateField()
     to_date = models.DateField()
     prefix = models.CharField(max_length=200)
