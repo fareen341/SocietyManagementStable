@@ -958,9 +958,9 @@ class CostCenterView(viewsets.ModelViewSet):
         return Response(serialized_data, status=status.HTTP_201_CREATED)
 
 
-class VoucherTypeView(viewsets.ModelViewSet):
-    queryset = VoucherType.objects.all()
-    serializer_class = VoucherTypeSerializer
+class VoucherTypeCreationView(viewsets.ModelViewSet):
+    queryset = VoucherTypeCreation.objects.all()
+    serializer_class = VoucherTypeCreationSerializer
 
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)

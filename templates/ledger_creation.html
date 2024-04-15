@@ -514,16 +514,35 @@
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-5">
+
+                                <div class="col-4">
                                     <div class="sty-input-wrapper w-100 mb-3">
-                                        <input type="text" class="sty-inp form-control" v-model="formData.voucher_type" :class="{ 'error-message': errors.voucher_type }">
-                                        <label class="sty-label">Voucher Type</label>
+                                        <select class="w-100 sty-inp" style="background-color: white;" v-model="formData.voucher_type" :class="{ 'error-message': errors.voucher_type }">
+                                            <option value="Select Voucher Option">Select Voucher Option</option>
+                                            <option value="purchase">Purchase</option>
+                                            <option value="sale">Sale</option>
+                                            <option value="general">General</option>
+                                            <option value="expenses">Expenses</option>
+                                            <option value="income">Income</option>
+                                            <option value="payment">Payment</option>
+                                            <option value="receipt">Receipt</option>
+                                        </select>
+                                        <label class="sty-label">Voucher Types</label>
                                         <span v-if="errors.voucher_type" class="error">{{ errors.voucher_type[0] }}</span>
                                         <span v-else></span>
                                     </div>
                                 </div>
 
-                                <div class="col-5">
+                                <div class="col-4">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="text" class="sty-inp form-control" v-model="formData.voucher_name" :class="{ 'error-message': errors.voucher_name }">
+                                        <label class="sty-label">Voucher Name</label>
+                                        <span v-if="errors.voucher_name" class="error">{{ errors.voucher_name[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-4">
                                     <div class="sty-input-wrapper w-100 mb-3">
                                         <input type="text" class="sty-inp form-control" v-model="formData.voucher_short_name" :class="{ 'error-message': errors.voucher_short_name }">
                                         <label class="sty-label">Short Name of Voucher</label>
@@ -544,31 +563,20 @@
 
                                     <div class="col-4">
                                         <div class="sty-input-wrapper w-100 mb-3">
-                                            <select class="w-100 sty-inp" style="background-color: white;">
-                                                <option value="">Select Voucher Option</option>
-                                                <option value="Assets">Purchase</option>
-                                                <option value="Liabilities">Sale</option>
-                                                <option value="Income">General</option>
-                                                <option value="Expenses">Expenses</option>
-                                                <option value="Expenses">Income</option>
-                                                <option value="Expenses">Payment</option>
-                                                <option value="Expenses">Receipt</option>
-                                            </select>
-                                            <label class="sty-label">Voucher Option</label>
+                                            <input type="date" class="sty-inp form-control" v-model="form.from_date" v-validate="'required'">
+                                            <label class="sty-label">From Date</label>
+                                            <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].from_date" class="error">{{ errors['voucher_indexing'][index].from_date[0] }}</span>
+                                            <span v-else></span>
                                         </div>
                                     </div>
 
-                                    <div class="col-4">
-                                        <div class="sty-input-wrapper w-100 mb-3">
-                                            <input type="date" class="sty-inp form-control" v-model="form.from_date" v-validate="'required'">
-                                            <label class="sty-label">From Date</label>
-                                        </div>
-                                    </div>
 
                                     <div class="col-4">
                                         <div class="sty-input-wrapper w-100 mb-3">
                                             <input type="date" class="sty-inp form-control" v-model="form.to_date" v-validate="'required|date_range'">
                                             <label class="sty-label">To Date</label>
+                                            <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].to_date" class="error">{{ errors['voucher_indexing'][index].to_date[0] }}</span>
+                                            <span v-else></span>
                                         </div>
                                     </div>
 
@@ -576,6 +584,8 @@
                                         <div class="sty-input-wrapper w-100 mb-3">
                                             <input type="text" class="sty-inp form-control" v-model="form.prefix" >
                                             <label class="sty-label">Prefix</label>
+                                            <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].prefix" class="error">{{ errors['voucher_indexing'][index].prefix[0] }}</span>
+                                            <span v-else></span>
                                         </div>
                                     </div>
 
@@ -583,6 +593,8 @@
                                         <div class="sty-input-wrapper w-100 mb-3">
                                             <input type="text" class="sty-inp form-control" v-model="form.suffix" >
                                             <label class="sty-label">Suffix</label>
+                                            <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].suffix" class="error">{{ errors['voucher_indexing'][index].suffix[0] }}</span>
+                                            <span v-else></span>
                                         </div>
                                     </div>
 
@@ -977,9 +989,12 @@ var app = new Vue({
         forms: [
             {}
         ],
-        formData: {},
+        formData: {
+            voucher_type: 'Select Voucher Option'
+        },
         errors: {},
         voucherType: [],
+        errors: {},
     },
     methods: {
         addForm() {
@@ -1025,7 +1040,8 @@ var app = new Vue({
                 });
             })
             .catch(error => {
-                console.error('Error fetching data:', error);
+                this.errors = error.response.data;
+                console.error('Error fetching data:', this.errors);
             });
 
         $('#voucherTypeCreationModal').on('hidden.bs.modal', () => {

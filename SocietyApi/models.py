@@ -421,9 +421,19 @@ class Ledger(models.Model):
     def __str__(self):
         return self.ledger_name
 
+voucher_type = [
+    ('purchase', 'Purchase'),
+    ('sale', 'Sale'),
+    ('general', 'General'),
+    ('expenses', 'Expenses'),
+    ('income', 'Income'),
+    ('payment', 'Payment'),
+    ('receipt', 'Receipt'),
+]
 
-class VoucherType(models.Model):
-    voucher_type = models.CharField(max_length=200)
+class VoucherTypeCreation(models.Model):
+    voucher_type = models.CharField(max_length=200, choices=voucher_type)
+    voucher_name = models.CharField(max_length=200)
     voucher_short_name = models.CharField(max_length=200)
 
     def __str__(self):
@@ -431,7 +441,7 @@ class VoucherType(models.Model):
 
 
 class VoucherIndexing(models.Model):
-    voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
+    voucher_type = models.ForeignKey(VoucherTypeCreation, on_delete=models.CASCADE)
     from_date = models.DateField()
     to_date = models.DateField()
     prefix = models.CharField(max_length=200)
