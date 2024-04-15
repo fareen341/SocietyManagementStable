@@ -141,7 +141,6 @@
               <p id="redirectToMember"></p>
             </fieldset> -->
 
-
             <fieldset>
               <div id="addMemberDiv">
                 {% verbatim %}
@@ -149,7 +148,7 @@
                     <div class="row mt-3" style="text-align: left">
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <select class="w-100 sty-inp form-control" v-model="formData.wing_flat" @change="get_checkbox_value($event)">
+                          <select class="w-100 sty-inp form-control" v-model="formData.wing_flat" id="flatDropdown" @change="get_checkbox_value($event)">
                             <option v-for="unit in units" :value="unit[0]">{{ unit[1] }}</option>
                           </select>
                           <label for="wing_flat_select" class="sty-label">Wing & Flat No.</label>
@@ -172,14 +171,16 @@
                           <input type="number" min="0" max="100" class="w-100 sty-inp percentage-input" v-model="formData.ownership_percent" @input="getOwnership(formData.wing_flat, $event)" />
                           <label for="" class="sty-label">Ownership %</label>
                           <span v-if="ownershipError" style="color: red;">{{ ownershipError }}</span>
-                          <span v-if="errors.ownership_percent" class="error">{{ errors.ownership_percent[0] }}</span>
+                          <span v-if="(errors.ownership_percent && errors.ownership_percent[0]) || (errors.non_field_errors && errors.non_field_errors[0])" class="error">
+                            {{ errors.ownership_percent ? errors.ownership_percent[0] : errors.non_field_errors[0] }}
+                          </span>
                           <span v-else></span>
                         </div>
                       </div>
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <select class="w-100 sty-inp" v-model="formData.member_position">
+                          <select class="w-100 sty-inp" v-model="formData.member_position" style="background-color: white;">
                             <option value="">Select Member Position</option>
                             <option value="nominal_member">Nominal Member</option>
                             <option value="associate_member">Associate Member</option>
@@ -229,7 +230,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <select name="state" class="w-100 sty-inp" v-model="formData.member_state">
+                          <select class="w-100 sty-inp" v-model="formData.member_state" style="background-color: white;">
                             <option value="">Select State</option>
                             <option value="Andhra Pradesh">Andhra Pradesh</option>
                             <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -406,7 +407,8 @@
                           <div class="w-100 sty-input-wrapper">
                             <input type="text" class="w-100 sty-inp" v-model="form.nominee_name" />
                             <label for="" class="sty-label">Nominee Name</label>
-                            <span class="error" v-if="hasError(index, 'nominee_name')">{{ getError(index, 'nominee_name') }}</span>
+                            <span v-if="nomError[index] && nomError[index].nominee_name" class="error">{{ nomError[index].nominee_name }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
 
@@ -414,14 +416,16 @@
                           <div class="w-100 sty-input-wrapper">
                             <input type="date" class="w-100 sty-inp form-control" v-model="form.date_of_nomination"  />
                             <label for="" class="sty-label">Date of Nomination</label>
-                            <span class="error" v-if="hasError(index, 'date_of_nomination')">{{ getError(index, 'date_of_nomination') }}</span>
+                            <span v-if="nomError[index] && nomError[index].date_of_nomination" class="error">{{ nomError[index].date_of_nomination }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
                             <input class="w-100 sty-inp form-control" type="text" v-model="form.relation_with_nominee"  />
                             <label for="" class="sty-label">Relation with Nominator</label>
-                            <span class="error" v-if="hasError(index, 'relation_with_nominee')">{{ getError(index, 'relation_with_nominee') }}</span>
+                            <span v-if="nomError[index] && nomError[index].relation_with_nominee" class="error">{{ nomError[index].relation_with_nominee }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
 
@@ -429,47 +433,53 @@
                           <div class="w-100 sty-input-wrapper">
                             <input type="text" class="w-100 sty-inp form-control percentage-input" v-model="form.nominee_sharein_percent" />
                             <label for="" class="sty-label">Nominee Sharein %</label>
-                            <span class="error" v-if="hasError(index, 'nominee_sharein_percent')">{{ getError(index, 'nominee_sharein_percent') }}</span>
+                            <span v-if="nomError[index] && nomError[index].nominee_sharein_percent" class="error">{{ nomError[index].nominee_sharein_percent }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
                             <input type="date" class="w-100 sty-inp"v-model="form.nominee_dob" />
                             <label for="" class="sty-label">Nominee DOB</label>
-                            <span class="error" v-if="hasError(index, 'nominee_dob')">{{ getError(index, 'nominee_dob') }}</span>
+                            <span v-if="nomError[index] && nomError[index].nominee_dob" class="error">{{ nomError[index].nominee_dob }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
                             <input type="number" class="w-100 sty-inp" v-model="form.nominee_aadhar_no" />
                             <label for="" class="sty-label">Nominee Aadhaar No</label>
-                            <span class="error" v-if="hasError(index, 'nominee_aadhar_no')">{{ getError(index, 'nominee_aadhar_no') }}</span>
+                            <span v-if="nomError[index] && nomError[index].nominee_aadhar_no" class="error">{{ nomError[index].nominee_aadhar_no }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
                             <input type="text" class="w-100 sty-inp" v-model="form.nominee_pan_no" />
                             <label for="" class="sty-label">Nominee PAN No</label>
-                            <span class="error" v-if="hasError(index, 'nominee_pan_no')">{{ getError(index, 'nominee_pan_no') }}</span>
+                            <span v-if="nomError[index] && nomError[index].nominee_pan_no" class="error">{{ nomError[index].nominee_pan_no }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
                             <input type="text" class="w-100 sty-inp" v-model="form.nominee_email" />
                             <label for="id_nominee_email" class="sty-label">Nominee Email</label>
-                            <span class="error" v-if="hasError(index, 'nominee_email')">{{ getError(index, 'nominee_email') }}</span>
+                            <span v-if="nomError[index] && nomError[index].nominee_email" class="error">{{ nomError[index].nominee_email }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
                             <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="form.nominee_address" ></textarea>
                             <label for="" class="sty-label">Nominee Permanent Address</label>
-                            <span class="error" v-if="hasError(index, 'nominee_address')">{{ getError(index, 'nominee_address') }}</span>
+                            <span v-if="nomError[index] && nomError[index].nominee_address" class="error">{{ nomError[index].nominee_address }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <select name="state" class="w-100 sty-inp" v-model="form.nominee_state" >
+                            <select class="w-100 sty-inp" v-model="form.nominee_state" style="background-color: white;">
                               <option value="">Select State</option>
                               <option value="Andhra Pradesh">Andhra Pradesh</option>
                               <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -510,14 +520,16 @@
                               <option value="Puducherry">Puducherry</option>
                             </select>
                             <label for="" class="sty-label">State</label>
-                            <span class="error" v-if="hasError(index, 'nominee_state')">{{ getError(index, 'nominee_state') }}</span>
+                            <span v-if="nomError[index] && nomError[index].nominee_state" class="error">{{ nomError[index].nominee_state }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
                             <input type="number" class="w-100 sty-inp" v-model="form.nominee_pin_code" />
                             <label for="" class="sty-label">Pin Code</label>
-                            <span class="error" v-if="hasError(index, 'nominee_pin_code')">{{ getError(index, 'nominee_pin_code') }}</span>
+                            <span v-if="nomError[index] && nomError[index].nominee_pin_code" class="error">{{ nomError[index].nominee_pin_code }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
 
@@ -525,14 +537,15 @@
                           <div class="w-100 sty-input-wrapper">
                             <input type="number" class="w-100 sty-inp form-control" v-model="form.nominee_contact" />
                             <label for="" class="sty-label">Nominee Contact No.</label>
-                            <span class="error" v-if="hasError(index, 'nominee_contact')">{{ getError(index, 'nominee_contact') }}</span>
+                            <span v-if="nomError[index] && nomError[index].nominee_contact" class="error">{{ nomError[index].nominee_contact }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
                             <input type="number" class="w-100 sty-inp" v-model="form.nominee_emergency_contact" />
                             <label for="" class="sty-label">Emergency Contact No.</label>
-                            <span class="error" v-if="hasError(index, 'nominee_emergency_contact')">{{ getError(index, 'nominee_emergency_contact') }}</span>
+                            <span v-else></span>
                           </div>
                         </div>
                         <div class="col-lg-4 mb-4 gap-3 align-items-center">
@@ -806,7 +819,7 @@
 
                   <div class="col-lg-4 mb-3">
                     <div class="w-100 sty-input-wrapper">
-                      <select class="w-100 sty-inp" v-model="formData.gst_state">
+                      <select class="w-100 sty-inp" v-model="formData.gst_state" style="background-color: white;">
                         <option value="">Select State</option>
                         <option value="Andhra Pradesh">Andhra Pradesh</option>
                         <option value="Arunachal Pradesh">Arunachal Pradesh</option>

@@ -74,6 +74,9 @@ urlpatterns = [
     path('unit-master/', views.unit_master, name='unit_master'),
     path('ledger-creation/', views.ledger_creation, name='ledger_creation'),
     path('group', views.account_group, name='group'),
+    path('group_data', views.get_group_datatable, name='group_data'),
+    path('cost_center_data', views.get_cost_center_datatable, name='cost_center_data'),
+
 
     # UNIT TEST
     path('unit_test', views.unit_test, name='unit_test'),

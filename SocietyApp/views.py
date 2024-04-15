@@ -293,9 +293,8 @@ def unit_master(request):
 
 
 def ledger_creation(request):
-    datatable_columns = [0, 1]
+    datatable_columns = [0, 1, 2]
     return render(request, 'ledger_creation.html', {'datatable_columns': datatable_columns})
-
 
 
 def get_all_child_investments_2(parent):
@@ -320,20 +319,21 @@ def get_all_child_investments_2(parent):
     return last_child, immediate_parent, super_parent
 
 
-
 def get_all_child_investments(parent):
-    # last_child, immediate_parent, super_parent = get_all_child_investments_2(parent)
-
-    # if last_child:
-    #     print("Last Child:", last_child)
-    # if immediate_parent:
-    #     print("Immediate Parent:", immediate_parent)
-    # if super_parent:
-    #     print("Super Parent:", super_parent)
-
     all_childs = []
     def traverse_children(investment, depth=0):
-        children = investment.cost_center.all()
+        child = 0
+        children = investment.children.all()
+        # children = investment.cost_center.all()
+        if children.count() > 1:
+            cnt = children[len(children) - 2]
+            print("count in count=====", cnt)
+        elif children.count() > 0:
+            cnt = children[len(children) - 1]
+            print("count in count in else=====", cnt)
+        last_child = investment.children.last()
+        if last_child:
+            print("last child==========", last_child)
         if children:
             for child in children:
                 show = f" {'---' * depth} {child}"
@@ -345,11 +345,52 @@ def get_all_child_investments(parent):
 
 
 def account_group(request):
-    under_grp = "Primary"
+    # under_grp = "Primary"
     # under_grp = "Expenses"
     # under_grp = "Liabilities"
     # under_grp = "Jwellery"
-    # parent_investment = Childs.objects.get(name=under_grp)
-    parent_investment = CostCenter.objects.get(name=under_grp)
+    under_grp = "Assets"
+    parent_investment = Childs.objects.get(name=under_grp)
+    # parent_investment = CostCenter.objects.get(name=under_grp)
     all_child_investments = get_all_child_investments(parent_investment)
     return render(request, 'account.html', {'all_child_investments': all_child_investments, "under_grp": under_grp})
+
+
+# UNIT TESTING VIEW
+def unit_test(request):
+    datatable_columns = [0, 2, 3]
+    return render(request, 'Unit-Test/unit_test.html', {'datatable_columns': datatable_columns})
+
+
+# FOR GROUPS
+def get_group_datatable(request):
+    data = []
+    def find_root_parent(child):
+        if child.parent:
+            return find_root_parent(child.parent)
+        else:
+            return child
+
+    for child in Childs.objects.all():
+        root_parent = find_root_parent(child)
+
+        group_data = {
+            'name': child.name,
+            'parent': str(child.parent),
+            'super_parent': root_parent.name
+        }
+        data.append(group_data)
+
+    return JsonResponse({'groups': data})
+
+
+# FOR COST CENTER
+def get_cost_center_datatable(request):
+    data = []
+    for child in CostCenter.objects.all():
+        group_data = {
+            'name': child.name,
+            'parent': str(child.parent),
+        }
+        data.append(group_data)
+    return JsonResponse({'groups': data})

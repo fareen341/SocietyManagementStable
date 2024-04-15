@@ -1013,6 +1013,10 @@ var app = new Vue({
 
         // Flat Name
         flatName: '',
+
+        // Error
+        newErrors: {},
+        ownership_error: '',
     },
     methods: {
         // ADD VEHICLE START
@@ -1033,8 +1037,11 @@ var app = new Vue({
         },
         getFormNumber: index => index + 1,
         // ADD VEHICLE END
-
+        memberObjectNotFoundvalidation(){
+            // TO BE CONTINUE...
+        },
         viewMemberData(id, flat_id, flat_name) {
+            // this.memberObjectNotFoundvalidation();
             this.flatName = flat_name;
             $('#viewMemberModal').modal('show');
             axios.get(`http://127.0.0.1:8000/api/flat_detail/${flat_id}`)
@@ -1054,7 +1061,7 @@ var app = new Vue({
                     this.memberData = response.data;
                 })
                 .catch(error => {
-                    console.error('Error fetching data:', error);
+                    console.error('Error fetching members data:', error);
                 });
 
             axios.get(`http://127.0.0.1:8000/api/home-loan/${id}`)
@@ -1283,6 +1290,7 @@ var app = new Vue({
             $('#editMemberModal').modal('show');
         },
         addNomineeOnClick(member_id) {
+            this.errors = {};
             const nominee = new FormData();
             nominee.append("member_name", this.addNewNomineeMemberId);
             for (const key in this.nominee) {
@@ -1298,7 +1306,8 @@ var app = new Vue({
                     toastr.success(response.message, "Nominee Added!");
                 })
                 .catch(error => {
-                    console.log("Errors -->", error);
+                    this.errors = error.response.data;
+                    console.log("Errors -->", this.errors);
                 });
         },
         addGST() {
@@ -1465,62 +1474,77 @@ var app = new Vue({
                     });
             });
         },
+        calculateAge(admissionDate) {
+            const today = new Date();
+            const admissionDateObj = new Date(admissionDate);
+
+            let age = today.getFullYear() - admissionDateObj.getFullYear();
+            const monthDiff = today.getMonth() - admissionDateObj.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < admissionDateObj.getDate())) {
+                age--;
+            }
+            return age;
+        },
         submitEditedMemberData() {
             let successfulSubmissions = 0;
-            let failedSubmissions = 0;
+            let totalPercent = 0;
+            this.ownership_error = '';
+            this.errors = {};
+            this.newErrors = {};
+            let showToastrError = true;
 
-            console.log("MEMBER COMPLETE DATA->", this.memberData);
             let cessation = ''
             this.memberformData.forEach((form, index) => {
                 if (form.date_of_cessation) {
-                    console.log("member name-->", form.date_of_cessation);
                     cessation = form.date_of_cessation;
                 }
             });
 
-            console.log(cessation);
+            this.memberformData.forEach((form, index) => {
+                if (form.ownership_percent) {
+                    totalPercent += parseFloat(form.ownership_percent);
+                }
+            });
+
+            if (totalPercent > 100){
+                this.ownership_error = 'Ownership exceeding! Addition of all ownership % should be 100 for this flat!';
+                toastr.error("Please Correct All Errors!");
+                return;
+            }
 
             this.memberformData.forEach((form, index) => {
-                console.log("MEMER ID-//////////////////>", form);
                 const formData = new FormData();
                 delete form.sales_agreement;
                 delete form.other_attachment;
-                console.log("ONLY FORM->", form);
-                console.log("ONLY FORM->", form.sales_agreement);
                 const payload = {};
                 for (const key in form) {
                     if (Object.prototype.hasOwnProperty.call(form, key)) {
                         if (key == 'date_of_cessation') {
-                            console.log("owner ship gives");
                             payload[key] = cessation
                         }
-                        // console.log(key);
+                        if(key === 'date_of_admission'){
+                            payload['age_at_date_of_admission'] = this.calculateAge(form[key]);
+                        }
                         if (form[key] !== null) {
                             payload[key] = form[key];
                         }
                     }
                 }
-                // payload['nominees'] = this.forms;
-                console.log("payload", payload);
                 formData.append('data', JSON.stringify(payload));
 
 
                 const refName = 'sales_agreement_' + index;
                 const inputElement = this.$refs[refName];
                 if (inputElement && inputElement.length > 0) {
-                    console.log("doc ==>", inputElement[0].files[0]);
                     formData.append('sales_agreement', inputElement[0].files[0]);
                 }
 
                 const otherDoc = 'other_attachment_' + index;
                 const inputElementDoc = this.$refs[otherDoc];
                 if (inputElementDoc && inputElementDoc.length > 0) {
-                    console.log("doc ==>", inputElementDoc[0].files[0]);
-                    formData.append('other_attachment_', inputElementDoc[0].files[0]);
+                    formData.append('other_attachment', inputElementDoc[0].files[0]);
                 }
-
-
-                // console.log("payload", payload);
 
                 axios.defaults.xsrfCookieName = 'csrftoken';
                 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -1530,6 +1554,7 @@ var app = new Vue({
                     }
                 })
                     .then(response => {
+                        this.$set(this.newErrors, index, null);
                         successfulSubmissions++;
                         if (successfulSubmissions === this.memberformData.length) {
                             toastr.success(response.message, "Member Updated Successfully!");
@@ -1547,9 +1572,11 @@ var app = new Vue({
                         // console.log("LOG LOG LOG", this.members);
                     })
                     .catch(error => {
-                        failedSubmissions++;
-                        toastr.error("Please Correct All Errors!");
-                        this.required_docs_errors = error.response
+                        if(showToastrError){
+                            toastr.error("Please Correct All Errors!");
+                            showToastrError = false;
+                        }
+                        this.$set(this.newErrors, index, error.response.data);
                     });
             });
         },
@@ -1561,13 +1588,11 @@ var app = new Vue({
         },
         memberHistoryData(wing_flat, flat_name) {
             this.flatName = flat_name;
-            console.log("wing_flat=======", this.flatName );
             $('#memberHistoryModal').modal('show');
             axios.get(`http://127.0.0.1:8000/api/history/?wing_flat__id=${wing_flat}`)
                 .then(response => {
                     if (response.data) {
                         this.memberHistory = response.data;
-                        console.log("RESPONSE ~~~~~~~~~~~~~~~~~~~~~~~~==>", this.memberHistory.length > 0);
 
                         if (this.memberHistory.length != 0) {
                             this.primaryMembers = [];
@@ -1665,6 +1690,8 @@ var app = new Vue({
                     // delete element.wing_flat;
                     delete element.member_position;
                     delete element.nominees;
+                    delete element.sales_agreement;
+                    delete element.other_attachment;
                 });
 
                 this.members = response.data;
@@ -1702,15 +1729,19 @@ new Vue({
         forms: [
             {}
         ],
-        errors: [],
+        errors: {
+            non_field_errors: ''
+        },
         required_docs_errors: {},
         flat_having_primary_mem: true,
         ownershipError: '',
+        nomError: {},
+        isValid: true,
     },
     methods: {
         addForm() {
-            this.forms.push({
-            });
+            this.forms.push({});
+            this.formData.wing_flat = $('#flatDropdown').val();
             const newIndex = this.forms.length - 1;
             this.errors = this.errors.filter(error => error.index !== newIndex);
         },
@@ -1719,27 +1750,71 @@ new Vue({
             this.forms.splice(index, 1);
         },
         hasError(index, field) {
-            return this.errors.some(error => error.index === index && error[field]);
+            // return this.errors.some(error => error.index === index && error[field]);
         },
         getError(index, field) {
-            const error = this.errors.find(error => error.index === index);
-            return error ? error[field][0] : '';
+            // const error = this.errors.find(error => error.index === index);
+            // return error ? error[field][0] : '';
+        },
+        validateNominees(fieldName, form, index) {
+            if (!form[fieldName]) {
+              // Initialize nomError for this form if it doesn't exist
+              if (!this.nomError[index]) {
+                this.$set(this.nomError, index, {});
+              }
+              // Update the error message for the field
+              this.$set(this.nomError[index], fieldName, `This field is required`);
+              this.isValid = false;
+            }
+        },
+        calculateAge(admissionDate) {
+            alert(admissionDate);
+            const today = new Date();
+            const admissionDateObj = new Date(admissionDate);
+
+            let age = today.getFullYear() - admissionDateObj.getFullYear();
+            const monthDiff = today.getMonth() - admissionDateObj.getMonth();
+
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < admissionDateObj.getDate())) {
+                age--;
+            }
+
+            return age;
         },
         submitMembers(addAnother) {
             this.formData.wing_flat = $('#flatDropdown').val();
+
+            // VALIDATION FOR NOMINEES:
+            this.nomError = {};
+
+            this.forms.forEach((form, index) => {
+                this.validateNominees('nominee_name', form, index);
+                this.validateNominees('date_of_nomination', form, index);
+                this.validateNominees('relation_with_nominee', form, index);
+                this.validateNominees('nominee_sharein_percent', form, index);
+                this.validateNominees('nominee_dob', form, index);
+                this.validateNominees('nominee_aadhar_no', form, index);
+                this.validateNominees('nominee_pan_no', form, index);
+                this.validateNominees('nominee_email', form, index);
+                this.validateNominees('nominee_address', form, index);
+                this.validateNominees('nominee_state', form, index);
+                this.validateNominees('nominee_pin_code', form, index);
+                this.validateNominees('nominee_contact', form, index);
+            });
 
             const payload = {};
             for (const key in this.formData) {
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
                     if (this.formData[key] !== null) {
+                        if(key === 'date_of_admission'){
+                            payload['age_at_date_of_admission'] = this.calculateAge(this.formData[key]);
+                        }
                         payload[key] = this.formData[key];
                     }
                 }
             }
             payload['nominees'] = this.forms;
             this.formData.append('data', JSON.stringify(payload));
-
-            console.log("payload", payload);
 
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -1759,7 +1834,8 @@ new Vue({
                     }
                 })
                 .catch(error => {
-                    this.required_docs_errors = error.response.data
+                    this.errors = error.response.data;
+                    console.log("Member form error!", this.errors);
                 });
             // $("#redirectToShares").trigger("click");
 
@@ -1815,6 +1891,13 @@ new Vue({
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
+
+        $('#addMemberModal').on('hidden.bs.modal', () => {
+            this.errors = {};
+            this.nomError = {};
+            this.formData = {};
+        });
+
     },
 });
 
@@ -3906,87 +3989,6 @@ new Vue({
 
 
 
-/* LEDGER CREATION DATATABLE, COMMON FOR ALL 4 DATATABLE ON LEDGER PAGE */
-$(document).ready(function() {
-    var table = $('#led_groupDatatable, #led_ledgerDatatable, #led_costCenterDatatable, #led_voucherTypeDatatable').DataTable({
-        "dom": '<"dt-buttons"Br><"clear">ftipl',
-        responsive: true,
-        buttons: [
-            {
-                extend: 'colvis',
-                text: 'More Column',
-                postfixButtons: [
-                    'colvisRestore'
-                ]
-            },
-            {
-                extend: 'searchBuilder',
-                text: 'Filter'
-            },
-            {
-                extend: 'print',
-                exportOptions: {
-                    // columns: ':visible',
-                    columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
-                    modifier: { search: 'applied', order: 'applied' },
-
-                }
-            },
-            {
-                extend: 'print',
-                text: 'Print All',
-                exportOptions: {
-                    columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
-                    // modifier: { search: 'applied', order: 'applied' },
-
-                }
-            },
-        ],
-
-        order: [],
-        "stripeClasses": [],
-
-        columnDefs: [
-
-            { "visible": true, "targets": datatable_columns },
-            { "visible": false, "targets": '_all' },
-        ],
-        fixedColumns: {
-            left: 2
-        },
-        // "paging": true,
-        // 'pageLength': '5',
-        pagingType: "simple",
-        paginate: {
-            previous: "<",
-            next: ">"
-        },
-        scrollCollapse: false,
-        scrollX: true
-    });
-
-    // Set the DataTable info text to be centered
-    $('#led_groupDatatable_info, #led_ledgerDatatable_info, #led_costCenterDatatable_info, #led_voucherTypeDatatable_info').css({
-        'text-align': 'center',
-        'position': 'relative',
-        'left': '40%',
-        'padding-top': '20px',
-        // 'margin-right': 'auto',
-        'display': 'block'
-    });
-
-    // Adjust the info text position when the table is redrawn
-    table.on('draw.dt', function () {
-        $('#led_groupDatatable_info, #led_ledgerDatatable_info, #led_costCenterDatatable_info, #led_voucherTypeDatatable_info').css({
-            'text-align': 'center',
-            'margin-left': 'auto',
-            'margin-right': 'auto'
-        });
-    });
-});
-
-
-
 new Vue({
     el: '#societyHead',
     data: {
@@ -4005,337 +4007,6 @@ new Vue({
             });
     }
 });
-
-
-// GROUP CREATION FOR LEDGER
-new Vue({
-    el: '#groupCreationVue',
-    data: {
-        subGroups: ['Select Sub Group'],
-        name: '',
-        parent: '',
-        superParent: '',
-        errors: {},
-    },
-    methods: {
-        updateSubGroups(event){
-            this.subGroups = [];
-            if(!event.target.value){
-                this.subGroups = '';
-                return;
-            }
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.get(`http://127.0.0.1:8000/api/ledger_group/${event.target.value}`)
-            .then(response => {
-                    this.subGroups = response.data.sub_group;
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        },
-        submitGroup(){
-            let selectElement = $('.js-example-basic-single').val();
-            data = {
-                "name": this.name,
-                "superParent": this.superParent,
-                "parent": selectElement
-            }
-
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.post('http://127.0.0.1:8000/api/leadger_group_creation/', data)
-                .then(response => {
-                    console.log("Response-->", response.data);
-                    $(".js-example-basic-single").val('').trigger('change');
-                    this.name = '';
-                    this.errors = {}
-                    toastr.success(response.message, "Group Added Successfully!");
-                    this.subGroups.push(response.data.name);
-                })
-                .catch(error => {
-                    console.log("Errors -->", error.response.data);
-                    this.errors = error.response.data;
-                });
-        },
-    },
-});
-
-
-// FOR GROUP SELECTION
-$('.js-example-basic-single').select2({
-    dropdownParent: $('#groupCreationModal'),
-    width: '100%',
-    // height: '200px !important;',
-    // 'overflow-y': 'auto'
-});
-
-
-// LEDGER CREATION
-new Vue({
-    el: '#ledgerAppVue',
-    data: {
-        based_on: '',
-        formData: {
-            country: '',
-            state: '',
-            city: '',
-            ifsc_code: '',
-            bank_branch_name: '',
-            branch_name: ''
-        },
-        errors: {},
-        subGroups: '',
-        ledgerData: [],
-        countries: [],
-        states: [],
-        cities: []
-    },
-    methods: {
-        submitLedger(){
-            let ledgerData = new FormData();
-            for (const key in this.formData) {
-                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-                    if (this.formData[key] !== null) {
-                        console.log(key);
-                        ledgerData.append(key, this.formData[key]);
-                    }
-                }
-            }
-            let selectElement = $('#ledgerSelection').val();
-            ledgerData.append('group_name', selectElement)
-
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.post('http://127.0.0.1:8000/api/ledger_creation/', ledgerData)
-                .then(response => {
-                    console.log('Form submitted successfully:', response.data);
-                })
-                .catch(error => {
-                    this.errors = error.response.data
-                    console.log("Error: ->", this.errors);
-                });
-        },
-        getCountries() {
-            axios.get('https://api.countrystatecity.in/v1/countries', {
-                headers: {
-                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
-                }
-            })
-            .then(response => {
-                this.countries = response.data;
-            })
-            .catch(error => {
-                console.error('Error fetching countries:', error);
-            });
-        },
-
-        getStates() {
-            if (!this.formData.country) return;
-            axios.get(`https://api.countrystatecity.in/v1/countries/${this.formData.country}/states`, {
-                headers: {
-                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
-                }
-            })
-            .then(response => {
-                this.states = response.data;
-                this.cities = [];
-            })
-            .catch(error => {
-                console.error('Error fetching states:', error);
-            });
-        },
-
-        getCities() {
-
-            axios.get(`https://api.countrystatecity.in/v1/countries/${this.formData.country}/states/${this.formData.state}/cities`, {
-                headers: {
-                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
-                }
-            })
-            .then(response => {
-                console.log('City Response:', response.data); // Log city data received from the API
-                this.cities = response.data;
-            })
-            .catch(error => {
-                console.error('Error fetching cities:', error);
-            });
-        },
-
-
-        getBranchName() {
-            // Make a GET request to the Razorpay IFSC API
-            var apiUrl = "https://ifsc.razorpay.com/" + this.formData.ifsc_code;
-            fetch(apiUrl)
-              .then(response => {
-                if (!response.ok) {
-                  throw new Error('Failed to fetch branch name. Please check the IFSC code.');
-                }
-                return response.json();
-              })
-              .then(data => {
-                this.formData.bank_branch_name = data.BANK;
-                this.formData.branch_name = data.BRANCH;
-              })
-              .catch(error => {
-                this.formData.bank_branch_name = '';
-                this.formData.branch_name = '';
-              });
-        },
-    },
-    mounted() {
-            axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
-            .then(response => {
-                this.subGroups = response.data.sub_group;
-                $('#ledgerSelection').select2({
-                    dropdownParent: $('#ledgerCreation'),
-                    width: '100%',
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-
-            // LEDGER DTATABLE
-            axios.get(`http://127.0.0.1:8000/api/ledger_creation/`)
-            .then(response => {
-                console.log("ledger data====in table", response.data);
-                this.ledgerData = response.data;
-                $(document).ready(function () {
-                    $('#led_ledgerDatatable').DataTable();
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching ledger data:', error);
-            });
-
-            this.getCountries();
-    }
-});
-
-
-// COST CENTER GROUP CREATION
-new Vue({
-    el: '#costCenterCreationVue',
-    data: {
-        costCenterList: ['Select Under Group'],
-        name: '',
-        parent: '',
-        errors: {},
-    },
-    methods: {
-        submitCostCenter(){
-            let selectElement = $('#costCreationSelection').val();
-            data = {
-                "name": this.name,
-                "parent": selectElement
-            }
-
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.post('http://127.0.0.1:8000/api/cost_center/', data)
-                .then(response => {
-                    this.errors = {}
-                    this.name = '';
-                    $("#costCreationSelection").val('').trigger('change');
-                    toastr.success(response.message, "Group Added Successfully!");
-                    this.costCenterList.push(response.data.name);
-                })
-                .catch(error => {
-                    console.log("Errors -->", error.response.data);
-                    this.errors = error.response.data;
-                });
-        },
-    },
-    mounted(){
-        axios.get(`http://127.0.0.1:8000/api/get_all_cost_centers/`)
-            .then(response => {
-                this.costCenterList = response.data.cost_centers;
-                $('#costCreationSelection').select2({
-                    dropdownParent: $('#costCenterCreationModal'),
-                    width: '100%',
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-
-        $('#costCenterCreationModal').on('hidden.bs.modal', () => {
-            this.errors = {};
-            this.name = '';
-            $("#costCreationSelection").val('').trigger('change');
-        });
-    }
-});
-
-
-// VOUCHER TYPE CREATION
-var app = new Vue({
-    el: '#voucherTypeVue',
-    data: {
-        forms: [
-            {}
-        ],
-        formData: {},
-        errors: {},
-        voucherType: [],
-    },
-    methods: {
-        addForm() {
-            this.forms.push({});
-        },
-        removeForm(index) {
-            this.forms.splice(index, 1);
-        },
-        getFormNumber: index => index + 1,
-        submitVoucherData(){
-            if(this.forms){
-                this.formData['voucher_indexing'] = this.forms;
-            }
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
-            axios.post(`http://127.0.0.1:8000/api/voucher_type/`, this.formData)
-                .then(response => {
-                    toastr.success(response.message, "Voucher Details Added!");
-                    $('#voucherTypeCreationModal').modal('hide');
-                    setTimeout(function() {
-                        location.reload();
-                    }, 600);
-                })
-                .catch(error => {
-                    this.errors = error.response.data;
-                    console.error('Error fetching data:', this.errors);
-                });
-        },
-        viewRequestedData(){
-            alert('view');
-        },
-        editRequestedData(){
-            alert('edit');
-        },
-    },
-    mounted() {
-        axios.get('http://127.0.0.1:8000/api/voucher_type/')
-            .then(response => {
-                this.voucherType = response.data;
-                $(document).ready(function () {
-                    $('#led_costCenterDatatable').DataTable();
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-
-        $('#voucherTypeCreationModal').on('hidden.bs.modal', () => {
-            this.formData = {};
-            this.forms = [{}];
-            this.errors = {};
-        });
-    }
-});
-
-
 
 
 // Print Functionality for Registers and Form I, J

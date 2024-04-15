@@ -16,146 +16,105 @@
         </ul>
     </div>
 
-    <div class="tab-content ">
+    <div class="tab-content">
         <div class="tab-pane active" id="1">
-            <div class="tab-pane show fade active" id="home" role="tabpanel">
+            <div id="groupCreationVue">
+                <div class="tab-pane show fade active" id="home" role="tabpanel">
 
-                <div class="d-flex" style="flex-direction: column;">
-                    <!-- Button trigger modal -->
-                    <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#groupCreationModal">
-                        Create Group
-                    </button>
-                </div>
+                    <div class="d-flex" style="flex-direction: column;">
+                        <!-- Button trigger modal -->
+                        <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#groupCreationModal">
+                            Create Group
+                        </button>
+                    </div>
 
-                <!-- Modal -->
-                <div class="modal fade" id="groupCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-                    <div class="modal-content" id="groupCreationVue">
-                        {% verbatim %}
-                        <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Group Creation</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-
-                            <div class="row">
-                                <div class="sty-input-wrapper w-100 mb-3">
-                                    <input type="text" class="sty-inp form-control" v-model="name" :style="{ borderColor: errors.group_name || errors.already_exist ? 'red' : '' }">
-                                    <label class="sty-label">Group Name</label>
-                                    <span v-if="errors.group_name || errors.already_exist" class="error">{{ errors.group_name || errors.already_exist }}</span>
-                                    <span v-else></span>
+                    <!-- Modal -->
+                    <div class="modal fade" id="groupCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                            <div class="modal-content">
+                                {% verbatim %}
+                                <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Group Creation</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
+                                <div class="modal-body">
 
-                                <div class="sty-input-wrapper w-100 mb-3">
-                                    <div class="w-100 sty-input-wrapper">
-                                        <select class="w-100 sty-inp" style="background-color: white;" @change="updateSubGroups($event)" v-model="superParent">
-                                            <option value="">Select Under Group</option>
-                                            <option value="Assets">Assets</option>
-                                            <option value="Liabilities">Liabilities</option>
-                                            <option value="Income">Income</option>
-                                            <option value="Expenses">Expenses</option>
-                                        </select>
-                                        <label class="sty-label">Under Group</label>
+                                    <div class="row">
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <input type="text" class="sty-inp form-control" v-model="name" :style="{ borderColor: errors.group_name || errors.already_exist ? 'red' : '' || errors.same_child_parent ? 'red' : '' }" style="text-transform: capitalize;">
+                                            <label class="sty-label">Group Name</label>
+                                            <span v-if="errors.group_name || errors.already_exist || errors.same_child_parent" class="error">{{ errors.group_name || errors.already_exist || errors.same_child_parent }}</span>
+                                            <span v-else></span>
+                                        </div>
+
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <div class="w-100 sty-input-wrapper">
+                                                <select class="w-100 sty-inp" style="background-color: white;" @change="updateSubGroups($event)" v-model="superParent">
+                                                    <option value="">Select Under Group</option>
+                                                    <option value="Assets">Assets</option>
+                                                    <option value="Liabilities">Liabilities</option>
+                                                    <option value="Income">Income</option>
+                                                    <option value="Expenses">Expenses</option>
+                                                </select>
+                                                <label class="sty-label">Under Group</label>
+                                                <span v-if="errors.parent_name" class="error">{{ errors.parent_name }}</span>
+                                                <span v-else></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <select class="w-100 sty-inp" id="groupSelection" style="background-color: white;" :style="{ borderColor: errors.under_group ? 'red' : '' }">
+                                                <option value="">Select Sub Group</option>
+                                                <option v-for="item in subGroups" :value="item">{{ item }}</option>
+                                            </select>
+                                            <label class="sty-label">Sub Group</label>
+                                            <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
+                                            <span v-else></span>
+                                        </div>
                                     </div>
                                 </div>
-
-                                <div class="sty-input-wrapper w-100 mb-3">
-                                    <select class="js-example-basic-single w-100 sty-inp" style="background-color: white;" v-model="parent" :style="{ borderColor: errors.under_group ? 'red' : '' }">
-                                        <option value="">Select Sub Group</option>
-                                        <option v-for="item in subGroups" :value="item">{{ item }}</option>
-                                    </select>
-                                    <label class="sty-label">Sub Group</label>
-                                    <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
-                                    <span v-else></span>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="submitGroup">Add Group</button>
                                 </div>
+                                {% endverbatim %}
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" @click="submitGroup">Add Group</button>
+                    </div>
+                    <!-- included code -->
+                    <div class="container mt-3 mb-4">
+                        <div class="table-responsive" id="groupTableDiv">
+                            {% verbatim %}
+                            <table id="led_groupDatatable" class="order-column dt-table display table-sm w-100">
+                                <thead>
+                                    <tr>
+                                        <th>Actions</th>
+                                        <th>Group Name</th>
+                                        <th>Sub Group</th>
+                                        <th>Under Group</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(group, index) in groupData" :key="index">
+                                        <td>
+                                            <span @click="viewRequestedData(group.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                            <span @click="editRequestedData(group.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                                        </td>
+                                        <td>
+                                            <span v-if="group.name === group.super_parent">-</span>
+                                            <span v-else>{{ group.name }}</span>
+                                        </td>
+                                        <td>
+                                            <span v-if="group.parent === 'None' || group.parent === group.super_parent">-</span>
+                                            <span v-else>{{ group.parent }}</span>
+                                        </td>
+                                        <td>{{ group.super_parent }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            {% endverbatim %}
                         </div>
-                        {% endverbatim %}
-                    </div>
-                    </div>
-                </div>
-                <!-- included code -->
-                <div class="container mt-3 mb-4">
-                    <div class="table-responsive" id="groupTableDiv">
-                        {% verbatim %}
-                        <table id="led_groupDatatable" class="order-column dt-table display table-sm w-100">
-                            <thead>
-                                <tr>
-                                    <th>Actions</th>
-                                    <th>Ledger Name</th>
-                                    <th>Alias</th>
-                                    <th>Group Name</th>
-                                    <th>Contact Person Name</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>Test</td>
-                                    <td>Abcd</td>
-                                    <td>Group A</td>
-                                    <td>Sameer</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>Test</td>
-                                    <td>Abcd</td>
-                                    <td>Group A</td>
-                                    <td>Fareen</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>Test</td>
-                                    <td>Abcd</td>
-                                    <td>Group A</td>
-                                    <td>Nazim</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>Test</td>
-                                    <td>Abcd</td>
-                                    <td>Group A</td>
-                                    <td>Mohammad</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                            <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>Test</td>
-                                    <td>Abcd</td>
-                                    <td>Group A</td>
-                                    <td>Atul</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        {% endverbatim %}
                     </div>
                 </div>
             </div>
@@ -457,129 +416,80 @@
         </div>
 
         <div class="tab-pane" id="3">
-            <div class="d-flex" style="flex-direction: column;">
-                <!-- Button trigger modal -->
-                <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#costCenterCreationModal">
-                    Create Cost Center
-                </button>
-            </div>
+            <div id="costCenterCreationVue">
+                <div class="d-flex" style="flex-direction: column;">
+                    <!-- Button trigger modal -->
+                    <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#costCenterCreationModal">
+                        Create Cost Center
+                    </button>
+                </div>
 
-            <!-- Modal -->
-            <div class="modal fade" id="costCenterCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Cost Center Creation</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <!-- Modal -->
+                <div class="modal fade" id="costCenterCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Cost Center Creation</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                {% verbatim %}
+                                <div class="row">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="text" class="sty-inp form-control" v-model="name">
+                                        <label class="sty-label">Cost Center Name</label>
+                                        <span v-if="errors.group_name || errors.already_exist" class="error">{{ errors.group_name || errors.already_exist }}</span>
+                                        <span v-else></span>
+                                    </div>
+
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <select class="w-100 sty-inp" style="background-color: white;" id="costCreationSelection">
+                                            <option value="">Select Under Group</option>
+                                            <option v-for="item in costCenterList" :value="item">{{ item }}</option>
+                                        </select>
+                                        <label class="sty-label">Under Group</label>
+                                        <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="submitCostCenter">Save changes</button>
+                                </div>
+                                {% endverbatim %}
+                            </div>
+
+                        </div>
                     </div>
-                    <div class="modal-body" id="costCenterCreationVue">
-                        {% verbatim %}
-                        <div class="row">
-                            <div class="sty-input-wrapper w-100 mb-3">
-                                <input type="text" class="sty-inp form-control" v-model="name">
-                                <label class="sty-label">Cost Center Name</label>
-                                <span v-if="errors.group_name || errors.already_exist" class="error">{{ errors.group_name || errors.already_exist }}</span>
-                                <span v-else></span>
-                            </div>
+                </div>
 
-                            <div class="sty-input-wrapper w-100 mb-3">
-                                <select class="w-100 sty-inp" style="background-color: white;" id="costCreationSelection">
-                                    <option value="">Select Under Group</option>
-                                    <option v-for="item in costCenterList" :value="item">{{ item }}</option>
-                                </select>
-                                <label class="sty-label">Under Group</label>
-                                <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
-                                <span v-else></span>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" @click="submitCostCenter">Save changes</button>
-                        </div>
+                <div class="container mt-3 mb-4">
+                    <div class="table-responsive" id="costCenterTableDiv">
+                        {% verbatim %}
+                        <table id="led_costCenterDatatable" class="order-column dt-table display table-sm w-100">
+                            <thead>
+                                <tr>
+                                    <th>Actions</th>
+                                    <th>Name</th>
+                                    <th>Parent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(group, index) in costCenterData" :key="index">
+                                    <td>
+                                        <span @click="viewRequestedData(group.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                        <span @click="editRequestedData(group.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                                    </td>
+                                    <td>{{ group.name }}</td>
+                                    <td>
+                                        <span v-if="group.parent === 'None'">-</span>
+                                        <span v-else>{{ group.parent }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         {% endverbatim %}
                     </div>
-
-                </div>
-                </div>
-            </div>
-
-            <div class="container mt-3 mb-4">
-                <div class="table-responsive" id="costCenterTableDiv">
-                    {% verbatim %}
-                    <table id="led_costCenterDatatable" class="order-column dt-table display table-sm w-100">
-                        <thead>
-                            <tr>
-                                <th>Actions</th>
-                                <th>Ledger Name</th>
-                                <th>Alias</th>
-                                <th>Group Name</th>
-                                <th>Contact Person Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div class="d-flex">
-                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
-                                <td>Test</td>
-                                <td>Abcd</td>
-                                <td>Group A</td>
-                                <td>Sameer</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex">
-                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
-                                <td>Test</td>
-                                <td>Abcd</td>
-                                <td>Group A</td>
-                                <td>Fareen</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex">
-                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
-                                <td>Test</td>
-                                <td>Abcd</td>
-                                <td>Group A</td>
-                                <td>Nazim</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex">
-                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
-                                <td>Test</td>
-                                <td>Abcd</td>
-                                <td>Group A</td>
-                                <td>Mohammad</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex">
-                                        <button class="btn" title="View Ledger Details"><i class="fa-solid fa-eye"></i></button>
-                                        <button class="btn" title="Edit Ledger"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
-                                <td>Test</td>
-                                <td>Abcd</td>
-                                <td>Group A</td>
-                                <td>Atul</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    {% endverbatim %}
                 </div>
             </div>
         </div>
@@ -625,28 +535,44 @@
                                 <div class="row" v-for="(form, index) in forms" :key="index">
                                     <p class="lead text-center">Voucher Date {{ getFormNumber(index) }}</p>
 
-                                    <div class="col-1 mt-2">
+                                    <div class="col-3 mt-2">
                                         <div @click.prevent="addForm">
                                             <i class="fa-solid fa-circle-plus"></i>
                                             <span>Add</span>
                                         </div>
                                     </div>
 
-                                    <div class="col-2">
+                                    <div class="col-4">
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <select class="w-100 sty-inp" style="background-color: white;">
+                                                <option value="">Select Voucher Option</option>
+                                                <option value="Assets">Purchase</option>
+                                                <option value="Liabilities">Sale</option>
+                                                <option value="Income">General</option>
+                                                <option value="Expenses">Expenses</option>
+                                                <option value="Expenses">Income</option>
+                                                <option value="Expenses">Payment</option>
+                                                <option value="Expenses">Receipt</option>
+                                            </select>
+                                            <label class="sty-label">Voucher Option</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-4">
                                         <div class="sty-input-wrapper w-100 mb-3">
                                             <input type="date" class="sty-inp form-control" v-model="form.from_date" v-validate="'required'">
                                             <label class="sty-label">From Date</label>
                                         </div>
                                     </div>
 
-                                    <div class="col-2">
+                                    <div class="col-4">
                                         <div class="sty-input-wrapper w-100 mb-3">
                                             <input type="date" class="sty-inp form-control" v-model="form.to_date" v-validate="'required|date_range'">
                                             <label class="sty-label">To Date</label>
                                         </div>
                                     </div>
 
-                                    <div class="col-3">
+                                    <div class="col-4">
                                         <div class="sty-input-wrapper w-100 mb-3">
                                             <input type="text" class="sty-inp form-control" v-model="form.prefix" >
                                             <label class="sty-label">Prefix</label>
@@ -663,6 +589,7 @@
                                     <div class="col-1 mt-2">
                                         <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
                                     </div>
+                                    <hr>
                                 </div>
                             </div>
                         </div>
@@ -678,7 +605,7 @@
                 <div class="container mt-3 mb-4" style="margin-bottom: 200px !important;">
                     <div class="table-responsive" id="voucherTypeTableDiv">
                         {% verbatim %}
-                        <table id="led_costCenterDatatable" class="order-column dt-table display table-sm w-100">
+                        <table id="led_voucherTypeDatatable" class="order-column dt-table display table-sm w-100">
                             <thead>
                                 <tr>
                                     <th>Actions</th>
@@ -714,5 +641,486 @@
     let datatable_columns = {{ datatable_columns }};
 </script>
 
+<script>
+// GROUP CREATION FOR LEDGER
+new Vue({
+    el: '#groupCreationVue',
+    data: {
+        subGroups: ['Select Sub Group'],
+        name: '',
+        parent: '',
+        superParent: '',
+        errors: {},
+        groupData: {},
+    },
+    methods: {
+        updateSubGroups(event){
+            this.subGroups = [];
+            if(!event.target.value){
+                this.subGroups = '';
+                return;
+            }
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.get(`http://127.0.0.1:8000/api/ledger_group/${event.target.value}`)
+            .then(response => {
+                    this.subGroups = response.data.sub_group;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        submitGroup(){
+            function toTitleCase(str) {
+                return str.replace(
+                  /\w\S*/g,
+                  function(txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                  }
+                );
+              }
+
+            this.parent = $('#groupSelection').val();
+            console.log("SELECTED ELEMENT======", this.parent);
+            data = {
+                "name": toTitleCase(this.name),
+                "superParent": this.superParent,
+                "parent": this.parent
+            }
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/leadger_group_creation/', data)
+                .then(response => {
+                    console.log("Response-->", response.data);
+                    $("#groupSelection").val('').trigger('change');
+                    this.name = '';
+                    this.errors = {}
+                    toastr.success(response.message, "Group Added Successfully!");
+                    this.subGroups.push(response.data.name);
+                })
+                .catch(error => {
+                    console.log("Errors -->", error.response.data);
+                    this.errors = error.response.data;
+                });
+            },
+        viewRequestedData(){
+            alert("view");
+        },
+        editRequestedData(){
+            alert('edit');
+        },
+    },
+    mounted() {
+        axios.get(`http://127.0.0.1:8000/group_data`)
+        .then(response => {
+            this.groupData = response.data.groups;
+            $(document).ready(function () {
+                $('#led_groupDatatable').DataTable();
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+
+        $('#groupCreationModal').on('hidden.bs.modal', () => {
+            location.reload();
+        });
+}
+});
+
+
+// FOR GROUP SELECTION
+$('#groupSelection').select2({
+    dropdownParent: $('#groupCreationModal'),
+    width: '100%',
+    // height: '200px !important;',
+    // 'overflow-y': 'auto'
+});
+
+
+// LEDGER CREATION
+new Vue({
+    el: '#ledgerAppVue',
+    data: {
+        based_on: '',
+        formData: {
+            country: '',
+            state: '',
+            city: '',
+            ifsc_code: '',
+            bank_branch_name: '',
+            branch_name: ''
+        },
+        errors: {},
+        subGroups: '',
+        ledgerData: [],
+        countries: [],
+        states: [],
+        cities: []
+    },
+    methods: {
+        voucherValidate(fieldName, form, index) {
+            if (!form[fieldName]) {
+              // Initialize nomError for this form if it doesn't exist
+              if (!this.voucherError[index]) {
+                this.$set(this.nomError, index, {});
+              }
+              // Update the error message for the field
+              this.$set(this.nomError[index], fieldName, `This field is required`);
+              this.isValid = false;
+            }
+        },
+        submitLedger(){
+            // VALIDATION FOR VOUCHER CLONED FORM
+            this.forms.forEach((form, index) => {
+                this.voucherValidate('voucher_type', form, index);
+                this.voucherValidate('from_date', form, index);
+                this.voucherValidate('to_date', form, index);
+                this.voucherValidate('prefix', form, index);
+                this.voucherValidate('suffix', form, index);
+            });
+
+            let ledgerData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    if (this.formData[key] !== null) {
+                        console.log(key);
+                        ledgerData.append(key, this.formData[key]);
+                    }
+                }
+            }
+            let selectElement = $('#ledgerSelection').val();
+            ledgerData.append('group_name', selectElement)
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/ledger_creation/', ledgerData)
+                .then(response => {
+                    console.log('Form submitted successfully:', response.data);
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error: ->", this.errors);
+                });
+        },
+        getCountries() {
+            axios.get('https://api.countrystatecity.in/v1/countries', {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+            .then(response => {
+                this.countries = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching countries:', error);
+            });
+        },
+
+        getStates() {
+            if (!this.formData.country) return;
+            axios.get(`https://api.countrystatecity.in/v1/countries/${this.formData.country}/states`, {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+            .then(response => {
+                this.states = response.data;
+                this.cities = [];
+            })
+            .catch(error => {
+                console.error('Error fetching states:', error);
+            });
+        },
+
+        getCities() {
+
+            axios.get(`https://api.countrystatecity.in/v1/countries/${this.formData.country}/states/${this.formData.state}/cities`, {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+            .then(response => {
+                console.log('City Response:', response.data); // Log city data received from the API
+                this.cities = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching cities:', error);
+            });
+        },
+
+        getBranchName() {
+            // Make a GET request to the Razorpay IFSC API
+            var apiUrl = "https://ifsc.razorpay.com/" + this.formData.ifsc_code;
+            fetch(apiUrl)
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Failed to fetch branch name. Please check the IFSC code.');
+                }
+                return response.json();
+              })
+              .then(data => {
+                this.formData.bank_branch_name = data.BANK;
+                this.formData.branch_name = data.BRANCH;
+              })
+              .catch(error => {
+                this.formData.bank_branch_name = '';
+                this.formData.branch_name = '';
+              });
+        },
+    },
+    mounted() {
+            axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
+            .then(response => {
+                this.subGroups = response.data.sub_group;
+                $('#ledgerSelection').select2({
+                    dropdownParent: $('#ledgerCreation'),
+                    width: '100%',
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+            // LEDGER DTATABLE
+            axios.get(`http://127.0.0.1:8000/api/ledger_creation/`)
+            .then(response => {
+                this.ledgerData = response.data;
+                $(document).ready(function () {
+                    $('#led_ledgerDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching ledger data:', error);
+            });
+
+            this.getCountries();
+    }
+});
+
+
+// COST CENTER GROUP CREATION
+new Vue({
+    el: '#costCenterCreationVue',
+    data: {
+        costCenterList: ['Select Under Group'],
+        name: '',
+        parent: '',
+        errors: {},
+        costCenterData: {},
+    },
+    methods: {
+        submitCostCenter(){
+            let selectElement = $('#costCreationSelection').val();
+            data = {
+                "name": this.name,
+                "parent": selectElement
+            }
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/cost_center/', data)
+                .then(response => {
+                    this.errors = {}
+                    this.name = '';
+                    $("#costCreationSelection").val('').trigger('change');
+                    toastr.success(response.message, "Group Added Successfully!");
+                    this.costCenterList.push(response.data.name);
+                })
+                .catch(error => {
+                    console.log("Errors -->", error.response.data);
+                    this.errors = error.response.data;
+                });
+        },
+    },
+    mounted(){
+        axios.get(`http://127.0.0.1:8000/api/get_all_cost_centers/`)
+            .then(response => {
+                this.costCenterList = response.data.cost_centers;
+                $('#costCreationSelection').select2({
+                    dropdownParent: $('#costCenterCreationModal'),
+                    width: '100%',
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // DATATABLE FOR COST CENTER
+        axios.get(`http://127.0.0.1:8000/cost_center_data`)
+            .then(response => {
+                this.costCenterData = response.data.groups;
+                $(document).ready(function () {
+                    $('#led_costCenterDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        $('#costCenterCreationModal').on('hidden.bs.modal', () => {
+            location.reload();
+            // this.errors = {};
+            // this.name = '';
+            // $("#costCreationSelection").val('').trigger('change');
+
+        });
+    }
+});
+
+
+// VOUCHER TYPE CREATION
+var app = new Vue({
+    el: '#voucherTypeVue',
+    data: {
+        forms: [
+            {}
+        ],
+        formData: {},
+        errors: {},
+        voucherType: [],
+    },
+    methods: {
+        addForm() {
+            this.forms.push({});
+        },
+        removeForm(index) {
+            this.forms.splice(index, 1);
+        },
+        getFormNumber: index => index + 1,
+        submitVoucherData(){
+            if(this.forms){
+                this.formData['voucher_indexing'] = this.forms;
+            }
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+            axios.post(`http://127.0.0.1:8000/api/voucher_type/`, this.formData)
+                .then(response => {
+                    toastr.success(response.message, "Voucher Details Added!");
+                    $('#voucherTypeCreationModal').modal('hide');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                    console.error('Error fetching data:', this.errors);
+                });
+        },
+        viewRequestedData(){
+            alert('view');
+        },
+        editRequestedData(){
+            alert('edit');
+        },
+    },
+    mounted() {
+        axios.get('http://127.0.0.1:8000/api/voucher_type/')
+            .then(response => {
+                this.voucherType = response.data;
+                $(document).ready(function () {
+                    $('#led_voucherTypeDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        $('#voucherTypeCreationModal').on('hidden.bs.modal', () => {
+            this.formData = {};
+            this.forms = [{}];
+            this.errors = {};
+        });
+    }
+});
+
+
+/* LEDGER CREATION DATATABLE, COMMON FOR ALL 4 DATATABLE ON LEDGER PAGE */
+$(document).ready(function() {
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+        $($.fn.dataTable.tables(true)).DataTable()
+           .columns.adjust();
+     });
+
+    var table = $('#led_groupDatatable, #led_ledgerDatatable, #led_costCenterDatatable, #led_voucherTypeDatatable').DataTable({
+        "dom": '<"dt-buttons"Br><"clear">ftipl',
+        buttons: [
+            {
+                extend: 'colvis',
+                text: 'More Column',
+                postfixButtons: [
+                    'colvisRestore'
+                ]
+            },
+            {
+                extend: 'searchBuilder',
+                text: 'Filter'
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    // columns: ':visible',
+                    columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                    modifier: { search: 'applied', order: 'applied' },
+
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print All',
+                exportOptions: {
+                    columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                    // modifier: { search: 'applied', order: 'applied' },
+
+                }
+            },
+        ],
+
+        order: [],
+        "stripeClasses": [],
+
+        columnDefs: [
+
+            { "visible": true, "targets": datatable_columns },
+            { "visible": false, "targets": '_all' },
+        ],
+        fixedColumns: {
+            left: 2
+        },
+        // "paging": true,
+        // 'pageLength': '5',
+        pagingType: "simple",
+        paginate: {
+            previous: "<",
+            next: ">"
+        },
+        scrollCollapse: false,
+        scrollX: true
+    });
+
+    // Set the DataTable info text to be centered
+    $('#led_groupDatatable_info, #led_ledgerDatatable_info, #led_costCenterDatatable_info, #led_voucherTypeDatatable_info').css({
+        'text-align': 'center',
+        'position': 'relative',
+        'left': '40%',
+        'padding-top': '20px',
+        // 'margin-right': 'auto',
+        'display': 'block'
+    });
+
+    // Adjust the info text position when the table is redrawn
+    table.on('draw.dt', function () {
+        $('#led_groupDatatable_info, #led_ledgerDatatable_info, #led_costCenterDatatable_info, #led_voucherTypeDatatable_info').css({
+            'text-align': 'center',
+            'margin-left': 'auto',
+            'margin-right': 'auto'
+        });
+    });
+});
+
+
+</script>
 
 {% endblock body %}

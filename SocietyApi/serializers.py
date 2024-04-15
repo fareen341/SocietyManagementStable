@@ -2,6 +2,7 @@ from .models import *
 from rest_framework import serializers
 import os
 from SocietyApp.models import *
+from django.db.models import *
 
 
 class SocietyCreationSerializer(serializers.ModelSerializer):
@@ -78,16 +79,78 @@ class NomineesSerializer(serializers.ModelSerializer):
         ]
 
 
-# SERIALIZER FOR MEMBER TABLE VIEW
+# Serializers for add, update
+class MembersActionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Members
+        fields = '__all__'
+
+    def validate(self, attrs):
+        # Validate ownership percentage to ensure it doesn't exceed 100%
+        ownership_percent = attrs.get('ownership_percent', 0)
+        if ownership_percent <= 0 or ownership_percent > 100:
+            raise serializers.ValidationError(f"Ownership percentage should be between 0 & 100%!", code='invalid_ownership_percent')
+        return attrs
+
+
+# SERIALIZER FOR DISPLAT(RETRIVE, LIST)
 class MembersSerializer(serializers.ModelSerializer):
     flat_name_formatted = serializers.SerializerMethodField()
     member_position_formatted = serializers.SerializerMethodField()
     nominees = NomineesSerializer(many=True, required=False)
     member_is_primary_formatted = serializers.SerializerMethodField()
+    sales_agreement_filename = serializers.SerializerMethodField()
+    other_attachment_filename = serializers.SerializerMethodField()
 
     class Meta:
         model = Members
-        fields = '__all__'
+        fields = [
+            'id',
+            'flat_name_formatted',
+            'member_name',
+            'member_position_formatted',
+            'ownership_percent',
+            'member_dob',
+            'member_pan_no',
+            'member_aadhar_no',
+            'member_address',
+            'member_state',
+            'member_pin_code',
+            'member_email',
+            'member_contact',
+            'member_emergency_contact',
+            'member_occupation',
+            'member_is_primary',
+            'date_of_admission',
+            'age_at_date_of_admission',
+            'sales_agreement_filename',
+            'other_attachment_filename',
+            'date_of_entrance_fees',
+            'date_of_cessation',
+            'reason_for_cessation',
+
+            # Extra fields
+            'wing_flat',
+            'other_attachment',
+            'member_position',
+            'sales_agreement',
+            'member_is_primary_formatted',
+            'nominees'
+        ]
+
+    def get_sales_agreement_filename(self, obj):
+        if obj.sales_agreement:
+            file_name = os.path.basename(obj.sales_agreement.name)
+            max_length = 25
+            if len(file_name) > max_length:
+                file_name = file_name[:max_length - 3] + '...'
+            return file_name
+        return None
+
+    def get_other_attachment_filename(self, obj):
+        if obj.other_attachment:
+            return os.path.basename(obj.other_attachment.name)
+        return None
 
     # FORMAT FLAT NO.
     def get_flat_name_formatted(self, obj):
@@ -106,6 +169,13 @@ class MembersSerializer(serializers.ModelSerializer):
         else:
             return "Secondary"
 
+    def get_error_keys(self, data):
+        error_keys = super().get_error_keys(data)
+        if 'non_field_errors' in error_keys:
+            error_keys.remove('non_field_errors')
+            error_keys.append('ownership_exceeded')
+        return error_keys
+
     def to_representation(self, instance):
         # Call the parent class method to get the default representation
         data = super().to_representation(instance)
@@ -113,7 +183,6 @@ class MembersSerializer(serializers.ModelSerializer):
         # Check if the action is list, if so, exclude member_is_primary_formatted field
         if self.context['view'].action == 'list':
             data.pop('member_is_primary_formatted', None)
-
         return data
 
 

@@ -152,6 +152,8 @@ class WingFlatView(viewsets.ModelViewSet):
             return Response(response_data, status=status.HTTP_201_CREATED)
         return super().partial_update(request, *args, **kwargs)
 
+from django.db import transaction
+
 
 # GET ALL WINGS
 class UnitWingView(viewsets.ViewSet):
@@ -167,6 +169,11 @@ class MemberView(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['=wing_flat__id']
     parser_classes = (MultipartJsonParser, JSONParser)
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'partial_update', 'update']:
+            return MembersActionSerializer
+        return MembersSerializer
 
     def create(self, request, *args, **kwargs):
         try:
@@ -187,22 +194,29 @@ class MemberView(viewsets.ModelViewSet):
             modified_data = request.data.copy()
             modified_data['same_flat_member_identification'] = member_data
 
-        member_serializer = self.get_serializer(data=modified_data)
-        if member_serializer.is_valid():
-            member_instance = member_serializer.save()
+        with transaction.atomic():
+            member_serializer = self.get_serializer(data=modified_data)
 
-            # Loop through nominee data and save each nominee
-            for nominee_dict in nominees_data:
-                nominee_serializer = NomineesSerializer(data=nominee_dict)
-                if nominee_serializer.is_valid():
-                    # Associate the nominee with the member instance
-                    nominee_serializer.save(member_name=member_instance)
-                else:
-                    return Response(nominee_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if member_serializer.is_valid():
+                total_ownership_percentage = Members.objects.filter(wing_flat=modified_data['wing_flat']).aggregate(total_ownership=Sum('ownership_percent'))['total_ownership']
+                if total_ownership_percentage and total_ownership_percentage + int(modified_data['ownership_percent'])  > 100:
+                    raise serializers.ValidationError({'ownership_percent': [f'Total ownership percentage cannot exceed 100%, This flat left with {100 - total_ownership_percentage} % ownership!']})
 
-            return Response(member_serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(member_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                member_instance = member_serializer.save()
+
+                # Loop through nominee data and save each nominee
+                for nominee_dict in nominees_data:
+                    nominee_serializer = NomineesSerializer(data=nominee_dict)
+                    if nominee_serializer.is_valid():
+                        # Associate the nominee with the member instance
+                        nominee_serializer.save(member_name=member_instance)
+                    else:
+                        member_instance.delete()
+                        return Response(nominee_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+                return Response(member_serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(member_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -220,6 +234,11 @@ class MemberView(viewsets.ModelViewSet):
         # queryset = Members.objects.filter(member_is_primary=True, date_of_cessation__isnull=True)
         queryset = Members.objects.filter(member_is_primary=True, date_of_cessation__isnull=True)
         serializer = MembersSerializer(queryset, many=True, context={'request': request, 'view': self})
+
+        for member in serializer.data:
+            # ownership_percent = member['ownership_percent']
+            total_ownership_percentage = Members.objects.filter(wing_flat=member['wing_flat']).aggregate(total_ownership=Sum('ownership_percent'))['total_ownership']
+            member['ownership_percent'] = total_ownership_percentage
         return Response(serializer.data)
 
 
@@ -846,35 +865,42 @@ class CreateGroupForLedgerView(viewsets.ModelViewSet):
 
 
     def create(self, request, *args, **kwargs):
+        print('REQUEST====> GROUP', request.data)
         errors = {}
         go_further = True
         name = request.data.get('name')
         parent_name = request.data.get('parent')
         super_parent = request.data.get('superParent')
-        already_exists = Childs.objects.filter(name=name, parent__name=parent_name)
+        # already_exists = Childs.objects.filter(name=name, parent__name=parent_name).exists()
+        # if not parent_name:
+        #     already_exists = Childs.objects.filter(name=name, parent__name=super_parent).exists()
 
-        # if not name or not parent_name or not super_parent_name:
+        # if name == parent_name:
+        #     errors['same_child_parent'] = 'Pls input different name! Child and Parent cannot be same!'
+
         if not name:
             errors['group_name'] = 'Group Name Is Required'
-        if already_exists:
-            errors['already_exist'] = 'Group Already Exists'
+
+        if not super_parent:
+            errors['parent_name'] = 'Parent Name Is Required'
+
+        # if already_exists:
+        #     errors['already_exist'] = 'Group Already Exists'
+
+        if Childs.objects.filter(name=name).exists():
+            errors['already_exist'] = f'This should be unique, "{name}" already exists!'
+
+        if errors:
+            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             super_parent_obj = Childs.objects.get(name=super_parent)
-            print("super_parent_obj===", super_parent_obj)
         except Childs.DoesNotExist:
-            print("does not exists===")
             super_parent_obj = Childs.objects.create(name=super_parent)
 
         if not parent_name:
             go_further = False
             child = Childs.objects.create(name=name, parent=super_parent_obj)
-
-        # elif not parent_name:
-        #     errors['under_group'] = 'Please Select Under Group'
-
-        if errors:
-            return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             # Check if the parent already exists under the superParent
@@ -886,7 +912,6 @@ class CreateGroupForLedgerView(viewsets.ModelViewSet):
 
         # Create the child under the parent
         if go_further:
-            print("Go further ===", go_further)
             child = Childs.objects.create(name=name, parent=parent)
 
         serializer = self.get_serializer(child)
@@ -913,16 +938,12 @@ class CostCenterView(viewsets.ModelViewSet):
         name = request.data.get('name')
         parent_name = request.data.get('parent')
 
-        already_exists = CostCenter.objects.filter(name=name, parent__name=parent_name)
-
         if not name:
             errors['group_name'] = 'Cost Center Name Is Required'
-        if already_exists:
-            errors['already_exist'] = 'Group Already Exists'
-
-        # if not CostCenter.objects.all().exists():
         if not parent_name:
             errors['under_group'] = 'Please Select Under Group'
+        if CostCenter.objects.filter(name=name, parent__name=parent_name).exists():
+            errors['already_exist'] = f'Pls select different name, "{name}" under group "{parent_name}" already exists!'
 
         if errors:
             return Response(errors, status=status.HTTP_400_BAD_REQUEST)
