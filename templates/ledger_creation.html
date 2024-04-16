@@ -517,7 +517,7 @@
 
                                 <div class="col-4">
                                     <div class="sty-input-wrapper w-100 mb-3">
-                                        <select class="w-100 sty-inp" style="background-color: white;" v-model="formData.voucher_type" :class="{ 'error-message': errors.voucher_type }">
+                                        <select class="w-100 sty-inp form-control" style="background-color: white;" v-model="formData.voucher_type" :class="{ 'error-message': errors.voucher_type }">
                                             <option value="Select Voucher Option">Select Voucher Option</option>
                                             <option value="purchase">Purchase</option>
                                             <option value="sale">Sale</option>
@@ -550,62 +550,59 @@
                                         <span v-else></span>
                                     </div>
                                 </div>
+                            </div>
+                                
+                            <div class="row" v-for="(form, index) in forms" :key="index">
+                                <p class="lead text-center">Voucher Date {{ getFormNumber(index) }}</p>
 
-                                <div class="row" v-for="(form, index) in forms" :key="index">
-                                    <p class="lead text-center">Voucher Date {{ getFormNumber(index) }}</p>
-
-                                    <div class="col-3 mt-2">
-                                        <div @click.prevent="addForm">
-                                            <i class="fa-solid fa-circle-plus"></i>
-                                            <span>Add</span>
-                                        </div>
+                                <div class="col-4">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="date" class="sty-inp form-control" v-model="form.from_date" v-validate="'required'" :class="{ 'error-message': errors.voucher_indexing }">
+                                        <label class="sty-label">From Date</label>
+                                        <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].from_date" class="error">{{ errors['voucher_indexing'][index].from_date[0] }}</span>
+                                        <span v-else></span>
                                     </div>
-
-                                    <div class="col-4">
-                                        <div class="sty-input-wrapper w-100 mb-3">
-                                            <input type="date" class="sty-inp form-control" v-model="form.from_date" v-validate="'required'">
-                                            <label class="sty-label">From Date</label>
-                                            <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].from_date" class="error">{{ errors['voucher_indexing'][index].from_date[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="col-4">
-                                        <div class="sty-input-wrapper w-100 mb-3">
-                                            <input type="date" class="sty-inp form-control" v-model="form.to_date" v-validate="'required|date_range'">
-                                            <label class="sty-label">To Date</label>
-                                            <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].to_date" class="error">{{ errors['voucher_indexing'][index].to_date[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-4">
-                                        <div class="sty-input-wrapper w-100 mb-3">
-                                            <input type="text" class="sty-inp form-control" v-model="form.prefix" >
-                                            <label class="sty-label">Prefix</label>
-                                            <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].prefix" class="error">{{ errors['voucher_indexing'][index].prefix[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-3">
-                                        <div class="sty-input-wrapper w-100 mb-3">
-                                            <input type="text" class="sty-inp form-control" v-model="form.suffix" >
-                                            <label class="sty-label">Suffix</label>
-                                            <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].suffix" class="error">{{ errors['voucher_indexing'][index].suffix[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-1 mt-2">
-                                        <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
-                                    </div>
-                                    <hr>
                                 </div>
+
+
+                                <div class="col-4">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="date" class="sty-inp form-control" v-model="form.to_date" v-validate="'required|date_range'" :class="{ 'error-message': errors.voucher_indexing }">
+                                        <label class="sty-label">To Date</label>
+                                        <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].to_date" class="error">{{ errors['voucher_indexing'][index].to_date[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-4">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="text" class="sty-inp form-control" v-model="form.prefix" :class="{ 'error-message': errors.voucher_indexing }">
+                                        <label class="sty-label">Prefix</label>
+                                        <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].prefix" class="error">{{ errors['voucher_indexing'][index].prefix[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-4">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="text" class="sty-inp form-control" v-model="form.suffix" :class="{ 'error-message': errors.voucher_indexing }">
+                                        <label class="sty-label">Suffix</label>
+                                        <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].suffix" class="error">{{ errors['voucher_indexing'][index].suffix[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-4">
+                                    <button class="btn " @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can" style="color: red;"></i></button>
+                                </div>
+                                <hr>
                             </div>
                         </div>
                         <div class="modal-footer">
+                            <div @click.prevent="addForm" class="me-auto btn btn-primary" style="border-radius: 10px;">
+                                <i class="fa-solid fa-circle-plus"></i>
+                                <span>ADD</span>
+                            </div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary" @click="submitVoucherData">Save changes</button>
                         </div>
