@@ -422,13 +422,13 @@ class Ledger(models.Model):
         return self.ledger_name
 
 voucher_type = [
-    ('purchase', 'Purchase'),
-    ('sale', 'Sale'),
-    ('general', 'General'),
-    ('expenses', 'Expenses'),
-    ('income', 'Income'),
-    ('payment', 'Payment'),
-    ('receipt', 'Receipt'),
+    ('purchase_voucher', 'Purchase Voucher'),
+    ('sale_voucher', 'Sale Voucher'),
+    ('general_voucher', 'General Voucher'),
+    ('expenses_voucher', 'Expenses Voucher'),
+    ('income_voucher', 'Income Voucher'),
+    ('payment_voucher', 'Payment Voucher'),
+    ('receipt_voucher', 'Receipt Voucher'),
 ]
 
 class VoucherType(models.Model):

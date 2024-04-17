@@ -363,18 +363,22 @@ def unit_test(request):
 
 
 # FOR GROUPS
-def get_group_datatable(request):
+def get_group_datatable(request, id=None):
     data = []
+    group_data_obj = Childs.objects.all()
+    if id:
+        group_data_obj = Childs.objects.filter(id=id)
     def find_root_parent(child):
         if child.parent:
             return find_root_parent(child.parent)
         else:
             return child
 
-    for child in Childs.objects.all():
+    for child in group_data_obj:
         root_parent = find_root_parent(child)
 
         group_data = {
+            'id': child.pk,
             'name': child.name,
             'parent': str(child.parent),
             'super_parent': root_parent.name
@@ -385,10 +389,14 @@ def get_group_datatable(request):
 
 
 # FOR COST CENTER
-def get_cost_center_datatable(request):
+def get_cost_center_datatable(request, id=None):
     data = []
-    for child in CostCenter.objects.all():
+    cost_center_obj = CostCenter.objects.all()
+    if id:
+        cost_center_obj = CostCenter.objects.filter(id=id)
+    for child in cost_center_obj:
         group_data = {
+            'id': child.pk,
             'name': child.name,
             'parent': str(child.parent),
         }

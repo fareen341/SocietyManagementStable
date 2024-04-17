@@ -75,7 +75,9 @@ urlpatterns = [
     path('ledger-creation/', views.ledger_creation, name='ledger_creation'),
     path('group', views.account_group, name='group'),
     path('group_data', views.get_group_datatable, name='group_data'),
+    path('group_data/<int:id>/', views.get_group_datatable, name='group_data_retrive'),
     path('cost_center_data', views.get_cost_center_datatable, name='cost_center_data'),
+    path('cost_center_data/<int:id>/', views.get_cost_center_datatable, name='cost_center_data_retrive'),
 
 
     # UNIT TEST
@@ -83,6 +85,7 @@ urlpatterns = [
     path('api/get_bug_type/', apiviews.UnitTestView.as_view({'get': 'get_bug_type_dropdown'}), name='get_bug_type'),
     path('api/bug_status/', apiviews.UnitTestView.as_view({'get': 'get_test_status_dropdown'}), name='bug_status'),
     path('api/review/', apiviews.UnitTestView.as_view({'get': 'get_review_dropdown'}), name='review'),
+    path('api/get_voucher_index/<int:voucher_type_id>/', apiviews.VoucherIndexingView.as_view({'get': 'get_voucher_indexing'}), name='get_voucher_index'),
 
 
     # REGISTERS

@@ -962,6 +962,11 @@ class VoucherTypeView(viewsets.ModelViewSet):
     queryset = VoucherType.objects.all()
     serializer_class = VoucherTypeSerializer
 
+    def get_serializer_class(self):
+        if self.action in ['create', 'retrieve', 'partial_update', 'update']:
+            return VoucherTypeSerializer
+        return VoucherTypeDisplaySerializer
+
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
@@ -969,6 +974,20 @@ class VoucherTypeView(viewsets.ModelViewSet):
 class VoucherIndexingView(viewsets.ModelViewSet):
     queryset = VoucherIndexing.objects.all()
     serializer_class = VoucherIndexingSerializer
+
+    @action(detail=False, methods=['get'])
+    # GET VOUCHER INDEXING BASED ON ID OF VOUCHTER TYPE
+    def get_voucher_indexing(self, request, *args, **kwargs):
+        voucher_type_id = kwargs.get('voucher_type_id')
+        print("ID===================ID================", voucher_type_id)
+        try:
+            instances = VoucherIndexing.objects.filter(voucher_type=voucher_type_id)
+        except VoucherIndexing.DoesNotExist:
+            return Response(data={"message": "Member not found"})
+
+        serializer = VoucherIndexingSerializer(instances, many=True, context={'request': request, 'view': self})
+        print("SERIALIZERS===============>", serializer)
+        return Response(serializer.data)
 
 
 class UnitTestView(viewsets.ModelViewSet):

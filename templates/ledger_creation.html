@@ -28,7 +28,7 @@
                         </button>
                     </div>
 
-                    <!-- Modal -->
+                    <!-- GROUP CREATE MODAL -->
                     <div class="modal fade" id="groupCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
                             <div class="modal-content">
@@ -81,6 +81,84 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- GROUP UPDATE MODAL  -->
+                    <div class="modal fade" id="groupUpdateModal" tabindex="-1" aria-labelledby="groupUpdateModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                            <div class="modal-content">
+                                {% verbatim %}
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="groupUpdateModalLabel">Group Creation</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div class="row">
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <input type="text" class="sty-inp form-control" v-model="name" :style="{ borderColor: errors.group_name || errors.already_exist ? 'red' : '' || errors.same_child_parent ? 'red' : '' }" style="text-transform: capitalize;">
+                                            <label class="sty-label">Group Name</label>
+                                            <span v-if="errors.group_name || errors.already_exist || errors.same_child_parent" class="error">{{ errors.group_name || errors.already_exist || errors.same_child_parent }}</span>
+                                            <span v-else></span>
+                                        </div>
+
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <div class="w-100 sty-input-wrapper">
+                                                <select class="w-100 sty-inp" style="background-color: white;" @change="updateSubGroups($event)" v-model="superParent">
+                                                    <option value="">Select Under Group</option>
+                                                    <option value="Assets">Assets</option>
+                                                    <option value="Liabilities">Liabilities</option>
+                                                    <option value="Income">Income</option>
+                                                    <option value="Expenses">Expenses</option>
+                                                </select>
+                                                <label class="sty-label">Under Group</label>
+                                                <span v-if="errors.parent_name" class="error">{{ errors.parent_name }}</span>
+                                                <span v-else></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="sty-input-wrapper w-100 mb-3">
+                                            <select class="w-100 sty-inp" id="groupSelection" style="background-color: white;" :style="{ borderColor: errors.under_group ? 'red' : '' }">
+                                                <option value="">Select Sub Group</option>
+                                                <option v-for="item in subGroups" :value="item">{{ item }}</option>
+                                            </select>
+                                            <label class="sty-label">Sub Group</label>
+                                            <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
+                                            <span v-else></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="submitGroup">Add Group</button>
+                                </div>
+                                {% endverbatim %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GROUP VIEW MODAL  -->
+                    <div class="modal fade" id="groupViewModal" tabindex="-1" aria-labelledby="groupUpdateModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                            <div class="modal-content">
+                                {% verbatim %}
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="groupUpdateModalLabel">Group Creation</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    NAME: {{ name }} <br>
+                                    PARENT: {{ parent }} <br>
+                                    SUPER PARENT: {{ superParent }}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="submitGroup">Add Group</button>
+                                </div>
+                                {% endverbatim %}
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- included code -->
                     <div class="container mt-3 mb-4">
                         <div class="table-responsive" id="groupTableDiv">
@@ -127,7 +205,7 @@
                         Create Ledger
                     </button>
 
-                    <!-- Modal -->
+                    <!-- LEDGER CREATION MODAL -->
                     <div class="modal fade" id="ledgerCreation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-xl modal-dialog-scrollable">
                         <div class="modal-content">
@@ -364,6 +442,46 @@
                         </div>
                     </div>
 
+                    <!-- LEDGER VIEW MODAL -->
+                    <div class="modal fade" id="ledgerView" tabindex="-1" aria-labelledby="ledgerViewLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="ledgerViewLabel">Ledger Creation Form</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                    {% verbatim %}
+                                        ledger_name: {{ formData.ledger_name }}<br>
+                                        nature: {{ formData.nature }}<br>
+                                        gst_number: {{ formData.gst_number }}<br>
+                                        alis: {{ formData.alis }}<br>
+                                        based_on: {{ formData.based_on }}<br>
+                                        contact_person_name: {{ formData.contact_person_name }}<br>
+                                        group_name: {{ formData.group_name }}<br>
+                                        area: {{ formData.area }}<br>
+                                        contact_person_number: {{ formData.contact_person_number }}<br>
+                                        pan_number: {{ formData.pan_number }}<br>
+                                        fixed: {{ formData.fixed }}<br>
+                                        contact_person_email: {{ formData.contact_person_email }}<br>
+                                        address: {{ formData.address }}<br>
+                                        country: {{ formData.country }}<br>
+                                        state: {{ formData.state }}<br>
+                                        city: {{ formData.city }}<br>
+                                        pin_code: {{ formData.pin_code }}<br>
+                                        beneficiary_name: {{ formData.beneficiary_name }}<br>
+                                        account_no: {{ formData.account_no }}<br>
+                                        ifsc_code: {{ formData.ifsc_code }}<br>
+                                        bank_name: {{ formData.bank_name }}<br>
+                                        branch_name: {{ formData.branch_name }}<br>
+                                        opening_balance: {{ formData.opening_balance }}<br>
+                                        dr_cr: {{ formData.dr_cr }}<br>
+                                    {% endverbatim %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="container mt-3 mb-4">
                         <div class="table-responsive" id="ledgerTableDiv" style="font-family: 'Calibri', sans-serif !important; height: max-content;">
                             {% verbatim %}
@@ -424,7 +542,7 @@
                     </button>
                 </div>
 
-                <!-- Modal -->
+                <!-- COST CENTER CREATE Modal -->
                 <div class="modal fade" id="costCenterCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
                         <div class="modal-content">
@@ -462,6 +580,69 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- COST CENTER UPDATE MODAL -->
+                <div class="modal fade" id="costCenterUpdateModal" tabindex="-1" aria-labelledby="costCenterUpdateModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="costCenterUpdateModalLabel">Cost Center Creation</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                {% verbatim %}
+                                <div class="row">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="text" class="sty-inp form-control" v-model="name">
+                                        <label class="sty-label">Cost Center Name</label>
+                                        <span v-if="errors.group_name || errors.already_exist" class="error">{{ errors.group_name || errors.already_exist }}</span>
+                                        <span v-else></span>
+                                    </div>
+
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <select class="w-100 sty-inp" style="background-color: white;" id="costCreationSelectionOnUpdate">
+                                            <option value="">Select Under Group</option>
+                                            <option v-for="item in costCenterList" :value="item">{{ item }}</option>
+                                        </select>
+                                        <label class="sty-label">Under Group</label>
+                                        <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="submitCostCenter">Save changes</button>
+                                </div>
+                                {% endverbatim %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COST CENTER VIEW MODAL -->
+                <div class="modal fade" id="costCenterViewModal" tabindex="-1" aria-labelledby="costCenterViewModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="costCenterViewModalLabel">Cost Center Creation</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                {% verbatim %}
+                                <div class="row">
+                                    Name: {{ name }} <br>
+                                    Parent: {{ parent }}
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                                {% endverbatim %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
 
                 <div class="container mt-3 mb-4">
                     <div class="table-responsive" id="costCenterTableDiv">
@@ -503,7 +684,7 @@
                     </button>
                 </div>
 
-                <!-- Modal -->
+                <!-- CREATE AND UPDATE MODAL -->
                 <div class="modal fade" id="voucherTypeCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
                     <div class="modal-content">
@@ -519,13 +700,13 @@
                                     <div class="sty-input-wrapper w-100 mb-3">
                                         <select class="w-100 sty-inp form-control" style="background-color: white;" v-model="formData.voucher_type" :class="{ 'error-message': errors.voucher_type }">
                                             <option value="Select Voucher Option">Select Voucher Option</option>
-                                            <option value="purchase">Purchase</option>
-                                            <option value="sale">Sale</option>
-                                            <option value="general">General</option>
-                                            <option value="expenses">Expenses</option>
-                                            <option value="income">Income</option>
-                                            <option value="payment">Payment</option>
-                                            <option value="receipt">Receipt</option>
+                                            <option value="purchase_voucher">Purchase Voucher</option>
+                                            <option value="sale_voucher">Sale Voucher</option>
+                                            <option value="general_voucher">General Voucher</option>
+                                            <option value="expenses_voucher">Expenses Voucher</option>
+                                            <option value="income_voucher">Income Voucher</option>
+                                            <option value="payment_voucher">Payment Voucher</option>
+                                            <option value="receipt_voucher">Receipt Voucher</option>
                                         </select>
                                         <label class="sty-label">Voucher Types</label>
                                         <span v-if="errors.voucher_type" class="error">{{ errors.voucher_type[0] }}</span>
@@ -551,7 +732,7 @@
                                     </div>
                                 </div>
                             </div>
-                                
+
                             <div class="row" v-for="(form, index) in forms" :key="index">
                                 <p class="lead text-center">Voucher Date {{ getFormNumber(index) }}</p>
 
@@ -604,12 +785,53 @@
                                 <span>ADD</span>
                             </div>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" @click="submitVoucherData">Save changes</button>
+                            <button type="submit" class="btn btn-primary" @click="submitVoucherData(formData.id)">Save changes</button>
                         </div>
                         {% endverbatim %}
                     </div>
                     </div>
                 </div>
+
+                <!-- VIEW MODAL -->
+                <div class="modal fade" id="voucherTypeViewModal" tabindex="-1" aria-labelledby="voucherTypeViewModal" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        {% verbatim %}
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="voucherTypeViewModal">Voucher Type Creation</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <p>voucher_type: {{this.formData.voucher_type}}</p>
+                                <p>voucher_name: {{this.formData.voucher_name}}</p>
+                                <p>voucher_short_name: {{this.formData.voucher_short_name}}</p>
+
+
+                                <div class="row" v-for="(form, index) in forms" :key="index">
+                                    Voucher indexing {{ index }}
+                                    <p>voucher_type: {{ form.voucher_type }}</p>
+                                    <p>from_date: {{ form.from_date }}</p>
+                                    <p>to_date: {{ form.to_date }}</p>
+                                    <p>prefix: {{ form.prefix }}</p>
+                                    <p>suffix: {{ form.suffix }}</p>
+                                    <hr>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div @click.prevent="addForm" class="me-auto btn btn-primary" style="border-radius: 10px;">
+                                <i class="fa-solid fa-circle-plus"></i>
+                                <span>ADD</span>
+                            </div>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" @click="submitVoucherData(formData.id)">Save changes</button>
+                        </div>
+                        {% endverbatim %}
+                    </div>
+                    </div>
+                </div>
+
 
                 <div class="container mt-3 mb-4" style="margin-bottom: 200px !important;">
                     <div class="table-responsive" id="voucherTypeTableDiv">
@@ -618,8 +840,10 @@
                             <thead>
                                 <tr>
                                     <th>Actions</th>
-                                    <th>Ledger Name</th>
-                                    <th>Ledger Name</th>
+                                    <th>Id</th>
+                                    <th>voucher_type</th>
+                                    <th>voucher_name</th>
+                                    <th>voucher_short_name</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -713,11 +937,25 @@ new Vue({
                     this.errors = error.response.data;
                 });
             },
-        viewRequestedData(){
-            alert("view");
+        viewRequestedData(id){
+            $('#groupViewModal').modal('show');
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.get(`http://127.0.0.1:8000/group_data/${id}`)
+            .then(response => {
+                    this.name = response.data.groups[0].name;
+                    this.parent = response.data.groups[0].parent;
+                    this.superParent = response.data.groups[0].super_parent;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
         },
-        editRequestedData(){
-            alert('edit');
+        editRequestedData(id){
+            alert(id);
+            $('#groupUpdateModal').modal('show');
+
         },
     },
     mounted() {
@@ -769,27 +1007,7 @@ new Vue({
         cities: []
     },
     methods: {
-        voucherValidate(fieldName, form, index) {
-            if (!form[fieldName]) {
-              // Initialize nomError for this form if it doesn't exist
-              if (!this.voucherError[index]) {
-                this.$set(this.nomError, index, {});
-              }
-              // Update the error message for the field
-              this.$set(this.nomError[index], fieldName, `This field is required`);
-              this.isValid = false;
-            }
-        },
         submitLedger(){
-            // VALIDATION FOR VOUCHER CLONED FORM
-            this.forms.forEach((form, index) => {
-                this.voucherValidate('voucher_type', form, index);
-                this.voucherValidate('from_date', form, index);
-                this.voucherValidate('to_date', form, index);
-                this.voucherValidate('prefix', form, index);
-                this.voucherValidate('suffix', form, index);
-            });
-
             let ledgerData = new FormData();
             for (const key in this.formData) {
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
@@ -878,6 +1096,24 @@ new Vue({
                 this.formData.branch_name = '';
               });
         },
+
+        viewRequestedData(id){
+            $('#ledgerView').modal('show');
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.get(`http://127.0.0.1:8000/api/ledger_creation/${id}`)
+                .then(response => {
+                    this.formData = response.data;
+                    console.log('Form submitted successfully:', response.data);
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error: ->", this.errors);
+                });
+        },
+        editRequestedData(id){
+            alert(id);
+        },
     },
     mounted() {
             axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
@@ -942,13 +1178,44 @@ new Vue({
                     this.errors = error.response.data;
                 });
         },
+        viewRequestedData(id){
+            $('#costCenterViewModal').modal('show');
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.get(`http://127.0.0.1:8000/cost_center_data/${id}/`)
+                .then(response => {
+                    this.name = response.data.groups[0].name;
+                    this.parent = response.data.groups[0].parent;
+                })
+                .catch(error => {
+                    console.log("Errors -->", error.response.data);
+                    this.errors = error.response.data;
+                });
+        },
+        editRequestedData(id){
+            alert("update");
+            $('#costCenterUpdateModal').modal('show');
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.get(`http://127.0.0.1:8000/cost_center_data/${id}/`)
+                .then(response => {
+                    this.name = response.data.groups[0]['name'];
+                    console.log("COST CENTER DATA ON UPDATE", response.data.groups[0]);
+                    $("#costCreationSelectionOnUpdate").val(response.data.groups[0]['parent']).trigger('change');
+                })
+                .catch(error => {
+                    console.log("Errors -->", error.response.data);
+                    this.errors = error.response.data;
+                });
+        },
     },
     mounted(){
         axios.get(`http://127.0.0.1:8000/api/get_all_cost_centers/`)
             .then(response => {
                 this.costCenterList = response.data.cost_centers;
-                $('#costCreationSelection').select2({
-                    dropdownParent: $('#costCenterCreationModal'),
+                $('#costCreationSelection, #costCreationSelectionOnUpdate').select2({
+                    dropdownParent: $('#costCenterCreationModal, #costCenterUpdateModal'),
                     width: '100%',
                 });
             })
@@ -1001,31 +1268,91 @@ var app = new Vue({
             this.forms.splice(index, 1);
         },
         getFormNumber: index => index + 1,
-        submitVoucherData(){
+        submitVoucherData(id){
             if(this.forms){
                 this.formData['voucher_indexing'] = this.forms;
             }
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-            axios.post(`http://127.0.0.1:8000/api/voucher_type/`, this.formData)
+            // TO UPDATE VOUCHER DETAILS
+            if(id){
+                axios.patch(`http://127.0.0.1:8000/api/voucher_type/${id}/`, this.formData)
+                    .then(response => {
+                        toastr.success(response.message, "Voucher Details Updated!");
+                        //$('#voucherTypeCreationModal').modal('hide');
+                        //setTimeout(function() {
+                        //    location.reload();
+                        //}, 600);
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data;
+                        console.error('Error fetching data:', this.errors);
+                    });
+            }else{
+            // TO ADD VOUCHER DETAILS
+                axios.post(`http://127.0.0.1:8000/api/voucher_type/`, this.formData)
+                    .then(response => {
+                        toastr.success(response.message, "Voucher Details Added!");
+                        $('#voucherTypeCreationModal').modal('hide');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 600);
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data;
+                        console.error('Error fetching data:', this.errors);
+                    });
+            }
+        },
+        viewRequestedData(id){
+            $('#voucherTypeViewModal').modal('show');
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+            axios.get(`http://127.0.0.1:8000/api/voucher_type/${id}/`)
                 .then(response => {
-                    toastr.success(response.message, "Voucher Details Added!");
-                    $('#voucherTypeCreationModal').modal('hide');
-                    setTimeout(function() {
-                        location.reload();
-                    }, 600);
+                    this.formData = response.data;
+                    if(response.data){
+                        axios.get(`http://127.0.0.1:8000/api/get_voucher_index/${this.formData.id}/`)
+                            .then(response => {
+                                this.forms = response.data;
+                            })
+                            .catch(error => {
+                                this.errors = error.response.data;
+                                console.error('Error fetching data:', this.errors);
+                            });
+                    }
                 })
                 .catch(error => {
                     this.errors = error.response.data;
                     console.error('Error fetching data:', this.errors);
                 });
         },
-        viewRequestedData(){
-            alert('view');
-        },
-        editRequestedData(){
-            alert('edit');
+        editRequestedData(id){
+            $('#voucherTypeCreationModal').modal('show');
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+            axios.get(`http://127.0.0.1:8000/api/voucher_type/${id}/`)
+                .then(response => {
+                    this.formData = response.data;
+                    if(response.data){
+                        axios.get(`http://127.0.0.1:8000/api/get_voucher_index/${this.formData.id}/`)
+                            .then(response => {
+                                this.forms = response.data;
+                            })
+                            .catch(error => {
+                                this.errors = error.response.data;
+                                console.error('Error fetching data:', this.errors);
+                            });
+                    }
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                    console.error('Error fetching data:', this.errors);
+                });
+
         },
     },
     mounted() {

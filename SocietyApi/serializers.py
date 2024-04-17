@@ -416,8 +416,6 @@ class FlatDetailSerializers(serializers.ModelSerializer):
             return "No"
 
 
-
-
 class MemberForUnitSerializer(serializers.ModelSerializer):
     # Keep it if Nominees required in future.
     # nominees = NomineesSerializer(many=True, required=False)
@@ -484,14 +482,16 @@ class CostCenterSerializersList(serializers.ModelSerializer):
 class VoucherIndexingSerializer(serializers.ModelSerializer):
     class Meta:
         model = VoucherIndexing
-        fields = ['from_date', 'to_date', 'prefix', 'suffix']
+        fields = ['voucher_type', 'from_date', 'to_date', 'prefix', 'suffix']
 
+
+# CREATE SERIALIZERS(['create', 'retrieve', 'partial_update', 'update'])
 class VoucherTypeSerializer(serializers.ModelSerializer):
     voucher_indexing = VoucherIndexingSerializer(many=True, required=False)
 
     class Meta:
         model = VoucherType
-        fields = ['voucher_type', 'voucher_name', 'voucher_short_name', 'voucher_indexing']
+        fields = ['id', 'voucher_type', 'voucher_name', 'voucher_short_name', 'voucher_indexing']
 
     def create(self, validated_data):
         indexing_data = validated_data.pop('voucher_indexing', None)
@@ -500,6 +500,20 @@ class VoucherTypeSerializer(serializers.ModelSerializer):
             for indexing_item in indexing_data:
                 VoucherIndexing.objects.create(voucher_type=voucher_type, **indexing_item)
         return voucher_type
+
+
+# DISPLAY SERIALIZERS
+class VoucherTypeDisplaySerializer(serializers.ModelSerializer):
+    voucher_indexing = VoucherIndexingSerializer(many=True, required=False)
+    voucher_type_formatted = serializers.SerializerMethodField()
+
+    class Meta:
+        model = VoucherType
+        fields = ['id', 'voucher_type_formatted', 'voucher_name', 'voucher_short_name', 'voucher_indexing']
+
+    def get_voucher_type_formatted(self, obj):
+        voucher_type_choices = dict(VoucherType._meta.get_field('voucher_type').choices)
+        return voucher_type_choices.get(obj.voucher_type, '')
 
 
 # FOR LIST
