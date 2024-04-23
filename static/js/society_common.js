@@ -4176,3 +4176,110 @@ new Vue({
         });
     },
 })
+
+
+//Purchase Voucher
+new Vue({
+    el: '#purchases',
+    data: {
+      purchases: [{
+        account: '',
+      }] // Initial purchase div
+    },
+    methods: {
+      addMore() {
+        this.purchases.push({}); // Add an empty object to the array
+      },
+      openModal(id) {
+        // alert(id);
+        // alert(typeof(id));
+
+        // const result = this.purchases.find(item => item.id === index);
+
+        // console.log(this.purchases);
+        // console.log(result);
+        // Open modal for the specific purchase item using the index
+        $('#addCostCenter').modal('show');
+      }
+    }
+  });
+
+//Sale Voucher
+  new Vue({
+    el: '#sales',
+    data: {
+      sales: [{
+        amount: '',
+      }] // Initial purchase div
+    },
+    methods: {
+        addSale() {
+        this.sales.push({}); // Add an empty object to the array
+      },
+      openModal(id) {
+        // alert(id);
+        // alert(typeof(id));
+
+        // const result = this.purchases.find(item => item.id === index);
+
+        // console.log(this.purchases);
+        // console.log(result);
+        // Open modal for the specific purchase item using the index
+        $('#addSaleCostCenter').modal('show');
+      }
+    }
+  });
+
+
+  //Expense Voucher
+  new Vue({
+    el: '#expenses',
+    data: {
+      expenses: [{
+        expense_amount: '',
+      }] // Initial purchase div
+    },
+    methods: {
+        addExpense() {
+        this.expenses.push({}); // Add an empty object to the array
+      },
+      openModal(id) {
+        // alert(id);
+        // alert(typeof(id));
+
+        // const result = this.purchases.find(item => item.id === index);
+
+        // console.log(this.purchases);
+        // console.log(result);
+        // Open modal for the specific purchase item using the index
+        $('#addExpenseCostCenter').modal('show');
+      }
+    }
+  });
+
+
+//Income Voucher
+new Vue({
+    el: '#incomes',
+    data: {
+        incomes: [{
+        income_amount: '',
+        }] // Initial purchase div
+    },
+    methods: {
+        addIncome() {
+        this.incomes.push({}); // Add an empty object to the array
+        },
+        openModal(id) {
+        // alert(id);
+        // alert(typeof(id));
+
+        // const result = this.purchases.find(item => item.id === index);
+
+        // console.log(this.purchases);
+        // console.log(result);
+        // Open modal for the specific purchase item using the index
+        $('#addIncomeCostCenter').modal('show');
+        }
+    }
+    });

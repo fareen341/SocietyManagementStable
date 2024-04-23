@@ -79,6 +79,8 @@ urlpatterns = [
     path('cost_center_data', views.get_cost_center_datatable, name='cost_center_data'),
     path('cost_center_data/<int:id>/', views.get_cost_center_datatable, name='cost_center_data_retrive'),
 
+    path('voucher_creation', views.voucher_creation, name='voucher_creation'),
+
 
     # UNIT TEST
     path('unit_test', views.unit_test, name='unit_test'),

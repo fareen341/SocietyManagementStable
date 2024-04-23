@@ -402,3 +402,8 @@ def get_cost_center_datatable(request, id=None):
         }
         data.append(group_data)
     return JsonResponse({'groups': data})
+
+
+def voucher_creation(request):
+    datatable_columns = [0, 2, 3]
+    return render(request, 'voucher_creation_new.html', {'datatable_columns': datatable_columns})
