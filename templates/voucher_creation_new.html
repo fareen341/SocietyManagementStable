@@ -33,8 +33,8 @@
     <div class="tab-content" id="costCenterEntirePage">
 
     <div class="tab-pane fade show active" id="purchase-tab-pane" role="tabpanel" aria-labelledby="purchase-tab" tabindex="0">
-        <div class="gap-4">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#purchaseVoucherCreate">Create Purchase Voucher</button>
+        <div class="d-flex">
+            <button type="button" class="ms-auto add-mem-btn" data-bs-toggle="modal" data-bs-target="#purchaseVoucherCreate">Create Purchase Voucher</button>
         </div>
         {% verbatim %}
         <div>
@@ -81,15 +81,12 @@
             <div class="modal-dialog modal-xl">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="purchaseVoucherCreateLabel">Add Cost Center</h5>
+                  <h5 class="modal-title" id="heading">Purchase Voucher Creation</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <!-- Your form fields for adding cost center here -->
-                  <div class="form-group">
-                    <label for="costCenter">Cost Center</label>
-                    <input type="text" class="form-control" id="costCenter">
-                    <div class="container shadow pt-4">
+                  <div class="form-group">                  
+                    <div class="container pt-4">
                         <form action="">
                             <div class="row">
                                 <div class="col-lg-4 mb-3">
@@ -214,11 +211,11 @@
         </div>
 
         <!-- CREATE MODAL FOR ADD COST CENTER -->
-        <div class="modal fade" id="purchaseCostCenter" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="purchaseCostCenter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Add Cost Center</h5>
+                  <h5 class="modal-title" id="heading">Add Cost Center</h5>
                   <button type="button" class="btn-close" aria-label="Close" @click="closePurchaseCostCenter"></button>
                 </div>
                 <div class="modal-body">
@@ -240,8 +237,10 @@
                                     {{ value }}
                                 </td>
                                 <td>
-                                    <input type="text" placeholder="Input Cost" class="sty-inp w-100 form-control">
-                                    <label class="sty-label" for="">Input Cost</label>
+                                    <div class="sty-input-wrapper w-100">
+                                        <input type="text" placeholder="Input Cost" class="sty-inp w-100 form-control">
+                                        <label class="sty-label" for="">Input Cost</label>
+                                    </div>
                                 </td>
                                 <!-- <td>
                                     <span @click="viewRequestedData(tenantData.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
@@ -403,11 +402,156 @@
                 </div>
             </form>
         </div>
+    </div> -->
+
+    <div class="tab-pane fade" id="journal-tab-pane" role="tabpanel" aria-labelledby="journal-tab" tabindex="0">
+
+        <div class="container">
+            <button class="add-mem-btn" data-bs-toggle="modal" data-bs-target="#journalVoucherCreate">Create Journal Voucher</button>
+        </div>
+
+        <!-- Create Journal Voucher Modal -->
+        <div class="modal fade" id="journalVoucherCreate" tabindex="-1" aria-labelledby="journalVoucherLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="journalVoucherLabel">Journal Voucher Creation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="">
+                        <div class="row">
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <select class="w-100 sty-inp form-control" name="" id="">
+                                        <option value="">Voucher 1</option>
+                                        <option value="">Voucher 2</option>
+                                    </select>
+                                    <label class="sty-label" for="">Voucher Type</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="text" name="" id="">
+                                    <label class="sty-label" for="">Voucher Number</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="date" name="" id="">
+                                    <label class="sty-label" for="">Voucher Date</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="date" name="" id="">
+                                    <label class="sty-label" for="">Booking Date</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="mt-1 mb-3">
+
+                        <div class="" id="journals">
+                            <!-- <div v-for="(item, index) in journals" :key="index"> -->
+                                <div class="row" >
+                                    <div class="col-1 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <select name="" class="sty-inp form-control">
+                                                <option value="dr">DR</option>
+                                                <option value="cr">CR</option>
+                                            </select>
+                                            <label class="sty-label" for="">DR/CR</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-3 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="text" name="" >
+                                            <label class="sty-label" for="">Ledger Name</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="number" class="sty-inp form-control" name="" >
+                                            <label class="sty-label" for="">Debit Amount</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="number" class="sty-inp form-control" name="" >
+                                            <label class="sty-label" for="">Credit Amount</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <button class="btn btn-primary">
+                                            Against Reference
+                                        </button>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <button class="btn btn-primary">
+                                            Cost Center
+                                        </button>
+                                    </div>
+                                </div>
+                            <!-- </div> -->
+                            <div class="row">
+                                <div class="col-2 mb-3">
+                                    <button class="btn btn-primary"  type="button">Add More</button>
+                                </div>
+                                <div class="col-2 mb-3">
+
+                                </div>
+                                <div class="col-lg-2 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="number" name="" id="">
+                                        <label class="sty-label" for="">Debit Total Amount</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="number" name="" id="">
+                                        <label class="sty-label" for="">Credit Total Amount</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input type="text" class="sty-inp form-control" name="" id="">
+                                        <label class="sty-label" for="">Amount in Words</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-6 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <textarea class="sty-inp form-control" name="" id="" cols="30" rows="1"></textarea>
+                                        <label class="sty-label" for="">Narration</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+            </div>
+        </div>
     </div>
 
-    <div class="tab-pane fade" id="journal-tab-pane" role="tabpanel" aria-labelledby="journal-tab" tabindex="0">...</div>
-
-    <div class="tab-pane fade" id="expense-tab-pane" role="tabpanel" aria-labelledby="expense-tab" tabindex="0">
+    <!-- <div class="tab-pane fade" id="expense-tab-pane" role="tabpanel" aria-labelledby="expense-tab" tabindex="0">
         <div class="container shadow pt-4">
             <form action="">
                 <div class="row">
@@ -672,10 +816,378 @@
                 </div>
             </form>
         </div>
-    </div>
-    <div class="tab-pane fade" id="payment-tab-pane" role="tabpanel" aria-labelledby="payment-tab" tabindex="0">...</div>
-    <div class="tab-pane fade" id="receipt-tab-pane" role="tabpanel" aria-labelledby="receipt-tab" tabindex="0">...</div>
     </div> -->
+    <div class="tab-pane fade" id="payment-tab-pane" role="tabpanel" aria-labelledby="payment-tab" tabindex="0">
+
+        <div class="container">
+            <button class="add-mem-btn" data-bs-toggle="modal" data-bs-target="#paymentVoucherCreate">Create Payment Voucher</button>
+        </div>
+
+        <!-- Create Payment Voucher Modal -->
+        <div class="modal fade" id="paymentVoucherCreate" tabindex="-1" aria-labelledby="paymentVoucherLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="paymentVoucherLabel">Payment Voucher Creation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="">
+                        <div class="row">
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <select class="w-100 sty-inp form-control" name="" id="">
+                                        <option value="">Voucher 1</option>
+                                        <option value="">Voucher 2</option>
+                                    </select>
+                                    <label class="sty-label" for="">Voucher Type</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="text" name="" id="">
+                                    <label class="sty-label" for="">Voucher Number</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="date" name="" id="">
+                                    <label class="sty-label" for="">Voucher Date</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="date" name="" id="">
+                                    <label class="sty-label" for="">Booking Date</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="mt-1 mb-3">
+
+                        <div class="" id="payments">
+                            <!-- <div v-for="(item, index) in payments" :key="index"> -->
+                                <div class="row" >
+                                    <div class="col-1 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <select name="" class="sty-inp form-control">
+                                                <option value="dr">DR</option>
+                                                <option value="cr">CR</option>
+                                            </select>
+                                            <label class="sty-label" for="">DR/CR</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <select class="sty-inp form-control" name="" id="">
+                                                <option value="">Bank</option>
+                                                <option value="">Cash</option>
+                                            </select>
+                                            <label for="" class="sty-label">Bank/Cash</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <!-- <input class="sty-inp form-control" type="text" name="" > -->
+                                            <select class="sty-inp form-control" name="" id="">
+                                                <option value="">Ledger 1</option>
+                                                <option value="">Ledger 2</option>
+                                                <option value="">Ledger 3</option>
+                                            </select>
+                                            <label class="sty-label" for="">Ledger Name</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="number" class="sty-inp form-control" name="" >
+                                            <label class="sty-label" for="">Debit Amount</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="number" class="sty-inp form-control" name="" >
+                                            <label class="sty-label" for="">Credit Amount</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <button class="btn btn-primary">
+                                            Against Reference
+                                        </button>
+                                    </div>
+
+                                    <div class="col-lg-1 mb-3">
+                                        <button class="btn btn-primary">
+                                            Cost 
+                                        </button>
+                                    </div>
+                                </div>
+                            <!-- </div> -->
+                            <div class="row">
+                                <div class="col-2 mb-3">
+                                    <button class="btn btn-primary"  type="button">Add More</button>
+                                </div>
+                                <div class="col-3 mb-3">
+                                    <!-- this is empty to manage the space accordingly -->
+                                </div>
+                                <div class="col-lg-2 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="number" name="" id="">
+                                        <label class="sty-label" for="">Debit Total Amount</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="number" name="" id="">
+                                        <label class="sty-label" for="">Credit Total Amount</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <label class="sty-label" for="">Amount in Words</label>
+                                </div>
+                            </div>
+
+                            <div class="col-6 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <textarea class="sty-inp form-control" name="" id="" cols="30" rows="1"></textarea>
+                                    <label class="sty-label" for="">Narration</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="text" name="" id="">
+                                    <label class="sty-label" for="">Cheque Number</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="date" name="" id="">
+                                    <label class="sty-label" for="">Date</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="text" name="" id="">
+                                    <label class="sty-label" for="">Bank Name</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                        </div>
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="receipt-tab-pane" role="tabpanel" aria-labelledby="receipt-tab" tabindex="0">
+
+        <div class="container">
+            <button class="add-mem-btn" data-bs-toggle="modal" data-bs-target="#receiptVoucherCreate">Create Receipt Voucher</button>
+        </div>
+
+        <!-- Create Receipt Voucher Modal -->
+        <div class="modal fade" id="receiptVoucherCreate" tabindex="-1" aria-labelledby="receiptVoucherLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h1 class="modal-title fs-5" id="receiptVoucherLabel">Receipt Voucher Creation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="">
+                        <div class="row">
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <select class="w-100 sty-inp form-control" name="" id="">
+                                        <option value="">Voucher 1</option>
+                                        <option value="">Voucher 2</option>
+                                    </select>
+                                    <label class="sty-label" for="">Voucher Type</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="text" name="" id="">
+                                    <label class="sty-label" for="">Voucher Number</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="date" name="" id="">
+                                    <label class="sty-label" for="">Voucher Date</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="date" name="" id="">
+                                    <label class="sty-label" for="">Booking Date</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="mt-1 mb-3">
+
+                        <div class="" id="receipts">
+                            <!-- <div v-for="(item, index) in receipts" :key="index"> -->
+                                <div class="row" >
+                                    <div class="col-1 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <select name="" class="sty-inp form-control">
+                                                <option value="dr">DR</option>
+                                                <option value="cr">CR</option>
+                                            </select>
+                                            <label class="sty-label" for="">DR/CR</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <select class="sty-inp form-control" name="" id="">
+                                                <option value="">Bank</option>
+                                                <option value="">Cash</option>
+                                            </select>
+                                            <label for="" class="sty-label">Bank/Cash</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <!-- <input class="sty-inp form-control" type="text" name="" > -->
+                                            <select class="sty-inp form-control" name="" id="">
+                                                <option value="">Ledger 1</option>
+                                                <option value="">Ledger 2</option>
+                                                <option value="">Ledger 3</option>
+                                            </select>
+                                            <label class="sty-label" for="">Ledger Name</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="number" class="sty-inp form-control" name="" >
+                                            <label class="sty-label" for="">Debit Amount</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="number" class="sty-inp form-control" name="" >
+                                            <label class="sty-label" for="">Credit Amount</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <button class="btn btn-primary">
+                                            Against Reference
+                                        </button>
+                                    </div>
+
+                                    <div class="col-lg-1 mb-3">
+                                        <button class="btn btn-primary">
+                                            Cost 
+                                        </button>
+                                    </div>
+                                </div>
+                            <!-- </div> -->
+                            <div class="row">
+                                <div class="col-2 mb-3">
+                                    <button class="btn btn-primary"  type="button">Add More</button>
+                                </div>
+                                <div class="col-3 mb-3">
+                                    <!-- this is empty to manage the space accordingly -->
+                                </div>
+                                <div class="col-lg-2 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="number" name="" id="">
+                                        <label class="sty-label" for="">Debit Total Amount</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="number" name="" id="">
+                                        <label class="sty-label" for="">Credit Total Amount</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                    <label class="sty-label" for="">Amount in Words</label>
+                                </div>
+                            </div>
+
+                            <div class="col-6 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <textarea class="sty-inp form-control" name="" id="" cols="30" rows="1"></textarea>
+                                    <label class="sty-label" for="">Narration</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="text" name="" id="">
+                                    <label class="sty-label" for="">Cheque Number</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="date" name="" id="">
+                                    <label class="sty-label" for="">Date</label>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input class="sty-inp form-control" type="text" name="" id="">
+                                    <label class="sty-label" for="">Bank Name</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                        </div>
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    </div>
 </div>
 
 <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script> -->
@@ -749,24 +1261,7 @@ $(document).ready(function() {
         scrollX: true
     });
 
-    // Set the DataTable info text to be centered
-    //$('#costCenterDatatable, #purchaseVoucherDatatable').css({
-    //    'text-align': 'center',
-    //    'position': 'relative',
-    //    'left': '40%',
-    //    'padding-top': '20px',
-    //    // 'margin-right': 'auto',
-    //    'display': 'block'
-    //});
-//
-    //// Adjust the info text position when the table is redrawn
-    //table.on('draw.dt', function () {
-    //    $('#costCenterDatatable, #purchaseVoucherDatatable').css({
-    //        'text-align': 'center',
-    //        'margin-left': 'auto',
-    //        'margin-right': 'auto'
-    //    });
-    //});
+    
 });
 
 
@@ -802,6 +1297,18 @@ new Vue({
         $('#purchaseCostCenter').modal('hide');
       },
     }
-  });
+});
+
+new Vue({
+    el: '#journals',
+    data: {
+        journals: [{
+            journal_dr_amount: '',
+            journal_cr_amount: '',
+        }]
+    },
+    
+});
+
 </script>
 {% endblock body %}
