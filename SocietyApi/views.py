@@ -13,7 +13,7 @@ from rest_framework.decorators import action
 from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from SocietyApp.models import *
-
+from django.utils import timezone
 
 
 # Create your views here.
@@ -198,9 +198,15 @@ class MemberView(viewsets.ModelViewSet):
             member_serializer = self.get_serializer(data=modified_data)
 
             if member_serializer.is_valid():
-                total_ownership_percentage = Members.objects.filter(wing_flat=modified_data['wing_flat']).aggregate(total_ownership=Sum('ownership_percent'))['total_ownership']
+                total_ownership_percentage = Members.objects.filter(
+                    wing_flat=modified_data['wing_flat'],
+                    date_of_cessation__isnull=True
+                ).aggregate(total_ownership=Sum('ownership_percent'))['total_ownership']
                 if total_ownership_percentage and total_ownership_percentage + int(modified_data['ownership_percent'])  > 100:
-                    raise serializers.ValidationError({'ownership_percent': [f'Total ownership percentage cannot exceed 100%, This flat left with {100 - total_ownership_percentage} % ownership!']})
+                    raise serializers.ValidationError(
+                        {'ownership_percent': [
+                            f'Total ownership percentage cannot exceed 100%, This flat left with {100 - total_ownership_percentage} % ownership!'
+                        ]})
 
                 member_instance = member_serializer.save()
 
@@ -237,10 +243,11 @@ class MemberView(viewsets.ModelViewSet):
 
         for member in serializer.data:
             # ownership_percent = member['ownership_percent']
-            total_ownership_percentage = Members.objects.filter(wing_flat=member['wing_flat']).aggregate(total_ownership=Sum('ownership_percent'))['total_ownership']
+            total_ownership_percentage = Members.objects.filter(
+                wing_flat=member['wing_flat'], date_of_cessation__isnull=True
+            ).aggregate(total_ownership=Sum('ownership_percent'))['total_ownership']
             member['ownership_percent'] = total_ownership_percentage
         return Response(serializer.data)
-
 
     def retrieve(self, request, *args, **kwargs):
         instance_id = kwargs.get('pk')
@@ -256,8 +263,6 @@ class MemberView(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-
-
     @action(detail=False, methods=['get'])
     def member_history_retrieve(self, request, *args, **kwargs):
         wing_flat_id = self.request.query_params.get('wing_flat__id')
@@ -268,7 +273,6 @@ class MemberView(viewsets.ModelViewSet):
 
         serializer = MembersSerializer(instances, many=True, context={'request': request, 'view': self})
         return Response(serializer.data)
-
 
     def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -820,19 +824,6 @@ def get_previous_suggestions(request, meeting_id):
     return JsonResponse({"previous_suggestions": serialized_suggestions.data})
 
 
-def select_ledger_group(request, group_name):
-    sub_group = []
-    if group_name == 'assets':
-        sub_group = ['Fixed Assets', 'Investment', 'Curren Assest', 'Misc Assets']
-    elif group_name == 'liabilities':
-        sub_group = ['Capital', 'Reserve', 'Loan', 'Current Liabilities', 'Misc Liabilities']
-    elif group_name == 'income':
-        sub_group = ['Direct Income', 'Indirect Income']
-    elif group_name == 'expenses':
-        sub_group = ['Direct Expenses', 'Indirect Expenses']
-    return JsonResponse({"sub_group": sub_group})
-
-
 def get_all_child_investments(parent):
     all_childs = []
     def traverse_children(investment, depth=0):
@@ -849,20 +840,6 @@ def get_all_child_investments(parent):
 class CreateGroupForLedgerView(viewsets.ModelViewSet):
     queryset = Childs.objects.all()
     serializer_class = CreateGroupForLedgerSerializers
-
-    @action(detail=False, methods=['get'])
-    def select_ledger_group(self, request, group_name):
-        try:
-            parent_investment = Childs.objects.get(name=group_name)
-            all_child_investments = get_all_child_investments(parent_investment)
-            sub_group = sorted(list(all_child_investments))
-        except Childs.DoesNotExist:
-            sub_group = []
-
-        if group_name == 'all':
-            sub_group = sorted(list(Childs.objects.all().values_list('name', flat=True)))
-        return JsonResponse({"sub_group": sub_group})
-
 
     def create(self, request, *args, **kwargs):
         print('REQUEST====> GROUP', request.data)
@@ -883,6 +860,9 @@ class CreateGroupForLedgerView(viewsets.ModelViewSet):
 
         if not super_parent:
             errors['parent_name'] = 'Parent Name Is Required'
+
+        if parent_name and not Childs.objects.filter(name=parent_name).exists():
+            errors['sub_group_error'] = f'This grp does not exists!'
 
         # if already_exists:
         #     errors['already_exist'] = 'Group Already Exists'
@@ -917,6 +897,36 @@ class CreateGroupForLedgerView(viewsets.ModelViewSet):
         serializer = self.get_serializer(child)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+    def partial_update(self, request, *args, **kwargs):
+        print("Requested data:", request.data)
+        errors = {}
+        name = request.data.get('name')
+        parent_name = request.data.get('parent')
+        super_parent = request.data.get('superParent')
+        if super_parent:
+            try:
+                child_obj = Childs.objects.get(name=name)
+                child_obj.parent = Childs.objects.get(name=super_parent)
+                child_obj.save()
+            except Childs.DoesNotExist:
+                print("does not exists")
+        return Response("PATCH request processed successfully", status=status.HTTP_200_OK)
+
+
+    @action(detail=False, methods=['get'])
+    def select_ledger_group(self, request, group_name):
+        try:
+            parent_investment = Childs.objects.get(name=group_name)
+            all_child_investments = get_all_child_investments(parent_investment)
+            sub_group = sorted(list(all_child_investments))
+        except Childs.DoesNotExist:
+            sub_group = []
+
+        if group_name == 'all':
+            sub_group = sorted(list(Childs.objects.all().values_list('name', flat=True)))
+        return JsonResponse({"sub_group": sub_group})
 
 
 class LedgerView(viewsets.ModelViewSet):
@@ -958,9 +968,39 @@ class CostCenterView(viewsets.ModelViewSet):
         return Response(serialized_data, status=status.HTTP_201_CREATED)
 
 
+    # def patch(self, request, *args, **kwargs):
+    #     print(request.data)
+    #     return Response("PATCH request processed successfully", status=status.HTTP_200_OK)
+    #     errors = {}
+    #     name = request.data.get('name')
+    #     parent_name = request.data.get('parent')
+
+    #     if not name:
+    #         errors['group_name'] = 'Cost Center Name Is Required'
+    #     if not parent_name:
+    #         errors['under_group'] = 'Please Select Under Group'
+    #     if CostCenter.objects.filter(name=name, parent__name=parent_name).exists():
+    #         errors['already_exist'] = f'Pls select different name, "{name}" under group "{parent_name}" already exists!'
+
+    #     if errors:
+    #         return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+    #     try:
+    #         parent = CostCenter.objects.get(name=parent_name)
+    #     except CostCenter.DoesNotExist:
+    #         parent = None
+
+    #     child = CostCenter.objects.create(name=name, parent=parent)
+    #     serialized_data = CostCenterSerializers(child).data
+    #     return Response(serialized_data, status=status.HTTP_201_CREATED)
+
+
 class VoucherTypeView(viewsets.ModelViewSet):
     queryset = VoucherType.objects.all()
     serializer_class = VoucherTypeSerializer
+
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_fields = ['voucher_type']
 
     def get_serializer_class(self):
         if self.action in ['create', 'retrieve', 'partial_update', 'update']:
@@ -970,24 +1010,84 @@ class VoucherTypeView(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        voucher_indexing = request.data.get('voucher_indexing')
+        voucher_serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if voucher_serializer.is_valid():
+            voucher_instance = voucher_serializer.save()
+
+            if voucher_indexing:
+                for item in voucher_indexing:
+                    voucher_indexing_id = item.get('id')
+                    if voucher_indexing_id:
+                        voucher_instance = VoucherIndexing.objects.get(pk=voucher_indexing_id)
+                        voucher_serializer = VoucherIndexingSerializer(
+                            voucher_instance, data=item, partial=True
+                        )
+                    # else:
+                    #     voucher_serializer = VoucherIndexingSerializer(data=item)
+                        if voucher_serializer.is_valid():
+                            voucher_serializer.save(member_name=voucher_instance)
+                        else:
+                            return Response(voucher_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return super().partial_update(request, *args, **kwargs)
+
 
 class VoucherIndexingView(viewsets.ModelViewSet):
     queryset = VoucherIndexing.objects.all()
     serializer_class = VoucherIndexingSerializer
 
-    @action(detail=False, methods=['get'])
+    def create(self, request, *args, **kwargs):
+        print("request data===============", request.data)
+        return super().create(request, *args, **kwargs)
+
     # GET VOUCHER INDEXING BASED ON ID OF VOUCHTER TYPE
+    @action(detail=False, methods=['get'])
     def get_voucher_indexing(self, request, *args, **kwargs):
         voucher_type_id = kwargs.get('voucher_type_id')
-        print("ID===================ID================", voucher_type_id)
         try:
             instances = VoucherIndexing.objects.filter(voucher_type=voucher_type_id)
         except VoucherIndexing.DoesNotExist:
-            return Response(data={"message": "Member not found"})
+            return Response(data={"message": "Voucher not found"})
 
         serializer = VoucherIndexingSerializer(instances, many=True, context={'request': request, 'view': self})
-        print("SERIALIZERS===============>", serializer)
         return Response(serializer.data)
+
+    # FETCH VOUCHER NUMBER BASED ON VOUCHER SELECTED
+    @action(detail=False, methods=['get'])
+    def get_voucher_number(self, request, *args, **kwargs):
+        voucher_type_id = kwargs.get('voucher_type_id')
+        try:
+            results = {}
+            current_time = timezone.now().date()
+            instances = VoucherIndexing.objects.filter(voucher_type=voucher_type_id)
+            print("instance ======", instances)
+            # CHECK FOR THE COST CENTER ALREADY ADDED, AND TAKE ITS SUFFIX AND DO ADDITION OF ONE
+            # FOR THAT WE NEED TO ADD SUFFIX TOO
+
+            if not instances:
+                results.update({
+                    'voucher_number': 1,
+                    'suffix': 1
+                })
+
+            for dates in instances:
+                if dates.from_date <= current_time <= dates.to_date:
+                    results.update({
+                        'voucher_number': dates.voucher_number,
+                        'suffix': dates.suffix
+                    })
+                    break
+                else:
+                    results.update({
+                        'voucher_number': 1,
+                        'suffix': 1
+                    })
+        except VoucherIndexing.DoesNotExist:
+            return Response(data={"message": "Voucher not found"})
+
+        return Response(results)
 
 
 class UnitTestView(viewsets.ModelViewSet):

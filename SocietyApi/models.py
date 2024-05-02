@@ -397,7 +397,7 @@ class Ledger(models.Model):
     nature = models.CharField(max_length=200)
     gst_number = models.CharField(max_length=200)
     alis = models.CharField(max_length=200)
-    based_on = models.CharField(max_length=200)
+    based_on = models.CharField(max_length=200, null=True, blank=True)
     contact_person_name = models.CharField(max_length=200)
     group_name = models.CharField(max_length=200)
     area = models.CharField(max_length=200, null=True, blank=True)
@@ -431,24 +431,6 @@ voucher_type = [
     ('receipt_voucher', 'Receipt Voucher'),
 ]
 
-class VoucherType(models.Model):
-    voucher_type = models.CharField(max_length=200, choices=voucher_type)
-    voucher_name = models.CharField(max_length=200)
-    voucher_short_name = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.voucher_type
-
-
-class VoucherIndexing(models.Model):
-    voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
-    from_date = models.DateField()
-    to_date = models.DateField()
-    prefix = models.CharField(max_length=200)
-    suffix = models.CharField(max_length=200)
-
-
-
 # BUGS MODEL
 bug_type = [
         ('bug', 'Bug'),
@@ -472,3 +454,23 @@ class UnitTest(models.Model):
     raised_by = models.ForeignKey(User, on_delete=models.CASCADE)
     test_status = models.CharField(max_length=200, choices=bug_status, default='pending')
     review = models.CharField(max_length=200, choices=review_status, default='open')
+
+
+
+class VoucherType(models.Model):
+    voucher_type = models.CharField(max_length=200, choices=voucher_type)
+    voucher_name = models.CharField(max_length=200)
+    voucher_short_name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.voucher_type
+
+
+# ADD DEFAULT VALUE IN VOUCHER NUMBER:
+class VoucherIndexing(models.Model):
+    voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
+    from_date = models.DateField()
+    to_date = models.DateField()
+    prefix = models.CharField(max_length=200)
+    suffix = models.CharField(max_length=200)
+    voucher_number = models.CharField(max_length=250)

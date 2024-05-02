@@ -1768,7 +1768,6 @@ new Vue({
             }
         },
         calculateAge(admissionDate) {
-            alert(admissionDate);
             const today = new Date();
             const admissionDateObj = new Date(admissionDate);
 
@@ -4178,31 +4177,7 @@ new Vue({
 })
 
 
-//Purchase Voucher
-new Vue({
-    el: '#purchases',
-    data: {
-      purchases: [{
-        account: '',
-      }] // Initial purchase div
-    },
-    methods: {
-      addMore() {
-        this.purchases.push({}); // Add an empty object to the array
-      },
-      openModal(id) {
-        // alert(id);
-        // alert(typeof(id));
 
-        // const result = this.purchases.find(item => item.id === index);
-
-        // console.log(this.purchases);
-        // console.log(result);
-        // Open modal for the specific purchase item using the index
-        $('#addCostCenter').modal('show');
-      }
-    }
-  });
 
 //Sale Voucher
   new Vue({
@@ -4283,3 +4258,5 @@ new Vue({
         }
     }
     });
+
+

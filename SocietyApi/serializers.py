@@ -135,7 +135,8 @@ class MembersSerializer(serializers.ModelSerializer):
             'member_position',
             'sales_agreement',
             'member_is_primary_formatted',
-            'nominees'
+            'nominees',
+            'same_flat_member_identification'
         ]
 
     def get_sales_agreement_filename(self, obj):
@@ -479,27 +480,54 @@ class CostCenterSerializersList(serializers.ModelSerializer):
         fields = ['name']
 
 
+class VoucherCreateIndexingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VoucherIndexing
+        fields = ['id', 'from_date', 'to_date', 'prefix', 'suffix', 'voucher_number']
+
+# REQUIRED FOR ADDING ONLY VOUCHER INDEXING
 class VoucherIndexingSerializer(serializers.ModelSerializer):
     class Meta:
         model = VoucherIndexing
-        fields = ['voucher_type', 'from_date', 'to_date', 'prefix', 'suffix']
+        fields = ['id', 'voucher_type', 'from_date', 'to_date', 'prefix', 'suffix', 'voucher_number']
 
 
 # CREATE SERIALIZERS(['create', 'retrieve', 'partial_update', 'update'])
 class VoucherTypeSerializer(serializers.ModelSerializer):
-    voucher_indexing = VoucherIndexingSerializer(many=True, required=False)
+    voucher_indexing = VoucherCreateIndexingSerializer(many=True, required=False)
 
     class Meta:
         model = VoucherType
         fields = ['id', 'voucher_type', 'voucher_name', 'voucher_short_name', 'voucher_indexing']
 
     def create(self, validated_data):
+        print("======================================")
         indexing_data = validated_data.pop('voucher_indexing', None)
         voucher_type = VoucherType.objects.create(**validated_data)
         if indexing_data:
             for indexing_item in indexing_data:
+                print("vtype==============", voucher_type)
                 VoucherIndexing.objects.create(voucher_type=voucher_type, **indexing_item)
         return voucher_type
+
+    # def update(self, instance, validated_data):
+    #     print("validated_data==========================", validated_data)
+    #     indexing_data = validated_data.pop('voucher_indexing', None)
+    #     for attr, value in validated_data.items():
+    #         setattr(instance, attr, value)
+    #     instance.save()
+    #     if indexing_data:
+    #         for indexing_item in indexing_data:
+    #             # If indexing item has an 'id', it's an existing object, so update it
+    #             if 'id' in indexing_item:
+    #                 indexing_obj = VoucherIndexing.objects.get(id=indexing_item['id'])
+    #                 for attr, value in indexing_item.items():
+    #                     setattr(indexing_obj, attr, value)
+    #                 indexing_obj.save()
+    #             # Otherwise, it's a new object, so create it
+    #             # else:
+    #             #     VoucherIndexing.objects.create(voucher_type=instance, **indexing_item)
+    #     return instance
 
 
 # DISPLAY SERIALIZERS

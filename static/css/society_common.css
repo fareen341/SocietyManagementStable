@@ -336,8 +336,14 @@ p {
 .error-message {
     /* color: #d50707; */
     /* color: red; */
-    font-size: 14px;
+    /* font-size: 14px; */
     border-color: red;
+}
+
+/* Custom CSS for toastr */
+.toast-success {
+    top: 50px; /* Adjust the top padding as needed */
+    background-color: greenyellow;
 }
 
 

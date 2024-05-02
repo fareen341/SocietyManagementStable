@@ -294,66 +294,41 @@ def unit_master(request):
 
 def ledger_creation(request):
     datatable_columns = [0, 1, 2]
-    return render(request, 'ledger_creation.html', {'datatable_columns': datatable_columns})
+    # GROUPS LIST VIEW
+    under_grps = ["Assets", "Liabilities", "Income", "Expenses", "Bank"]
+    all_child_investments = {}
+    for under_grp in under_grps:
+        parent_investment = Childs.objects.get(name=under_grp)
+        # parent_investment = CostCenter.objects.get(name=under_grp)
+        all_child_investments[under_grp] = get_all_child_investments(parent_investment)
+
+    # COST CENTER LIST VIEW
+    parent_investment = CostCenter.objects.get(name="Primary")
+    all_cost_center_group = get_all_child_investments(parent_investment, cost_center=True)
+
+    return render(request, 'ledger_creation.html', {
+        'datatable_columns': datatable_columns,
+        'all_child_investments': all_child_investments,
+        'all_cost_center_group': all_cost_center_group
+    })
 
 
-def get_all_child_investments_2(parent):
-    last_child = None
-    immediate_parent = None
-    super_parent = None
-
-    def traverse_children(investment, depth=0):
-        nonlocal last_child, immediate_parent, super_parent
-
-        children = investment.children.all()
-        print("children ==", children)
-        if children:
-            for child in children:
-                if not child.children.exists():
-                    last_child = child
-                    immediate_parent = investment
-                    super_parent = investment.parent
-                traverse_children(child, depth + 1)
-
-    traverse_children(parent)
-    return last_child, immediate_parent, super_parent
-
-
-def get_all_child_investments(parent):
+def get_all_child_investments(parent, cost_center=False):
     all_childs = []
     def traverse_children(investment, depth=0):
         child = 0
-        children = investment.children.all()
-        # children = investment.cost_center.all()
-        if children.count() > 1:
-            cnt = children[len(children) - 2]
-            print("count in count=====", cnt)
-        elif children.count() > 0:
-            cnt = children[len(children) - 1]
-            print("count in count in else=====", cnt)
-        last_child = investment.children.last()
-        if last_child:
-            print("last child==========", last_child)
+        if cost_center:
+            children = investment.cost_center.all()
+        else:
+            children = investment.children.all()
         if children:
             for child in children:
-                show = f" {'---' * depth} {child}"
+                show = f"{'→'* depth} {child}"
                 # show = f"{child}"
                 all_childs.append(show)
                 traverse_children(child, depth + 1)
     traverse_children(parent)
     return all_childs
-
-
-def account_group(request):
-    # under_grp = "Primary"
-    # under_grp = "Expenses"
-    # under_grp = "Liabilities"
-    # under_grp = "Jwellery"
-    under_grp = "Assets"
-    parent_investment = Childs.objects.get(name=under_grp)
-    # parent_investment = CostCenter.objects.get(name=under_grp)
-    all_child_investments = get_all_child_investments(parent_investment)
-    return render(request, 'account.html', {'all_child_investments': all_child_investments, "under_grp": under_grp})
 
 
 # UNIT TESTING VIEW
@@ -405,5 +380,5 @@ def get_cost_center_datatable(request, id=None):
 
 
 def voucher_creation(request):
-    datatable_columns = [0, 2, 3]
+    datatable_columns = [0, 1]
     return render(request, 'voucher_creation_new.html', {'datatable_columns': datatable_columns})
