@@ -468,175 +468,105 @@
 
                                             <div class="col-12" id="purchases">
                                                 <!-- <div v-for="(item, index) in purchases" :key="index">
-                                            <div class="row" :id="'purchase' + (index + 1)">
-                                                <div class="col-4 mb-3">
-                                                    <div class="sty-input-wrapper w-100">
-                                                        <select class="w-100 sty-inp form-control selectLedger" v-model="item.ledger_name">
-                                                            <option value="">Select Ledger</option>
-                                                            <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
-                                                        </select>
-                                                        <label class="sty-label">Ledger</label>
+                                                    <div class="row" :id="'purchase' + (index + 1)">
+                                                        <div class="col-4 mb-3">
+                                                            <div class="sty-input-wrapper w-100">
+                                                                <select class="w-100 sty-inp form-control selectLedger" v-model="item.ledger_name">
+                                                                    <option value="">Select Ledger</option>
+                                                                    <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
+                                                                </select>
+                                                                <label class="sty-label">Ledger</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-2 mb-3">
+                                                            <div class="sty-input-wrapper w-100">
+                                                                <input class="sty-inp form-control w-100" type="number" v-model="item.quantity" @input="calculateAmount(item)">
+                                                                <label class="sty-label">Quantity</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-2 mb-3">
+                                                            <div class="sty-input-wrapper w-100">
+                                                                <input class="sty-inp form-control w-100" type="text" v-model="item.rate" @input="calculateAmount(item)">
+                                                                <label class="sty-label">Rate</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-2 mb-3">
+                                                            <div class="sty-input-wrapper w-100">
+                                                                <input class="sty-inp form-control w-100" type="number" v-model="item.amount" readonly>
+                                                                <label class="sty-label">Amount</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-2 mb-3">
+                                                            <button class="btn btn-primary" @click="purchseCostCenter(item.amount)" type="button">Add Cost Center</button>
+                                                            <button class="btn btn-primary" @click="removeCostCenter(index)" v-if="index !== 0" type="button">Remove</button>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
 
-                                                <div class="col-2 mb-3">
-                                                    <div class="sty-input-wrapper w-100">
-                                                        <input class="sty-inp form-control w-100" type="number" v-model="item.quantity" @input="calculateAmount(item)">
-                                                        <label class="sty-label">Quantity</label>
-                                                    </div>
-                                                </div>
 
-                                                <div class="col-2 mb-3">
-                                                    <div class="sty-input-wrapper w-100">
-                                                        <input class="sty-inp form-control w-100" type="text" v-model="item.rate" @input="calculateAmount(item)">
-                                                        <label class="sty-label">Rate</label>
-                                                    </div>
-                                                </div>
 
-                                                <div class="col-2 mb-3">
-                                                    <div class="sty-input-wrapper w-100">
-                                                        <input class="sty-inp form-control w-100" type="number" v-model="item.amount" readonly>
-                                                        <label class="sty-label">Amount</label>
-                                                    </div>
-                                                </div>
+                                                <h5 class="text-center">Cost Center</h5>
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="text-align:center;" width="5%">Select Ledger</th>
+                                                                <th style="text-align:center;">Quantity</th>
+                                                                <th style="text-align:center;" width="5%">Rate</th>
+                                                                <th style="text-align:center;" width="5%">Amount</th>
+                                                                <th style="text-align:center;" width="5%">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(item, index) in purchases" :key="index">
+                                                                <td style="text-align:center;" width="5%">
+                                                                    <select class="selectLedger" style="width: 50%; border: none; border-color: transparent;">
+                                                                        <option value="">Select Ledger</option>
+                                                                        <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
+                                                                    </select>
+                                                                    <p class="mt-1 text-danger" v-if="errors[index] && errors[index].ledger_name">{{  errors[index].ledger_name[0] }}</p>
+                                                                    <span v-else></span>
+                                                                </td>
 
-                                                <div class="col-2 mb-3">
-                                                    <button class="btn btn-primary" @click="purchseCostCenter(item.amount)" type="button">Add Cost Center</button>
-                                                    <button class="btn btn-primary" @click="removeCostCenter(index)" v-if="index !== 0" type="button">Remove</button>
-                                                </div>
-                                            </div>
-                                        </div> -->
+                                                                <td style="text-align:center;" width="5%">
+                                                                    <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Quantity" v-model="item.quantity" @input="calculateAmount(item)">
+                                                                    <p class="mt-1 text-danger" v-if="errors[index] && errors[index].quantity">{{ errors[index].quantity[0] }}</p>
+                                                                    <span v-else></span>
+                                                                </td>
 
-                                                <h3 class="text-center">Cost Center</h3>
-                                                <table class="table table-bordered">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th style="text-align:center;" width="5%">Select Ledger</th>
-                                                            <th style="text-align:center;">Quantity</th>
-                                                            <th style="text-align:center;" width="5%">Rate</th>
-                                                            <th style="text-align:center;" width="5%">Amount</th>
-                                                            <th style="text-align:center;" width="5%">Delete</th>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Select Ledger">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Quantity">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Rate">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Amount">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <span style="width: 50%; border: none; border-color: transparent;">
-                                                                    <i class="fa-solid fa-trash-can"></i>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Select Ledger">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Quantity">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Rate">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Amount">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <span style="width: 50%; border: none; border-color: transparent;">
-                                                                    <i class="fa-solid fa-trash-can"></i>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Select Ledger">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Quantity">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Rate">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Amount">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <span style="width: 50%; border: none; border-color: transparent;">
-                                                                    <i class="fa-solid fa-trash-can"></i>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Select Ledger">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Quantity">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Rate">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Amount">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <span style="width: 50%; border: none; border-color: transparent;">
-                                                                    <i class="fa-solid fa-trash-can"></i>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Select Ledger">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Quantity">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Rate">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Amount">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <span style="width: 50%; border: none; border-color: transparent;">
-                                                                    <i class="fa-solid fa-trash-can"></i>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Select Ledger">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Quantity">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Rate">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <input type="text" style="width: 50%; border: none; border-color: transparent;" placeholder="Enter Amount">
-                                                            </td>
-                                                            <td style="text-align:center;" width="5%">
-                                                                <span style="width: 50%; border: none; border-color: transparent;">
-                                                                    <i class="fa-solid fa-trash-can"></i>
-                                                                </span>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th id="total" colspan="3">Total :</th>
-                                                            <td style="text-align: center">200</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                                                <td style="text-align:center;" width="5%">
+                                                                    <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Rate" v-model="item.rate" @input="calculateAmount(item)" @keyup.enter="openCostCenterModal(index)" >
+                                                                    <p class="mt-1 text-danger" v-if="errors[index] && errors[index].rate">{{ errors[index].rate[0] }}</p>
+                                                                    <span v-else></span>
+                                                                </td>
+
+                                                                <td style="text-align:center;" width="5%">
+                                                                    <input type="text" style="width: 60%; border: none; border-color: transparent; outline: none;" placeholder="Amount" v-model="item.amount" @keyup.tab.prevent="openCostCenterModal(index)" readonly>
+                                                                </td>
+
+                                                                <td style="text-align:center;" width="5%">
+                                                                    <span style="width: 60%; border: none; border-color: transparent;" @click="removeCostCenter(index)" v-if="index !== 0" >
+                                                                        <i class="fa-solid fa-trash-can"></i>
+                                                                    </span>
+                                                                    <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
+                                                                        <i class="fa-solid fa-pen"></i>
+                                                                    </span>
+                                                                    <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
+                                                                    <span v-else></span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th style="text-align:center;" colspan="3">Total</th>
+                                                                <td style="text-align: center;">
+                                                                    <input type="text" style="width: 50%; border: none; border-color: transparent; outline: none;" placeholder="Total Amount" v-model="totalAmountValue" readonly>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+
                                                 <div class="row mb-3">
                                                     <div class="col-6">
                                                         <div class="sty-input-wrapper w-100">
@@ -671,79 +601,51 @@
             <!-- CREATE MODAL FOR ADD COST CENTER -->
             <div class="modal fade" id="purchaseCostCenterModal" tabindex="-1"
                 aria-labelledby="purchaseCostCenterModalLabel" aria-hidden="true">
+                {% verbatim %}
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="purchaseCostCenterModalLabel">Add Cost Center</h5>
-                            <button type="button" class="btn-close" aria-label="Close"
-                                @click="closePurchaseCostCenter"></button>
+                            <span class="modal-title" style="font-size: 21px;" id="purchaseCostCenterModalLabel">Total Amount:</span>
+                            <span class="text-right"><input style="border: none; border-color: transparent; outline: none; font-size: 21px;" type="number" v-model="displayAmount" readonly></span>
                         </div>
                         <div class="modal-body">
-                            <!-- Your form fields for adding cost center here -->
                             <div class="form-group">
-                                {% verbatim %}
-                                <div class="row mb-3">
-                                    <div class="col-6">
-                                        <div class="sty-input-wrapper w-100">
-                                            <p>Total Amount</p>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-6">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input type="number" class="sty-inp form-control" v-model="displayAmount"
-                                                readonly>
-                                        </div>
-                                    </div>
-
-                                    <p class="text-center mt-3 text-danger" v-if="showSave">Total Amount Is Exceeding
-                                        The Given Amount!</p>
-                                </div>
+                                <h5 class="text-center">Add Cost Center </h5>
 
                                 <div class="row mb-3" v-for="(item, index) in items" :key="index">
-
                                     <div class="col-5">
                                         <div class="sty-input-wrapper w-100">
                                             <select class="w-100 sty-inp form-control groupSelectionUpdate" id="faren">
-                                                <option value="">Select Bill Name</option>
-                                                <option v-for="bill in costCenterData" :value="bill">{{ bill }}</option>
+                                                <option value="">Select Cost Center</option>
+                                                <option v-for="item in costCenterData" :value="item.id">{{ item.name }}</option>
                                             </select>
                                         </div>
-                                        <span v-if="costCenterError && costCenterError.cost_center_name"
-                                            class="error">{{ costCenterError && costCenterError.cost_center_name
-                                            }}</span>
+                                        <span v-if="costCenterError && costCenterError.cost_center_name" class="error">{{ costCenterError && costCenterError.cost_center_name}}</span>
                                         <span v-else></span>
                                     </div>
 
                                     <div class="col-5">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="number" class="sty-inp form-control" v-model="item.billAmount"
-                                                @keyup.enter="addMoreOnEnterKey"
-                                                placeholder="Press Enter To Add More Input" id="faren2">
+                                            <input type="number" class="sty-inp form-control" style="height: 36px;" v-model="item.cost_center_amount" @keyup.enter="addMoreOnEnterKey" placeholder="Press Enter To Add More Input" id="faren2">
                                         </div>
-                                        <span v-if="costCenterError && costCenterError.cost_center_amount"
-                                            class="error">{{ costCenterError && costCenterError.cost_center_amount
-                                            }}</span>
+                                        <span v-if="costCenterError && costCenterError.cost_center_amount" class="error">{{ costCenterError && costCenterError.cost_center_amount }}</span>
                                         <span v-else></span>
                                     </div>
 
                                     <div class="col-2" v-if="index !== 0">
                                         <div class="sty-input-wrapper w-100 mt-2">
-                                            <button @click="removeItem(index)">Delete {{ index }}</button>
+                                            <span @click="removeItem(index)"><i class="fa-solid fa-trash-can"></i></span>
                                         </div>
                                     </div>
                                 </div>
-                                {% endverbatim %}
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary"
-                                @click="closePurchaseCostCenter">Close</button>
-                            <button type="button" class="btn btn-primary" :disabled="showSave"
-                                @click="addPurchaseCostCenter">Save</button>
+                            <button type="button" class="btn btn-primary" :disabled="showSave" @click="addRowOnSave">Save</button>
                         </div>
                     </div>
                 </div>
+                {% endverbatim %}
             </div>
         </div>
 
@@ -1932,7 +1834,6 @@
         el: '#costCenterEntirePage',
         data: {
             purchases: [{
-                billAmount: '',
                 ledger_name: '',
                 quantity: '',
                 rate: '',
@@ -1942,9 +1843,8 @@
             vouchersList: [],
             ledgerList: [],
             items: [{
-                billName: '',
-                amount: null,
-                billAmount: null
+                cost_center_name: '',
+                cost_center_amount: null,
             }],
             selectedBillNames: [],
             showSave: false,
@@ -1963,6 +1863,7 @@
             countries: [],
             states: [],
             cities: [],
+            errors: {},
         },
         methods: {
             // EXTRA
@@ -1970,33 +1871,6 @@
 
             },
             // EXTRA
-            initializeSelect2Again() {
-                this.$nextTick(() => {
-                    $('.groupSelectionUpdate').select2({
-                        dropdownParent: $('#purchaseCostCenterModal'),
-                        width: '100%',
-                    });
-                });
-            },
-            initializeSelect2Twice() {
-                // Destroy existing Select2 instances for all dropdowns
-                $('.groupSelectionUpdate').each(function () {
-                    if ($(this).data('select2')) {
-                        $(this).select2('destroy');
-                    }
-                });
-
-                // Reinitialize Select2 for all dropdowns
-                $('.groupSelectionUpdate').select2({
-                    dropdownParent: $('#purchaseCostCenterModal'),
-                    width: '100%',
-                }).on('select2:open', () => {
-                    $(".select2-results:not(:has(button.create-button))").append('<button class="create-button btn">+ Create New ledger</button>');
-                    $('.select2-results').on('click', 'button.create-button', function () {
-                        console.log("event happened");
-                    });
-                });
-            },
             initializeSelect2($element) {
                 $element.select2({
                     dropdownParent: $('#purchaseVoucherCreate'),
@@ -2008,13 +1882,77 @@
                         $('#createNewLedger').modal('show');
                     });
                 });
-            },
-            addNewCostCenter() {
-                this.purchases.push({ ledger_name: '' });
-                this.$nextTick(() => {
-                    const $newDropdown = $('.selectLedger').last(); // Get the newly added dropdown
-                    this.initializeSelect2($newDropdown);
+            },addRowOnSave(){
+                $('#purchaseCostCenterModal').modal('hide');
+                $('#purchaseVoucherCreate').modal('show');
+                this.purchases.push({
+                    ledger_name: '',
+                    quantity: '',
+                    rate: '',
+                    amount: ''
                 });
+                //this.$nextTick(() => {
+                //    const $newDropdown = $('.selectLedger').last();
+                //    this.initializeSelect2($newDropdown);
+                //});
+                this.$nextTick(() => {
+                    this.initializeSelect2($('.selectLedger'));
+                });
+            },
+            initializeSelect2Twice($element) {
+                $element.select2({
+                    dropdownParent: $('#purchaseCostCenterModal'),
+                    width: '100%',
+                })
+            },
+            addMoreOnEnterKey() {
+                this.items.push({
+                    cost_center_name: '',
+                    cost_center_amount: null
+                });
+
+                this.$nextTick(() => {
+                    this.initializeSelect2Twice($('.groupSelectionUpdate'));
+                });
+            },
+            removeItem(index) {
+                this.items.splice(index, 1);
+                let newVal = document.getElementsByClassName('groupSelectionUpdate')[index + 1].value;
+                console.log('new value=====================', newVal)
+
+                const $select = $('.groupSelectionUpdate').eq(index);
+                $select.val(newVal).trigger('change');
+
+                this.$nextTick(() => {
+                    this.initializeSelect2Twice($('.groupSelectionUpdate'));
+                });
+            },
+            openCostCenterModal(index) {
+                this.errors = {};
+                this.displayAmount = this.purchases[index]['amount'];
+                this.purchases[index]['ledger_name'] = document.getElementsByClassName('selectLedger')[index + 1].value;
+
+                axios.post(`http://127.0.0.1:8000/api/purchase_voucher_creation/`, this.purchases[index])
+                    .then(response => {
+                        $('#purchaseCostCenterModal').modal('show');
+                        $('#purchaseVoucherCreate').modal('hide');
+                        axios.get(`http://127.0.0.1:8000/api/cost_center/`)
+                            .then(response => {
+                                this.costCenterData = response.data;
+                            })
+                            .catch(error => {
+                                console.error('Error fetching data:', error);
+                            });
+
+                        // INITIALIZING SELECT2 FOR COST CENTER
+                        $('.groupSelectionUpdate').select2({
+                            dropdownParent: $('#purchaseCostCenterModal'),
+                            width: '100%',
+                        });
+                    })
+                    .catch(error => {
+                        this.$set(this.errors, index, error.response.data);
+                    });
             },
             openVoucherModal(modalName) {
                 $('#purchaseVoucherCreate').modal('show');
@@ -2031,49 +1969,6 @@
                     .catch(error => {
                         console.error('Error fetching data:', error);
                     });
-            },
-            addMoreOnEnterKey() {
-                const lastItem = this.items[this.items.length - 1];
-                const billAmountValue = lastItem.billAmount;
-                if (this.totalBillAmount() >= this.purchases.amount) {
-                    this.showSave = true;
-                    return;
-                }
-
-                this.items.push({ billName: '', amount: null, billAmount: null });
-                this.selectedBillNames.push('');
-
-                // Add new dropdown to the existing Select2 instance
-                $('.groupSelectionUpdate').each(function () {
-                    $(this).append('<option value="newValue">New Value</option>');
-
-                    // Initialize Select2 on the newly added dropdown
-                    $(this).select2({
-                        dropdownParent: $('#purchaseCostCenterModal'),
-                        width: '100%',
-                    });
-                });
-            },
-            purchseCostCenter(amount) {
-                this.displayAmount = amount;
-                $('#purchaseVoucherCreate').modal('hide');
-                $('#purchaseCostCenterModal').modal('show');
-                axios.get(`http://127.0.0.1:8000/api/cost_center/`)
-                    .then(response => {
-                        this.costCenterData = response.data.map(item => item.name);
-                        $(document).ready(function () {
-                            $('#costCenterDatatable').DataTable();
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                    });
-
-                // INITIALIZING SELECT2 FOR COST CENTER
-                $('.groupSelectionUpdate').select2({
-                    dropdownParent: $('#purchaseCostCenterModal'),
-                    width: '100%',
-                });
             },
             totalBillAmount() {
                 return this.items.reduce((sum, item) => sum + parseInt(item.billAmount || 0, 10), 0);
@@ -2092,19 +1987,10 @@
                     this.totalAmount();
                 }
             },
-            addPurchaseCostCenter() {
-                if (this.totalBillAmount() >= this.purchases.amount) {
-                    this.showSave = true;
-                    return;
-                }
-            },
-            closePurchaseCostCenter() {
-                $('#purchaseVoucherCreate').modal('show');
-                $('#purchaseCostCenterModal').modal('hide');
-            },
-            removeItem(index) {
-                this.items.splice(index, 1);
-            },
+            //if (this.totalBillAmount() >= this.purchases.amount) {
+            //    this.showSave = true;
+            //    return;
+            //}
             fetchVoucherNumber(event) {
                 if (!event.target.value) {
                     this.formData.voucher_number = '';
