@@ -929,11 +929,6 @@ class CreateGroupForLedgerView(viewsets.ModelViewSet):
         return JsonResponse({"sub_group": sub_group})
 
 
-class LedgerView(viewsets.ModelViewSet):
-    queryset = Ledger.objects.all()
-    serializer_class = LedgerSerializers
-
-
 class CostCenterView(viewsets.ModelViewSet):
     queryset = CostCenter.objects.all()
     serializer_class = CostCenterSerializers
@@ -1136,3 +1131,13 @@ class UnitTestView(viewsets.ModelViewSet):
             {'value': choice[0], 'label': choice[1]} for choice in review_status
         ]
         return Response(choices)
+
+
+class LedgerView(viewsets.ModelViewSet):
+    queryset = Ledger.objects.all()
+    serializer_class = LedgerSerializers
+
+
+class PurchaseVoucherView(viewsets.ModelViewSet):
+    queryset = PurchaseVoucherModel.objects.all()
+    serializer_class = PurchaseVoucherSerializers

@@ -463,16 +463,11 @@ class CreateGroupForLedgerSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class LedgerSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Ledger
-        fields = '__all__'
-
-
 class CostCenterSerializers(serializers.ModelSerializer):
     class Meta:
         model = CostCenter
         fields = '__all__'
+
 
 class CostCenterSerializersList(serializers.ModelSerializer):
     class Meta:
@@ -568,4 +563,16 @@ class UnitTestSerializer(serializers.ModelSerializer):
 class UnitTestPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = UnitTest
+        fields = '__all__'
+
+
+class LedgerSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Ledger
+        fields = '__all__'
+
+
+class PurchaseVoucherSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = PurchaseVoucherModel
         fields = '__all__'

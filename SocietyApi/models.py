@@ -391,36 +391,6 @@ class Suggestion(models.Model):
     suggestions = models.TextField()
 
 
-
-class Ledger(models.Model):
-    ledger_name = models.CharField(max_length=200)
-    nature = models.CharField(max_length=200)
-    gst_number = models.CharField(max_length=200)
-    alis = models.CharField(max_length=200)
-    based_on = models.CharField(max_length=200, null=True, blank=True)
-    contact_person_name = models.CharField(max_length=200)
-    group_name = models.CharField(max_length=200)
-    area = models.CharField(max_length=200, null=True, blank=True)
-    contact_person_number = models.CharField(max_length=200)
-    pan_number = models.CharField(max_length=200)
-    fixed = models.CharField(max_length=200, null=True, blank=True)
-    contact_person_email = models.CharField(max_length=200)
-    address = models.CharField(max_length=200)
-    country = models.CharField(max_length=200)
-    state = models.CharField(max_length=200)
-    city = models.CharField(max_length=200)
-    pin_code = models.CharField(max_length=200)
-    beneficiary_name = models.CharField(max_length=200)
-    account_no = models.CharField(max_length=200)
-    ifsc_code = models.CharField(max_length=200)
-    bank_name = models.CharField(max_length=200)
-    branch_name = models.CharField(max_length=200, null=True, blank=True)
-    opening_balance = models.CharField(max_length=200)
-    dr_cr = models.CharField(max_length=200)
-
-    def __str__(self):
-        return self.ledger_name
-
 voucher_type = [
     ('purchase_voucher', 'Purchase Voucher'),
     ('sale_voucher', 'Sale Voucher'),
@@ -456,7 +426,6 @@ class UnitTest(models.Model):
     review = models.CharField(max_length=200, choices=review_status, default='open')
 
 
-
 class VoucherType(models.Model):
     voucher_type = models.CharField(max_length=200, choices=voucher_type)
     voucher_name = models.CharField(max_length=200)
@@ -474,3 +443,41 @@ class VoucherIndexing(models.Model):
     prefix = models.CharField(max_length=200)
     suffix = models.CharField(max_length=200)
     voucher_number = models.CharField(max_length=250)
+
+
+class Ledger(models.Model):
+    ledger_name = models.CharField(max_length=200)
+    nature = models.CharField(max_length=200)
+    gst_number = models.CharField(max_length=200)
+    alis = models.CharField(max_length=200)
+    based_on = models.CharField(max_length=200, null=True, blank=True)
+    contact_person_name = models.CharField(max_length=200)
+    group_name = models.CharField(max_length=200)
+    area = models.CharField(max_length=200, null=True, blank=True)
+    contact_person_number = models.CharField(max_length=200)
+    pan_number = models.CharField(max_length=200)
+    fixed = models.CharField(max_length=200, null=True, blank=True)
+    contact_person_email = models.CharField(max_length=200)
+    address = models.CharField(max_length=200)
+    country = models.CharField(max_length=200)
+    state = models.CharField(max_length=200)
+    city = models.CharField(max_length=200)
+    pin_code = models.CharField(max_length=200)
+    beneficiary_name = models.CharField(max_length=200)
+    account_no = models.CharField(max_length=200)
+    ifsc_code = models.CharField(max_length=200)
+    bank_name = models.CharField(max_length=200)
+    branch_name = models.CharField(max_length=200, null=True, blank=True)
+    opening_balance = models.CharField(max_length=200)
+    dr_cr = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.ledger_name
+
+
+# Purchase Voucher
+class PurchaseVoucherModel(models.Model):
+    ledger_name = models.ForeignKey(Ledger, on_delete=models.CASCADE)
+    quantity = models.FloatField()
+    rate = models.FloatField()
+    amount = models.FloatField()
