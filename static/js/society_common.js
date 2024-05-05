@@ -1487,6 +1487,8 @@ var app = new Vue({
             return age;
         },
         submitEditedMemberData() {
+            $('#loader').show();
+
             let successfulSubmissions = 0;
             let totalPercent = 0;
             this.ownership_error = '';
@@ -1509,6 +1511,12 @@ var app = new Vue({
 
             if (totalPercent > 100){
                 this.ownership_error = 'Ownership exceeding! Addition of all ownership % should be 100 for this flat!';
+                $('#loader').hide();
+                toastr.options = {
+                    closeButton: true,
+                    positionClass: 'toast-top-center',
+                    timeOut: 5000
+                    };
                 toastr.error("Please Correct All Errors!");
                 return;
             }
@@ -1557,6 +1565,12 @@ var app = new Vue({
                         this.$set(this.newErrors, index, null);
                         successfulSubmissions++;
                         if (successfulSubmissions === this.memberformData.length) {
+                            $('#loader').hide();
+                            toastr.options = {
+                                closeButton: true,
+                                positionClass: 'toast-top-center',
+                                timeOut: 5000
+                              };
                             toastr.success(response.message, "Member Updated Successfully!");
                             $('#editMemberModal').modal('hide');
                             setTimeout(function() {
@@ -1573,6 +1587,12 @@ var app = new Vue({
                     })
                     .catch(error => {
                         if(showToastrError){
+                            $('#loader').hide();
+                            toastr.options = {
+                                closeButton: true,
+                                positionClass: 'toast-top-center',
+                                timeOut: 5000
+                              };
                             toastr.error("Please Correct All Errors!");
                             showToastrError = false;
                         }

@@ -11,7 +11,6 @@ class MultipartJsonParser(parsers.MultiPartParser):
             parser_context=parser_context
         )
         data = {}
-        print("DATA IN UTILS", result.data)
         data = json.loads(result.data["data"])
         qdict = QueryDict('', mutable=True)
         qdict.update(data)
