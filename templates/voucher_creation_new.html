@@ -48,10 +48,10 @@
 
         <div class="tab-pane fade show active" id="purchase-tab-pane" role="tabpanel" aria-labelledby="purchase-tab"
             tabindex="0">
-            <div class="gap-4">
-                <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#purchaseVoucherCreate">Create Purchase Voucher</button> -->
-                <button type="button" class="btn btn-primary" @click="openVoucherModal('purchase_voucher')">Create
-                    Purchase Voucher</button>
+            
+            <div class="container">
+                <button class="add-mem-btn" type="button" @click="openVoucherModal('purchase_voucher')">Create Purchase
+                    Voucher</button>
             </div>
             {% verbatim %}
             <div>
@@ -467,45 +467,7 @@
                                             <hr class="mt-1 mb-3">
 
                                             <div class="col-12" id="purchases">
-                                                <!-- <div v-for="(item, index) in purchases" :key="index">
-                                            <div class="row" :id="'purchase' + (index + 1)">
-                                                <div class="col-4 mb-3">
-                                                    <div class="sty-input-wrapper w-100">
-                                                        <select class="w-100 sty-inp form-control selectLedger" v-model="item.ledger_name">
-                                                            <option value="">Select Ledger</option>
-                                                            <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
-                                                        </select>
-                                                        <label class="sty-label">Ledger</label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-2 mb-3">
-                                                    <div class="sty-input-wrapper w-100">
-                                                        <input class="sty-inp form-control w-100" type="number" v-model="item.quantity" @input="calculateAmount(item)">
-                                                        <label class="sty-label">Quantity</label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-2 mb-3">
-                                                    <div class="sty-input-wrapper w-100">
-                                                        <input class="sty-inp form-control w-100" type="text" v-model="item.rate" @input="calculateAmount(item)">
-                                                        <label class="sty-label">Rate</label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-2 mb-3">
-                                                    <div class="sty-input-wrapper w-100">
-                                                        <input class="sty-inp form-control w-100" type="number" v-model="item.amount" readonly>
-                                                        <label class="sty-label">Amount</label>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-2 mb-3">
-                                                    <button class="btn btn-primary" @click="purchseCostCenter(item.amount)" type="button">Add Cost Center</button>
-                                                    <button class="btn btn-primary" @click="removeCostCenter(index)" v-if="index !== 0" type="button">Remove</button>
-                                                </div>
-                                            </div>
-                                        </div> -->
+                                                
 
                                                 <h3 class="text-center">Cost Center</h3>
                                                 <table class="table table-bordered">
@@ -754,7 +716,7 @@
             </div>
             {% verbatim %}
             <div>
-                <table id="purchaseVoucherDatatable" class="display dt-table order-column" style="width:100%">
+                <table id="saleVoucherDatatable" class="display dt-table order-column" style="width:100%">
                     <!-- <table id="houseHelpDataTable"> -->
                     <thead>
                         <tr>
@@ -792,7 +754,7 @@
             </div>
             {% endverbatim %}
 
-            <!-- CREATE MODAL FOR PURCHASE VOUCHER -->
+            <!-- CREATE MODAL FOR SALE VOUCHER -->
             <div class="modal fade" id="salesVoucherCreation" tabindex="-1" aria-labelledby="salesVoucherCreationLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-xl">
@@ -853,76 +815,59 @@
 
                                             <hr class="mt-1 mb-3">
 
-                                            <div class="col-12" id="purchases">
-                                                <div v-for="(item, index) in purchases" :key="index">
-                                                    <div class="row" :id="'purchase' + (index + 1)">
-                                                        <div class="col-4 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="text"
-                                                                    name="" :id="'product' + (index + 1)">
-                                                                <label class="sty-label" for="">Ledger</label>
-                                                            </div>
-                                                        </div>
+                                            
+                                        </div>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="number"
-                                                                    name="" :id="'quantity' + (index + 1)">
-                                                                <label class="sty-label" for="">Quantity</label>
-                                                            </div>
-                                                        </div>
+                                        
+                                        <table class="table table-sm table-bordered">
+                                            <thead class="table-dark">
+                                                <th style="text-align:center;">Select Ledger</th>
+                                                <th style="text-align:center;">Quantity</th>
+                                                <th style="text-align:center;">Rate</th>
+                                                <th style="text-align:center;">Amount</th>
+                                                <th style="text-align:center;">Action</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Quantity">
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Rate">
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Amount">
+                                                    </td>
+                                                    <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                        <span class="ms-auto me-auto" >
+                                                            <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th id="total" colspan="3">Total :</th>
+                                                    <td style="text-align: center">200</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="text"
-                                                                    name="" :id="'rate' + (index + 1)">
-                                                                <label class="sty-label" for="">Rate</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="number"
-                                                                    name="" v-model="item.account"
-                                                                    :id="'amount' + (index + 1)">
-                                                                <label class="sty-label" for="">Amount</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-2 mb-3">
-                                                            <button class="btn btn-primary"
-                                                                @click="purchseCostCenter(item.account)"
-                                                                type="button">Add Cost Center</button>
-                                                        </div>
-                                                    </div>
+                                        <div class="row mt-3">
+                                            <div class="col-6 mb-3">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                                    <label class="sty-label" for="">Amount in Words</label>
                                                 </div>
-                                                <div class="d-flex mb-4 mt-3" style="justify-content: space-between;">
-                                                    <button class="btn btn-primary" @click="addMore" type="button">Add
-                                                        More</button>
-                                                    <div class=" sty-input-wrapper me-3">
-                                                        <input class="sty-inp" type="number" name="" id="">
-                                                        <label for="" class="sty-label">Total Amount</label>
-                                                    </div>
+                                            </div>
+    
+                                            <div class="col-6 mb-3">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <textarea class="sty-inp form-control" name="" id="" cols="30"
+                                                        rows="1"></textarea>
+                                                    <label class="sty-label" for="">Narration</label>
                                                 </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-6">
-                                                        <div class="sty-input-wrapper w-100">
-                                                            <input type="text" class="sty-inp w-100 form-control"
-                                                                name="" id="">
-                                                            <label for="" class="sty-label">Amount in Words</label>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-6">
-                                                        <div class="sty-input-wrapper w-100">
-                                                            <textarea class="sty-inp w-100 form-control" name="" id=""
-                                                                cols="30" rows="1"></textarea>
-                                                            <label for="" class="sty-label">Narration</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <hr class="mt-1 mb-3">
-                                                <button class="btn btn-primary mb-3" type="submit">Submit</button>
                                             </div>
                                         </div>
                                     </form>
@@ -991,92 +936,64 @@
                                 </div>
 
                                 <hr class="mt-1 mb-3">
-
-                                <div class="" id="journals">
-                                    <!-- <div v-for="(item, index) in journals" :key="index"> -->
-                                    <div class="row">
-                                        <div class="col-1 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <select name="" class="sty-inp form-control">
-                                                    <option value="dr">DR</option>
-                                                    <option value="cr">CR</option>
+                                
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-dark">
+                                        <th style="text-align:center;">Select Type</th>
+                                        <th style="text-align:center;">Ledger Name</th>
+                                        <th style="text-align:center;">Debit Amount</th>
+                                        <th style="text-align:center;">Credit Amount</th>
+                                        <th style="text-align:center;">Actions</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">DR</option>
+                                                    <option value="">CR</option>
                                                 </select>
-                                                <label class="sty-label" for="">DR/CR</label>
-                                            </div>
-                                        </div>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
+                                            </td>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" >
+                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th id="total" colspan="2">Total :</th>
+                                            <td style="text-align: center">Debit Total: <span class="ms-3">200</span></td>
+                                            <td style="text-align: center">Credit Total: <span class="ms-3">200</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                                        <div class="col-lg-3 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="text" name="">
-                                                <label class="sty-label" for="">Ledger Name</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Debit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Credit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <button class="btn btn-primary">
-                                                Against Reference
-                                            </button>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <button class="btn btn-primary">
-                                                Cost Center
-                                            </button>
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="text" class="sty-inp form-control" name="" id="">
+                                            <label class="sty-label" for="">Amount in Words</label>
                                         </div>
                                     </div>
-                                    <!-- </div> -->
-                                    <div class="row">
-                                        <div class="col-2 mb-3">
-                                            <button class="btn btn-primary" type="button">Add More</button>
-                                        </div>
-                                        <div class="col-2 mb-3">
 
-                                        </div>
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Debit Total Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Credit Total Amount</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="text" class="sty-inp form-control" name="" id="">
-                                                <label class="sty-label" for="">Amount in Words</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-6 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <textarea class="sty-inp form-control" name="" id="" cols="30"
-                                                    rows="1"></textarea>
-                                                <label class="sty-label" for="">Narration</label>
-                                            </div>
+                                    <div class="col-6 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <textarea class="sty-inp form-control" name="" id="" cols="30"
+                                                rows="1"></textarea>
+                                            <label class="sty-label" for="">Narration</label>
                                         </div>
                                     </div>
                                 </div>
+
                                 <button class="btn btn-primary" type="submit">Submit</button>
                             </form>
                         </div>
@@ -1195,76 +1112,58 @@
 
                                             <hr class="mt-1 mb-3">
 
-                                            <div class="col-12" id="purchases">
-                                                <div v-for="(item, index) in purchases" :key="index">
-                                                    <div class="row" :id="'purchase' + (index + 1)">
-                                                        <div class="col-4 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="text"
-                                                                    name="" :id="'product' + (index + 1)">
-                                                                <label class="sty-label" for="">Ledger</label>
-                                                            </div>
-                                                        </div>
+                                            
+                                        </div>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="number"
-                                                                    name="" :id="'quantity' + (index + 1)">
-                                                                <label class="sty-label" for="">Quantity</label>
-                                                            </div>
-                                                        </div>
+                                        <table class="table table-sm table-bordered">
+                                            <thead class="table-dark">
+                                                <th style="text-align:center;">Select Ledger</th>
+                                                <th style="text-align:center;">Quantity</th>
+                                                <th style="text-align:center;">Rate</th>
+                                                <th style="text-align:center;">Amount</th>
+                                                <th style="text-align:center;">Action</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Quantity">
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Rate">
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Amount">
+                                                    </td>
+                                                    <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                        <span class="ms-auto me-auto" >
+                                                            <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th id="total" colspan="3">Total :</th>
+                                                    <td style="text-align: center">200</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="text"
-                                                                    name="" :id="'rate' + (index + 1)">
-                                                                <label class="sty-label" for="">Rate</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="number"
-                                                                    name="" v-model="item.account"
-                                                                    :id="'amount' + (index + 1)">
-                                                                <label class="sty-label" for="">Amount</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-2 mb-3">
-                                                            <button class="btn btn-primary"
-                                                                @click="purchseCostCenter(item.account)"
-                                                                type="button">Add Cost Center</button>
-                                                        </div>
-                                                    </div>
+                                        <div class="row mt-3">
+                                            <div class="col-6 mb-3">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <input type="text" class="sty-inp form-control" name="" id="">
+                                                    <label class="sty-label" for="">Amount in Words</label>
                                                 </div>
-                                                <div class="d-flex mb-4 mt-3" style="justify-content: space-between;">
-                                                    <button class="btn btn-primary" @click="addMore" type="button">Add
-                                                        More</button>
-                                                    <div class=" sty-input-wrapper me-3">
-                                                        <input class="sty-inp" type="number" name="" id="">
-                                                        <label for="" class="sty-label">Total Amount</label>
-                                                    </div>
+                                            </div>
+    
+                                            <div class="col-6 mb-3">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <textarea class="sty-inp form-control" name="" id="" cols="30"
+                                                        rows="1"></textarea>
+                                                    <label class="sty-label" for="">Narration</label>
                                                 </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-6">
-                                                        <div class="sty-input-wrapper w-100">
-                                                            <input type="text" class="sty-inp w-100 form-control"
-                                                                name="" id="">
-                                                            <label for="" class="sty-label">Amount in Words</label>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-6">
-                                                        <div class="sty-input-wrapper w-100">
-                                                            <textarea class="sty-inp w-100 form-control" name="" id=""
-                                                                cols="30" rows="1"></textarea>
-                                                            <label for="" class="sty-label">Narration</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <hr class="mt-1 mb-3">
-                                                <button class="btn btn-primary mb-3" type="submit">Submit</button>
                                             </div>
                                         </div>
                                     </form>
@@ -1387,78 +1286,64 @@
 
                                             <hr class="mt-1 mb-3">
 
-                                            <div class="col-12" id="purchases">
-                                                <div v-for="(item, index) in purchases" :key="index">
-                                                    <div class="row" :id="'purchase' + (index + 1)">
-                                                        <div class="col-4 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="text"
-                                                                    name="" :id="'product' + (index + 1)">
-                                                                <label class="sty-label" for="">Ledger</label>
-                                                            </div>
-                                                        </div>
+                                            
+                                                
+                                            
+                                        </div>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="number"
-                                                                    name="" :id="'quantity' + (index + 1)">
-                                                                <label class="sty-label" for="">Quantity</label>
-                                                            </div>
-                                                        </div>
+                                        <table class="table table-sm table-bordered">
+                                            <thead class="table-dark">
+                                                <th style="text-align:center;">Select Ledger</th>
+                                                <th style="text-align:center;">Quantity</th>
+                                                <th style="text-align:center;">Rate</th>
+                                                <th style="text-align:center;">Amount</th>
+                                                <th style="text-align:center;">Action</th>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Quantity">
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Rate">
+                                                    </td>
+                                                    <td style="text-align:center;">
+                                                        <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Amount">
+                                                    </td>
+                                                    <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                        <span class="ms-auto me-auto" >
+                                                            <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th id="total" colspan="3">Total :</th>
+                                                    <td style="text-align: center">200</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="text"
-                                                                    name="" :id="'rate' + (index + 1)">
-                                                                <label class="sty-label" for="">Rate</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="number"
-                                                                    name="" v-model="item.account"
-                                                                    :id="'amount' + (index + 1)">
-                                                                <label class="sty-label" for="">Amount</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-2 mb-3">
-                                                            <button class="btn btn-primary"
-                                                                @click="purchseCostCenter(item.account)"
-                                                                type="button">Add Cost Center</button>
-                                                        </div>
-                                                    </div>
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <input type="text" class="sty-inp w-100 form-control"
+                                                        name="" id="">
+                                                    <label for="" class="sty-label">Amount in Words</label>
                                                 </div>
-                                                <div class="d-flex mb-4 mt-3" style="justify-content: space-between;">
-                                                    <button class="btn btn-primary" @click="addMore" type="button">Add
-                                                        More</button>
-                                                    <div class=" sty-input-wrapper me-3">
-                                                        <input class="sty-inp" type="number" name="" id="">
-                                                        <label for="" class="sty-label">Total Amount</label>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-6">
-                                                        <div class="sty-input-wrapper w-100">
-                                                            <input type="text" class="sty-inp w-100 form-control"
-                                                                name="" id="">
-                                                            <label for="" class="sty-label">Amount in Words</label>
-                                                        </div>
-                                                    </div>
+                                            </div>
 
-                                                    <div class="col-6">
-                                                        <div class="sty-input-wrapper w-100">
-                                                            <textarea class="sty-inp w-100 form-control" name="" id=""
-                                                                cols="30" rows="1"></textarea>
-                                                            <label for="" class="sty-label">Narration</label>
-                                                        </div>
-                                                    </div>
+                                            <div class="col-6">
+                                                <div class="sty-input-wrapper w-100">
+                                                    <textarea class="sty-inp w-100 form-control" name="" id=""
+                                                        cols="30" rows="1"></textarea>
+                                                    <label for="" class="sty-label">Narration</label>
                                                 </div>
-                                                <hr class="mt-1 mb-3">
-                                                <button class="btn btn-primary mb-3" type="submit">Submit</button>
                                             </div>
                                         </div>
+                                        
                                     </form>
                                 </div>
                             </div>
@@ -1525,91 +1410,57 @@
                                 </div>
 
                                 <hr class="mt-1 mb-3">
-
-                                <div class="" id="payments">
-                                    <!-- <div v-for="(item, index) in payments" :key="index"> -->
-                                    <div class="row">
-                                        <div class="col-1 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <select name="" class="sty-inp form-control">
-                                                    <option value="dr">DR</option>
-                                                    <option value="cr">CR</option>
+                                
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-dark">
+                                        <th style="text-align:center;">Select Type</th>
+                                        <th style="text-align:center;">Select Mode</th>
+                                        <th style="text-align:center;">Ledger Name</th>
+                                        <th style="text-align:center;">Debit Amount</th>
+                                        <th style="text-align:center;">Credit Amount</th>
+                                        <th style="text-align:center;">Actions</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">DR</option>
+                                                    <option value="">CR</option>
                                                 </select>
-                                                <label class="sty-label" for="">DR/CR</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <select class="sty-inp form-control" name="" id="">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
                                                     <option value="">Bank</option>
                                                     <option value="">Cash</option>
                                                 </select>
-                                                <label for="" class="sty-label">Bank/Cash</label>
-                                            </div>
-                                        </div>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
+                                            </td>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" >
+                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th id="total" colspan="3">Total :</th>
+                                            <td style="text-align: center">Debit Total: <span class="ms-3">200</span></td>
+                                            <td style="text-align: center">Credit Total: <span class="ms-3">200</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <!-- <input class="sty-inp form-control" type="text" name="" > -->
-                                                <select class="sty-inp form-control" name="" id="">
-                                                    <option value="">Ledger 1</option>
-                                                    <option value="">Ledger 2</option>
-                                                    <option value="">Ledger 3</option>
-                                                </select>
-                                                <label class="sty-label" for="">Ledger Name</label>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Debit Amount</label>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Credit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <button class="btn btn-primary">
-                                                Against Reference
-                                            </button>
-                                        </div>
-
-                                        <div class="col-lg-1 mb-3">
-                                            <button class="btn btn-primary">
-                                                Cost
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <!-- </div> -->
-                                    <div class="row">
-                                        <div class="col-2 mb-3">
-                                            <button class="btn btn-primary" type="button">Add More</button>
-                                        </div>
-                                        <div class="col-3 mb-3">
-                                            <!-- this is empty to manage the space accordingly -->
-                                        </div>
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Debit Total Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Credit Total Amount</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
@@ -1650,7 +1501,7 @@
                                 <div class="row">
 
                                 </div>
-                                <button class="btn btn-primary" type="submit">Submit</button>
+                                
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -1715,90 +1566,53 @@
 
                                 <hr class="mt-1 mb-3">
 
-                                <div class="" id="receipts">
-                                    <!-- <div v-for="(item, index) in receipts" :key="index"> -->
-                                    <div class="row">
-                                        <div class="col-1 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <select name="" class="sty-inp form-control">
-                                                    <option value="dr">DR</option>
-                                                    <option value="cr">CR</option>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-dark">
+                                        <th style="text-align:center;">Select Type</th>
+                                        <th style="text-align:center;">Select Mode</th>
+                                        <th style="text-align:center;">Ledger Name</th>
+                                        <th style="text-align:center;">Debit Amount</th>
+                                        <th style="text-align:center;">Credit Amount</th>
+                                        <th style="text-align:center;">Actions</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">DR</option>
+                                                    <option value="">CR</option>
                                                 </select>
-                                                <label class="sty-label" for="">DR/CR</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <select class="sty-inp form-control" name="" id="">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
                                                     <option value="">Bank</option>
                                                     <option value="">Cash</option>
                                                 </select>
-                                                <label for="" class="sty-label">Bank/Cash</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <!-- <input class="sty-inp form-control" type="text" name="" > -->
-                                                <select class="sty-inp form-control" name="" id="">
-                                                    <option value="">Ledger 1</option>
-                                                    <option value="">Ledger 2</option>
-                                                    <option value="">Ledger 3</option>
-                                                </select>
-                                                <label class="sty-label" for="">Ledger Name</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Debit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Credit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <button class="btn btn-primary">
-                                                Against Reference
-                                            </button>
-                                        </div>
-
-                                        <div class="col-lg-1 mb-3">
-                                            <button class="btn btn-primary">
-                                                Cost
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <!-- </div> -->
-                                    <div class="row">
-                                        <div class="col-2 mb-3">
-                                            <button class="btn btn-primary" type="button">Add More</button>
-                                        </div>
-                                        <div class="col-3 mb-3">
-                                            <!-- this is empty to manage the space accordingly -->
-                                        </div>
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Debit Total Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Credit Total Amount</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
+                                            </td>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" >
+                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th id="total" colspan="3">Total :</th>
+                                            <td style="text-align: center">Debit Total: <span class="ms-3">200</span></td>
+                                            <td style="text-align: center">Credit Total: <span class="ms-3">200</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
@@ -1839,7 +1653,7 @@
                                 <div class="row">
 
                                 </div>
-                                <button class="btn btn-primary" type="submit">Submit</button>
+                                
                             </form>
                         </div>
                         <div class="modal-footer">
