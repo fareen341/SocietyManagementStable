@@ -133,7 +133,7 @@
                                                 <option v-for="item in subGroups" :value="item">{{ item }}</option>
                                             </select>
                                             <label class="sty-label">Group Name</label>
-                                            <span v-if="groupError" class="error">{{ groupError }}</span>
+                                            <span v-if="groupError && Object.keys(groupError).length > 0" class="error">{{ groupError }}</span>
                                             <span v-else></span>
                                         </div>
 
@@ -388,6 +388,61 @@
                             </form>
                             {% endverbatim %}
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GROUP CREATE MODAL -->
+            <div class="modal fade" id="groupCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                    <div class="modal-content">
+                        {% verbatim %}
+                        <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Group Creation</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="groupCreationModalClose"></button>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row">
+                                <div class="sty-input-wrapper w-100 mb-3">
+                                    <input type="text" class="sty-inp form-control" v-model="name" :style="{ borderColor: errors.group_name || errors.already_exist ? 'red' : '' || errors.same_child_parent ? 'red' : '' }" style="text-transform: capitalize;">
+                                    <label class="sty-label">Group Name</label>
+                                    <span v-if="errors.group_name || errors.already_exist || errors.same_child_parent" class="error">{{ errors.group_name || errors.already_exist || errors.same_child_parent }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100 mb-3">
+                                    <div class="w-100 sty-input-wrapper">
+                                        <select class="w-100 sty-inp" style="background-color: white;" @change="updateSubGroups($event)" v-model="superParent">
+                                            <option value="">Select Under Group</option>
+                                            <option value="Assets">Assets</option>
+                                            <option value="Liabilities">Liabilities</option>
+                                            <option value="Income">Income</option>
+                                            <option value="Expenses">Expenses</option>
+                                            <option value="Bank">Bank</option>
+                                        </select>
+                                        <label class="sty-label">Under Group</label>
+                                        <span v-if="errors.parent_name" class="error">{{ errors.parent_name }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100 mb-3">
+                                    <select class="w-100 sty-inp" id="groupSelection" style="background-color: white;" :style="{ borderColor: errors.under_group ? 'red' : '' }">
+                                        <option value="">Select Sub Group</option>
+                                        <option v-for="item in subGroupsOnGroupModal" :value="item">{{ item }}</option>
+                                    </select>
+                                    <label class="sty-label">Sub Group</label>
+                                    <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="groupCreationModalClose">Close</button>
+                            <button type="button" class="btn btn-primary" @click="submitGroup(0)">Add Group</button>
+                        </div>
+                        {% endverbatim %}
                     </div>
                 </div>
             </div>
@@ -1858,17 +1913,98 @@
             displayAmount: null,
             totalAmountValue: 0,
             errors: {},
-            subGroups: '',
+            subGroups: [],
             groupError: {},
             countries: [],
             states: [],
             cities: [],
             errors: {},
+            subGroupsOnGroupModal: [],
+            name: '',
+            parent: '',
+            superParent: '',
         },
         methods: {
             // EXTRA
             addMore() {
 
+            },
+            updateSubGroups(event, calling_from_update=false){
+                this.subGroupsOnGroupModal = [];
+                event = event;
+                if(!calling_from_update){
+                    event = event.target.value
+                }
+                //if(!event.target.value){
+                if(!event){
+                    this.subGroupsOnGroupModal = '';
+                    return;
+                }
+                axios.defaults.xsrfCookieName = 'csrftoken';
+                axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+                //axios.get(`http://127.0.0.1:8000/api/ledger_group/${event.target.value}`)
+                axios.get(`http://127.0.0.1:8000/api/ledger_group/${event}`)
+                .then(response => {
+                        this.subGroupsOnGroupModal = response.data.sub_group;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data in getting group:', error);
+                    });
+            },
+            groupCreationModalClose(){
+                $('#groupCreationModal').modal('hide');
+                $('#createNewLedger').modal('show');
+            },
+            submitGroup(id){
+                function toTitleCase(str) {
+                    return str.replace(
+                      /\w\S*/g,
+                      function(txt) {
+                        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                      }
+                    );
+                }
+
+                axios.defaults.xsrfCookieName = 'csrftoken';
+                axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+                this.parent = $('#groupSelection').val();
+                console.log("SELECTED ELEMENT======", this.parent);
+                data = {
+                    "name": toTitleCase(this.name),
+                    "superParent": this.superParent,
+                    "parent": this.parent
+                }
+
+                axios.post('http://127.0.0.1:8000/api/leadger_group_creation/', data)
+                    .then(response => {
+                        console.log("Response-->", response.data);
+                        $("#groupSelection").val('').trigger('change');
+                        this.name = '';
+                        this.errors = {}
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 5000
+                        };
+                        toastr.success(response.message, "Group Added Successfully!");
+                        $('#groupCreationModal').modal('hide');
+                        $('#createNewLedger').modal('show');
+                        this.subGroupsOnGroupModal.push(response.data.name);
+                    })
+                    .catch(error => {
+                        console.log("Errors -->", error.response.data);
+                        this.errors = error.response.data;
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 2000
+                        };
+                        toastr.error("Please Correct All Errors!");
+                        if(this.errors.sub_group_error){
+                            toastr.error("Sub Group Does Not Exists, Please Refresh The Page And Try Again!");
+                        }
+                    });
             },
             // EXTRA
             initializeSelect2($element) {
@@ -1880,6 +2016,44 @@
                     $('.select2-results').on('click', 'button.create-button', function () {
                         $('#purchaseVoucherCreate').modal('hide');
                         $('#createNewLedger').modal('show');
+
+                        axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
+                        .then(response => {
+                            this.subGroups = response.data.sub_group;
+                            console.log("data==============", this.subGroups);
+                            $('#ledgerSelection').select2({
+                                dropdownParent: $('#createNewLedger'),
+                                width: '100%',
+                                }).on('select2:open', () => {
+                                    $(".select2-results:not(:has(button.create-button))").append('<button class="create-button btn">+ Create New Group</button>');
+                                    $('.select2-results').on('click', 'button.create-button', function () {
+                                        $('#createNewLedger').modal('hide');
+                                        $('#groupCreationModal').modal('show');
+
+                                        $('#groupSelection').select2({
+                                            dropdownParent: $('#groupCreationModal'),
+                                            width: '100%',
+                                        });
+                                        ///////////
+
+                                        //axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
+                                        //.then(response => {
+                                        //    this.subGroups = response.data.sub_group;
+                                        //    console.log("data==============", this.subGroups);
+                                        //    $('#ledgerSelection').select2({
+                                        //        dropdownParent: $('#createNewLedger'),
+                                        //        width: '100%',
+                                        //    });
+                                        //})
+                                        //.catch(error => {
+                                        //    console.error('Error fetching data:', error);
+                                        //});
+                                    });
+                                });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                        });
                     });
                 });
             },addRowOnSave(){
@@ -2009,9 +2183,6 @@
                 $('#purchaseVoucherCreate').modal('show');
                 $('#createNewLedger').modal('hide');
             },
-            submitLedger() {
-
-            },
             getCountries() {
                 axios.get('https://api.countrystatecity.in/v1/countries', {
                     headers: {
@@ -2071,6 +2242,45 @@
                     .catch(error => {
                         this.formData.bank_branch_name = '';
                         this.formData.branch_name = '';
+                    });
+            },
+            submitLedger(id){
+                if ($('#ledgerSelection').val() === '') {
+                    this.groupError = "This field may not be blank."
+                }
+
+                let ledgerData = new FormData();
+                for (const key in this.formData) {
+                    if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                        if (this.formData[key] !== null) {
+                            ledgerData.append(key, this.formData[key]);
+                        }
+                    }
+                }
+
+                // ADDING GROUP NAME USING JQUERY
+                ledgerData.append('group_name', $('#ledgerSelection').val());
+
+                // ADD
+                axios.defaults.xsrfCookieName = 'csrftoken';
+                axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+                axios.post('http://127.0.0.1:8000/api/ledger_creation/', ledgerData)
+                    .then(response => {
+                        alert('response');
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 5000
+                        };
+                        toastr.success(response.message, "Ledger Created Successfully!");
+                        $('#createNewLedger').modal('hide');
+                        $('#purchaseVoucherCreate').modal('show');
+                        this.ledgerList.push(response.data);
+                        this.formData = {};
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data
+                        console.log("Error: ->", this.errors);
                     });
             },
         },
