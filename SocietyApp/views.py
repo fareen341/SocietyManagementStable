@@ -382,3 +382,14 @@ def get_cost_center_datatable(request, id=None):
 def voucher_creation(request):
     datatable_columns = [0, 1]
     return render(request, 'voucher_creation_new.html', {'datatable_columns': datatable_columns})
+
+
+def balance_sheet(request):
+    datatable_columns = [0, 1]
+    return render(request, 'balance_sheet.html', {'datatable_columns': datatable_columns})
+
+
+def profit_and_loss(request):
+    datatable_columns = [0, 1]
+    return render(request, 'profit_and_loss.html', {'datatable_columns': datatable_columns})
+

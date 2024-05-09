@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-5 ms-auto me-auto" id="societyHead">
+          {% verbatim %}
+          <div class="text-center mt-2" id="print-head">
+            <h3 id="heading" style="color: #000 !important; font-family: 'Calibri', sans-serif;"><b>{{ society.society_name }}</b></h3>
+            <p style="font-family: 'Calibri', sans-serif;" class="mt-3 p-0 mb-0 print-head-content"><b>Registraion Number: </b> <span>{{ society.registration_number }}</span></p>
+            <p style="font-family: 'Calibri', sans-serif;" class="print-head-content">{{ society.society_reg_address }}, {{ society.socity_state }}, {{ society.pin_code }}</p>
+          </div>
+          {% endverbatim %}
+        </div>
+    </div>
+    <div class="row" id="balanceSheetVue">
+      {% verbatim %}
+      <h3 class="text-center">BALANCE SHEET AS ON 31/03/24</h3>
+      <div class="col-lg-6">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Previous Year</th>
+              <th scope="col">Liabilities</th>
+              <th></th>
+              <th scope="col">Current Year</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(ledger, index) in ledgers" :key="ledger.id">
+              <th scope="row">{{ index + 1 }}</th>
+              <td>{{ ledger.ledger_name }}</td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      {% endverbatim %}
+
+      
+      <div class="col-lg-6">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th scope="col">Previous Year</th>
+              <th scope="col">Assets</th>
+              <th></th>
+              <th scope="col">Current Year</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Mark</td>
+              <td></td>
+              <td>Otto</td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>Jacob</td>
+              <td></td>
+              <td>Thornton</td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td colspan="2"></td>
+              <td colspan="2">Larry the Bird</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+</div>
+
+<script>
+  let datatable_columns = {{ datatable_columns }};
+</script>
+
+{% endblock body %}

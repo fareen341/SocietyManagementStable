@@ -77,8 +77,9 @@ urlpatterns = [
     path('group_data/<int:id>/', views.get_group_datatable, name='group_data_retrive'),
     path('cost_center_data', views.get_cost_center_datatable, name='cost_center_data'),
     path('cost_center_data/<int:id>/', views.get_cost_center_datatable, name='cost_center_data_retrive'),
-
     path('voucher_creation', views.voucher_creation, name='voucher_creation'),
+    path('balance_sheet/', views.balance_sheet, name='balance_sheet'),
+    path('profit_and_loss/', views.profit_and_loss, name='profit_and_loss'),
 
 
     # UNIT TEST
@@ -113,6 +114,8 @@ urlpatterns = [
 
     path('api/ledger_group/<str:group_name>/', apiviews.CreateGroupForLedgerView.as_view({'get': 'select_ledger_group'}), name='ledger_group'),
     path('api/get_all_cost_centers/', apiviews.CostCenterView.as_view({'get': 'select_cost_center'}), name='get_all_cost_centers'),
+    path('get_ledgers/<str:group_list>', apiviews.LedgerView.as_view({'get': 'get_ledgers'}), name='get_ledgers')
+
 
 ]
 if settings.DEBUG:

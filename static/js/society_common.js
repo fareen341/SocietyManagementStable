@@ -4277,6 +4277,32 @@ new Vue({
         $('#addIncomeCostCenter').modal('show');
         }
     }
-    });
+});
 
 
+new Vue({
+    el: '#balanceSheetVue',
+    data: {
+        ledgers: [],
+        assets: [],
+    },
+    mounted() {
+        axios.defaults.xsrfCookieName = 'csrftoken';
+        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+        axios.get(`http://127.0.0.1:8000/api/ledger_group/Liabilities`)
+            .then(response => {
+                axios.get(`http://127.0.0.1:8000/get_ledgers/${response.data.sub_group}`)
+                    .then(response => {
+                        this.ledgers = response.data;
+                        console.log("FILTERRED DATA=============", this.ledgers.ledgers);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+});
+    
