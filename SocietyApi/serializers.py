@@ -10,6 +10,12 @@ class SocietyCreationSerializer(serializers.ModelSerializer):
         model = SocietyCreation
         fields = '__all__'
 
+    def validate(self, data):
+        # Check if an object already exists in the database
+        if SocietyCreation.objects.exists():
+            raise serializers.ValidationError("Society already created.")
+        return data
+
 
 class SocietyBankSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,6 +40,7 @@ class SocietyRegistrationDocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocietyRegistrationDocument
         fields = [
+            'id',
             'completion_cert',
             'occupancy_cert',
             'deed_of_conveyance',

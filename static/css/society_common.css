@@ -798,10 +798,9 @@ input::placeholder {
 
 
   .error {
-    color: red;
+    color: #dc3545;
     font-size: 14px;
 }
-
 
 
 /* checkbox style */

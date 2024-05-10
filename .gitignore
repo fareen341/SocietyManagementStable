@@ -5,4 +5,4 @@
 **/venv/
 # *.sqlite3
 **/media/
-info.txt
+# info.txt

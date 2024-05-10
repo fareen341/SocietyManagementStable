@@ -6,7 +6,8 @@ from .models import *
 # Create your views here.
 
 def create_society(request):
-    return render(request,'society_creation.html')
+    datatable_columns = [0, 2, 3]
+    return render(request,'society_creation.html', {'datatable_columns': datatable_columns})
 
 
 def society_detail(request):
