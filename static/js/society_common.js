@@ -140,10 +140,6 @@ new Vue({
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
                     if (this.formData[key] !== null) {
                         formData.append(key, this.formData[key]);
-                        if(key === 'pan_number'){
-                            let pan_data = this.formData[key].toUpperCase();
-                            formData.append(key, pan_data);
-                        }
                     }
                 }
             }
@@ -281,6 +277,7 @@ new Vue({
             return error ? error[field][0] : '';
         },
         submitBank() {
+            $('#loader').show();
             const primaryChecked = this.forms.some(form => form.is_primary);
             if (!primaryChecked) {
                 this.singlePrimaryError = "Please select at least one beneficiary as primary."
@@ -294,6 +291,7 @@ new Vue({
 
             axios.post('http://127.0.0.1:8000/api/society_bank/', this.forms, {})
                 .then(response => {
+                    $('#loader').hide();
                     toastr.options = {
                         closeButton: true,
                         positionClass: 'toast-top-center',
@@ -303,6 +301,7 @@ new Vue({
                     this.nextAction();
                 })
                 .catch(errors => {
+                    $('#loader').hide();
                     this.errors = errors.response.data.errors;
                     toastr.options = {
                         closeButton: true,
@@ -358,7 +357,7 @@ new Vue({
             const error = this.errors.find(error => error.index === index);
             return error ? error[field][0] : '';
         },
-        validateNominees(fieldName, form, index) {
+        validateData(fieldName, form, index) {
             if (!form[fieldName]) {
               if (!this.otherDocError[index]) {
                 this.$set(this.otherDocError, index, {});
@@ -368,48 +367,49 @@ new Vue({
             }
         },
         submitBothDocs() {
+            $('#loader').show();
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
             // OTER DOCUMENTS
-                this.forms.forEach((form, index) => {
-                    if(this.showForm){
-                        this.validateNominees('other_document', form, index);
-                        this.validateNominees('other_document_specification', form, index);
+            this.forms.forEach((form, index) => {
+                if(this.showForm){
+                    this.validateData('other_document', form, index);
+                    this.validateData('other_document_specification', form, index);
 
-                        const formData2 = new FormData();
-                        formData2.append('other_document_specification', form.other_document_specification);
+                    const formData2 = new FormData();
+                    formData2.append('other_document_specification', form.other_document_specification);
 
-                        const refName = 'other_document_' + index;
-                        const inputElement = this.$refs[refName];
-                        if (inputElement && inputElement.length > 0) {
-                            console.log("doc ==>", inputElement[0].files[0]);
-                            formData2.append('other_document', inputElement[0].files[0]);
-                        }
-
-                        if (formData2) {
-                            axios.post('http://127.0.0.1:8000/api/society-other-docs/', formData2, {
-                                headers: {
-                                    'Content-Type': 'multipart/form-data'
-                                }
-                            })
-                                .then(response => {
-                                    this.isValid = true;
-                                    console.log('Form data submitted successfully:', response.data);
-                                })
-                                .catch(errors => {
-                                    console.error('Error submitting form data:', errors);
-                                    // this.errors = errors.response.data.errors;
-                                    // toastr.options = {
-                                    //     closeButton: true,
-                                    //     positionClass: 'toast-top-center',
-                                    //     timeOut: 2000
-                                    //   };
-                                    // toastr.error("Please Correct Error In Other Document!");
-                                });
-                        }
+                    const refName = 'other_document_' + index;
+                    const inputElement = this.$refs[refName];
+                    if (inputElement && inputElement.length > 0) {
+                        console.log("doc ==>", inputElement[0].files[0]);
+                        formData2.append('other_document', inputElement[0].files[0]);
                     }
-                });
+
+                    if (formData2) {
+                        axios.post('http://127.0.0.1:8000/api/society-other-docs/', formData2, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                            .then(response => {
+                                this.isValid = true;
+                                console.log('Form data submitted successfully:', response.data);
+                            })
+                            .catch(errors => {
+                                console.error('Error submitting form data:', errors);
+                                // this.errors = errors.response.data.errors;
+                                // toastr.options = {
+                                //     closeButton: true,
+                                //     positionClass: 'toast-top-center',
+                                //     timeOut: 2000
+                                //   };
+                                // toastr.error("Please Correct Error In Other Document!");
+                            });
+                    }
+                }
+            });
 
             // REQUIRED DOC CODE, this.formData coming from handleFileUpload function
             axios.post('http://127.0.0.1:8000/api/society-registration-documents/', this.formData, {
@@ -418,6 +418,7 @@ new Vue({
                 }
             })
                 .then(response => {
+                    $('#loader').hide();
                     if(this.isValid === false){
                         axios.delete(`http://127.0.0.1:8000/api/society-registration-documents/${response.data.id}/`)
                             .then(response => {
@@ -437,6 +438,7 @@ new Vue({
                     }
                 })
                 .catch(errors => {
+                    $('#loader').hide();
                     console.error('Error submitting form data:', errors);
                     this.required_docs_errors = errors.response.data;
                     toastr.options = {
@@ -501,7 +503,7 @@ new Vue({
             const error = this.errors.find(error => error.index === index);
             return error ? error[field][0] : '';
         },
-        validateNominees(fieldName, form, index) {
+        validateData(fieldName, form, index) {
             if (!form[fieldName]) {
                 if (!this.blockError[index]) {
                     this.$set(this.blockError, index, {});
@@ -522,10 +524,11 @@ new Vue({
             }
         },
         submitWingFlat() {
+            $('#loader').show();
             this.blockError = {};
             this.forms.forEach((form, index) => {
-                this.validateNominees('wing_name', form, index);
-                this.validateNominees('flat_number', form, index);
+                this.validateData('wing_name', form, index);
+                this.validateData('flat_number', form, index);
             });
 
             if (Object.keys(this.blockError).length === 0){
@@ -538,6 +541,7 @@ new Vue({
                     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
                     axios.post('http://127.0.0.1:8000/api/wing-flat/', formData, {})
                         .then(response => {
+                            $('#loader').hide();
                             toastr.options = {
                                 closeButton: true,
                                 positionClass: 'toast-top-center',
@@ -562,22 +566,24 @@ new Vue({
                               });
                         })
                         .catch(errors => {
+                            $('#loader').hide();
                             toastr.options = {
                                 closeButton: true,
                                 positionClass: 'toast-top-center',
                                 timeOut: 2000
                             };
-                            toastr.error("Please Correct ALl Errors!");
+                            toastr.error("Please Correct All Errors!");
                             this.errors = errors.response.data.errors;
                         });
                     });
             }else{
+                $('#loader').hide();
                 toastr.options = {
                     closeButton: true,
                     positionClass: 'toast-top-center',
                     timeOut: 2000
                 };
-                toastr.error("Please Correct ALl Errors!");
+                toastr.error("Please Correct All Errors!");
             }
         },
         getFormNumber: index => index + 1
@@ -726,6 +732,8 @@ new Vue({
         error: null,
         errors: {},
         item: {},
+        states: [],
+        cities: [],
     },
     methods: {
         editSocietyForm() {
@@ -785,6 +793,54 @@ new Vue({
         clearErrors() {
             this.errors = {};
         },
+        fetchState(){
+            axios.get('https://api.countrystatecity.in/v1/countries/IN/states', {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+            .then(response => {
+                this.states = response.data;
+                this.corr_states = response.data;
+            })
+            .catch(error => {
+                // alert('Error Fetching States');
+            });
+        },
+        fetchCorrCity(event, flag){
+            if(flag){
+                this.formData.society_corr_city = '';
+                event = event.target.value;
+            }
+            axios.get(`https://api.countrystatecity.in/v1/countries/IN/states/${event}/cities`, {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+            .then(response => {
+                this.cities = response.data;
+            })
+            .catch(error => {
+                // alert('Error Fetching Cities');
+            });
+        },
+        fetchCity(event, flag){
+            if(flag){
+                this.formData.society_city = '';
+                event = event.target.value;
+            }
+            axios.get(`https://api.countrystatecity.in/v1/countries/IN/states/${event}/cities`, {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+            .then(response => {
+                this.cities = response.data;
+            })
+            .catch(error => {
+                alert('Error Fetching Cities');
+            });
+        }
     },
     mounted() {
         society_id = document.getElementById('society_id');
@@ -792,27 +848,29 @@ new Vue({
             society_id = society_id.value;
             axios.get(`http://127.0.0.1:8000/api/society-creation/`)
                 .then(response => {
-                    console.log("RESPONSE==>", response.data);
+                    this.fetchState();
+                    this.fetchCity(response.data.socity_state, 0);
+                    this.fetchCorrCity(response.data.socity_corr_state, 0);
+                    console.log("RESPONSE==>", response.data.registration_doc_filename);
                     this.item = response.data;
                     this.formData = response.data;
-                    console.log("ITEM==>", this.item);
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
         }
-        // const myModal = new bootstrap.Modal(document.getElementById('myModal'));
-        // myModal.show();
     },
 });
 
-
-// ADD BANK DETAILS ON MODAL:
+// BANK ON SOCIETY DETAILS PAGE:
 new Vue({
-    el: '#bankContainerModal',
+    el: '#bankDisplayVue',
     data: {
+        bankData: [],
+        formData: {},
         forms: [{}],
         errors: [],
+        errorsOnEdit: {},
     },
     methods: {
         addForm() {
@@ -836,16 +894,95 @@ new Vue({
 
             axios.post('http://127.0.0.1:8000/api/society_bank/', this.forms, {})
                 .then(response => {
-                    console.log('Form data submitted successfully:', response.data);
-                    this.nextAction();
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success("Bank Added!");
+                    $('#addBankDetails').modal('hide');
+                    this.bankData.push(response.data[0]);
                 })
                 .catch(errors => {
-                    console.error('Error submitting form data:', errors);
                     this.errors = errors.response.data.errors;
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.error("Please Correct All Errors!");
                 });
         },
-        getFormNumber: index => index + 1
-    }
+        getFormNumber: index => index + 1,
+        bankUpdate(id) {
+            $('#editBankDetails').modal('show');
+            axios.get(`http://127.0.0.1:8000/api/society_bank/${id}/`)
+                .then(response => {
+                    console.log("CALLING FOR EDIT BANK", response.data);
+                    this.formData = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        submitBankUpdatedData(id) {
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+            const formData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    formData.append(key, this.formData[key]);
+                }
+            }
+
+            axios.patch(`http://127.0.0.1:8000/api/society_bank/${id}/`, formData)
+                .then(response => {
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success("Bank Updated!");
+                    $('#editBankDetails').modal('hide');
+
+                    const index = this.bankData.findIndex(item => item.id === id);
+                    if (index !== -1) {
+                        this.$set(this.bankData, index, response.data);
+                    }
+                })
+                .catch(error => {
+                    this.errorsOnEdit = error.response.data;
+                });
+        },
+        deleteBank(id) {
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.delete(`http://127.0.0.1:8000/api/society_bank/${id}/`)
+                .then(response => {
+                    console.log("Form Submitted:", response.data);
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error Submitting:", this.errors);
+                });
+
+        },
+    },
+    mounted() {
+        axios.get('http://127.0.0.1:8000/api/society_bank/')
+            .then(response => {
+                this.bankData = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        $('#addBankDetails').on('hidden.bs.modal', () => {
+            this.forms = [{}];
+            this.errors = [];
+        });
+    },
 });
 
 
@@ -862,6 +999,9 @@ new Vue({
         ],
         errors: [],
         required_docs_errors: {},
+        requiredDocs: [],
+        otherDocs: [],
+        formData: {},
     },
     methods: {
         addForm() {
@@ -920,154 +1060,29 @@ new Vue({
             console.log("again", this.forms[index]);
         },
         getFormNumber: index => index + 1
-    }
-});
-
-// BANK ON SOCIETY DETAILS PAGE:
-new Vue({
-    el: '#bankDisplayVue',
-    data: {
-        bankData: {},
-        formData: {},
-        errors: {},
-        // formInput: new FormData(),
-        // tenantData: [],
-        // tenantIdToUpdate: null,
     },
-    methods: {
-        bankUpdate(id) {
-            // this.tenantIdToUpdate = id;
-            $('#editBankDetails').modal('show');
-            axios.get(`http://127.0.0.1:8000/api/society_bank/${id}/`)
-                .then(response => {
-                    console.log("CALLING FOR EDIT BANK", response.data);
-                    this.formData = response.data;
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
-        },
-        submitBankUpdatedData(id) {
-            console.log("id from submit====>", id);
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
-            const formData = new FormData();
-            for (const key in this.formData) {
-                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-                    formData.append(key, this.formData[key]);
-                }
-            }
-
-            axios.patch(`http://127.0.0.1:8000/api/society_bank/${id}/`, formData)
-                .then(response => {
-                    console.log("Form Submitted:", response.data);
-                })
-                .catch(error => {
-                    this.errors = error.response.data
-                    console.log("Error Submitting:", this.errors);
-                });
-        },
-        deleteBank(id) {
-            console.log("id====", id);
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.delete(`http://127.0.0.1:8000/api/society_bank/${id}/`)
-                .then(response => {
-                    console.log("Form Submitted:", response.data);
-                })
-                .catch(error => {
-                    this.errors = error.response.data
-                    console.log("Error Submitting:", this.errors);
-                });
-
-        },
-        // updateTenant(){
-        //     for (const key in this.formData) {
-        //         if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-        //             if (this.formData[key] !== null) {
-        //                 this.formInput.append(key, this.formData[key]);
-        //             }
-        //         }
-        //     }
-
-        //     axios.defaults.xsrfCookieName = 'csrftoken';
-        //     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-        //     axios.patch(`http://127.0.0.1:8000/api/tenant_creation/${this.tenantIdToUpdate}/`, this.formInput, {
-        //         headers: {
-        //             'Content-Type': 'multipart/form-data'
-        //         }
-        //     })
-        //         .then(response => {
-        //             console.log("Form Submitted:", response.data);
-        //         })
-        //         .catch(error => {
-        //             this.errors = error.response.data
-        //             console.log("Error Submitting:", this.errors );
-        //         });
-        // },
-        // viewRequestedData(id) {
-        //     $('#tenentViewModal').modal('show');
-        //     axios.get(`http://127.0.0.1:8000/api/tenant_creation/${id}/`)
-        //         .then(response => {
-        //             this.formData = response.data;
-        //         })
-        //         .catch(error => {
-        //             console.error('Error fetching data:', error);
-        //         });
-        // },
-        // submitTenant() {
-        //     for (const key in this.formData) {
-        //         if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-        //             if (this.formData[key] !== null) {
-        //                 this.formInput.append(key, this.formData[key]);
-        //             }
-        //         }
-        //     }
-
-        //     axios.defaults.xsrfCookieName = 'csrftoken';
-        //     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-        //     axios.post('http://127.0.0.1:8000/api/tenant_creation/', this.formInput, {
-        //         headers: {
-        //             'Content-Type': 'multipart/form-data'
-        //         }
-        //     })
-        //         .then(response => {
-        //             console.log("Form Submitted:", response.data);
-        //         })
-        //         .catch(error => {
-        //             this.errors = error.response.data
-        //             console.log("Error Submitting:", this.errors );
-
-        //         });
-        // },
-        // handleFileChange(event, refName){
-        //     const selectedFile = event.target.files[0];
-
-        //     if (selectedFile) {
-        //         this.formInput.append(refName, selectedFile);
-        //     }
-        // },
-        // clearErrors() {
-        //     this.errors = {};
-        // },
-    },
-    mounted() {
-        axios.get('http://127.0.0.1:8000/api/society_bank/')
+    mounted(){
+        // REQUIRED DOCS
+        axios.get(`http://127.0.0.1:8000/api/society-registration-documents/`)
             .then(response => {
-                this.bankData = response.data;
+                this.requiredDocs = response.data;
+                console.log("req ============", this.requiredDocs);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
 
-        // $('#tenentCreation, #tenentUpdateModal').on('hidden.bs.modal', () => {
-        //     this.clearErrors();
-        //     this.formData = {};
-        // });
-    },
-})
-
+        // OTHER DOCS
+        axios.get(`http://127.0.0.1:8000/api/society-other-docs/`)
+            .then(response => {
+                this.otherDocs = response.data;
+                console.log("thisc========", this.otherDocs);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+});
 
 
 // MEMBERS PAGE START

@@ -28,6 +28,12 @@ class SocietyCreation(models.Model):
     socity_corr_state = models.CharField(max_length=100, null=True, blank=True)
     pin_corr_code = models.CharField(max_length=100, null=True, blank=True)
 
+    def save(self, *args, **kwargs):
+        self.pan_number = self.pan_number.upper()
+        self.gst_number = self.gst_number.upper()
+        self.registration_number = self.registration_number.upper()
+        super(SocietyCreation, self).save(*args, **kwargs)
+
 
 class SocietyBank(models.Model):
     society_creation = models.ForeignKey(SocietyCreation, on_delete=models.CASCADE)
@@ -77,8 +83,17 @@ class SocietyRegistrationDocument(models.Model):
 
 
 class WingFlat(models.Model):
+    society_creation = models.OneToOneField(SocietyCreation, on_delete=models.CASCADE)
     wing_name = models.CharField(max_length=50)
     flat_number = models.CharField(max_length=50)
+
+    def save(self, *args, **kwargs):
+        if not self.society_creation_id:
+            last_society_creation = SocietyCreation.objects.first()
+            if last_society_creation:
+                self.society_creation = last_society_creation
+        self.wing_name = self.wing_name.upper()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.wing_name

@@ -55,7 +55,7 @@
                                                 <div class="mb-2">
                                                     <div class="input-group">
                                                         <div class="firstinp w-50 sty-input-wrapper">
-                                                            <input class="w-100 sty-inp" type="number" id="id_registration_number" v-model="formData.registration_number" :style="{ borderColor: errors.registration_number ? '#dc3545' : '' }">
+                                                            <input class="w-100 sty-inp" type="text" style="text-transform:uppercase" id="id_registration_number" v-model="formData.registration_number" :style="{ borderColor: errors.registration_number ? '#dc3545' : '' }">
                                                             <label for="id_registration_number" class="sty-label">Registration Number</label>
                                                             <span v-if="errors.registration_number" class="error">{{ errors.registration_number[0] }}</span>
                                                             <span v-else></span>
@@ -452,7 +452,7 @@
 
                                                 <div class="row mb-3">
                                                     <div class="col-lg-3 sty-input-wrapper">
-                                                        <input class="w-100 sty-inp" type="text" v-model="form.wing_name" :style="{ borderColor: blockError[index] && blockError[index].wing_name? '#dc3545' : '' }">
+                                                        <input class="w-100 sty-inp" type="text" style="text-transform:uppercase" v-model="form.wing_name" :style="{ borderColor: blockError[index] && blockError[index].wing_name? '#dc3545' : '' }">
                                                         <label for="" class="sty-label">Enter your Wing Name</label>
                                                         <span v-if="blockError[index] && blockError[index].wing_name" class="error">{{ blockError[index].wing_name }}</span>
                                                         <span v-else></span>
