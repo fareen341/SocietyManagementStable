@@ -14,7 +14,6 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from SocietyApp.models import *
 from django.utils import timezone
-from .filters import LedgerFilter
 
 
 # Create your views here.

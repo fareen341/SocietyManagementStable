@@ -5,7 +5,7 @@
 
 {% block body %}
 
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-lg-5 ms-auto me-auto" id="societyHead">
           {% verbatim %}
@@ -31,10 +31,50 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(ledger, index) in ledgers" :key="ledger.id">
-              <th scope="row">{{ index + 1 }}</th>
-              <td>{{ ledger.ledger_name }}</td>
+            <tr>
               <td></td>
+              <td>I. Share Capital:</td>
+              <td></td>
+              <td>100000</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>I-A. Subscription towards shares:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>II. Reserve Fund and Other Funds:</td>
+              <td>3000.00</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>III. Secured Loans:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>V. Unsecured Loans:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>VI. Deposits:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>VII. Current Liabilities and Provisions:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>IX. Interest accrued due but not paid:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>Income & Expenditure A/c</td>
               <td></td>
             </tr>
           </tbody>
@@ -42,7 +82,7 @@
       </div>
       {% endverbatim %}
 
-      
+
       <div class="col-lg-6">
         <table class="table table-bordered">
           <thead>
@@ -55,27 +95,54 @@
           </thead>
           <tbody>
             <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
               <td></td>
-              <td>Otto</td>
+              <td>VII. Fixed Assets:</td>
+              <td></td>
             </tr>
             <tr>
-              <th scope="row">2</th>
-              <td>Jacob</td>
               <td></td>
-              <td>Thornton</td>
+              <td>II. Investments</td>
+              <td></td>
             </tr>
             <tr>
-              <th scope="row">3</th>
-              <td colspan="2"></td>
-              <td colspan="2">Larry the Bird</td>
+              <td rowspan="2"></td>
+              <td>I. Cash and Bank balances<td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>(a) Cash on hand</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>IV. Loans and Advances:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>VI. Current Assets:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>X. Profit and Loss Account:</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>Accumulated losses not written off from the reserve or any other fund</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>Income & Expenditure A/c</td>
+              <td></td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-    
+
 </div>
 
 <script>

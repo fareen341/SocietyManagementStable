@@ -4281,20 +4281,37 @@ new Vue({
 
 
 new Vue({
-    el: '#balanceSheetVue',
+    el: '#profitAndLossVue',
     data: {
         ledgers: [],
-        assets: [],
+        expense_ledgers: [],
+        income_ledgers: [],
     },
     mounted() {
         axios.defaults.xsrfCookieName = 'csrftoken';
         axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-        axios.get(`http://127.0.0.1:8000/api/ledger_group/Liabilities`)
+
+        // Income
+        axios.get(`http://127.0.0.1:8000/api/ledger_group/Income`)
             .then(response => {
                 axios.get(`http://127.0.0.1:8000/get_ledgers/${response.data.sub_group}`)
                     .then(response => {
-                        this.ledgers = response.data;
-                        console.log("FILTERRED DATA=============", this.ledgers.ledgers);
+                        this.income_ledgers = response.data.ledgers;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // Expenses
+        axios.get(`http://127.0.0.1:8000/api/ledger_group/Expenses`)
+            .then(response => {
+                axios.get(`http://127.0.0.1:8000/get_ledgers/${response.data.sub_group}`)
+                    .then(response => {
+                        this.expense_ledgers = response.data.ledgers;
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
@@ -4305,4 +4322,3 @@ new Vue({
             });
     }
 });
-    

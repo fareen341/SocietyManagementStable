@@ -17,77 +17,56 @@
           {% endverbatim %}
         </div>
     </div>
-    <div class="row">
+    <div class="row" id="profitAndLossVue">
+      {% verbatim %}
       <h3 class="text-center">BALANCE SHEET AS ON 31/03/24</h3>
+
       <div class="col-lg-6">
         <table class="table table-bordered">
           <thead>
             <tr>
               <th scope="col">Previous Year</th>
               <th></th>
-              <th scope="col">Liabilites</th>
-              <th></th>
+              <th scope="col">Expenditure</th>
               <th scope="col">Current Year</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
+            <tr v-for="(ledger, index) in expense_ledgers" :key="ledger.id">
+              <th scope="row"></th>
               <td>To</td>
-              <td>Mark</td>
+              <td>{{ ledger.ledger_name }}</td>
               <td></td>
-              <td>Otto</td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>To</td>
-              <td>Jacob</td>
               <td></td>
-              <td>Thornton</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>To</td>
-              <td colspan="2"></td>
-              <td colspan="2">Larry the Bird</td>
             </tr>
           </tbody>
         </table>
       </div>
-      
+
       <div class="col-lg-6">
         <table class="table table-bordered">
           <thead>
             <tr>
               <th scope="col">Previous Year</th>
-              <th scope="col">Assets</th>
               <th></th>
+              <th scope="col">Income</th>
               <th scope="col">Current Year</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
+            <tr v-for="(ledger, index) in income_ledgers" :key="ledger.id">
+              <th scope="row"></th>
+              <td>To</td>
+              <td>{{ ledger.ledger_name }}</td>
               <td></td>
-              <td>Otto</td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Jacob</td>
               <td></td>
-              <td>Thornton</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td colspan="2"></td>
-              <td colspan="2">Larry the Bird</td>
             </tr>
           </tbody>
         </table>
       </div>
+      {% endverbatim %}
     </div>
-    
+
 </div>
 
 {% endblock body %}
