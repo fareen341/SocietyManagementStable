@@ -340,6 +340,11 @@ p {
     border-color: red;
 }
 
+/* USEFULL AT ONE PLACE - DONT DELETE */
+.error-border{
+    border-color: #dc3545;
+}
+
 /* Custom CSS for toastr */
 .toast-success {
     top: 50px; /* Adjust the top padding as needed */

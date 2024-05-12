@@ -453,14 +453,14 @@
                                                 <div class="row mb-3">
                                                     <div class="col-lg-3 sty-input-wrapper">
                                                         <input class="w-100 sty-inp" type="text" style="text-transform:uppercase" v-model="form.wing_name" :style="{ borderColor: blockError[index] && blockError[index].wing_name? '#dc3545' : '' }">
-                                                        <label for="" class="sty-label">Enter your Wing Name</label>
+                                                        <label for="" class="sty-label">Wing Name</label>
                                                         <span v-if="blockError[index] && blockError[index].wing_name" class="error">{{ blockError[index].wing_name }}</span>
                                                         <span v-else></span>
                                                     </div>
 
                                                     <div class="col-lg-5 sty-input-wrapper">
                                                         <textarea class="w-100 sty-inp" cols="30" rows="1" v-model="form.flat_number" :style="{ borderColor: blockError[index] && blockError[index].flat_number ? '#dc3545' : '' }"></textarea>
-                                                        <label for="" class="sty-label">Enter your Flat Numbers</label>
+                                                        <label for="" class="sty-label">Flat Numbers</label>
                                                         <span v-if="blockError[index] && blockError[index].flat_number" class="error">{{ blockError[index].flat_number }}</span>
                                                         <span v-else></span>
                                                     </div>

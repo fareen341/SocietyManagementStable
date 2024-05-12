@@ -83,7 +83,7 @@ class SocietyRegistrationDocument(models.Model):
 
 
 class WingFlat(models.Model):
-    society_creation = models.OneToOneField(SocietyCreation, on_delete=models.CASCADE)
+    society_creation = models.ForeignKey(SocietyCreation, on_delete=models.CASCADE)
     wing_name = models.CharField(max_length=50)
     flat_number = models.CharField(max_length=50)
 
