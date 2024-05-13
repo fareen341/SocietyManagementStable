@@ -579,7 +579,7 @@
 
         <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
             <div class="container">
-                <div class="row mt-3 p-2" id="societyDocumentsContainer">
+                <div class="mt-3 p-2" id="societyDocumentsContainer">
 
                     <!-- ADD OTHER DOC MODAL -->
                     <div class="modal fade" id="addOtherDocuments" tabindex="-1" aria-labelledby="" aria-hidden="true">
@@ -633,204 +633,320 @@
                     </div>
 
                     {% verbatim %}
-                    <div class="d-flex">
-                        <h3 class="text-center mb-3">Society Documents</h3>
-                        <button class="btn btn-primary ms-auto me-5" @click="updateRequiredDocsClick">Edit</button>
-                    </div>
-
-                    <div class="col-3">
-                        <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Completion Certificate</b></p>
-                    </div>
-                    <div class="col-3">
-                        <span><a class="me-4" :href="requiredDocs[0].completion_cert" target="_blank" >{{ requiredDocs[0].completion_cert_filename }}</a></span>
-                        <span><a :href="requiredDocs[0].completion_cert" download><i class="fa-solid fa-download"></i></a></span>
-                    </div>
-
-                    <div class="col-3">
-                        <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Occupancy Certificate</b></p>
-                    </div>
-                    <div class="col-3">
-                        <span><a class="me-4" :href="requiredDocs[0].occupancy_cert" target="_blank" >{{ requiredDocs[0].occupancy_cert_filename }}</a></span>
-                        <span><a :href="requiredDocs[0].occupancy_cert" download><i class="fa-solid fa-download"></i></a></span>
-                    </div>
-
-                    <div class="col-3">
-                        <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Deed of Conveyance</b></p>
-                    </div>
-                    <div class="col-3">
-                        <span><a class="me-4" :href="requiredDocs[0].deed_of_conveyance" target="_blank" >{{ requiredDocs[0].deed_of_conveyance_filename }}</a></span>
-                        <span><a :href="requiredDocs[0].deed_of_conveyance" download><i class="fa-solid fa-download"></i></a></span>
-                    </div>
-
-                    <div class="col-3">
-                        <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Scoiety Bye Laws</b></p>
-                    </div>
-                    <div class="col-3">
-                        <span><a class="me-4" :href="requiredDocs[0].society_by_law" target="_blank" >{{ requiredDocs[0].society_by_law_filename }}</a></span>
-                        <span><a :href="requiredDocs[0].society_by_law" download><i class="fa-solid fa-download"></i></a></span>
-                    </div>
-                    <div class="col-3">
-                        <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Other Document</b></p>
-                    </div>
-                    <div class="col-3">
-                        <span><a class="me-4" :href="requiredDocs[0].soc_other_document_filename" target="_blank" v-if="requiredDocs[0].soc_other_document_filename">{{ requiredDocs[0].soc_other_document_filename }}</a></span>
-                        <span><a :href="requiredDocs[0].soc_other_document_filename" v-if="requiredDocs[0].soc_other_document_filename" download><i class="fa-solid fa-download"></i></a></span>
-                    </div>
-
-                    <!-- UPDATE MODAL FOR REQUIRED DOCS -->
-                    <div class="modal fade" id="updateRequiredDocs" tabindex="-1" aria-labelledby="updateRequiredDocsLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="updateRequiredDocsLabel">Update Document</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                    <div class="modal-body">
-                                        <form enctype="multipart/form-data">
-                                            <div class="row p-2 mt-2">
-                                                <div class="col-lg-12 mb-3 d-flex">
-
-                                                    <div class="w-100 sty-input-wrapper">
-                                                        <input type="file" class="w-100 sty-inp form-control" id="completion_cert" ref="completion_cert" @change="handleFileUpload($event, 'completion_cert')" :style="{ borderColor: required_docs_errors.completion_cert ? '#dc3545' : '' }">
-                                                        <label for="" class="sty-label">Completion Certificate</label>
-                                                    </div>
-                                                    <div class="prev">
-                                                        <button type="button" class="sty-inp form-control"
-                                                            onclick="PreviewImage('completion_cert')">
-                                                            <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
-                                                        </button>
-                                                    </div>
-                                                    <div class="prev ms-4 me-4">
-                                                        Attached File:
-                                                    </div>
-                                                    <div class="prev me-4">
-                                                        <span><a :href="requiredDocs[0].completion_cert" target="_blank" >{{ requiredDocs[0].completion_cert_filename }}</a></span>
-                                                    </div>
-                                                    <div class="prev">
-                                                        <span><a :href="requiredDocs[0].completion_cert" download><i class="fa-solid fa-download"></i></a></span>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-lg-12 mb-3 d-flex">
-                                                    <div class="w-100 sty-input-wrapper">
-                                                        <input type="file" id="occupancy_cert" class="w-100 sty-inp form-control" ref="occupancy_cert" @change="handleFileUpload($event, 'occupancy_cert')" :style="{ borderColor: required_docs_errors.occupancy_cert ? '#dc3545' : '' }">
-                                                        <label for="" class="sty-label">Occupancy Certificate</label>
-                                                    </div>
-                                                    <div class="prev">
-                                                        <button type="button" class="sty-inp form-control" onclick="PreviewImage('occupancy_cert')">
-                                                            <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
-                                                        </button>
-                                                    </div>
-                                                    <div class="prev ms-4 me-4">
-                                                        Attached File:
-                                                    </div>
-                                                    <div class="prev">
-                                                        <span><a class="me-4" :href="requiredDocs[0].occupancy_cert" target="_blank" >{{ requiredDocs[0].occupancy_cert_filename }}</a></span>
-                                                    </div>
-                                                    <div class="prev">
-                                                        <span><a :href="requiredDocs[0].occupancy_cert" download><i class="fa-solid fa-download"></i></a></span>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-lg-12 mb-3 d-flex">
-                                                    <div class="w-100 sty-input-wrapper">
-                                                        <input type="file" class="w-100 sty-inp form-control" id="deed_of_conveyance" ref="deed_of_conveyance" @change="handleFileUpload($event, 'deed_of_conveyance')" :style="{ borderColor: required_docs_errors.deed_of_conveyance ? '#dc3545' : '' }">
-                                                        <label for="" class="sty-label">Deed of Conveyance</label>
-                                                    </div>
-                                                    <div class="prev">
-                                                        <button type="button" class="sty-inp form-control"
-                                                            onclick="PreviewImage('deed_of_conveyance')">
-                                                            <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
-                                                        </button>
-                                                    </div>
-                                                    <div class="prev ms-4 me-4">
-                                                        Attached File:
-                                                    </div>
-                                                    <div class="prev">
-                                                        <span><a class="me-4" :href="requiredDocs[0].deed_of_conveyance" target="_blank" >{{ requiredDocs[0].deed_of_conveyance_filename }}</a></span>
-                                                    </div>
-                                                    <div class="prev">
-                                                        <span><a :href="requiredDocs[0].deed_of_conveyance" download><i class="fa-solid fa-download"></i></a></span>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-lg-12 mb-3 d-flex">
-                                                    <div class="w-100 sty-input-wrapper">
-                                                        <input type="file" id="society_by_law" class="w-100 sty-inp form-control" ref="society_by_law" @change="handleFileUpload($event, 'society_by_law')" :style="{ borderColor: required_docs_errors.society_by_law ? '#dc3545' : '' }">
-                                                        <label for="" class="sty-label">Society Bye Laws</label>
-                                                    </div>
-                                                    <div class="prev">
-                                                        <button type="button" class="sty-inp form-control"
-                                                            onclick="PreviewImage('society_by_law')">
-                                                            <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
-                                                        </button>
-                                                    </div>
-                                                    <div class="prev ms-4 me-4">
-                                                        Attached File:
-                                                    </div>
-                                                    <div class="prev">
-                                                        <span><a class="me-4" :href="requiredDocs[0].society_by_law" target="_blank" >{{ requiredDocs[0].society_by_law_filename }}</a></span>
-                                                    </div>
-                                                    <div class="prev">
-                                                        <span><a :href="requiredDocs[0].society_by_law" download><i class="fa-solid fa-download"></i></a></span>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-lg-12 mb-3 d-flex">
-
-                                                    <div class="w-100 sty-input-wrapper">
-                                                        <input type="file" class="w-100 sty-inp form-control" id="soc_other_document_spec" ref="soc_other_document" @change="handleFileUpload($event, 'soc_other_document')">
-                                                        <label for="" class="sty-label">Other Documents</label>
-                                                    </div>
-                                                    <div class="w-100 sty-input-wrapper">
-                                                        <input type="text" class="w-100 sty-inp" v-model="formData.soc_other_document_spec" @change="handleFileUpload($event, 'soc_other_document_spec')" />
-                                                        <label for="" class="sty-label">Specify your Document</label>
-                                                    </div>
-                                                    <div class="prev">
-                                                        <button type="button" class="sty-inp form-control"
-                                                            onclick="PreviewImage('soc_other_document_spec')">
-                                                            <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
-                                                        </button>
-                                                    </div>
-                                                    <div class="prev ms-4 me-4" v-if="requiredDocs[0].soc_other_document_filename">
-                                                        Attached File:
-                                                    </div>
-                                                    <div class="prev">
-                                                        <span><a class="me-4" :href="requiredDocs[0].soc_other_document_filename" target="_blank" v-if="requiredDocs[0].soc_other_document_filename">{{ requiredDocs[0].soc_other_document_filename }}</a></span>
-                                                    </div>
-                                                    <div class="prev">
-                                                        <span><a :href="requiredDocs[0].soc_other_document_filename" v-if="requiredDocs[0].soc_other_document_filename" download><i class="fa-solid fa-download"></i></a></span>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </form>
-                                    </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-4">
+                    <div v-if="requiredDocs.length === 0">
                         <div class="d-flex">
-                            <h3 class="text-center">Other Documents</h3>
-                            <button class="btn btn-primary ms-auto me-5" @click="openModal">Add</button>
+                            <h3 class="text-center mb-3">Society Documents</h3>
+                            <!-- <button class="btn btn-primary ms-auto me-5" @click="updateRequiredDocsClick">Add</button> -->
+                            <button type="button" class="btn btn-primary ms-auto me-5" data-bs-toggle="modal" data-bs-target="#addRequiredDocs">Add</button>
                         </div>
-                        <div v-if="otherDocs.length === 0" class="text-center"><p class="lead">No Documents Added</p></div>
-                        <div class="row" v-for="(item, index) in otherDocs" :key="index">
-                            <div class="col-3">
-                                <p style="color: black; font-family: 'Calibri', sans-serif;"><b>{{ item.other_document_specification }}</b></p>
-                            </div>
-                            <div class="col-3">
-                                <span><a class="me-4" :href="item.other_document" target="_blank">{{ item.other_document_filename }}</a></span>
-                                <span><a :href="item.other_document" download><i class="fa-solid fa-download"></i></a></span>
-                                <!-- <span @click.prevent="deleteOtherDocument(item.id)"><i class="fa-solid fa-trash-can text-danger" style="font-size: 18px;"></i></span> -->
+
+                        <div class="text-center"><p class="lead">No Documents Added</p></div>
+
+                        <!-- ADD MODAL FOR REQUIRED DOCS -->
+                        <div class="modal fade" id="addRequiredDocs" tabindex="-1" aria-labelledby="addRequiredDocsLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="addRequiredDocsLabel">Add Document</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                        <div class="modal-body">
+                                            <form enctype="multipart/form-data">
+                                                <div class="row p-2 mt-2">
+                                                    <div class="col-lg-12 mb-3 d-flex">
+
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="completion_cert" ref="completion_cert" @change="handleFileUpload($event, 'completion_cert', 'true')" :style="{ borderColor: errors.completion_cert ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Completion Certificate</label>
+                                                            <span v-if="errors.occupancy_cert" class="error">{{ errors.occupancy_cert[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('completion_cert')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" id="occupancy_cert" class="w-100 sty-inp form-control" ref="occupancy_cert" @change="handleFileUpload($event, 'occupancy_cert', 'true')" :style="{ borderColor: errors.occupancy_cert ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Occupancy Certificate</label>
+                                                            <span v-if="errors.occupancy_cert" class="error">{{ errors.occupancy_cert[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control" onclick="PreviewImage('occupancy_cert')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="deed_of_conveyance" ref="deed_of_conveyance" @change="handleFileUpload($event, 'deed_of_conveyance', 'true')" :style="{ borderColor: errors.deed_of_conveyance ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Deed of Conveyance</label>
+                                                            <span v-if="errors.deed_of_conveyance" class="error">{{ errors.deed_of_conveyance[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('deed_of_conveyance')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" id="society_by_law" class="w-100 sty-inp form-control" ref="society_by_law" @change="handleFileUpload($event, 'society_by_law', 'true')" :style="{ borderColor: errors.society_by_law ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Society Bye Laws</label>
+                                                            <span v-if="errors.society_by_law" class="error">{{ errors.society_by_law[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('society_by_law')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="soc_other_document_spec" ref="soc_other_document" @change="handleFileUpload($event, 'soc_other_document', 'true')">
+                                                            <label for="" class="sty-label">Other Documents</label>
+                                                            <span v-if="errors.soc_other_document" class="error">{{ errors.soc_other_document[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="text" class="w-100 sty-inp" v-model="soc_other_document_spec" />
+                                                            <label for="" class="sty-label">Specify your Document</label>
+                                                            <span v-if="errors.soc_other_document_spec" class="error">{{ errors.soc_other_document_spec[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('soc_other_document_spec')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" @click="addRequiredDocuments(0)">Save</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <div v-if="requiredDocs.length !== 0" class="row">
+                        <div class="d-flex">
+                            <h3 class="text-center mb-3">Society Documents</h3>
+                            <button class="btn btn-primary ms-auto me-5" @click="updateRequiredDocsClick">Edit</button>
+                        </div>
+
+                        <div class="col-3">
+                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Completion Certificate</b></p>
+                        </div>
+                        <div class="col-3">
+                            <span><a class="me-4" :href="requiredDocs[0].completion_cert" target="_blank" >{{ requiredDocs[0].completion_cert_filename }}</a></span>
+                            <span><a :href="requiredDocs[0].completion_cert" download><i class="fa-solid fa-download"></i></a></span>
+                        </div>
+
+                        <div class="col-3">
+                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Occupancy Certificate</b></p>
+                        </div>
+                        <div class="col-3">
+                            <span><a class="me-4" :href="requiredDocs[0].occupancy_cert" target="_blank" >{{ requiredDocs[0].occupancy_cert_filename }}</a></span>
+                            <span><a :href="requiredDocs[0].occupancy_cert" download><i class="fa-solid fa-download"></i></a></span>
+                        </div>
+
+                        <div class="col-3">
+                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Deed of Conveyance</b></p>
+                        </div>
+                        <div class="col-3">
+                            <span><a class="me-4" :href="requiredDocs[0].deed_of_conveyance" target="_blank" >{{ requiredDocs[0].deed_of_conveyance_filename }}</a></span>
+                            <span><a :href="requiredDocs[0].deed_of_conveyance" download><i class="fa-solid fa-download"></i></a></span>
+                        </div>
+
+                        <div class="col-3">
+                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Scoiety Bye Laws</b></p>
+                        </div>
+                        <div class="col-3">
+                            <span><a class="me-4" :href="requiredDocs[0].society_by_law" target="_blank" >{{ requiredDocs[0].society_by_law_filename }}</a></span>
+                            <span><a :href="requiredDocs[0].society_by_law" download><i class="fa-solid fa-download"></i></a></span>
+                        </div>
+                        <div class="col-3">
+                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Other Document({{ requiredDocs[0].soc_other_document_spec }})</b></p>
+                        </div>
+                        <div class="col-3">
+                            <span><a class="me-4" :href="requiredDocs[0].soc_other_document" target="_blank" v-if="requiredDocs[0].soc_other_document">{{ requiredDocs[0].soc_other_document_filename }}</a></span>
+                            <span><a :href="requiredDocs[0].soc_other_document" v-if="requiredDocs[0].soc_other_document" download><i class="fa-solid fa-download"></i></a></span>
+                        </div>
+
+                        <!-- UPDATE MODAL FOR REQUIRED DOCS -->
+                        <div class="modal fade" id="updateRequiredDocs" tabindex="-1" aria-labelledby="updateRequiredDocsLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="updateRequiredDocsLabel">Update Document</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                        <div class="modal-body">
+                                            <form enctype="multipart/form-data">
+                                                <div class="row p-2 mt-2">
+                                                    <div class="col-lg-12 mb-3 d-flex">
+
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="completion_cert" ref="completion_cert" @change="handleFileUpload($event, 'completion_cert', 'true')" :style="{ borderColor: required_docs_errors.completion_cert ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Completion Certificate</label>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('completion_cert')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="prev ms-4 me-4">
+                                                            Attached File:
+                                                        </div>
+                                                        <div class="prev me-4">
+                                                            <span><a :href="requiredDocs[0].completion_cert" target="_blank" >{{ requiredDocs[0].completion_cert_filename }}</a></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a :href="requiredDocs[0].completion_cert" download><i class="fa-solid fa-download"></i></a></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" id="occupancy_cert" class="w-100 sty-inp form-control" ref="occupancy_cert" @change="handleFileUpload($event, 'occupancy_cert', 'true')" :style="{ borderColor: required_docs_errors.occupancy_cert ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Occupancy Certificate</label>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control" onclick="PreviewImage('occupancy_cert')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="prev ms-4 me-4">
+                                                            Attached File:
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a class="me-4" :href="requiredDocs[0].occupancy_cert" target="_blank" >{{ requiredDocs[0].occupancy_cert_filename }}</a></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a :href="requiredDocs[0].occupancy_cert" download><i class="fa-solid fa-download"></i></a></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="deed_of_conveyance" ref="deed_of_conveyance" @change="handleFileUpload($event, 'deed_of_conveyance', 'true')" :style="{ borderColor: required_docs_errors.deed_of_conveyance ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Deed of Conveyance</label>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('deed_of_conveyance')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="prev ms-4 me-4">
+                                                            Attached File:
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a class="me-4" :href="requiredDocs[0].deed_of_conveyance" target="_blank" >{{ requiredDocs[0].deed_of_conveyance_filename }}</a></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a :href="requiredDocs[0].deed_of_conveyance" download><i class="fa-solid fa-download"></i></a></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" id="society_by_law" class="w-100 sty-inp form-control" ref="society_by_law" @change="handleFileUpload($event, 'society_by_law', 'true')" :style="{ borderColor: required_docs_errors.society_by_law ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Society Bye Laws</label>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('society_by_law')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="prev ms-4 me-4">
+                                                            Attached File:
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a class="me-4" :href="requiredDocs[0].society_by_law" target="_blank" >{{ requiredDocs[0].society_by_law_filename }}</a></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a :href="requiredDocs[0].society_by_law" download><i class="fa-solid fa-download"></i></a></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="soc_other_document_spec" ref="soc_other_document" @change="handleFileUpload($event, 'soc_other_document', 'true')">
+                                                            <label for="" class="sty-label">Other Documents</label>
+                                                        </div>
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="text" class="w-100 sty-inp" v-model="soc_other_document_spec" />
+                                                            <label for="" class="sty-label">Specify your Document</label>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('soc_other_document_spec')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="prev ms-4 me-4" v-if="requiredDocs[0].soc_other_document_filename">
+                                                            Attached File:
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a class="me-4" :href="requiredDocs[0].soc_other_document" target="_blank" v-if="requiredDocs[0].soc_other_document">{{ requiredDocs[0].soc_other_document_filename }}</a></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a :href="requiredDocs[0].soc_other_document" v-if="requiredDocs[0].soc_other_document" download><i class="fa-solid fa-download"></i></a></span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" @click="addRequiredDocuments(requiredDocs[0].id)">Update</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="mt-4">
+                            <div class="d-flex">
+                                <h3 class="text-center">Other Documents</h3>
+                                <button class="btn btn-primary ms-auto me-5" @click="openModal">Add</button>
+                            </div>
+                            <div v-if="otherDocs.length === 0" class="text-center"><p class="lead">No Documents Added</p></div>
+                            <div class="row" v-for="(item, index) in otherDocs" :key="index">
+                                <div class="col-3">
+                                    <p style="color: black; font-family: 'Calibri', sans-serif;"><b>{{ item.other_document_specification }}</b></p>
+                                </div>
+                                <div class="col-3">
+                                    <span><a class="me-4" :href="item.other_document" target="_blank">{{ item.other_document_filename }}</a></span>
+                                    <span><a :href="item.other_document" download><i class="fa-solid fa-download"></i></a></span>
+                                    <!-- <span @click.prevent="deleteOtherDocument(item.id)"><i class="fa-solid fa-trash-can text-danger" style="font-size: 18px;"></i></span> -->
+                                </div>
+                            </div>
+                        </div>
                     {% endverbatim %}
                 </div>
             </div>

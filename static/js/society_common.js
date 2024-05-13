@@ -1060,8 +1060,99 @@ new Vue({
         otherDocs: [],
         formData: {},
         otherDocError: {},
+        addReqFormData: new FormData(),
+        soc_other_document_spec: '',
     },
     methods: {
+        handleFileUpload(event, index, addReqDoc) {
+            const selectedFile = event.target.files[0];
+
+            if(addReqDoc){
+                if(selectedFile){
+                    if (this.addReqFormData.has(index)) {
+                        this.addReqFormData.delete(index);
+                    }
+                    this.addReqFormData.append(index, selectedFile);
+                }
+            }
+            else{
+                if (selectedFile) {
+                    this.forms[index]['other_document'] = selectedFile;
+                }
+            }
+        },
+        addRequiredDocuments(id){
+            $('#loader').show();
+
+            if(this.soc_other_document_spec){
+                this.addReqFormData.append('soc_other_document_spec', this.soc_other_document_spec);
+            }
+
+            if(id){
+                // UPDATE
+                axios.patch(`http://127.0.0.1:8000/api/society-registration-documents/${id}/`, this.addReqFormData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                .then(response => {
+                    $('#loader').hide();
+                    $('#updateRequiredDocs').modal('hide');
+                    console.log('Form submitted successfully:', response.data);
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                        };
+                    toastr.success("Document Added Successfully!");
+
+                    const index = this.requiredDocs.findIndex(item => item.id === id);
+                    if (index !== -1) {
+                        this.$set(this.requiredDocs, index, response.data);
+                    }
+                    this.requiredDocs.push(response.data);
+                })
+                .catch(error => {
+                    $('#loader').hide();
+                    this.errors = error.response.data;
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                        };
+                    toastr.error("Pls Correct All Errors!");
+                });
+            }else{
+                // ADD
+                axios.post('http://127.0.0.1:8000/api/society-registration-documents/', this.addReqFormData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                .then(response => {
+                    $('#loader').hide();
+                    $('#addRequiredDocs').modal('hide');
+                    console.log('Form submitted successfully:', response.data);
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                        };
+                    toastr.success("Document Added Successfully!");
+                    this.requiredDocs.push(response.data);
+                })
+                .catch(error => {
+                    $('#loader').hide();
+                    this.errors = error.response.data;
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                        };
+                    toastr.error("Pls Correct All Errors!");
+                });
+            }
+        },
         addForm() {
             this.forms.push({
                 // other_document: '',
@@ -1170,15 +1261,6 @@ new Vue({
                     });
             }
         },
-        handleFileUpload(event, index) {
-            const selectedFile = event.target.files[0];
-            console.log('Selected File:', selectedFile);
-
-            if (selectedFile) {
-                this.forms[index]['other_document'] = selectedFile;
-            }
-            console.log("again", this.forms[index]);
-        },
         updateRequiredDocsClick(){
             $('#updateRequiredDocs').modal('show');
         },
@@ -1189,7 +1271,9 @@ new Vue({
         axios.get(`http://127.0.0.1:8000/api/society-registration-documents/`)
             .then(response => {
                 this.requiredDocs = response.data;
-                console.log("req ============", this.requiredDocs);
+                if(response.data[0].soc_other_document_spec){
+                    this.soc_other_document_spec = response.data[0].soc_other_document_spec;
+                }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
@@ -1199,7 +1283,6 @@ new Vue({
         axios.get(`http://127.0.0.1:8000/api/society-other-docs/`)
             .then(response => {
                 this.otherDocs = response.data;
-                console.log("thisc========", this.otherDocs);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
