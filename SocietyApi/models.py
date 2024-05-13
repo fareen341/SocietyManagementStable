@@ -1,31 +1,38 @@
 from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 
 
 
 # Create your models here.
 class SocietyCreation(models.Model):
-    society_name = models.CharField(max_length=200)
+    society_name = models.CharField(max_length=100)
     admin_email = models.EmailField()
     alternate_email = models.EmailField(null=True, blank=True)
-    admin_mobile_number = models.CharField(max_length=20, )
-    alternate_mobile_number = models.CharField(max_length=10, null=True, blank=True)
-    registration_number = models.CharField(max_length=200)
+    admin_mobile_number = models.CharField(max_length=20)
+    alternate_mobile_number = models.CharField(max_length=20, null=True, blank=True)
+    registration_number = models.CharField(max_length=100)
     registration_doc = models.FileField(upload_to='files/')
-    pan_number = models.CharField(max_length=200)
+    pan_number = models.CharField(max_length=10, validators=[RegexValidator(regex='^[a-zA-Z0-9]{10}$', message='PAN number must be exactly 10 digits')])
     pan_number_doc = models.FileField(upload_to='files/')
-    gst_number = models.CharField(max_length=200)
+    gst_number = models.CharField(max_length=15, validators=[RegexValidator(regex='^[a-zA-Z0-9]{15}$', message='GST number must be exactly 15 digits')])
     gst_number_doc = models.FileField(upload_to='files/')
     interest = models.CharField(max_length=100)
     society_reg_address = models.TextField()
     society_city = models.CharField(max_length=100)
     socity_state = models.CharField(max_length=100)
-    pin_code = models.CharField(max_length=100)
+    pin_code = models.CharField(max_length=60)
     society_corr_reg_address = models.TextField(null=True, blank=True)
     society_corr_city = models.CharField(max_length=100, null=True, blank=True)
     socity_corr_state = models.CharField(max_length=100, null=True, blank=True)
     pin_corr_code = models.CharField(max_length=100, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.pan_number = self.pan_number.upper()
+        self.gst_number = self.gst_number.upper()
+        self.registration_number = self.registration_number.upper()
+        super(SocietyCreation, self).save(*args, **kwargs)
 
 
 class SocietyBank(models.Model):
@@ -76,8 +83,17 @@ class SocietyRegistrationDocument(models.Model):
 
 
 class WingFlat(models.Model):
+    society_creation = models.ForeignKey(SocietyCreation, on_delete=models.CASCADE)
     wing_name = models.CharField(max_length=50)
     flat_number = models.CharField(max_length=50)
+
+    def save(self, *args, **kwargs):
+        if not self.society_creation_id:
+            last_society_creation = SocietyCreation.objects.first()
+            if last_society_creation:
+                self.society_creation = last_society_creation
+        self.wing_name = self.wing_name.upper()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.wing_name

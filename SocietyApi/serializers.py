@@ -6,9 +6,34 @@ from django.db.models import *
 
 
 class SocietyCreationSerializer(serializers.ModelSerializer):
+    registration_doc_filename = serializers.SerializerMethodField()
+    pan_number_doc_filename = serializers.SerializerMethodField()
+    gst_number_doc_filename = serializers.SerializerMethodField()
+
     class Meta:
         model = SocietyCreation
         fields = '__all__'
+
+    def get_registration_doc_filename(self, obj):
+        if obj.registration_doc:
+            return os.path.basename(obj.registration_doc.name)
+        return None
+
+    def get_pan_number_doc_filename(self, obj):
+        if obj.pan_number_doc:
+            return os.path.basename(obj.pan_number_doc.name)
+        return None
+
+    def get_gst_number_doc_filename(self, obj):
+        if obj.gst_number_doc:
+            return os.path.basename(obj.gst_number_doc.name)
+        return None
+
+    # def validate(self, data):
+    #     # Check if an object already exists in the database
+    #     if SocietyCreation.objects.exists():
+    #         raise serializers.ValidationError("Society already created.")
+    #     return data
 
 
 class SocietyBankSerializer(serializers.ModelSerializer):
@@ -25,22 +50,66 @@ class SocietyBankSerializer(serializers.ModelSerializer):
 
 
 class SocietyOtherDocumentSerializer(serializers.ModelSerializer):
+    other_document_filename = serializers.SerializerMethodField()
+
     class Meta:
         model = SocietyOtherDocument
-        fields = ['other_document', 'other_document_specification']
+        fields = ['id', 'other_document', 'other_document_specification', 'other_document_filename']
+
+    def get_other_document_filename(self, obj):
+        if obj.other_document:
+            return os.path.basename(obj.other_document.name)
+        return None
 
 
 class SocietyRegistrationDocumentSerializer(serializers.ModelSerializer):
+    completion_cert_filename = serializers.SerializerMethodField()
+    occupancy_cert_filename = serializers.SerializerMethodField()
+    deed_of_conveyance_filename = serializers.SerializerMethodField()
+    society_by_law_filename = serializers.SerializerMethodField()
+    soc_other_document_filename = serializers.SerializerMethodField()
+
     class Meta:
         model = SocietyRegistrationDocument
         fields = [
+            'id',
             'completion_cert',
             'occupancy_cert',
             'deed_of_conveyance',
             'society_by_law',
             'soc_other_document',
             'soc_other_document_spec',
+            'completion_cert_filename',
+            'occupancy_cert_filename',
+            'deed_of_conveyance_filename',
+            'society_by_law_filename',
+            'soc_other_document_filename'
         ]
+
+    def get_completion_cert_filename(self, obj):
+        if obj.completion_cert:
+            return os.path.basename(obj.completion_cert.name)
+        return None
+
+    def get_occupancy_cert_filename(self, obj):
+        if obj.occupancy_cert:
+            return os.path.basename(obj.occupancy_cert.name)
+        return None
+
+    def get_deed_of_conveyance_filename(self, obj):
+        if obj.deed_of_conveyance:
+            return os.path.basename(obj.deed_of_conveyance.name)
+        return None
+
+    def get_society_by_law_filename(self, obj):
+        if obj.society_by_law:
+            return os.path.basename(obj.society_by_law.name)
+        return None
+
+    def get_soc_other_document_filename(self, obj):
+        if obj.soc_other_document:
+            return os.path.basename(obj.soc_other_document.name)
+        return None
 
 
 class WingFlatSerializers(serializers.ModelSerializer):

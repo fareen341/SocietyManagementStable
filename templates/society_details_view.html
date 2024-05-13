@@ -34,153 +34,162 @@
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
             tabindex="0">
-            <div class="row mt-3 p-2" id="editSocietyVue">
-                <div class="d-flex">
-                    <p class="lead">Society Details</p>
-                    <input type="text" value={{ society_id }} id="society_id" hidden>
-                    <button type="button" class="btn btn-primary ms-auto me-5" data-bs-toggle="modal"
-                        data-bs-target="#editSocietyDetails">edit</button>
-                </div>
-                {% verbatim %}
-                <div class="col-3">
-                    <p class="ms-3 view-label">Society Name</p>
-                </div>
-                <div class="col-9">
-                    <p class="view-inps">{{item.society_name}}</p>
-                </div>
+            <div class="container">
+                <div class="row mt-3 p-2" id="editSocietyVue">
+                    <div class="d-flex">
+                        {% verbatim %}
+                            <h3 class="text-center">{{item.society_name}} Details</h3>
+                        {% endverbatim %}
+                        <input type="text" value={{ society_id }} id="society_id" hidden>
+                        <button type="button" class="btn btn-primary ms-auto me-5" data-bs-toggle="modal"
+                            data-bs-target="#editSocietyDetails">Edit</button>
+                    </div>
+                    {% verbatim %}
+                    <div class="col-3">
+                        <p class="ms-3 view-label">Society Name</p>
+                    </div>
+                    <div class="col-9">
+                        <p class="view-inps">{{item.society_name}}</p>
+                    </div>
 
-                <div class="col-3">
-                    <p class="ms-3 view-label">Registration Number</p>
-                </div>
-                <div class="col-4">
-                    <p class="view-inps">{{item.registration_number}}</p>
-                </div>
-                <div class="col-5">
-                    <p class="view-label">Registration Document:-&nbsp;&nbsp;&nbsp; <span class="hovme view-inps">
-                            {{item.registration_doc}}</span></p>
-                </div>
+                    <div class="col-3">
+                        <p class="ms-3 view-label">Registration Number</p>
+                    </div>
+                    <div class="col-4">
+                        <p class="view-inps">{{item.registration_number}}</p>
+                    </div>
+                    <div class="col-5">
+                        <p class="view-label">Registration Document:-&nbsp;&nbsp;&nbsp;
+                            <span><a class="me-4" :href="formData.pan_number_doc" target="_blank" v-if="formData.pan_number_doc_filename">{{ formData.pan_number_doc_filename }}</a></span>
+                            <span><a :href="formData.pan_number_doc" v-if="formData.pan_number_doc_filename" download><i class="fa-solid fa-download"></i></a></span>
+                        </p>
+                    </div>
 
-                <div class="col-3">
-                    <p class="ms-3 view-label">PAN Number</p>
-                </div>
-                <div class="col-4">
-                    <p class="view-inps">{{item.pan_number}}</p>
-                </div>
-                <div class="col-5">
-                    <p class="view-label">Pan Document:-&nbsp;&nbsp;&nbsp; <span class="hovme view-inps">
-                            {{item.pan_number_doc}}</span></p>
-                </div>
+                    <div class="col-3">
+                        <p class="ms-3 view-label">PAN Number</p>
+                    </div>
+                    <div class="col-4">
+                        <p class="view-inps">{{item.pan_number}}</p>
+                    </div>
+                    <div class="col-5">
+                        <p class="view-label">Pan Document:-&nbsp;&nbsp;&nbsp;
+                            <span><a class="me-4" :href="formData.gst_number_doc" target="_blank" v-if="formData.gst_number_doc_filename">{{ formData.gst_number_doc_filename }}</a></span>
+                            <span><a :href="formData.gst_number_doc" v-if="formData.gst_number_doc_filename" download><i class="fa-solid fa-download"></i></a></span>
+                        </p>
+                    </div>
 
-                <div class="col-3">
-                    <p class="ms-3 view-label">GST Number</p>
-                </div>
-                <div class="col-4">
-                    <p class="view-inps">{{item.gst_number}}</p>
-                </div>
-                <div class="col-5">
-                    <p class="view-label">GST Document:-&nbsp;&nbsp;&nbsp; <span
-                            class="hovme view-inps">{{item.gst_number_doc}}</span></p>
-                </div>
+                    <div class="col-3">
+                        <p class="ms-3 view-label">GST Number</p>
+                    </div>
+                    <div class="col-4">
+                        <p class="view-inps">{{item.gst_number}}</p>
+                    </div>
+                    <div class="col-5">
+                        <p class="view-label">GST Document:-&nbsp;&nbsp;&nbsp;
+                            <span><a class="me-4" :href="formData.gst_number_doc" target="_blank" v-if="formData.gst_number_doc_filename">{{ formData.gst_number_doc_filename }}</a></span>
+                            <span><a :href="formData.gst_number_doc" v-if="formData.gst_number_doc_filename" download><i class="fa-solid fa-download"></i></a></span>
+                        </p>
+                    </div>
 
-                <div class="col-3">
-                    <p class="ms-3 view-label">Administrator Email</p>
-                </div>
-                <div class="col-4">
-                    <p class="view-inps">{{item.admin_email}}</p>
-                </div>
+                    <div class="col-3">
+                        <p class="ms-3 view-label">Administrator Email</p>
+                    </div>
+                    <div class="col-4">
+                        <p class="view-inps">{{item.admin_email}}</p>
+                    </div>
 
-                <div class="col-5">
-                    <p class="view-label">Alternate Email &nbsp;&nbsp;&nbsp; <span
-                            class="hovme view-inps">{{item.alternate_email}}</span></p>
+                    <div class="col-5">
+                        <p class="view-label">Alternate Email &nbsp;&nbsp;&nbsp; <span
+                                class="hovme view-inps">{{item.alternate_email}}</span></p>
 
-                    <!-- <p style="font-size: 14px;"></p> -->
-                </div>
+                        <!-- <p style="font-size: 14px;"></p> -->
+                    </div>
 
-                <div class="col-3">
-                    <p class="ms-3 view-label">Administrator Mobile Number</p>
-                </div>
-                <div class="col-4">
-                    <p class="view-inps">{{item.admin_mobile_number}}</p>
-                </div>
+                    <div class="col-3">
+                        <p class="ms-3 view-label">Administrator Mobile Number</p>
+                    </div>
+                    <div class="col-4">
+                        <p class="view-inps">{{item.admin_mobile_number}}</p>
+                    </div>
 
-                <div class="col-5">
-                    <p class="view-label">Alternate Mobile Number &nbsp;&nbsp;&nbsp; <span
-                            class="hovme view-inps">{{item.alternate_mobile_number}}</span></p>
-                    <!-- <p style="font-size: 14px;">+91 7977318426</p> -->
-                </div>
+                    <div class="col-5">
+                        <p class="view-label">Alternate Mobile Number &nbsp;&nbsp;&nbsp; <span
+                                class="hovme view-inps">{{item.alternate_mobile_number}}</span></p>
+                        <!-- <p style="font-size: 14px;">+91 7977318426</p> -->
+                    </div>
 
-                <div class="col-3">
-                    <p class="ms-3 view-label">Interest %</p>
-                </div>
-                <div class="col-9">
-                    <p class="view-inps">{{item.interest}}</p>
-                </div>
+                    <div class="col-3">
+                        <p class="ms-3 view-label">Interest %</p>
+                    </div>
+                    <div class="col-9">
+                        <p class="view-inps">{{item.interest}}</p>
+                    </div>
 
-                <div class="col-3">
-                    <p class="ms-3 view-label">Society's Registered Address</p>
-                </div>
-                <div class="col-9">
-                    <!-- <p class="view-inps">3, Zaco Computers Pvt. Ltd., Dlh Park, Swami Vivekananda Rd, Malad, Sunder Nagar, Goregaon West, Mumbai, Maharashtra 400062</p> -->
-                    <p class="view-inps">{{item.society_reg_address}}, {{item.socity_state}}, {{item.society_city}},
-                        {{item.pin_code}}</p>
-                </div>
+                    <div class="col-3">
+                        <p class="ms-3 view-label">Society's Registered Address</p>
+                    </div>
+                    <div class="col-9">
+                        <!-- <p class="view-inps">3, Zaco Computers Pvt. Ltd., Dlh Park, Swami Vivekananda Rd, Malad, Sunder Nagar, Goregaon West, Mumbai, Maharashtra 400062</p> -->
+                        <p class="view-inps">{{item.society_reg_address}}, {{item.socity_state}}, {{item.society_city}},
+                            {{item.pin_code}}</p>
+                    </div>
 
-                <div class="col-3">
-                    <p class="ms-3 view-label">Society's Correspondence Address</p>
-                </div>
-                <div class="col-9">
-                    <p class="view-inps">{{item.society_corr_reg_address}}</p>
-                </div>
-                {% endverbatim %}
+                    <div class="col-3">
+                        <p class="ms-3 view-label">Society's Correspondence Address</p>
+                    </div>
+                    <div class="col-9">
+                        <p class="view-inps">{{item.society_corr_reg_address}}</p>
+                    </div>
+                    {% endverbatim %}
 
-                <!-- Edit Modal -->
-                <div class="modal fade" id="editSocietyDetails" tabindex="-1" aria-labelledby="" aria-hidden="true">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="">Edit Society Details</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div id="">
-                                    {% verbatim %}
-                                    <form enctype="multipart/form-data">
-                                        <div class="row p-2">
-                                            <div class="col-lg-4">
-                                                <div class="mb-3 w-100 sty-input-wrapper">
-                                                    <input class="w-100 sty-inp" type="text" v-model="formData.society_name">
-                                                    <label class="sty-label">Society Name</label>
-                                                    <span v-if="errors.society_name" class="error">{{ errors.society_name[0] }}</span>
-                                                    <span v-else></span>
+                    <!-- Edit Modal -->
+                    <div class="modal fade" id="editSocietyDetails" tabindex="-1" aria-labelledby="" aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="">Edit Society Details</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="">
+                                        {% verbatim %}
+                                        <form enctype="multipart/form-data">
+                                            <div class="row p-2">
+                                                <div class="col-lg-4">
+                                                    <div class="mb-3 w-100 sty-input-wrapper">
+                                                        <input class="w-100 sty-inp" type="text" v-model="formData.society_name">
+                                                        <label class="sty-label">Society Name</label>
+                                                        <span v-if="errors.society_name" class="error">{{ errors.society_name[0] }}</span>
+                                                        <span v-else></span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="mb-3 w-100 sty-input-wrapper">
-                                                    <input class="w-100 sty-inp" type="text" v-model="formData.admin_email" :style="{ borderColor: errors.admin_email ? 'red' : '' }">
-                                                    <label class="sty-label"> Administrator Email
-                                                    </label>
-                                                    <span v-if="errors.admin_email" class="error">{{ errors.admin_email[0] }}</span>
-                                                    <span v-else></span>
+                                                <div class="col-lg-4">
+                                                    <div class="mb-3 w-100 sty-input-wrapper">
+                                                        <input class="w-100 sty-inp" type="text" v-model="formData.admin_email" :style="{ borderColor: errors.admin_email ? 'red' : '' }">
+                                                        <label class="sty-label"> Administrator Email
+                                                        </label>
+                                                        <span v-if="errors.admin_email" class="error">{{ errors.admin_email[0] }}</span>
+                                                        <span v-else></span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="mb-3 w-100 sty-input-wrapper">
-                                                    <input class="w-100 sty-inp" type="text" v-model="formData.alternate_email" :style="{ borderColor: errors.alternate_email ? 'red' : '' }">
-                                                    <label class="sty-label">Alternate Email</label>
-                                                    <span v-if="errors.alternate_email" class="error">{{ errors.alternate_email[0] }}</span>
-                                                    <span v-else></span>
+                                                <div class="col-lg-4">
+                                                    <div class="mb-3 w-100 sty-input-wrapper">
+                                                        <input class="w-100 sty-inp" type="text" v-model="formData.alternate_email" :style="{ borderColor: errors.alternate_email ? 'red' : '' }">
+                                                        <label class="sty-label">Alternate Email</label>
+                                                        <span v-if="errors.alternate_email" class="error">{{ errors.alternate_email[0] }}</span>
+                                                        <span v-else></span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-8">
-                                                <div class="mb-2">
-                                                    <div class="input-group">
-                                                        <div class="firstinp w-50 sty-input-wrapper">
-                                                            <input class="w-100 sty-inp" type="number" id="id_registration_number" v-model="formData.registration_number" :style="{ borderColor: errors.registration_number ? 'red' : '' }">
-                                                            <label for="id_registration_number" class="sty-label">Registration Number</label>
-                                                            <span v-if="errors.registration_number" class="error">{{ errors.registration_number[0] }}</span>
-                                                            <span v-else></span>
-                                                        </div>
-                                                        <div class="secinp w-50 d-flex">
+                                                <div class="col-lg-8">
+                                                    <div class="mb-2">
+                                                        <div class="input-group">
+                                                            <div class="firstinp w-50 sty-input-wrapper">
+                                                                <input class="w-100 sty-inp" type="text" id="id_registration_number" v-model="formData.registration_number" :style="{ borderColor: errors.registration_number ? 'red' : '' }">
+                                                                <label for="id_registration_number" class="sty-label">Registration Number</label>
+                                                                <span v-if="errors.registration_number" class="error">{{ errors.registration_number[0] }}</span>
+                                                                <span v-else></span>
+                                                            </div>
+                                                            <div class="secinp w-50 d-flex">
                                                                 <div class="fileinp">
                                                                     <input type="file" class="sty-inp form-control" style="color: #2b96f1 !important;" ref="registration_doc" :style="{ borderColor: errors.registration_doc ? 'red' : '' }" />
                                                                     <span v-if="errors.registration_doc" class="error">{{ errors.registration_doc[0] }}</span>
@@ -192,30 +201,28 @@
                                                                         <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
                                                                     </button>
                                                                 </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="mb-3 sty-input-wrapper w-100">
-
-                                                    <input class="w-100 sty-inp" type="number" v-model="formData.admin_mobile_number" :style="{ borderColor: errors.admin_mobile_number ? 'red' : '' }">
-                                                    <label class="sty-label">Administrator Mobile Number</label>
-                                                    <span v-if="errors.admin_mobile_number" class="error">{{ errors.admin_mobile_number[0] }}</span>
-                                                    <span v-else></span>
+                                                <div class="col-lg-4">
+                                                    <div class="mt-2 d-flex">
+                                                        <span class="me-3">Attached File:</span>
+                                                        <a class="me-4" :href="formData.registration_doc" target="_blank" v-if="formData.registration_doc_filename">{{ formData.registration_doc_filename }}</a>
+                                                        <a :href="formData.registration_doc" v-if="formData.registration_doc_filename" download><i class="fa-solid fa-download"></i></a>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                            <div class="col-lg-8">
-                                                <div class="mb-2">
-                                                    <div class="input-group">
-                                                        <div class="firstinp w-50 sty-input-wrapper">
-                                                            <input class="w-100 sty-inp" type="number" v-model="formData.pan_number" :style="{ borderColor: errors.pan_number ? 'red' : '' }">
-                                                            <label class="sty-label">PAN Number</label>
-                                                            <span v-if="errors.pan_number" class="error">{{ errors.pan_number[0] }}</span>
-                                                            <span v-else></span>
-                                                        </div>
-                                                        <div class="secinp w-50 d-flex">
+                                                <div class="col-lg-8">
+                                                    <div class="mb-2">
+                                                        <div class="input-group">
+                                                            <div class="firstinp w-50 sty-input-wrapper">
+                                                                <input class="w-100 sty-inp" type="text" v-model="formData.pan_number" :style="{ borderColor: errors.pan_number ? 'red' : '' }">
+                                                                <label class="sty-label">PAN Number</label>
+                                                                <span v-if="errors.pan_number" class="error">{{ errors.pan_number[0] }}</span>
+                                                                <span v-else></span>
+                                                            </div>
+                                                            <div class="secinp w-50 d-flex">
                                                                 <div class="fileinp">
                                                                     <input type="file" class="sty-inp form-control" style="color: #2b96f1 !important;" ref="pan_number_doc" :style="{ borderColor: errors.pan_number_doc ? 'red' : '' }" />
                                                                     <span v-if="errors.pan_number_doc" class="error">{{ errors.pan_number_doc[0] }}</span>
@@ -227,28 +234,27 @@
                                                                         <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
                                                                     </button>
                                                                 </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                <div class="mb-3 w-100 sty-input-wrapper">
-                                                    <input class="sty-inp w-100" type="number" v-model="formData.alternate_mobile_number" :style="{ borderColor: errors.alternate_mobile_number ? 'red' : '' }">
-                                                    <label class="sty-label">Alternate Mobile Number</label>
-                                                    <span v-if="errors.alternate_mobile_number" class="error">{{ errors.alternate_mobile_number[0] }}</span>
-                                                    <span v-else></span>
+                                                <div class="col-lg-4">
+                                                    <div class="mt-2 d-flex">
+                                                        <span class="me-3">Attached File:</span>
+                                                        <a class="me-4" :href="formData.pan_number_doc" target="_blank" v-if="formData.pan_number_doc_filename">{{ formData.pan_number_doc_filename }}</a>
+                                                        <a :href="formData.pan_number_doc" v-if="formData.pan_number_doc_filename" download><i class="fa-solid fa-download"></i></a>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-8">
-                                                <div class="mb-2">
-                                                    <div class="input-group">
-                                                        <div class="firstinp w-50 sty-input-wrapper">
-                                                            <input class="form-control sty-inp" type="number" v-model="formData.gst_number" :style="{ borderColor: errors.gst_number ? 'red' : '' }" />
-                                                            <label class="form-label sty-label">GST Number</label>
-                                                            <span v-if="errors.gst_number" class="error">{{ errors.gst_number[0] }}</span>
-                                                            <span v-else></span>
-                                                        </div>
-                                                        <div class="secinp w-50 d-flex">
+                                                <div class="col-lg-8">
+                                                    <div class="mb-2">
+                                                        <div class="input-group">
+                                                            <div class="firstinp w-50 sty-input-wrapper">
+                                                                <input class="form-control sty-inp" type="text" v-model="formData.gst_number" :style="{ borderColor: errors.gst_number ? 'red' : '' }" />
+                                                                <label class="form-label sty-label">GST Number</label>
+                                                                <span v-if="errors.gst_number" class="error">{{ errors.gst_number[0] }}</span>
+                                                                <span v-else></span>
+                                                            </div>
+                                                            <div class="secinp w-50 d-flex">
                                                                 <div class="fileinp">
                                                                     <input type="file" class="form-control sty-inp" style="color: #2b96f1 !important;" ref="gst_number_doc" :style="{ borderColor: errors.gst_number_doc ? 'red' : '' }" />
                                                                     <span v-if="errors.gst_number_doc" class="error">{{ errors.gst_number_doc[0] }}</span>
@@ -260,244 +266,133 @@
                                                                         <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
                                                                     </button>
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-lg-4">
+                                                    <div class="mt-2 d-flex">
+                                                        <span class="me-3">Attached File:</span>
+                                                        <a class="me-4" :href="formData.gst_number_doc" target="_blank" v-if="formData.gst_number_doc_filename">{{ formData.gst_number_doc_filename }}</a>
+                                                        <a :href="formData.gst_number_doc" v-if="formData.gst_number_doc_filename" download><i class="fa-solid fa-download"></i></a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-12 mb-3">
+                                                    <div class="row mt-2">
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-3 w-100 sty-input-wrapper">
+                                                                <input class="w-100 sty-inp" type="number" v-model="formData.admin_mobile_number" :style="{ borderColor: errors.admin_mobile_number ? 'red' : '' }">
+                                                                <label class="sty-label">Administrator Mobile Number</label>
+                                                                <span v-if="errors.admin_mobile_number" class="error">{{ errors.admin_mobile_number[0] }}</span>
+                                                                <span v-else></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-3 w-100 sty-input-wrapper">
+                                                                <input class="sty-inp w-100" type="number" v-model="formData.alternate_mobile_number" :style="{ borderColor: errors.alternate_mobile_number ? 'red' : '' }">
+                                                                <label class="sty-label">Alternate Mobile Number</label>
+                                                                <span v-if="errors.alternate_mobile_number" class="error">{{ errors.alternate_mobile_number[0] }}</span>
+                                                                <span v-else></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-4">
+                                                            <div class="mb-3 w-100 sty-input-wrapper">
+                                                                <input class="w-100 sty-inp" type="number" v-model="formData.interest" :style="{ borderColor: errors.interest ? 'red' : '' }" />
+                                                                <label class="sty-label">Interest</label>
+                                                                <span v-if="errors.interest" class="error">{{ errors.interest[0] }}</span>
+                                                                <span v-else></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-lg-6  sty-input-wrapper">
+                                                            <textarea v-model="formData.society_reg_address" class="w-100 sty-inp" cols="30" rows="1" :style="{ borderColor: errors.society_reg_address ? 'red' : '' }"></textarea>
+                                                            <label class="sty-label">Society's Registered Address</label>
+                                                            <span v-if="errors.society_reg_address" class="error">{{ errors.society_reg_address[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+
+                                                        <div class="col-lg-2 sty-input-wrapper">
+                                                            <select class="w-100 sty-inp form-control" @change="fetchCity($event, 1)" v-model="formData.socity_state" :style="{ borderColor: errors.socity_state ? 'red' : '' }">
+                                                                <option value="">Select State</option>
+                                                                <option v-for="state in states" :value="state.iso2">{{ state.name }}</option>
+                                                            </select>
+                                                            <label class="sty-label">State</label>
+                                                            <span v-if="errors.society_city" class="error">{{ errors.society_city[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+
+                                                        <div class="col-lg-2 sty-input-wrapper">
+                                                            <select class="w-100 sty-inp form-control" v-model="formData.society_city" :style="{ borderColor: errors.society_city ? 'red' : '' }">
+                                                                <option value="">Select City</option>
+                                                                <option v-for="city in cities" :value="city.id">{{ city.name }}</option>
+                                                            </select>
+                                                            <label class="sty-label">City</label>
+                                                            <span v-if="errors.society_city" class="error">{{ errors.society_city[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+
+                                                        <div class="col-lg-2 sty-input-wrapper">
+                                                            <input type="number" class="w-100 sty-inp" v-model="formData.pin_code" :style="{ borderColor: errors.pin_code ? 'red' : '' }">
+                                                            <label class="sty-label">Pin Code</label>
+                                                            <span v-if="errors.pin_code" class="error">{{ errors.pin_code[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12 mb-2">
+                                                    <div class="row">
+                                                        <div class="col-lg-6 sty-input-wrapper">
+                                                            <textarea v-model="formData.society_corr_reg_address" class="w-100 sty-inp" cols="30" rows="1"></textarea>
+                                                            <label class="sty-label">Society's Correspondence Address</label>
+                                                            <span v-if="errors.society_corr_reg_address" class="error">{{ errors.society_corr_reg_address[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+
+                                                        <div class="col-lg-2 sty-input-wrapper">
+                                                            <select class="w-100 sty-inp form-control" @change="fetchCorrCity($event, 1)" v-model="formData.socity_corr_state" :style="{ borderColor: errors.socity_corr_state ? 'red' : '' }">
+                                                                <option value="">Select State</option>
+                                                                <option v-for="state in states" :value="state.iso2">{{ state.name }}</option>
+                                                            </select>
+                                                            <label for="id_socity_corr_state" class="sty-label">State</label>
+                                                            <span v-if="errors.socity_corr_state" class="error">{{ errors.socity_corr_state[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+
+                                                        <div class="col-lg-2 sty-input-wrapper">
+                                                            <select class="w-100 sty-inp form-control" v-model="formData.society_corr_city" :style="{ borderColor: errors.society_corr_city ? 'red' : '' }">
+                                                                <option value="">Select State</option>
+                                                                <option v-for="city in cities" :value="city.id">{{ city.name }}</option>
+                                                            </select>
+                                                            <label for="id_society_corr_city" class="sty-label">City</label>
+                                                            <span v-if="errors.society_corr_city" class="error">{{ errors.society_corr_city[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+
+                                                        <div class="col-lg-2 sty-input-wrapper">
+                                                            <input type="number" class="w-100 sty-inp" v-model="formData.pin_corr_code" :style="{ borderColor: errors.pin_corr_code ? 'red' : '' }">
+                                                            <label for="id_pin_corr_code" class="sty-label">Pin Code</label>
+                                                            <span v-if="errors.pin_corr_code" class="error">{{ errors.pin_corr_code[0] }}</span>
+                                                            <span v-else></span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
 
-
-                                            <div class="col-lg-4">
-                                                <div class="mb-3 w-100 sty-input-wrapper">
-                                                    <input class="w-100 sty-inp" type="number" v-model="formData.interest" :style="{ borderColor: errors.interest ? 'red' : '' }" />
-                                                    <label class="sty-label">Interest</label>
-                                                    <span v-if="errors.interest" class="error">{{ errors.interest[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <input type="button" id="SocSubmit" name="next" class="btn btn-primary" @click="editSocietyForm" value="Save & Next" />
                                             </div>
-
-                                            <div class="col-lg-12 mb-3">
-                                                <div class="row">
-                                                    <div class="col-lg-6  sty-input-wrapper">
-                                                        <textarea v-model="formData.society_reg_address" class="w-100 sty-inp" cols="30" rows="1" :style="{ borderColor: errors.society_reg_address ? 'red' : '' }"></textarea>
-                                                        <label class="sty-label">Society's Registered Address</label>
-                                                        <span v-if="errors.society_reg_address" class="error">{{ errors.society_reg_address[0] }}</span>
-                                                        <span v-else></span>
-                                                    </div>
-                                                    <div class="col-lg-2 sty-input-wrapper">
-                                                        <select class="w-100 sty-inp form-control" v-model="formData.society_city" :style="{ borderColor: errors.society_city ? 'red' : '' }">
-                                                            <option value="#">Select State</option>
-                                                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                                            <option value="Assam">Assam</option>
-                                                            <option value="Bihar">Bihar</option>
-                                                            <option value="Chhattisgarh">Chhattisgarh</option>
-                                                            <option value="Goa">Goa</option>
-                                                            <option value="Gujarat">Gujarat</option>
-                                                            <option value="Haryana">Haryana</option>
-                                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                                            <option value="Jharkhand">Jharkhand</option>
-                                                            <option value="Karnataka">Karnataka</option>
-                                                            <option value="Kerala">Kerala</option>
-                                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                                            <option value="Maharashtra">Maharashtra</option>
-                                                            <option value="Manipur">Manipur</option>
-                                                            <option value="Meghalaya">Meghalaya</option>
-                                                            <option value="Mizoram">Mizoram</option>
-                                                            <option value="Nagaland">Nagaland</option>
-                                                            <option value="Odisha">Odisha</option>
-                                                            <option value="Punjab">Punjab</option>
-                                                            <option value="Rajasthan">Rajasthan</option>
-                                                            <option value="Sikkim">Sikkim</option>
-                                                            <option value="Tamil Nadu">Tamil Nadu</option>
-                                                            <option value="Telangana">Telangana</option>
-                                                            <option value="Tripura">Tripura</option>
-                                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                                            <option value="Uttarakhand">Uttarakhand</option>
-                                                            <option value="West Bengal">West Bengal</option>
-                                                            <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
-                                                            <option value="Islands">Islands</option>
-                                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                                                            <option value="Daman and Diu">Daman and Diu</option>
-                                                            <option value="Delhi">Delhi</option>
-                                                            <option value="Ladakh">Ladakh</option>
-                                                            <option value="Lakshadweep">Lakshadweep</option>
-                                                            <option value="Puducherry">Puducherry</option>
-                                                        </select>
-                                                        <label class="sty-label">State</label>
-                                                        <span v-if="errors.society_city" class="error">{{ errors.society_city[0] }}</span>
-                                                        <span v-else></span>
-                                                    </div>
-                                                    <div class="col-lg-2 sty-input-wrapper">
-                                                        <select class="w-100 sty-inp form-control" v-model="formData.socity_state" :style="{ borderColor: errors.socity_state ? 'red' : '' }">
-                                                            <option value="#">Select State</option>
-                                                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                                            <option value="Assam">Assam</option>
-                                                            <option value="Bihar">Bihar</option>
-                                                            <option value="Chhattisgarh">Chhattisgarh</option>
-                                                            <option value="Goa">Goa</option>
-                                                            <option value="Gujarat">Gujarat</option>
-                                                            <option value="Haryana">Haryana</option>
-                                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                                            <option value="Jharkhand">Jharkhand</option>
-                                                            <option value="Karnataka">Karnataka</option>
-                                                            <option value="Kerala">Kerala</option>
-                                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                                            <option value="Maharashtra">Maharashtra</option>
-                                                            <option value="Manipur">Manipur</option>
-                                                            <option value="Meghalaya">Meghalaya</option>
-                                                            <option value="Mizoram">Mizoram</option>
-                                                            <option value="Nagaland">Nagaland</option>
-                                                            <option value="Odisha">Odisha</option>
-                                                            <option value="Punjab">Punjab</option>
-                                                            <option value="Rajasthan">Rajasthan</option>
-                                                            <option value="Sikkim">Sikkim</option>
-                                                            <option value="Tamil Nadu">Tamil Nadu</option>
-                                                            <option value="Telangana">Telangana</option>
-                                                            <option value="Tripura">Tripura</option>
-                                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                                            <option value="Uttarakhand">Uttarakhand</option>
-                                                            <option value="West Bengal">West Bengal</option>
-                                                            <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
-                                                            <option value="Islands">Islands</option>
-                                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                                                            <option value="Daman and Diu">Daman and Diu</option>
-                                                            <option value="Delhi">Delhi</option>
-                                                            <option value="Ladakh">Ladakh</option>
-                                                            <option value="Lakshadweep">Lakshadweep</option>
-                                                            <option value="Puducherry">Puducherry</option>
-                                                        </select>
-                                                        <label class="sty-label">City</label>
-                                                        <span v-if="errors.socity_state" class="error">{{ errors.socity_state[0] }}</span>
-                                                        <span v-else></span>
-                                                    </div>
-                                                    <div class="col-lg-2 sty-input-wrapper">
-                                                        <input type="number" class="w-100 sty-inp" v-model="formData.pin_code" :style="{ borderColor: errors.pin_code ? 'red' : '' }">
-                                                        <label class="sty-label">Pin Code</label>
-                                                        <span v-if="errors.pin_code" class="error">{{ errors.pin_code[0] }}</span>
-                                                        <span v-else></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-12 mb-2">
-                                                <div class="row">
-                                                    <div class="col-lg-6 sty-input-wrapper">
-                                                        <textarea v-model="formData.society_corr_reg_address" class="w-100 sty-inp" cols="30" rows="1"></textarea>
-                                                        <label class="sty-label">Society's Correspondence Address</label>
-                                                        <span v-if="errors.society_corr_reg_address" class="error">{{ errors.society_corr_reg_address[0] }}</span>
-                                                        <span v-else></span>
-                                                    </div>
-                                                    <div class="col-lg-2 sty-input-wrapper">
-                                                        <select class="w-100 sty-inp form-control" v-model="formData.society_corr_city" :style="{ borderColor: errors.society_corr_city ? 'red' : '' }">
-                                                            <option value="#">Select State</option>
-                                                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                                            <option value="Assam">Assam</option>
-                                                            <option value="Bihar">Bihar</option>
-                                                            <option value="Chhattisgarh">Chhattisgarh</option>
-                                                            <option value="Goa">Goa</option>
-                                                            <option value="Gujarat">Gujarat</option>
-                                                            <option value="Haryana">Haryana</option>
-                                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                                            <option value="Jharkhand">Jharkhand</option>
-                                                            <option value="Karnataka">Karnataka</option>
-                                                            <option value="Kerala">Kerala</option>
-                                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                                            <option value="Maharashtra">Maharashtra</option>
-                                                            <option value="Manipur">Manipur</option>
-                                                            <option value="Meghalaya">Meghalaya</option>
-                                                            <option value="Mizoram">Mizoram</option>
-                                                            <option value="Nagaland">Nagaland</option>
-                                                            <option value="Odisha">Odisha</option>
-                                                            <option value="Punjab">Punjab</option>
-                                                            <option value="Rajasthan">Rajasthan</option>
-                                                            <option value="Sikkim">Sikkim</option>
-                                                            <option value="Tamil Nadu">Tamil Nadu</option>
-                                                            <option value="Telangana">Telangana</option>
-                                                            <option value="Tripura">Tripura</option>
-                                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                                            <option value="Uttarakhand">Uttarakhand</option>
-                                                            <option value="West Bengal">West Bengal</option>
-                                                            <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
-                                                            <option value="Islands">Islands</option>
-                                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                                                            <option value="Daman and Diu">Daman and Diu</option>
-                                                            <option value="Delhi">Delhi</option>
-                                                            <option value="Ladakh">Ladakh</option>
-                                                            <option value="Lakshadweep">Lakshadweep</option>
-                                                            <option value="Puducherry">Puducherry</option>
-                                                        </select>
-                                                        <label for="id_socity_corr_state" class="sty-label">State</label>
-                                                        <span v-if="errors.society_corr_city" class="error">{{ errors.society_corr_city[0] }}</span>
-                                                        <span v-else></span>
-                                                    </div>
-                                                    <div class="col-lg-2 sty-input-wrapper">
-                                                        <select class="w-100 sty-inp form-control" v-model="formData.socity_corr_state" :style="{ borderColor: errors.socity_corr_state ? 'red' : '' }">
-                                                            <option value="#">Select State</option>
-                                                            <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
-                                                            <option value="Assam">Assam</option>
-                                                            <option value="Bihar">Bihar</option>
-                                                            <option value="Chhattisgarh">Chhattisgarh</option>
-                                                            <option value="Goa">Goa</option>
-                                                            <option value="Gujarat">Gujarat</option>
-                                                            <option value="Haryana">Haryana</option>
-                                                            <option value="Himachal Pradesh">Himachal Pradesh</option>
-                                                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
-                                                            <option value="Jharkhand">Jharkhand</option>
-                                                            <option value="Karnataka">Karnataka</option>
-                                                            <option value="Kerala">Kerala</option>
-                                                            <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                                            <option value="Maharashtra">Maharashtra</option>
-                                                            <option value="Manipur">Manipur</option>
-                                                            <option value="Meghalaya">Meghalaya</option>
-                                                            <option value="Mizoram">Mizoram</option>
-                                                            <option value="Nagaland">Nagaland</option>
-                                                            <option value="Odisha">Odisha</option>
-                                                            <option value="Punjab">Punjab</option>
-                                                            <option value="Rajasthan">Rajasthan</option>
-                                                            <option value="Sikkim">Sikkim</option>
-                                                            <option value="Tamil Nadu">Tamil Nadu</option>
-                                                            <option value="Telangana">Telangana</option>
-                                                            <option value="Tripura">Tripura</option>
-                                                            <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                                            <option value="Uttarakhand">Uttarakhand</option>
-                                                            <option value="West Bengal">West Bengal</option>
-                                                            <option value="Andaman and Nicobar ">Andaman and Nicobar </option>
-                                                            <option value="Islands">Islands</option>
-                                                            <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
-                                                            <option value="Daman and Diu">Daman and Diu</option>
-                                                            <option value="Delhi">Delhi</option>
-                                                            <option value="Ladakh">Ladakh</option>
-                                                            <option value="Lakshadweep">Lakshadweep</option>
-                                                            <option value="Puducherry">Puducherry</option>
-                                                        </select>
-                                                        <label for="id_society_corr_city" class="sty-label">City</label>
-                                                        <span v-if="errors.socity_corr_state" class="error">{{ errors.socity_corr_state[0] }}</span>
-                                                        <span v-else></span>
-                                                    </div>
-                                                    <div class="col-lg-2 sty-input-wrapper">
-                                                        <input type="number" class="w-100 sty-inp" v-model="formData.pin_corr_code" :style="{ borderColor: errors.pin_corr_code ? 'red' : '' }">
-                                                        <label for="id_pin_corr_code" class="sty-label">Pin Code</label>
-                                                        <span v-if="errors.pin_corr_code" class="error">{{ errors.pin_corr_code[0] }}</span>
-                                                        <span v-else></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <input type="button" id="SocSubmit" name="next" class="btn btn-primary" @click="editSocietyForm" value="Save & Next" />
-                                        </div>
-                                    </form>
-                                    {% endverbatim %}
+                                        </form>
+                                        {% endverbatim %}
+                                    </div>
                                 </div>
-                            </div>
 
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -505,531 +400,674 @@
         </div>
 
         <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-            <div class="row mt-3 p-2">
-                <div class="d-flex">
-                    <p class="lead">Bank Details</p>
-                    <button class="btn btn-success ms-auto me-5" data-bs-toggle="modal"
-                        data-bs-target="#addBankDetails">Add</button>
-                </div>
-                {% comment %} {% for item in soc_bank_object %} {% endcomment %}
-                <div id="bankDisplayVue">
-                    {% verbatim %}
-                        <div class="row" v-for="(item, index) in bankData" :key="index">
-                            <div class="d-flex w-75" style="justify-content: space-between;">
-                                <div class="headingg">
-                                    <p class="lead" style="font-family:'Calibri', sans-serif;">
-                                        <b>Bank Detail 1:</b>
-                                    </p>
-                                </div>
-                                <div class="optionn">
-                                    <p class="ms-auto">
+            <div class="container">
+                <div class="row mt-3 p-2">
+                    <div class="d-flex">
+                        <h3 class="text-center">Bank Details</h3>
+                        <button class="btn btn-primary ms-auto" data-bs-toggle="modal" data-bs-target="#addBankDetails">Add</button>
+                    </div>
+                    <div id="bankDisplayVue">
+                        {% verbatim %}
+                        <div class="row">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Beneficiary Name</th>
+                                        <th scope="col">Primary</th>
+                                        <th scope="col">Beneficiary Code</th>
+                                        <th scope="col">Beneficiary Acc Number</th>
+                                        <th scope="col">Beneficiary Bank</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(item, index) in bankData" :key="index">
+                                    <td>{{item.beneficiary_name}}</td>
+                                    <td>
+                                        <span v-if="item.is_primary"><i class="fa-solid fa-check"></i></span>
+                                        <span v-else><i class="fa-solid fa-xmark"></i></span>
+                                    </td>
+                                    <td>{{item.beneficiary_code}}</td>
+                                    <td>{{item.beneficiary_acc_number}}</td>
+                                    <td>{{item.beneficiary_bank}}</td>
+                                    <th>
                                         <span @click="bankUpdate(item.id)">
                                             <i class="fa-solid fa-pen fa-xs pe-2" style="color: black"></i>
                                         </span>
-                                        <span @click="deleteBank(item.id)">
+                                        <!-- <span @click="deleteBank(item.id)">
                                             <i class="fa-solid fa-trash-can fa-xs" style="color: black;"></i>
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="row d-flex" style="align-items: baseline;">
-                                    <div class="col-4">
-                                        <p class=" view-label">Beneficiary Name</p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="view-inps">{{item.beneficiary_name}}</p>
-                                    </div>
-                                </div>
-                            </div>
+                                        </span>  -->
+                                    </th>
+                                    </tr>
+                                </tbody>
+                                </table>
+                        </div>
+                        {% endverbatim %}
 
-                            <div class="col-lg-6">
-                                <div class="row d-flex" style="align-items: baseline;">
-                                    <div class="col-4">
-                                        <p class="view-label">Beneficiary IFSC Code</p>
+                        <!-- EDIT BANK MODAL -->
+                        <div class="modal fade" id="editBankDetails" tabindex="-1" aria-labelledby="" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="">Edit Bank Details</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="col-8">
-                                        <p class="view-inps">{{item.beneficiary_code}}</p>
+                                    <div class="modal-body">
+                                        {% verbatim %}
+                                        <form id="bankForm" class="form">
+                                            <div class="row p-2 mt-2">
+                                                <div class="col-lg-4 mb-3">
+                                                    <div class="mb-2 w-100 sty-input-wrapper">
+                                                        <input class="w-100 sty-inp" type="text" v-model="formData.beneficiary_name" :style="{ borderColor: errorsOnEdit.beneficiary_name ? '#dc3545' : '' }">
+                                                        <label for="id_beneficiary_name" class="sty-label">Beneficiary Name</label>
+                                                        <span v-if="errorsOnEdit.beneficiary_name" class="error">{{ errorsOnEdit.beneficiary_name[0] }}</span>
+                                                        <span v-else></span>
+                                                    </div>
+                                                    <small id="beneficiaryName1_Error" class="error-message"></small>
+                                                </div>
+                                                <div class="col-lg-4 mb-3">
+                                                    <div class="mb-2 w-100 sty-input-wrapper">
+                                                        <input class="w-100 sty-inp" type="text" v-model="formData.beneficiary_code" :style="{ borderColor: errorsOnEdit.beneficiary_code ? '#dc3545' : '' }">
+                                                        <label for="id_beneficiary_code" class="sty-label">Beneficiary IFSC Code</label>
+                                                        <span v-if="errorsOnEdit.beneficiary_code" class="error">{{ errorsOnEdit.beneficiary_code[0] }}</span>
+                                                        <span v-else></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 mb-3">
+                                                    <div class="mb-2 w-100 sty-input-wrapper">
+                                                        <input class="w-100 sty-inp" type="number" v-model="formData.beneficiary_acc_number" :style="{ borderColor: errorsOnEdit.beneficiary_acc_number ? '#dc3545' : '' }">
+                                                        <label for="id_beneficiary_acc_number" class="sty-label">Beneficiary Account Number</label>
+                                                        <span v-if="errorsOnEdit.beneficiary_acc_number" class="error">{{ errorsOnEdit.beneficiary_acc_number[0] }}</span>
+                                                        <span v-else></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 mb-3">
+                                                    <div class="mb-2 w-100 sty-input-wrapper">
+                                                        <input class="w-100 sty-inp" type="text" v-model="formData.beneficiary_bank" :style="{ borderColor: errorsOnEdit.beneficiary_bank ? '#dc3545' : '' }">
+                                                        <label for="id_beneficiary_bank" class="sty-label">Beneficiary Bank Name & Branch</label>
+                                                        <span v-if="errorsOnEdit.beneficiary_bank" class="error">{{ errorsOnEdit.beneficiary_bank[0] }}</span>
+                                                        <span v-else></span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-4 mb-4 gap-3 align-items-center">
+                                                    <input type="checkbox" class="sty-inp" v-model="formData.is_primary">
+                                                    <label>Make this Primary</label>
+                                                    <span v-if="errorsOnEdit.is_primary" class="error">{{ errorsOnEdit.is_primary[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        {% endverbatim %}
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6">
-                                <div class="row d-flex" style="align-items: baseline;">
-                                    <div class="col-4">
-                                        <p class="view-label">Beneficiary Account Number</p>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" @click="submitBankUpdatedData(formData.id)">Save changes</button>
                                     </div>
-                                    <div class="col-8">
-                                        <p class="view-inps">{{item.beneficiary_acc_number}}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6">
-                                <div class="row d-flex" style="align-items: baseline;">
-                                    <div class="col-4">
-                                        <p class="view-label">Bank Name & Branch</p>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="view-inps">{{item.beneficiary_bank}}</p>
-                                        <!-- <p style="font-size: 14px;">SAMEER NASIR SHAIKH</p> -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6">
-                                <div class="row d-flex" style="align-items: baseline;">
-                                    <div class="col-4">
-                                        <p class="view-label">Is Primary</p>
-                                    </div>
-
                                 </div>
                             </div>
                         </div>
-                    {% endverbatim %}
 
-                    <div class="modal fade" id="editBankDetails" tabindex="-1" aria-labelledby="" aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="">Edit Bank Details</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    {% verbatim %}
-                                    <form id="bankForm" class="form">
-                                        <div class="row p-2 mt-2">
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="mb-2 w-100 sty-input-wrapper">
-                                                    <input class="w-100 sty-inp" type="text" v-model="formData.beneficiary_name">
-                                                    <label for="id_beneficiary_name" class="sty-label">Beneficiary Name</label>
-                                                    <span v-if="errors.beneficiary_name" class="error">{{ errors.beneficiary_name[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                                <small id="beneficiaryName1_Error" class="error-message"></small>
-                                            </div>
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="mb-2 w-100 sty-input-wrapper">
-                                                    <input class="w-100 sty-inp" type="text" v-model="formData.beneficiary_code">
-                                                    <label for="id_beneficiary_code" class="sty-label">Beneficiary IFSC Code</label>
-                                                    <span v-if="errors.beneficiary_code" class="error">{{ errors.beneficiary_code[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="mb-2 w-100 sty-input-wrapper">
-                                                    <input class="w-100 sty-inp" type="number" v-model="formData.beneficiary_acc_number">
-                                                    <label for="id_beneficiary_acc_number" class="sty-label">Beneficiary Account Number</label>
-                                                    <span v-if="errors.beneficiary_acc_number" class="error">{{ errors.beneficiary_acc_number[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="mb-2 w-100 sty-input-wrapper">
-                                                    <input class="w-100 sty-inp" type="text" v-model="formData.beneficiary_bank">
-                                                    <label for="id_beneficiary_bank" class="sty-label">Beneficiary Bank Name & Branch</label>
-                                                    <span v-if="errors.beneficiary_bank" class="error">{{ errors.beneficiary_bank[0] }}</span>
-                                                    <span v-else></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-4 mb-4 gap-3 align-items-center">
-                                                <input type="checkbox" class="sty-inp" v-model="formData.is_primary">
-                                                <label>Make this Primary</label>
-                                                <span v-if="errors.is_primary" class="error">{{ errors.is_primary[0] }}</span>
-                                                <span v-else></span>
-                                            </div>
+                        <div class="modal fade" id="addBankDetails" tabindex="-1" aria-labelledby="" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="">Add Bank</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="bankContainerModal">
+                                            {% verbatim %}
+                                                <form enctype="multipart/form-data">
+                                                    <div v-for="(form, index) in forms" :key="index">
+
+                                                        <div class="row p-2 mt-2">
+                                                            <div class="col-lg-4 mb-3">
+                                                                <div class="mb-2 w-100 sty-input-wrapper">
+                                                                    <input class="w-100 sty-inp" type="text" v-model="form.beneficiary_name" :style="{ borderColor: hasError(index, 'beneficiary_name') ? 'red' : '' }">
+                                                                    <label class="sty-label">Beneficiary Name</label>
+                                                                    <span class="error" v-if="hasError(index, 'beneficiary_name')">{{ getError(index, 'beneficiary_name') }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4 mb-3">
+                                                                <div class="mb-2 w-100 sty-input-wrapper">
+                                                                    <input class="w-100 sty-inp" type="text" v-model="form.beneficiary_code" :style="{ borderColor: hasError(index, 'beneficiary_code') ? 'red' : '' }">
+                                                                    <label class="sty-label">Beneficiary IFSC Code</label>
+                                                                    <span class="error" v-if="hasError(index, 'beneficiary_code')">{{ getError(index, 'beneficiary_code') }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4 mb-3">
+                                                                <div class="mb-2 w-100 sty-input-wrapper">
+                                                                    <input class="w-100 sty-inp" type="number" v-model="form.beneficiary_acc_number" :style="{ borderColor: hasError(index, 'beneficiary_acc_number') ? 'red' : '' }">
+                                                                    <label class="sty-label">Beneficiary Account Number</label>
+                                                                    <span class="error" v-if="hasError(index, 'beneficiary_acc_number')">{{ getError(index, 'beneficiary_acc_number') }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4 mb-3">
+                                                                <div class="mb-2 w-100 sty-input-wrapper">
+                                                                    <input class="w-100 sty-inp" type="text" v-model="form.beneficiary_bank" :style="{ borderColor: hasError(index, 'beneficiary_bank') ? 'red' : '' }">
+                                                                    <label class="sty-label">Beneficiary Bank Name & Branch</label>
+                                                                    <span class="error" v-if="hasError(index, 'beneficiary_bank')">{{ getError(index, 'beneficiary_bank') }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-4 mb-4 gap-3 align-items-center">
+                                                                <input type="checkbox" class="sty-inp" v-model="form.is_primary"/>
+                                                                <label>Make this Primary</label>
+                                                                <span class="error" v-if="hasError(index, 'is_primary')">{{ getError(index, 'is_primary') }}</span>
+                                                            </div>
+                                                            <!--
+                                                            <div class="col-lg-4 mb-4 gap-3 align-items-center">
+                                                                <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
+                                                            </div>
+                                                            -->
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button type="button" class="btn btn-primary" @click="submitBankModal">Add Bank</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            {% endverbatim %}
                                         </div>
-                                    </form>
-                                    {% endverbatim %}
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" @click="submitBankUpdatedData(formData.id)">Save changes</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-                <hr class="">
             </div>
         </div>
 
         <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
-            <div class="row mt-3 p-2">
-                <div class="col-lg-6">
-                    <div class="row">
+            <div class="container">
+                <div class="mt-3 p-2" id="societyDocumentsContainer">
 
-                        <p class="lead">Society Documents</p>
-                        {% for item in soc_document_object %}
-                        <div class="col-4">
-                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Completion Certificate</b>
-                            </p>
-                        </div>
-                        <div class="col-8">
-                            <p class="hovme view-inps"><a style="text-decoration: none; color: grey;" target="_blank"
-                                    rel="noopener" download="Society-Registration-Certificate.jpg"
-                                    href="./images/my-images/Society-Registration-Certificate.jpg">{{item.completion_cert}}</a>
-                            </p>
-                        </div>
+                    <!-- ADD OTHER DOC MODAL -->
+                    <div class="modal fade" id="addOtherDocuments" tabindex="-1" aria-labelledby="" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5">Add Other Document</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {% verbatim %}
+                                    <div>
+                                        <form enctype="multipart/form-data">
+                                            <div v-for="(form, index) in forms" :key="index">
 
-                        <div class="col-4">
-                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Occupancy Certificate</b>
-                            </p>
+                                                <div class="row p-2 mt-2">
+                                                    <div class="d-flex isVisible">
+                                                        <div class="sty-input-wrapper">
+                                                            <input type="file" class="sty-inp form-control" id="fileInput" ref="'other_document' + index" @change="handleFileUpload($event, index)" :style="{ borderColor: otherDocError[index] && otherDocError[index].other_document ? '#dc3545' : '' }">
+                                                            <label class="sty-label">Other Document</label>
+                                                            <span v-if="otherDocError[index] && otherDocError[index].other_document" class="error">{{ otherDocError[index].other_document }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="sty-input-wrapper">
+                                                            <input type="text" class="sty-inp form-control" v-model="form.other_document_specification" :style="{ borderColor: otherDocError[index] && otherDocError[index].other_document_specification ? '#dc3545' : '' }">
+                                                            <label class="sty-label">Specify your Document</label>
+                                                            <span v-if="otherDocError[index] && otherDocError[index].other_document_specification" class="error">{{ otherDocError[index].other_document_specification }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <button class="sty-inp mb-4" style="background: transparent;">
+                                                            <svg class="svg-inline--fa fa-eye" style="color: #2b96f1 !important;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="eye" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg="">
+                                                                <path fill="currentColor" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"></path>
+                                                            </svg>
+                                                        </button>
+                                                        <div class="sty-inp mb-4" style="background: transparent;" v-if="index !== 0">
+                                                            <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can text-danger"></i></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary" @click="submitBothDocs">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    {% endverbatim %}
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-8">
-                            <p class="hovme view-inps"><a style="text-decoration: none; color: grey;" target="_blank"
-                                    rel="noopener" download="Society-Registration-Certificate.jpg"
-                                    href="./images/my-images/Society-Registration-Certificate.jpg">{{item.occupancy_cert}}</a>
-                            </p>
-                        </div>
-
-                        <div class="col-4">
-                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Deed of Conveyance</b></p>
-                        </div>
-                        <div class="col-8">
-                            <p class="hovme view-inps"><a style="text-decoration: none; color: grey;" target="_blank"
-                                    rel="noopener" download={{item.deed_of_conveyance}}
-                                    href="">{{item.deed_of_conveyance}}</a>
-                            </p>
-                        </div>
-
-                        <div class="col-4">
-                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Scoiety Bye Laws</b></p>
-                        </div>
-                        <div class="col-8">
-                            <p class="hovme view-inps"><a style="text-decoration: none; color: grey;" target="_blank"
-                                    rel="noopener" download="Society-Registration-Certificate.jpg"
-                                    href="./images/my-images/Society-Registration-Certificate.jpg">{{item.society_by_law}}</a>
-                            </p>
-                        </div>
-                        {% endfor %}
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <div class="row">
+
+                    {% verbatim %}
+                    <div v-if="requiredDocs.length === 0">
                         <div class="d-flex">
-                            <p class="lead">Other Documents</p>
-                            <button class="btn btn-success ms-auto me-5" data-bs-toggle="modal"
-                                data-bs-target="#addOtherDocuments">Add</button>
+                            <h3 class="text-center mb-3">Society Documents</h3>
+                            <!-- <button class="btn btn-primary ms-auto me-5" @click="updateRequiredDocsClick">Add</button> -->
+                            <button type="button" class="btn btn-primary ms-auto me-5" data-bs-toggle="modal" data-bs-target="#addRequiredDocs">Add</button>
                         </div>
-                        {% for item in soc_other_document_object %}
-                        <!-- <div class="col-3">
-                        </div> -->
-                        <div class="col-6">
-                            <p style="color: black; font-family: 'Calibri', sans-serif;">
-                                <b>{{item.other_document_specification}}</b>
-                            </p>
+
+                        <div class="text-center"><p class="lead">No Documents Added</p></div>
+
+                        <!-- ADD MODAL FOR REQUIRED DOCS -->
+                        <div class="modal fade" id="addRequiredDocs" tabindex="-1" aria-labelledby="addRequiredDocsLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="addRequiredDocsLabel">Add Document</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                        <div class="modal-body">
+                                            <form enctype="multipart/form-data">
+                                                <div class="row p-2 mt-2">
+                                                    <div class="col-lg-12 mb-3 d-flex">
+
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="completion_cert" ref="completion_cert" @change="handleFileUpload($event, 'completion_cert', 'true')" :style="{ borderColor: errors.completion_cert ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Completion Certificate</label>
+                                                            <span v-if="errors.occupancy_cert" class="error">{{ errors.occupancy_cert[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('completion_cert')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" id="occupancy_cert" class="w-100 sty-inp form-control" ref="occupancy_cert" @change="handleFileUpload($event, 'occupancy_cert', 'true')" :style="{ borderColor: errors.occupancy_cert ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Occupancy Certificate</label>
+                                                            <span v-if="errors.occupancy_cert" class="error">{{ errors.occupancy_cert[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control" onclick="PreviewImage('occupancy_cert')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="deed_of_conveyance" ref="deed_of_conveyance" @change="handleFileUpload($event, 'deed_of_conveyance', 'true')" :style="{ borderColor: errors.deed_of_conveyance ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Deed of Conveyance</label>
+                                                            <span v-if="errors.deed_of_conveyance" class="error">{{ errors.deed_of_conveyance[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('deed_of_conveyance')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" id="society_by_law" class="w-100 sty-inp form-control" ref="society_by_law" @change="handleFileUpload($event, 'society_by_law', 'true')" :style="{ borderColor: errors.society_by_law ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Society Bye Laws</label>
+                                                            <span v-if="errors.society_by_law" class="error">{{ errors.society_by_law[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('society_by_law')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="soc_other_document_spec" ref="soc_other_document" @change="handleFileUpload($event, 'soc_other_document', 'true')">
+                                                            <label for="" class="sty-label">Other Documents</label>
+                                                            <span v-if="errors.soc_other_document" class="error">{{ errors.soc_other_document[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="text" class="w-100 sty-inp" v-model="soc_other_document_spec" />
+                                                            <label for="" class="sty-label">Specify your Document</label>
+                                                            <span v-if="errors.soc_other_document_spec" class="error">{{ errors.soc_other_document_spec[0] }}</span>
+                                                            <span v-else></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('soc_other_document_spec')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" @click="addRequiredDocuments(0)">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="requiredDocs.length !== 0" class="row">
+                        <div class="d-flex">
+                            <h3 class="text-center mb-3">Society Documents</h3>
+                            <button class="btn btn-primary ms-auto me-5" @click="updateRequiredDocsClick">Edit</button>
+                        </div>
+
+                        <div class="col-3">
+                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Completion Certificate</b></p>
                         </div>
                         <div class="col-3">
-                            <p class="hovme view-inps"><a style="text-decoration: none; color: grey;" target="_blank"
-                                    rel="noopener" download="Society-Registration-Certificate.jpg"
-                                    href="./images/my-images/Society-Registration-Certificate.jpg">{{item.other_document}}</a>
-                            </p>
+                            <span><a class="me-4" :href="requiredDocs[0].completion_cert" target="_blank" >{{ requiredDocs[0].completion_cert_filename }}</a></span>
+                            <span><a :href="requiredDocs[0].completion_cert" download><i class="fa-solid fa-download"></i></a></span>
                         </div>
-                        {% endfor %}
+
+                        <div class="col-3">
+                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Occupancy Certificate</b></p>
+                        </div>
+                        <div class="col-3">
+                            <span><a class="me-4" :href="requiredDocs[0].occupancy_cert" target="_blank" >{{ requiredDocs[0].occupancy_cert_filename }}</a></span>
+                            <span><a :href="requiredDocs[0].occupancy_cert" download><i class="fa-solid fa-download"></i></a></span>
+                        </div>
+
+                        <div class="col-3">
+                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Deed of Conveyance</b></p>
+                        </div>
+                        <div class="col-3">
+                            <span><a class="me-4" :href="requiredDocs[0].deed_of_conveyance" target="_blank" >{{ requiredDocs[0].deed_of_conveyance_filename }}</a></span>
+                            <span><a :href="requiredDocs[0].deed_of_conveyance" download><i class="fa-solid fa-download"></i></a></span>
+                        </div>
+
+                        <div class="col-3">
+                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Scoiety Bye Laws</b></p>
+                        </div>
+                        <div class="col-3">
+                            <span><a class="me-4" :href="requiredDocs[0].society_by_law" target="_blank" >{{ requiredDocs[0].society_by_law_filename }}</a></span>
+                            <span><a :href="requiredDocs[0].society_by_law" download><i class="fa-solid fa-download"></i></a></span>
+                        </div>
+                        <div class="col-3">
+                            <p style="color: black; font-family: 'Calibri', sans-serif;"><b>Other Document({{ requiredDocs[0].soc_other_document_spec }})</b></p>
+                        </div>
+                        <div class="col-3">
+                            <span><a class="me-4" :href="requiredDocs[0].soc_other_document" target="_blank" v-if="requiredDocs[0].soc_other_document">{{ requiredDocs[0].soc_other_document_filename }}</a></span>
+                            <span><a :href="requiredDocs[0].soc_other_document" v-if="requiredDocs[0].soc_other_document" download><i class="fa-solid fa-download"></i></a></span>
+                        </div>
+
+                        <!-- UPDATE MODAL FOR REQUIRED DOCS -->
+                        <div class="modal fade" id="updateRequiredDocs" tabindex="-1" aria-labelledby="updateRequiredDocsLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="updateRequiredDocsLabel">Update Document</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                        <div class="modal-body">
+                                            <form enctype="multipart/form-data">
+                                                <div class="row p-2 mt-2">
+                                                    <div class="col-lg-12 mb-3 d-flex">
+
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="completion_cert" ref="completion_cert" @change="handleFileUpload($event, 'completion_cert', 'true')" :style="{ borderColor: required_docs_errors.completion_cert ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Completion Certificate</label>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('completion_cert')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="prev ms-4 me-4">
+                                                            Attached File:
+                                                        </div>
+                                                        <div class="prev me-4">
+                                                            <span><a :href="requiredDocs[0].completion_cert" target="_blank" >{{ requiredDocs[0].completion_cert_filename }}</a></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a :href="requiredDocs[0].completion_cert" download><i class="fa-solid fa-download"></i></a></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" id="occupancy_cert" class="w-100 sty-inp form-control" ref="occupancy_cert" @change="handleFileUpload($event, 'occupancy_cert', 'true')" :style="{ borderColor: required_docs_errors.occupancy_cert ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Occupancy Certificate</label>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control" onclick="PreviewImage('occupancy_cert')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="prev ms-4 me-4">
+                                                            Attached File:
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a class="me-4" :href="requiredDocs[0].occupancy_cert" target="_blank" >{{ requiredDocs[0].occupancy_cert_filename }}</a></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a :href="requiredDocs[0].occupancy_cert" download><i class="fa-solid fa-download"></i></a></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="deed_of_conveyance" ref="deed_of_conveyance" @change="handleFileUpload($event, 'deed_of_conveyance', 'true')" :style="{ borderColor: required_docs_errors.deed_of_conveyance ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Deed of Conveyance</label>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('deed_of_conveyance')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="prev ms-4 me-4">
+                                                            Attached File:
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a class="me-4" :href="requiredDocs[0].deed_of_conveyance" target="_blank" >{{ requiredDocs[0].deed_of_conveyance_filename }}</a></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a :href="requiredDocs[0].deed_of_conveyance" download><i class="fa-solid fa-download"></i></a></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" id="society_by_law" class="w-100 sty-inp form-control" ref="society_by_law" @change="handleFileUpload($event, 'society_by_law', 'true')" :style="{ borderColor: required_docs_errors.society_by_law ? '#dc3545' : '' }">
+                                                            <label for="" class="sty-label">Society Bye Laws</label>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('society_by_law')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="prev ms-4 me-4">
+                                                            Attached File:
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a class="me-4" :href="requiredDocs[0].society_by_law" target="_blank" >{{ requiredDocs[0].society_by_law_filename }}</a></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a :href="requiredDocs[0].society_by_law" download><i class="fa-solid fa-download"></i></a></span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-12 mb-3 d-flex">
+
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="file" class="w-100 sty-inp form-control" id="soc_other_document_spec" ref="soc_other_document" @change="handleFileUpload($event, 'soc_other_document', 'true')">
+                                                            <label for="" class="sty-label">Other Documents</label>
+                                                        </div>
+                                                        <div class="w-100 sty-input-wrapper">
+                                                            <input type="text" class="w-100 sty-inp" v-model="soc_other_document_spec" />
+                                                            <label for="" class="sty-label">Specify your Document</label>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <button type="button" class="sty-inp form-control"
+                                                                onclick="PreviewImage('soc_other_document_spec')">
+                                                                <i class="fa-solid fa-eye" style="color: #2b96f1 !important;"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div class="prev ms-4 me-4" v-if="requiredDocs[0].soc_other_document_filename">
+                                                            Attached File:
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a class="me-4" :href="requiredDocs[0].soc_other_document" target="_blank" v-if="requiredDocs[0].soc_other_document">{{ requiredDocs[0].soc_other_document_filename }}</a></span>
+                                                        </div>
+                                                        <div class="prev">
+                                                            <span><a :href="requiredDocs[0].soc_other_document" v-if="requiredDocs[0].soc_other_document" download><i class="fa-solid fa-download"></i></a></span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" @click="addRequiredDocuments(requiredDocs[0].id)">Update</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                        <div class="mt-4">
+                            <div class="d-flex">
+                                <h3 class="text-center">Other Documents</h3>
+                                <button class="btn btn-primary ms-auto me-5" @click="openModal">Add</button>
+                            </div>
+                            <div v-if="otherDocs.length === 0" class="text-center"><p class="lead">No Documents Added</p></div>
+                            <div class="row" v-for="(item, index) in otherDocs" :key="index">
+                                <div class="col-3">
+                                    <p style="color: black; font-family: 'Calibri', sans-serif;"><b>{{ item.other_document_specification }}</b></p>
+                                </div>
+                                <div class="col-3">
+                                    <span><a class="me-4" :href="item.other_document" target="_blank">{{ item.other_document_filename }}</a></span>
+                                    <span><a :href="item.other_document" download><i class="fa-solid fa-download"></i></a></span>
+                                    <!-- <span @click.prevent="deleteOtherDocument(item.id)"><i class="fa-solid fa-trash-can text-danger" style="font-size: 18px;"></i></span> -->
+                                </div>
+                            </div>
+                        </div>
+                    {% endverbatim %}
                 </div>
-                <!-- <h3 class="text-center mb-3" id="heading">DOCUMENTS</h3> -->
-
-
             </div>
         </div>
 
         <div class="tab-pane fade" id="wing-tab-pane" role="tabpanel" aria-labelledby="wing-tab" tabindex="0">
-            <div class="row mt-3 p-2">
-                <div class="d-flex">
-                    <p class="lead">Wing-Flat Details</p>
-                    <button class="btn btn-success ms-auto me-5" data-bs-toggle="modal"
-                        data-bs-target="#addWingFlat">Add</button>
+            <div class="container">
+                <div class="row mt-3 p-2">
+                    <div class="d-flex">
+                    </div>
+                    <div class="modal-header">
+                        <h3>Block Details</h3>
+                        <button class="btn btn-primary ms-auto me-5" data-bs-toggle="modal" data-bs-target="#addWingFlat">Add</button>
+                    </div>
+                    <div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col">Block</th>
+                                <th scope="col">Units</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                {% for item in wing_flat_list %}
+                                <td>{{ item.wing_name }}</td>
+                                <td>{{ item.flat_number }}</td>
+                                <td><i class="fa-solid fa-pen fa-xs pe-2" style="color: black" onclick="getObjectId(`{{ item.id }}`)"></i></td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                {% comment %} <div id="wingDisplayVue">
-                    {% verbatim %}
-                    <div v-for="(item, index) in wingFlatData" :key="index">
-                        <div class="row">
-                            <div class="col-3">
-                                <p class="ms-3 view-label">Wing & Flat Numbers</p>
-                            </div>
-                            <div class="col-2">
-                                <p class="view-inps">
-                                    <i class="fa-solid fa-pen fa-xs pe-2" style="color: black" data-bs-toggle="modal" data-bs-target="#editWingFlatDetails">
-                                    </i>
-                                    {{ item.wing_name }}
-                                </p>
-                            </div>
-                            <div class="col-6">
-                                {{ item.flat_number }}
+            </div>
+
+            <!-- ADD UNIT-BLOCK MODAL -->
+            <div class="modal fade" id="addWingFlat" tabindex="-1" aria-labelledby="" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="">Add Unit-Block</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div id="wingCreationUpdate">
+                                    {% verbatim %}
+                                        <form enctype="multipart/form-data">
+                                            <div v-for="(form, index) in forms" :key="index">
+                                                <div class="row mb-3" id="wingContent1">
+                                                    <div class="col-lg-5 sty-input-wrapper">
+                                                        <input class="w-100 sty-inp" type="text" style="text-transform:uppercase" v-model="form.wing_name" :style="{ borderColor: blockError[index] && blockError[index].wing_name? '#dc3545' : '' }">
+                                                        <label for="" class="sty-label">Wing Name</label>
+                                                        <span v-if="blockError[index] && blockError[index].wing_name" class="error">{{ blockError[index].wing_name }}</span>
+                                                        <span v-else></span>
+                                                    </div>
+                                                    <div class="col-lg-6 sty-input-wrapper">
+                                                        <textarea class="w-100 sty-inp" cols="30" rows="1" v-model="form.flat_number" :style="{ borderColor: blockError[index] && blockError[index].flat_number ? '#dc3545' : '' }"></textarea>
+                                                        <label for="" class="sty-label">Flat Numbers</label>
+                                                        <span v-if="blockError[index] && blockError[index].flat_number" class="error">{{ blockError[index].flat_number }}</span>
+                                                        <span v-else></span>
+                                                    </div>
+                                                    <div class="col-lg-1 mt-2" v-if="index !== 0">
+                                                        <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can text-danger" style="font-size: 18px;"></i></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span @click.prevent="addForm" class="add-mem-btn float-start">Add Another</span>
+                                            <input type="button" class="add-mem-btn" @click="submitWingFlat(true)" value="Save">
+                                        </form>
+                                    {% endverbatim %}
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {% endverbatim %}
-                </div> {% endcomment %}
-
-                {% for item in wing_flat_list %}
-                <div class="row">
-                    <div class="col-3">
-                        <p class="ms-3 view-label">Wing & Flat Numbers</p>
-                    </div>
-                    <div class="col-2">
-                        <p class="view-inps">
-                            <i class="fa-solid fa-pen fa-xs pe-2" style="color: black" onclick="getObjectId(`{{ item.id }}`)">
-                            </i>
-                            {{ item.wing_name }}
-                        </p>
-                    </div>
-                    <div class="col-6">
-                        {{ item.flat_number }}
-                    </div>
-                </div>
-                <hr>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<!-- EDIT MODAL START -->
-
-
-<!-- Modal -->
-
-
-<div class="modal fade" id="addBankDetails" tabindex="-1" aria-labelledby="" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="">Add Bank</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="bankContainerModal">
-                    {% verbatim %}
-                        <form enctype="multipart/form-data">
-                            <div v-for="(form, index) in forms" :key="index">
-                                <h3>Form {{ getFormNumber(index) }}</h3>
-
-                                <div class="row p-2 mt-2">
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="mb-2 w-100 sty-input-wrapper">
-                                            <input class="w-100 sty-inp" type="text" v-model="form.beneficiary_name">
-                                            <label class="sty-label">Beneficiary Name</label>
-                                            <span class="error" v-if="hasError(index, 'beneficiary_name')">{{ getError(index, 'beneficiary_name') }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="mb-2 w-100 sty-input-wrapper">
-                                            <input class="w-100 sty-inp" type="text" v-model="form.beneficiary_code">
-                                            <label class="sty-label">Beneficiary IFSC Code</label>
-                                            <span class="error" v-if="hasError(index, 'beneficiary_code')">{{ getError(index, 'beneficiary_code') }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="mb-2 w-100 sty-input-wrapper">
-                                            <input class="w-100 sty-inp" type="number" v-model="form.beneficiary_acc_number">
-                                            <label class="sty-label">Beneficiary Account Number</label>
-                                            <span class="error" v-if="hasError(index, 'beneficiary_acc_number')">{{ getError(index, 'beneficiary_acc_number') }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="mb-2 w-100 sty-input-wrapper">
-                                            <input class="w-100 sty-inp" type="text" v-model="form.beneficiary_bank">
-                                            <label class="sty-label">Beneficiary Bank Name & Branch</label>
-                                            <span class="error" v-if="hasError(index, 'beneficiary_bank')">{{ getError(index, 'beneficiary_bank') }}</span>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 mb-4 gap-3 align-items-center">
-                                        <input type="checkbox" class="sty-inp" v-model="form.is_primary"/>
-                                        <label>Make this Primary</label>
-                                        <span class="error" v-if="hasError(index, 'is_primary')">{{ getError(index, 'is_primary') }}</span>
-                                    </div>
-                                    <!--
-                                    <div class="col-lg-4 mb-4 gap-3 align-items-center">
-                                        <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
-                                    </div>
-                                    -->
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" @click="submitBankModal">Add Bank</button>
-                                </div>
-                            </div>
-                        </form>
-                    {% endverbatim %}
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-
-<div class="modal fade" id="addOtherDocuments" tabindex="-1" aria-labelledby="" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="">Add Other Document</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                {% verbatim %}
-                <div id="societyDocumentsContainer">
-                    <form enctype="multipart/form-data">
-                        <div v-for="(form, index) in forms" :key="index">
-                            <h3>Form {{ getFormNumber(index) }}</h3>
-
-                            <div class="row p-2 mt-2">
-                                <div class="d-flex isVisible">
-                                    <div class="sty-input-wrapper">
-                                        <input type="file" class="sty-inp form-control" ref="'other_document' + index" @change="handleFileUpload($event, index)">
-                                        <label class="sty-label">Other Document</label>
-                                    </div>
-                                    <div class="sty-input-wrapper">
-                                        <input type="text" class="sty-inp form-control" v-model="form.other_document_specification" />
-                                        <label class="sty-label">Specify your Document</label>
-                                    </div>
-                                    <button class="sty-inp mb-4" style="background: transparent;">
-                                        <svg class="svg-inline--fa fa-eye" style="color: #2b96f1 !important;" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="eye" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg="">
-                                            <path fill="currentColor" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z"></path>
-                                        </svg>
-                                    </button>
-                                    <div class="col-lg-4 mb-4 gap-3 align-items-center">
-                                        <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
-                                    </div>
-                                </div>
-                            </div>
+            <!-- UPDATE BLOCK DETAIL -->
+            <div class="modal fade" id="editWingFlatDetails" tabindex="-1" aria-labelledby="" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="">Edit Wing-Flat Details</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <span @click.prevent="addForm" class="add-mem-btn float-start">Add Form</span>
-                        <input type="button" class="add-mem-btn" @click="submitBothDocs" value="Submit All Forms">
-                        <hr>
-                    </form>
-                </div>
-                {% endverbatim %}
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="modal fade" id="addWingFlat" tabindex="-1" aria-labelledby="" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="">Add Another Wing-Flat</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="wing-info dataTable-text" style="text-align: left;">
-                        <p style="color: #616161;">As a first Step to set up your Complex, create blocks of your
-                            Apartment Complex below
-                            .PLease Note: <br></p>
-                        <ul style="list-style:none;" id="blockList">
-                            <li>
-                                Blocks are also referred as Towers / Buildings in some apartment Complexes.
-                            </li>
-                            <li>
-                                Even incase your complex does not have blocks, you need to create atleast one block
-                                (you can call the block "Flat").
-                            </li>
-                            <li class="more-content">
-                                Do note that each block name must be different and should be less than 30 characters
-                                in length.
-                            </li>
-                            <li class="more-content">
-                                If you have multiple wings in each tower - create one block per tower-wing
-                                combination. <br> For example: Tower 1 - A wing, Tower 1 - B wing, etc...
-                            </li>
-                            <li class="more-content">
-                                You can always add more blocks here.
-                            </li>
-                            <span class="more" onclick="showMore()">Show More</span>
-                            <span class="less" onclick="showLess()">Show Less</span>
-                        </ul>
-                    </div>
-                    <script>
-                        // $(".more").toggle(function(){
-                        //     $(this).text("less..").siblings(".complete").show();
-                        // }, function(){
-                        //     $(this).text("more..").siblings(".complete").hide();
-                        // });
-
-                        function showMore() {
-                            $('.more-content').slideDown('slow');
-                            $('.more').hide();
-                            $('.less').show();
-                        }
-
-                        function showLess() {
-                            $('.more-content').slideUp('slow');
-                            $('.less').hide();
-                            $('.more').show();
-                        }
-                    </script>
-
-                    <div id="wingCreationUpdate">
-                        {% verbatim %}
-                            <form enctype="multipart/form-data">
-                                <div v-for="(form, index) in forms" :key="index">
-                                    <p>Form {{ getFormNumber(index) }}</p>
-
-                                    <div class="row mb-3" id="wingContent1">
-                                        <div class="col-lg-3 sty-input-wrapper">
-                                            <input class="w-100 sty-inp" type="text" v-model="form.wing_name">
-                                            <label for="" class="sty-label">Enter your Wing Name</label>
-                                        </div>
-                                        <div class="col-lg-5 sty-input-wrapper">
-                                            <textarea class="w-100 sty-inp" cols="30" rows="1" v-model="form.flat_number"></textarea>
-                                            <label for="" class="sty-label">Enter your Flat Numbers</label>
-                                        </div>
-                                        <div class="col-lg-4 mb-4 gap-3 align-items-center">
-                                            <span @click.prevent="removeForm(index)"><i class="fa-solid fa-trash-can"></i></span>
-                                        </div>
+                        <div class="modal-body">
+                            <input type="text" id="wing_flat_id" hidden>
+                            <form enctype="multipart/form-data" id="wingFlatForm">
+                                <div class="row mb-3" id="wingContent1">
+                                    <div class="col-lg-6 sty-input-wrapper">
+                                        <input class="w-100 sty-inp" type="text" id="wing_name">
+                                        <label class="sty-label">Wing Name</label>
+                                        <span id="blockError" class="error"></span>
+                                    </div>
+                                    <div class="col-lg-6 sty-input-wrapper">
+                                        <textarea class="w-100 sty-inp" cols="30" rows="1" id="flat_number"></textarea>
+                                        <label class="sty-label">Flat Numbers</label>
+                                        <span id="unitError" class="error"></span>
+                                        <span id="flatNumberError" class="error"></span>
                                     </div>
                                 </div>
-                                <span @click.prevent="addForm" class="add-mem-btn float-start">Add Form</span>
-                                <input type="button" class="add-mem-btn" @click="submitWingFlat" value="Submit All Forms">
-                                <hr>
                             </form>
-                        {% endverbatim %}
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="updateWingFlatData()">Save changes</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+
         </div>
+
+
     </div>
 </div>
 
-
-<div class="modal fade" id="editWingFlatDetails" tabindex="-1" aria-labelledby="" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="">Edit Wing-Flat Details</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="text" id="wing_flat_id">
-                    <form enctype="multipart/form-data" id="wingFlatForm">
-                            <div class="row mb-3" id="wingContent1">
-                                <div class="col-lg-6 sty-input-wrapper">
-                                    <input class="w-100 sty-inp" type="text" id="wing_name">
-                                    <label for="" class="sty-label">Enter your Wing Name</label>
-                                </div>
-                                <div class="col-lg-6 sty-input-wrapper">
-                                    <textarea class="w-100 sty-inp" cols="30" rows="1" id="flat_number"></textarea>
-                                    <label for="" class="sty-label">Enter your Flat Numbers</label>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="updateWingFlatData()">Save changes</button>
-                    </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 
 <!-- EDIT MODAL END -->

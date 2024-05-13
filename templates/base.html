@@ -156,23 +156,28 @@
                                     style="padding-top: 6px;"></i>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'create_society' %}">Society Master Creation</a></li>
-                                <li><a class="dropdown-item" href="{% url 'member_details' %}">Members Master</a></li>
-                                <li><a class="dropdown-item" href="{% url 'create_house_help' %}">House Help Master</a></li>
-                                <li><a class="dropdown-item" href="{% url 'allocate_house_help' %}">HouseHelp Allocation</a>
-                                <li><a class="dropdown-item" href="{% url 'create_tenant' %}">Tenant Master</a></li>
-                                <li><a class="dropdown-item" href="{% url 'allocate_tenant' %}">Tenent Allocation</a></li>
-                                <li><a class="dropdown-item" href="{% url 'meetings' %}">Meetings</a></li>
-                                <li><a class="dropdown-item" href="{% url 'nominee_register_view' %}">Nominee Register</a></li>
-                                <li><a class="dropdown-item" href="{% url 'form_i_view' %}">Form I</a></li>
-                                <li><a class="dropdown-item" href="{% url 'vehicle_register' %}">Vehicle Register</a></li>
-                                <li><a class="dropdown-item" href="{% url 'hypotication_register' %}">Hypotication Register</a></li>
-                                <li><a class="dropdown-item" href="{% url 'unit_register' %}">Unit Register</a></li>
-                                <li><a class="dropdown-item" href="{% url 'form_j_view' %}">Form J</a></li>
-                                <li><a class="dropdown-item" href="{% url 'unit_master' %}">Unit Master</a></li>
-                                <li><a class="dropdown-item" href="{% url 'ledger_creation' %}">Ledger Master</a></li>
-                                <li><a class="dropdown-item" href="{% url 'unit_test' %}">Unit Test</a></li>
-                                <li><a class="dropdown-item" href="{% url 'voucher_creation' %}">Voucher Creation</a></li>
+                                {% if society_exists %}
+                                    <li><a class="dropdown-item" href="{% url 'society_details' %}">Society Details</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'member_details' %}">Members Master</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'create_house_help' %}">House Help Master</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'allocate_house_help' %}">HouseHelp Allocation</a>
+                                    <li><a class="dropdown-item" href="{% url 'create_tenant' %}">Tenant Master</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'allocate_tenant' %}">Tenent Allocation</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'meetings' %}">Meetings</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'nominee_register_view' %}">Nominee Register</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'form_i_view' %}">Form I</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'vehicle_register' %}">Vehicle Register</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'hypotication_register' %}">Hypotication Register</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'unit_register' %}">Unit Register</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'form_j_view' %}">Form J</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'unit_master' %}">Unit Master</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'ledger_creation' %}">Ledger Master</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'unit_test' %}">Unit Test</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'voucher_creation' %}">Voucher Creation</a></li>
+                                {% else %}
+                                    <li><a class="dropdown-item" href="{% url 'create_society' %}">Society Master Creation</a></li>
+                                {% endif %}
+
 
 
 
