@@ -2238,3 +2238,10 @@ BUGS:
 
 ========================== ** =================================
 Add loader in other all forms like socity creation
+
+
+
+===========================================================
+in shares only show flats whos member exists and that flat does not have shares added already.
+send success message on all forms of member master creation.
+and redirect to master page.
