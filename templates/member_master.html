@@ -148,7 +148,8 @@
                     <div class="row mt-3" style="text-align: left">
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <select class="w-100 sty-inp form-control" v-model="formData.wing_flat" id="flatDropdown" @change="get_checkbox_value($event)">
+                          <select class="w-100 sty-inp form-control" v-model="formData.wing_flat" id="flatDropdown" @change="get_checkbox_value($event)" :style="{ borderColor: errors.wing_flat ? '#dc3545' : '' }">
+                            <option value="">Select Block</option>
                             <option v-for="unit in units" :value="unit[0]">{{ unit[1] }}</option>
                           </select>
                           <label for="wing_flat_select" class="sty-label">Wing & Flat No.</label>
@@ -159,7 +160,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="text" class="w-100 sty-inp" v-model="formData.member_name" />
+                          <input type="text" class="w-100 sty-inp" v-model="formData.member_name" :style="{ borderColor: errors.member_name ? '#dc3545' : '' }">
                           <label for="" class="sty-label">Member's Name</label>
                           <span v-if="errors.member_name" class="error">{{ errors.member_name[0] }}</span>
                           <span v-else></span>
@@ -168,7 +169,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="number" min="0" max="100" class="w-100 sty-inp percentage-input" v-model="formData.ownership_percent" @input="getOwnership(formData.wing_flat, $event)" />
+                          <input type="number" min="0" max="100" class="w-100 sty-inp percentage-input" v-model="formData.ownership_percent" @input="getOwnership(formData.wing_flat, $event)" :style="{ borderColor: (errors.ownership_percent && errors.ownership_percent[0]) || (errors.non_field_errors && errors.non_field_errors[0]) ? '#dc3545' : '' }">
                           <label for="" class="sty-label">Ownership %</label>
                           <span v-if="ownershipError" style="color: red;">{{ ownershipError }}</span>
                           <span v-if="(errors.ownership_percent && errors.ownership_percent[0]) || (errors.non_field_errors && errors.non_field_errors[0])" class="error">
@@ -180,7 +181,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <select class="w-100 sty-inp" v-model="formData.member_position" style="background-color: white;">
+                          <select class="w-100 sty-inp" v-model="formData.member_position" style="background-color: white;" :style="{ borderColor: errors.member_position ? '#dc3545' : '' }">
                             <option value="">Select Member Position</option>
                             <option value="nominal_member">Nominal Member</option>
                             <option value="associate_member">Associate Member</option>
@@ -194,7 +195,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="date" class="w-100 sty-inp form-control" v-model="formData.member_dob" />
+                          <input type="date" class="w-100 sty-inp form-control" v-model="formData.member_dob" :style="{ borderColor: errors.member_dob ? '#dc3545' : '' }">
                           <label for="" class="sty-label">Member DOB</label>
                           <span v-if="errors.member_dob" class="error">{{ errors.member_dob[0] }}</span>
                           <span v-else></span>
@@ -203,7 +204,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="text" class="w-100 sty-inp" v-model="formData.member_pan_no" />
+                          <input type="text" class="w-100 sty-inp" v-model="formData.member_pan_no" :style="{ borderColor: errors.member_pan_no ? '#dc3545' : '' }">
                           <label for="" class="sty-label">Member PAN No</label>
                           <span v-if="errors.member_pan_no" class="error">{{ errors.member_pan_no[0] }}</span>
                           <span v-else></span>
@@ -212,7 +213,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="number" class="w-100 sty-inp" v-model="formData.member_aadhar_no" />
+                          <input type="number" class="w-100 sty-inp" v-model="formData.member_aadhar_no" :style="{ borderColor: errors.member_aadhar_no ? '#dc3545' : '' }">
                           <label for="" class="sty-label">Member Aadhaar No</label>
                           <span v-if="errors.member_aadhar_no" class="error">{{ errors.member_aadhar_no[0] }}</span>
                           <span v-else></span>
@@ -221,7 +222,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="formData.member_address"></textarea>
+                          <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="formData.member_address" :style="{ borderColor: errors.member_address ? '#dc3545' : '' }"></textarea>
                           <label for="" class="sty-label">Member Permanent Address</label>
                           <span v-if="errors.member_address" class="error">{{ errors.member_address[0] }}</span>
                           <span v-else></span>
@@ -230,7 +231,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <select class="w-100 sty-inp" v-model="formData.member_state" style="background-color: white;">
+                          <select class="w-100 sty-inp" v-model="formData.member_state" style="background-color: white;":style="{ borderColor: errors.member_state ? '#dc3545' : '' }">
                             <option value="">Select State</option>
                             <option value="Andhra Pradesh">Andhra Pradesh</option>
                             <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -278,7 +279,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="number" class="w-100 sty-inp" v-model="formData.member_pin_code" />
+                          <input type="number" class="w-100 sty-inp" v-model="formData.member_pin_code" :style="{ borderColor: errors.member_pin_code ? '#dc3545' : '' }">
                           <label for="" class="sty-label">Pin Code</label>
                           <span v-if="errors.member_pin_code" class="error">{{ errors.member_pin_code[0] }}</span>
                           <span v-else></span>
@@ -287,7 +288,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="email" class="w-100 sty-inp" v-model="formData.member_email" />
+                          <input type="email" class="w-100 sty-inp" v-model="formData.member_email" :style="{ borderColor: errors.member_email ? '#dc3545' : '' }">
                           <label for="" class="sty-label">Member Email</label>
                           <span v-if="errors.member_email" class="error">{{ errors.member_email[0] }}</span>
                           <span v-else></span>
@@ -296,7 +297,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="number" class="w-100 sty-inp form-control" v-model="formData.member_contact" />
+                          <input type="number" class="w-100 sty-inp form-control" v-model="formData.member_contact" :style="{ borderColor: errors.member_contact ? '#dc3545' : '' }">
                           <label for="" class="sty-label">Member Contact No.</label>
                           <span v-if="errors.member_contact" class="error">{{ errors.member_contact[0] }}</span>
                           <span v-else></span>
@@ -305,7 +306,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="number" class="w-100 sty-inp" v-model="formData.member_emergency_contact" />
+                          <input type="number" class="w-100 sty-inp" v-model="formData.member_emergency_contact" :style="{ borderColor: errors.member_emergency_contact ? '#dc3545' : '' }">
                           <label for="" class="sty-label">Emergency Contact No.</label>
                           <span v-if="errors.member_emergency_contact" class="error">{{ errors.member_emergency_contact[0] }}</span>
                           <span v-else></span>
@@ -314,7 +315,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="text" class="w-100 sty-inp" v-model="formData.member_occupation" />
+                          <input type="text" class="w-100 sty-inp" v-model="formData.member_occupation" :style="{ borderColor: errors.member_occupation ? '#dc3545' : '' }">
                           <label for="" class="sty-label">Occupation</label>
                           <span v-if="errors.member_occupation" class="error">{{ errors.member_occupation[0] }}</span>
                           <span v-else></span>
@@ -323,7 +324,7 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="date" class="w-100 sty-inp" v-model="formData.date_of_admission" />
+                          <input type="date" class="w-100 sty-inp" v-model="formData.date_of_admission" :style="{ borderColor: errors.date_of_admission ? '#dc3545' : '' }">
                           <label for="id_date_of_admission" class="sty-label">Date of admission</label>
                           <span v-if="errors.date_of_admission" class="error">{{ errors.date_of_admission[0] }}</span>
                           <span v-else></span>
@@ -332,7 +333,7 @@
 
                       <div class="col-lg-6 mb-2 d-flex">
                         <div class="w-100 sty-input-wrapper">
-                            <input type="file" class="w-100 sty-inp form-control" ref="sales_agreement" @change="handleChangeFile" />
+                            <input type="file" class="w-100 sty-inp form-control" ref="sales_agreement" @change="handleChangeFile" :style="{ borderColor: errors.sales_agreement ? '#dc3545' : '' }">
                             <label for="id_sales_agreement" class="sty-label">Sales Agreement</label>
                             <span v-if="errors.sales_agreement" class="error">{{ errors.sales_agreement[0] }}</span>
                           <span v-else></span>
@@ -347,7 +348,7 @@
 
                       <div class="col-lg-6 mb-2 d-flex">
                         <div class="w-100 sty-input-wrapper">
-                            <input type="file" class="w-100 sty-inp form-control" ref="other_attachment" @change="handleChangeFile"  />
+                            <input type="file" class="w-100 sty-inp form-control" ref="other_attachment" @change="handleChangeFile"  :style="{ borderColor: errors.other_attachment ? '#dc3545' : '' }">
                             <label for="id_other_attachment" class="sty-label">Other Attachment</label>
                             <span v-if="errors.other_attachment" class="error">{{ errors.other_attachment[0] }}</span>
                           <span v-else></span>
@@ -361,33 +362,17 @@
 
                       <div class="col-lg-4 mb-3">
                         <div class="w-100 sty-input-wrapper">
-                          <input type="date" class="w-100 sty-inp" v-model="formData.date_of_entrance_fees" />
+                          <input type="date" class="w-100 sty-inp" v-model="formData.date_of_entrance_fees" :style="{ borderColor: errors.date_of_entrance_fees ? '#dc3545' : '' }">
                           <label for="id_date_of_entrance_fees" class="sty-label">Date of entrance fees</label>
                           <span v-if="errors.date_of_entrance_fees" class="error">{{ errors.date_of_entrance_fees[0] }}</span>
                           <span v-else></span>
                         </div>
                       </div>
 
-                      <!-- <div class="col-lg-4 mb-3" id="id_flat_status_div_container" v-if="flat_having_primary_mem">
-                        <div class="w-100 sty-input-wrapper" id="id_flat_status_div">
-                          <select class="w-100 sty-inp" v-model="formData.flat_status">
-                            <option value="">Select Flat Status</option>
-                            <option value="occupied">Occupied</option>
-                            <option value="Not Occupied">Not Occupied</option>
-                            <option value="Rented">Rented</option>
-                            <option value="Japti">Japti</option>
-                            <option value="Builder Possession">Builder Possession</option>
-                          </select>
-                          <label for="id_flat_status_status" class="sty-label">Flat Status</label>
-                          <span v-if="errors.flat_status" class="error">{{ errors.flat_status[0] }}</span>
-                          <span v-else></span>
-                        </div>
-                      </div> -->
-
                       <div class="col-lg-4 d-flex align-items-center" id="id_is_primary_container" v-if="flat_having_primary_mem">
                         <small id="id_is_primary">
                           <span>
-                            <input type="checkbox" class="sty-inp" v-model="formData.member_is_primary"/>
+                            <input type="checkbox" class="sty-inp" v-model="formData.member_is_primary":style="{ borderColor: errors.member_is_primary ? '#dc3545' : '' }">
                           </span>&nbsp;Make Primary Member
                           <span v-if="errors.member_is_primary" class="error">{{ errors.member_is_primary[0] }}</span>
                           <span v-else></span>
@@ -405,7 +390,7 @@
                       <div class="row abcd" id="cloneNominee">
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input type="text" class="w-100 sty-inp" v-model="form.nominee_name" />
+                            <input type="text" class="w-100 sty-inp" v-model="form.nominee_name" :style="{ borderColor: nomError[index] && nomError[index].nominee_name ? '#dc3545' : '' }">
                             <label for="" class="sty-label">Nominee Name</label>
                             <span v-if="nomError[index] && nomError[index].nominee_name" class="error">{{ nomError[index].nominee_name }}</span>
                             <span v-else></span>
@@ -414,7 +399,7 @@
 
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input type="date" class="w-100 sty-inp form-control" v-model="form.date_of_nomination"  />
+                            <input type="date" class="w-100 sty-inp form-control" v-model="form.date_of_nomination"  :style="{ borderColor: nomError[index] && nomError[index].date_of_nomination ? '#dc3545' : '' }">
                             <label for="" class="sty-label">Date of Nomination</label>
                             <span v-if="nomError[index] && nomError[index].date_of_nomination" class="error">{{ nomError[index].date_of_nomination }}</span>
                             <span v-else></span>
@@ -422,7 +407,7 @@
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input class="w-100 sty-inp form-control" type="text" v-model="form.relation_with_nominee"  />
+                            <input class="w-100 sty-inp form-control" type="text" v-model="form.relation_with_nominee"  :style="{ borderColor: nomError[index] && nomError[index].relation_with_nominee ? '#dc3545' : '' }">
                             <label for="" class="sty-label">Relation with Nominator</label>
                             <span v-if="nomError[index] && nomError[index].relation_with_nominee" class="error">{{ nomError[index].relation_with_nominee }}</span>
                             <span v-else></span>
@@ -431,7 +416,7 @@
 
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input type="text" class="w-100 sty-inp form-control percentage-input" v-model="form.nominee_sharein_percent" />
+                            <input type="text" class="w-100 sty-inp form-control percentage-input" v-model="form.nominee_sharein_percent" :style="{ borderColor: nomError[index] && nomError[index].nominee_sharein_percent ? '#dc3545' : '' }">
                             <label for="" class="sty-label">Nominee Sharein %</label>
                             <span v-if="nomError[index] && nomError[index].nominee_sharein_percent" class="error">{{ nomError[index].nominee_sharein_percent }}</span>
                             <span v-else></span>
@@ -439,7 +424,7 @@
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input type="date" class="w-100 sty-inp"v-model="form.nominee_dob" />
+                            <input type="date" class="w-100 sty-inp"v-model="form.nominee_dob" :style="{ borderColor: nomError[index] && nomError[index].nominee_dob ? '#dc3545' : '' }">
                             <label for="" class="sty-label">Nominee DOB</label>
                             <span v-if="nomError[index] && nomError[index].nominee_dob" class="error">{{ nomError[index].nominee_dob }}</span>
                             <span v-else></span>
@@ -447,7 +432,7 @@
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input type="number" class="w-100 sty-inp" v-model="form.nominee_aadhar_no" />
+                            <input type="number" class="w-100 sty-inp" v-model="form.nominee_aadhar_no" :style="{ borderColor: nomError[index] && nomError[index].nominee_aadhar_no ? '#dc3545' : '' }">
                             <label for="" class="sty-label">Nominee Aadhaar No</label>
                             <span v-if="nomError[index] && nomError[index].nominee_aadhar_no" class="error">{{ nomError[index].nominee_aadhar_no }}</span>
                             <span v-else></span>
@@ -455,7 +440,7 @@
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input type="text" class="w-100 sty-inp" v-model="form.nominee_pan_no" />
+                            <input type="text" class="w-100 sty-inp" v-model="form.nominee_pan_no" :style="{ borderColor: nomError[index] && nomError[index].nominee_pan_no ? '#dc3545' : '' }">
                             <label for="" class="sty-label">Nominee PAN No</label>
                             <span v-if="nomError[index] && nomError[index].nominee_pan_no" class="error">{{ nomError[index].nominee_pan_no }}</span>
                             <span v-else></span>
@@ -463,23 +448,25 @@
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input type="text" class="w-100 sty-inp" v-model="form.nominee_email" />
+                            <input type="text" class="w-100 sty-inp" v-model="form.nominee_email" :style="{ borderColor: nomError[index] && nomError[index].nominee_email ? '#dc3545' : '' }">
                             <label for="id_nominee_email" class="sty-label">Nominee Email</label>
                             <span v-if="nomError[index] && nomError[index].nominee_email" class="error">{{ nomError[index].nominee_email }}</span>
                             <span v-else></span>
                           </div>
                         </div>
+
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="form.nominee_address" ></textarea>
+                            <textarea class="w-100 sty-inp form-control" cols="30" rows="1" v-model="form.nominee_address" :style="{ borderColor: nomError[index] && nomError[index].nominee_address ? '#dc3545' : '' }"></textarea>
                             <label for="" class="sty-label">Nominee Permanent Address</label>
                             <span v-if="nomError[index] && nomError[index].nominee_address" class="error">{{ nomError[index].nominee_address }}</span>
                             <span v-else></span>
                           </div>
                         </div>
+
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <select class="w-100 sty-inp" v-model="form.nominee_state" style="background-color: white;">
+                            <select class="w-100 sty-inp" v-model="form.nominee_state" style="background-color: white;" :style="{ borderColor: nomError[index] && nomError[index].nominee_state ? '#dc3545' : '' }">
                               <option value="">Select State</option>
                               <option value="Andhra Pradesh">Andhra Pradesh</option>
                               <option value="Arunachal Pradesh">Arunachal Pradesh</option>
@@ -524,9 +511,10 @@
                             <span v-else></span>
                           </div>
                         </div>
+
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input type="number" class="w-100 sty-inp" v-model="form.nominee_pin_code" />
+                            <input type="number" class="w-100 sty-inp" v-model="form.nominee_pin_code" :style="{ borderColor: nomError[index] && nomError[index].nominee_pin_code ? '#dc3545' : '' }">
                             <label for="" class="sty-label">Pin Code</label>
                             <span v-if="nomError[index] && nomError[index].nominee_pin_code" class="error">{{ nomError[index].nominee_pin_code }}</span>
                             <span v-else></span>
@@ -535,7 +523,7 @@
 
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input type="number" class="w-100 sty-inp form-control" v-model="form.nominee_contact" />
+                            <input type="number" class="w-100 sty-inp form-control" v-model="form.nominee_contact" :style="{ borderColor: nomError[index] && nomError[index].nominee_contact ? '#dc3545' : '' }">
                             <label for="" class="sty-label">Nominee Contact No.</label>
                             <span v-if="nomError[index] && nomError[index].nominee_contact" class="error">{{ nomError[index].nominee_contact }}</span>
                             <span v-else></span>
@@ -543,7 +531,7 @@
                         </div>
                         <div class="col-lg-4 mb-3">
                           <div class="w-100 sty-input-wrapper">
-                            <input type="number" class="w-100 sty-inp" v-model="form.nominee_emergency_contact" />
+                            <input type="number" class="w-100 sty-inp" v-model="form.nominee_emergency_contact">
                             <label for="" class="sty-label">Emergency Contact No.</label>
                             <span v-else></span>
                           </div>
@@ -757,8 +745,8 @@
                     <div class="col-lg-4 mb-3">
                       <div class="w-100 sty-input-wrapper">
                         <select class="w-100 sty-inp" v-model="formData.bank_loan_status" @change="loanStatus($event)">
-                          <option value="yes">Active</option>
-                          <option value="no">Inactive</option>
+                          <option value="active">Active</option>
+                          <option value="closed">Inactive</option>
                         </select>
                         <label class="sty-label">Loan Status</label>
                         <span v-if="errors.bank_loan_status" class="error">{{ errors.bank_loan_status[0] }}</span>

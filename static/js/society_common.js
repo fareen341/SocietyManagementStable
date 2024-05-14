@@ -2333,25 +2333,25 @@ new Vue({
     },
     methods: {
         submitSharesForm() {
-            // console.log("callinng");
-            // this.errors = {};
-            // const formData = new FormData();
-            // for (const key in this.formData) {
-            //     if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-            //         formData.append(key, this.formData[key]);
-            //     }
-            // }
-            // axios.defaults.xsrfCookieName = 'csrftoken';
-            // axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            // axios.post('http://127.0.0.1:8000/api/shares/', formData)
-            //     .then(response => {
-            //         console.log('Form submitted successfully:', response.data);
-            //         this.nextAction();
-            //     })
-            //     .catch(error => {
-            //         this.errors = error.response.data
-            //     });
-            $("#hLoan").trigger("click");
+            console.log("callinng");
+            this.errors = {};
+            const formData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    formData.append(key, this.formData[key]);
+                }
+            }
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/shares/', formData)
+                .then(response => {
+                    console.log('Form submitted successfully:', response.data);
+                    this.nextAction();
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                });
+            // $("#hLoan").trigger("click");
         },
         nextAction() {
             console.log('Form data submitted successfully. Proceeding to the next action.');
@@ -2394,21 +2394,21 @@ new Vue({
             }
 
             // axios.defaults.xsrfCookieName = 'csrftoken';
-            // axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            // axios.post('http://127.0.0.1:8000/api/home-loan/', formData, {
-            //     headers: {
-            //         'Content-Type': 'multipart/form-data'
-            //     }
-            // })
-            //     .then(response => {
-            //         console.log('Form submitted successfully:', response.data);
-            //         this.nextAction();
-            //     })
-            //     .catch(error => {
-            //         this.errors = error.response.data
-            //         console.log("Error: ->", error.response.data.folio_number[0]);
-            //     });
-            $("#redirectToGst").trigger("click");
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/home-loan/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(response => {
+                    console.log('Form submitted successfully:', response.data);
+                    this.nextAction();
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error: ->", error.response.data.folio_number[0]);
+                });
+            // $("#redirectToGst").trigger("click");
         },
         loanStatus(event) {
             this.attach_noc = false;
@@ -2453,16 +2453,16 @@ new Vue({
             }
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            // axios.post('http://127.0.0.1:8000/api/flat-gst/', formData)
-            //     .then(response => {
-            //         console.log('Form submitted successfully:', response.data);
-            //         this.nextAction();
-            //     })
-            //     .catch(error => {
-            //         this.errors = error.response.data
-            //         console.log("Error: ->", error.response.data.folio_number[0]);
-            //     });
-            $("#addGstNext").trigger("click");
+            axios.post('http://127.0.0.1:8000/api/flat-gst/', formData)
+                .then(response => {
+                    console.log('Form submitted successfully:', response.data);
+                    this.nextAction();
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error: ->", error.response.data.folio_number[0]);
+                });
+            // $("#addGstNext").trigger("click");
         },
         nextAction() {
             console.log('Form data submitted successfully. Proceeding to the next action.');
