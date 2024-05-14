@@ -422,22 +422,25 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="(item, index) in bankData" :key="index">
-                                    <td>{{item.beneficiary_name}}</td>
-                                    <td>
-                                        <span v-if="item.is_primary"><i class="fa-solid fa-check"></i></span>
-                                        <span v-else><i class="fa-solid fa-xmark"></i></span>
-                                    </td>
-                                    <td>{{item.beneficiary_code}}</td>
-                                    <td>{{item.beneficiary_acc_number}}</td>
-                                    <td>{{item.beneficiary_bank}}</td>
-                                    <th>
-                                        <span @click="bankUpdate(item.id)">
-                                            <i class="fa-solid fa-pen fa-xs pe-2" style="color: black"></i>
-                                        </span>
-                                        <!-- <span @click="deleteBank(item.id)">
-                                            <i class="fa-solid fa-trash-can fa-xs" style="color: black;"></i>
-                                        </span>  -->
-                                    </th>
+                                        <td>{{item.beneficiary_name}}</td>
+                                        <td>
+                                            <span v-if="item.is_primary"><i class="fa-solid fa-check"></i></span>
+                                            <span v-else><i class="fa-solid fa-xmark"></i></span>
+                                        </td>
+                                        <td>{{item.beneficiary_code}}</td>
+                                        <td>{{item.beneficiary_acc_number}}</td>
+                                        <td>{{item.beneficiary_bank}}</td>
+                                        <td>
+                                            <span @click="bankUpdate(item.id)">
+                                                <i class="fa-solid fa-pen fa-xs pe-2" style="color: black"></i>
+                                            </span>
+                                            <!-- <span @click="deleteBank(item.id)">
+                                                <i class="fa-solid fa-trash-can fa-xs" style="color: black;"></i>
+                                            </span>  -->
+                                        </td>
+                                    </tr>
+                                    <tr v-if="bankData.length === 0">
+                                        <td>No Bank Added</td>
                                     </tr>
                                 </tbody>
                                 </table>
@@ -598,15 +601,17 @@
                                                 <div class="row p-2 mt-2">
                                                     <div class="d-flex isVisible">
                                                         <div class="sty-input-wrapper">
-                                                            <input type="file" class="sty-inp form-control" id="fileInput" ref="'other_document' + index" @change="handleFileUpload($event, index)" :style="{ borderColor: otherDocError[index] && otherDocError[index].other_document ? '#dc3545' : '' }">
+                                                            <input type="file" class="sty-inp form-control" id="fileInput" ref="'other_document' + index" @change="handleFileUpload($event, index)" :style="{ borderColor: (otherDocError[index] && otherDocError[index].other_document) || errors.other_document ? '#dc3545' : '' }">
                                                             <label class="sty-label">Other Document</label>
                                                             <span v-if="otherDocError[index] && otherDocError[index].other_document" class="error">{{ otherDocError[index].other_document }}</span>
+                                                            <span v-else-if="errors.other_document" class="error">{{ errors.other_document[0] }}</span>
                                                             <span v-else></span>
                                                         </div>
                                                         <div class="sty-input-wrapper">
                                                             <input type="text" class="sty-inp form-control" v-model="form.other_document_specification" :style="{ borderColor: otherDocError[index] && otherDocError[index].other_document_specification ? '#dc3545' : '' }">
                                                             <label class="sty-label">Specify your Document</label>
                                                             <span v-if="otherDocError[index] && otherDocError[index].other_document_specification" class="error">{{ otherDocError[index].other_document_specification }}</span>
+                                                            <span v-else-if="errors.other_document_specification">{{ errors.other_document_specification[0] }}</span>
                                                             <span v-else></span>
                                                         </div>
                                                         <button class="sty-inp mb-4" style="background: transparent;">
@@ -964,20 +969,23 @@
                     <div>
                         <table class="table">
                             <thead>
-                            <tr>
-                                <th scope="col">Block</th>
-                                <th scope="col">Units</th>
-                                <th scope="col">Action</th>
-                            </tr>
+                                <tr>
+                                    <th scope="col">Block</th>
+                                    <th scope="col">Units</th>
+                                    <th scope="col">Action</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                {% for item in wing_flat_list %}
-                                <td>{{ item.wing_name }}</td>
-                                <td>{{ item.flat_number }}</td>
-                                <td><i class="fa-solid fa-pen fa-xs pe-2" style="color: black" onclick="getObjectId(`{{ item.id }}`)"></i></td>
-                            </tr>
-                            {% endfor %}
+                                <tr>
+                                    {% for item in wing_flat_list %}
+                                        <td>{{ item.wing_name }}</td>
+                                        <td>{{ item.flat_number }}</td>
+                                        <td><i class="fa-solid fa-pen fa-xs pe-2" style="color: black" onclick="getObjectId(`{{ item.id }}`)"></i></td>
+                                    {% endfor %}
+                                    {% if not wing_flat_list %}
+                                        <td class="3">No Block-Unit Added</td>
+                                    {% endif %}
+                                </tr>
                             </tbody>
                         </table>
                     </div>

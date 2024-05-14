@@ -367,7 +367,6 @@ new Vue({
             }
         },
         submitBothDocs() {
-            alert('LL')
             $('#loader').show();
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -810,7 +809,6 @@ new Vue({
                 }
             }
             if (this.$refs.registration_doc.files[0]) {
-                console.log("FILE REG");
                 this.formData.registration_doc = this.$refs.registration_doc.files[0]
             }
             if (this.$refs.pan_number_doc.files[0]) {
@@ -833,10 +831,25 @@ new Vue({
                     }
                 })
                     .then(response => {
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 5000
+                        };
+                        toastr.success("Society Updated Successfully!");
+                        setTimeout(function() {
+                            location.reload();
+                        }, 600);
                         // console.log("RESPONSE->", response.data);
                     })
                     .catch(error => {
                         this.errors = error.response.data;
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 5000
+                        };
+                        toastr.error("Please Correct All Errors!");
                     });
             }
         },
@@ -1207,13 +1220,6 @@ new Vue({
                 $('#loader').hide();
                 this.validateData('other_document', form, index);
                 this.validateData('other_document_specification', form, index);
-
-                toastr.options = {
-                    closeButton: true,
-                    positionClass: 'toast-top-center',
-                    timeOut: 5000
-                    };
-                toastr.error("Pls Correct All Errors!");
             });
 
             axios.defaults.xsrfCookieName = 'csrftoken';
@@ -1247,17 +1253,7 @@ new Vue({
                             $('#loader').hide();
                             this.errors = errors.response.data;
                             console.log("Errors======", this.errors);
-                            toastr.options = {
-                                closeButton: true,
-                                positionClass: 'toast-top-center',
-                                timeOut: 5000
-                                };
-                            toastr.error("Pls Correct All Errors!");
                         });
-                    })
-                    .catch(errors => {
-                        console.error('Error submitting form data:', errors);
-                        this.errors = errors.response.data.errors;
                     });
             }
         },
