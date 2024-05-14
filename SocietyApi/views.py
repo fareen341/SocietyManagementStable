@@ -158,7 +158,37 @@ from django.db import transaction
 # GET ALL WINGS
 class UnitWingView(viewsets.ViewSet):
     def list(self, request):
-        units = WingFlatUnique.objects.values_list('id', 'wing_flat_unique').distinct()
+        form_type = request.query_params.get('form_type')
+        units = WingFlatUnique.objects.filter(members__wing_flat__isnull=False).values_list('id', 'wing_flat_unique').distinct()
+        # FOR MEMBERS ONLY:
+        if form_type is not None and form_type == 'member_form':
+            units = WingFlatUnique.objects.values_list('id', 'wing_flat_unique').distinct()
+
+        # if wing_flat:
+        #     # MEMBERS:
+        #     if form_type is not None and form_type == 'member_form':
+        #         units = WingFlatUnique.objects.values_list('id', 'wing_flat_unique').distinct()
+
+        #     # SHARES
+        #     if form_type is not None and form_type == 'shares_form':
+        #         if FlatShares.objects.filter(wing_flat=wing_flat).exists():
+        #             units = units.exclude(id=wing_flat)
+
+        #     # HOME LOAN
+        #     if form_type is not None and form_type == 'home_loan_form':
+        #         if FlatHomeLoan.objects.filter(wing_flat=wing_flat).exists():
+        #             units = units.exclude(id=wing_flat)
+
+        #     # GST
+        #     if form_type is not None and form_type == 'gst_form':
+        #         if FlatGST.objects.filter(wing_flat=wing_flat).exists():
+        #             units = units.exclude(id=wing_flat)
+
+        #     # VEHICLE
+        #     if form_type is not None and form_type == 'vehicle_form':
+        #         if FlatMemberVehicle.objects.filter(wing_flat=wing_flat).exists():
+        #             units = units.exclude(id=wing_flat)
+
         return Response(units)
 
 

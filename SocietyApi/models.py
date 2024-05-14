@@ -219,8 +219,8 @@ class FlatDetail(models.Model):
 
 
 class FlatShares(models.Model):
-    unique_member_shares = models.ForeignKey(Members, on_delete=models.CASCADE, null=True, blank=True)
-    wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
+    unique_member_shares = models.OneToOneField(Members, on_delete=models.CASCADE, null=True, blank=True)
+    wing_flat = models.OneToOneField(WingFlatUnique, on_delete=models.CASCADE)
     folio_number = models.CharField(max_length=300)
     shares_date = models.DateField()
     application_number = models.CharField(max_length=300)
@@ -245,8 +245,8 @@ loan_status = [
     ]
 
 class FlatHomeLoan(models.Model):
-    unique_member_shares = models.ForeignKey(Members, on_delete=models.CASCADE, related_name='banks')
-    wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
+    unique_member_shares = models.OneToOneField(Members, on_delete=models.CASCADE, related_name='banks')
+    wing_flat = models.OneToOneField(WingFlatUnique, on_delete=models.CASCADE)
     bank_loan_name = models.CharField(max_length=300)
     bank_loan_object = models.CharField(max_length=300)
     bank_loan_date = models.DateField()
@@ -263,8 +263,8 @@ class FlatHomeLoan(models.Model):
 
 
 class FlatGST(models.Model):
-    unique_member_shares = models.ForeignKey(Members, on_delete=models.CASCADE)
-    wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
+    unique_member_shares = models.OneToOneField(Members, on_delete=models.CASCADE)
+    wing_flat = models.OneToOneField(WingFlatUnique, on_delete=models.CASCADE)
     gst_number = models.CharField(max_length=300)
     gst_state = models.CharField(max_length=300)
     gst_billing_name = models.CharField(max_length=300)

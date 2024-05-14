@@ -2138,6 +2138,15 @@ new Vue({
         },
         submitMembers(addAnother) {
             this.formData.wing_flat = $('#flatDropdown').val();
+            if(!this.formData.wing_flat){
+                this.formData.wing_flat = null;
+            }
+            if(!this.formData.member_position){
+                this.formData.member_position = null;
+            }
+            if(!this.formData.member_state){
+                this.formData.member_state = null;
+            }
 
             // VALIDATION FOR NOMINEES:
             this.nomError = {};
@@ -2239,8 +2248,11 @@ new Vue({
         getFormNumber: index => index + 1
     },
     mounted() {
-        axios.get(`http://127.0.0.1:8000/api/wing/`)
+        axios.get(`http://127.0.0.1:8000/api/wing/?wing_flat=1&form_type=member_form`)
             .then(response => {
+                this.formData.wing_flat = '';
+                this.formData.member_position = '';
+                this.formData.member_state = '';
                 this.units = response.data;
             })
             .catch(error => {
@@ -2255,7 +2267,6 @@ new Vue({
 
     },
 });
-
 
 
 // Add Flat Details
@@ -2346,10 +2357,22 @@ new Vue({
             axios.post('http://127.0.0.1:8000/api/shares/', formData)
                 .then(response => {
                     console.log('Form submitted successfully:', response.data);
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success("Shares Added Successfully!");
                     this.nextAction();
                 })
                 .catch(error => {
-                    this.errors = error.response.data
+                    this.errors = error.response.data;
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.error("Pls Correct All Errors!");
                 });
             // $("#hLoan").trigger("click");
         },
@@ -2402,11 +2425,22 @@ new Vue({
             })
                 .then(response => {
                     console.log('Form submitted successfully:', response.data);
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success("Home Loan Data Added Successfully!");
                     this.nextAction();
                 })
                 .catch(error => {
-                    this.errors = error.response.data
-                    console.log("Error: ->", error.response.data.folio_number[0]);
+                    this.errors = error.response.data;
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.error("Pls Correct All Errors!");
                 });
             // $("#redirectToGst").trigger("click");
         },
@@ -2456,11 +2490,22 @@ new Vue({
             axios.post('http://127.0.0.1:8000/api/flat-gst/', formData)
                 .then(response => {
                     console.log('Form submitted successfully:', response.data);
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success("GST Data Added Successfully!");
                     this.nextAction();
                 })
                 .catch(error => {
-                    this.errors = error.response.data
-                    console.log("Error: ->", error.response.data.folio_number[0]);
+                    this.errors = error.response.data;
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.error("Pls Correct All Errors!");
                 });
             // $("#addGstNext").trigger("click");
         },
@@ -2541,10 +2586,21 @@ new Vue({
                 })
                     .then(response => {
                         console.log('Form data submitted successfully:', response.data);
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 5000
+                        };
+                        toastr.success("Vehicle Data Added Successfully!");
                     })
                     .catch(errors => {
                         console.error('Error submitting form data:', errors);
-                        this.errors = errors.response.data.errors;
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 5000
+                        };
+                        toastr.error("Pls Correct All Errors!");
                     });
             });
         },
