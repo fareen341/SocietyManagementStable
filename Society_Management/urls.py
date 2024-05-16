@@ -114,7 +114,7 @@ urlpatterns = [
 
     path('api/ledger_group/<str:group_name>/', apiviews.CreateGroupForLedgerView.as_view({'get': 'select_ledger_group'}), name='ledger_group'),
     path('api/get_all_cost_centers/', apiviews.CostCenterView.as_view({'get': 'select_cost_center'}), name='get_all_cost_centers'),
-    path('get_ledgers/<str:group_list>', apiviews.LedgerView.as_view({'get': 'get_ledgers'}), name='get_ledgers')
+    path('get_ledgers/', apiviews.LedgerView.as_view({'get': 'get_ledgers'}), name='get_ledgers')
 
 
 ]

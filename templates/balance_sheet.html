@@ -35,11 +35,17 @@
               <td></td>
               <td>I. Share Capital:</td>
               <td></td>
-              <td>100000</td>
+              <td></td>
             </tr>
             <tr>
+            <tr>
               <td></td>
-              <td>I-A. Subscription towards shares:</td>
+              <td>I-A. Subscription towards shares:
+                <br>
+                <div v-for="(ledger, index) in group1" :key="ledger.id">
+                  -> {{ ledger.ledger_name }}
+                </div>
+              </td>
               <td></td>
             </tr>
             <tr>

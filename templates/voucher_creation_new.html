@@ -562,11 +562,9 @@
                                                     </div>
                                                 </div> -->
 
-
-
                                                 <h5 class="text-center">Cost Center</h5>
-                                                    <table class="table table-bordered">
-                                                        <thead>
+                                                    <table class="table table-sm table-bordered">
+                                                        <thead class="table-dark">
                                                             <tr>
                                                                 <th style="text-align:center;" width="5%">Select Ledger</th>
                                                                 <th style="text-align:center;">Quantity</th>
@@ -950,7 +948,6 @@
                                 <hr class="mt-1 mb-3">
 
                                 <div class="" id="journals">
-                                    <!-- <div v-for="(item, index) in journals" :key="index"> -->
                                     <div class="row">
                                         <div class="col-1 mb-3">
                                             <div class="sty-input-wrapper w-100">
@@ -995,7 +992,6 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <!-- </div> -->
                                     <div class="row">
                                         <div class="col-2 mb-3">
                                             <button class="btn btn-primary" type="button">Add More</button>
@@ -1034,7 +1030,175 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button class="btn btn-primary" type="submit">Submit</button>
+
+                                
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-dark">
+                                        <th style="text-align:center;">Select Type</th>
+                                        <th style="text-align:center;">Select Mode</th>
+                                        <th style="text-align:center;">Ledger Name</th>
+                                        <th style="text-align:center;">Debit Amount</th>
+                                        <th style="text-align:center;">Credit Amount</th>
+                                        <th style="text-align:center;">Actions</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">DR</option>
+                                                    <option value="">CR</option>
+                                                </select>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">Bank</option>
+                                                    <option value="">Cash</option>
+                                                </select>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
+                                            </td>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" >
+                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">DR</option>
+                                                    <option value="">CR</option>
+                                                </select>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">Bank</option>
+                                                    <option value="">Cash</option>
+                                                </select>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
+                                            </td>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" >
+                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">DR</option>
+                                                    <option value="">CR</option>
+                                                </select>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">Bank</option>
+                                                    <option value="">Cash</option>
+                                                </select>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
+                                            </td>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" >
+                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">DR</option>
+                                                    <option value="">CR</option>
+                                                </select>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">Bank</option>
+                                                    <option value="">Cash</option>
+                                                </select>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
+                                            </td>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" >
+                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
+                                                    <option value="">-------</option>
+                                                    <option value="">DR</option>
+                                                    <option value="">CR</option>
+                                                </select>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="" placeholder="Select Mode">
+                                                    <option value="">-------</option>
+                                                    <option value="">Bank</option>
+                                                    <option value="">Cash</option>
+                                                </select>
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
+                                            </td>
+                                            <td style="text-align:center;">
+                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
+                                            </td>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" >
+                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th id="total" colspan="3">Total :</th>
+                                            <td style="text-align: center">Debit Total: <span class="ms-3">200</span></td>
+                                            <td style="text-align: center">Credit Total: <span class="ms-3">200</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </form>
                         </div>
                         <div class="modal-footer">

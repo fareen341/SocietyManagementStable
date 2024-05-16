@@ -4294,7 +4294,7 @@ new Vue({
         // Income
         axios.get(`http://127.0.0.1:8000/api/ledger_group/Income`)
             .then(response => {
-                axios.get(`http://127.0.0.1:8000/get_ledgers/${response.data.sub_group}`)
+                axios.get(`http://127.0.0.1:8000/get_ledgers/?group_list=${response.data.sub_group}`)
                     .then(response => {
                         this.income_ledgers = response.data.ledgers;
                     })
@@ -4309,13 +4309,49 @@ new Vue({
         // Expenses
         axios.get(`http://127.0.0.1:8000/api/ledger_group/Expenses`)
             .then(response => {
-                axios.get(`http://127.0.0.1:8000/get_ledgers/${response.data.sub_group}`)
+                axios.get(`http://127.0.0.1:8000/get_ledgers/?group_list=${response.data.sub_group}`)
                     .then(response => {
                         this.expense_ledgers = response.data.ledgers;
+                        console.log("=============", this.expense_ledgers);
                     })
                     .catch(error => {
                         console.error('Error fetching data:', error);
                     });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+});
+
+
+
+new Vue({
+    el: '#balanceSheetVue',
+    data: {
+        ledgers: [],
+        group1: [],
+        income_ledgers: [],
+    },
+    mounted() {
+        axios.defaults.xsrfCookieName = 'csrftoken';
+        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+        // Groups
+        axios.get(`http://127.0.0.1:8000/get_ledgers/?group_list=${category}`)
+            .then(response => {
+                this.group1 = response.data.ledgers;
+                console.log("group===========", this.group1);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // Expenses
+        axios.get(`http://127.0.0.1:8000/get_ledgers/${response.data.sub_group}`)
+            .then(response => {
+                this.expense_ledgers = response.data.ledgers;
+                console.log("=============", this.expense_ledgers);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
