@@ -159,7 +159,12 @@ from django.db import transaction
 class UnitWingView(viewsets.ViewSet):
     def list(self, request):
         form_type = request.query_params.get('form_type')
-        units = WingFlatUnique.objects.filter(members__wing_flat__isnull=False).values_list('id', 'wing_flat_unique').distinct()
+        # CHECKING IF THERE ARE MEMBER
+        units = WingFlatUnique.objects.filter(
+            members__wing_flat__isnull=False,
+            members__member_is_primary=True,
+            members__date_of_cessation__isnull=True
+        ).values_list('id', 'wing_flat_unique').distinct()
         # FOR MEMBERS ONLY:
         if form_type is not None and form_type == 'member_form':
             units = WingFlatUnique.objects.values_list('id', 'wing_flat_unique').distinct()
@@ -169,25 +174,38 @@ class UnitWingView(viewsets.ViewSet):
         #     if form_type is not None and form_type == 'member_form':
         #         units = WingFlatUnique.objects.values_list('id', 'wing_flat_unique').distinct()
 
-        #     # SHARES
-        #     if form_type is not None and form_type == 'shares_form':
-        #         if FlatShares.objects.filter(wing_flat=wing_flat).exists():
-        #             units = units.exclude(id=wing_flat)
+        # SHARES
+        if form_type is not None and form_type == 'shares_form':
+            all_blocks = FlatShares.objects.filter(date_of_cessation__isnull=True).values_list('wing_flat__wing_flat_unique', flat=True)
+            if all_blocks:
+                for flat in all_blocks:
+                    if flat in units.values_list('wing_flat_unique', flat=True):
+                        units = units.exclude(wing_flat_unique=flat)
 
-        #     # HOME LOAN
-        #     if form_type is not None and form_type == 'home_loan_form':
-        #         if FlatHomeLoan.objects.filter(wing_flat=wing_flat).exists():
-        #             units = units.exclude(id=wing_flat)
+        # HOME LOAN
+        if form_type is not None and form_type == 'home_loan':
+            all_blocks = FlatHomeLoan.objects.filter(date_of_cessation__isnull=True).values_list('wing_flat__wing_flat_unique', flat=True)
+            if all_blocks:
+                for flat in all_blocks:
+                    if flat in units.values_list('wing_flat_unique', flat=True):
+                        units = units.exclude(wing_flat_unique=flat)
 
-        #     # GST
-        #     if form_type is not None and form_type == 'gst_form':
-        #         if FlatGST.objects.filter(wing_flat=wing_flat).exists():
-        #             units = units.exclude(id=wing_flat)
 
-        #     # VEHICLE
-        #     if form_type is not None and form_type == 'vehicle_form':
-        #         if FlatMemberVehicle.objects.filter(wing_flat=wing_flat).exists():
-        #             units = units.exclude(id=wing_flat)
+        # GST
+        if form_type is not None and form_type == 'gst_form':
+            all_blocks = FlatGST.objects.filter(date_of_cessation__isnull=True).values_list('wing_flat__wing_flat_unique', flat=True)
+            if all_blocks:
+                for flat in all_blocks:
+                    if flat in units.values_list('wing_flat_unique', flat=True):
+                        units = units.exclude(wing_flat_unique=flat)
+
+        # VEHICLE
+        if form_type is not None and form_type == 'vehicle_form':
+            all_blocks = FlatMemberVehicle.objects.filter(date_of_cessation__isnull=True).values_list('wing_flat__wing_flat_unique', flat=True)
+            if all_blocks:
+                for flat in all_blocks:
+                    if flat in units.values_list('wing_flat_unique', flat=True):
+                        units = units.exclude(wing_flat_unique=flat)
 
         return Response(units)
 

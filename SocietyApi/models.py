@@ -119,8 +119,8 @@ class Members(models.Model):
     ownership_percent = models.IntegerField()
     member_position = models.CharField(max_length=200, choices=position_choices)
     member_dob = models.DateField()
-    member_pan_no = models.CharField(max_length=200)
-    member_aadhar_no = models.CharField(max_length=200)
+    member_pan_no = models.CharField(max_length=10, validators=[RegexValidator(regex='^[a-zA-Z0-9]{10}$', message='PAN number must be exactly 10 digits')])
+    member_aadhar_no = models.CharField(max_length=12, validators=[RegexValidator(regex='^[a-zA-Z0-9]{12}$', message='Aadhar number must be exactly 12 digits')])
     member_address = models.CharField(max_length=200)
     member_state = models.CharField(max_length=200)
     member_pin_code = models.CharField(max_length=200)
@@ -142,11 +142,11 @@ class Members(models.Model):
 
     def save(self, *args, **kwargs):
         # OLD CODE
-
         if not self.pk and self.member_is_primary == True:
             # Only update the field if the instance is being saved for the first time
             super(Members, self).save(*args, **kwargs)
             self.same_flat_member_identification = f"{self.wing_flat.wing_flat_unique}MEM{self.pk}"
+            self.member_pan_no = self.member_pan_no.upper()
             self.save(update_fields=['same_flat_member_identification'])
         else:
             super(Members, self).save(*args, **kwargs)
@@ -178,8 +178,8 @@ class Nominees(models.Model):
     relation_with_nominee = models.CharField(max_length=300)
     nominee_sharein_percent = models.IntegerField()
     nominee_dob = models.DateField()
-    nominee_aadhar_no = models.CharField(max_length=300)
-    nominee_pan_no = models.CharField(max_length=300)
+    nominee_aadhar_no = models.CharField(max_length=12, validators=[RegexValidator(regex='^[a-zA-Z0-9]{12}$', message='Aadhar number must be exactly 12 digits')])
+    nominee_pan_no = models.CharField(max_length=10, validators=[RegexValidator(regex='^[a-zA-Z0-9]{10}$', message='PAN number must be exactly 10 digits')])
     nominee_email = models.EmailField()
     nominee_address = models.CharField(max_length=300)
     nominee_state = models.CharField(max_length=300)
@@ -189,6 +189,10 @@ class Nominees(models.Model):
 
     def __str__(self):
         return self.nominee_name
+
+    def save(self, *args, **kwargs):
+        self.nominee_pan_no = self.nominee_pan_no.upper()
+        super(Nominees, self).save(*args, **kwargs)
 
 
 flat_choices = [
@@ -220,7 +224,7 @@ class FlatDetail(models.Model):
 
 class FlatShares(models.Model):
     unique_member_shares = models.OneToOneField(Members, on_delete=models.CASCADE, null=True, blank=True)
-    wing_flat = models.OneToOneField(WingFlatUnique, on_delete=models.CASCADE)
+    wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
     folio_number = models.CharField(max_length=300)
     shares_date = models.DateField()
     application_number = models.CharField(max_length=300)
@@ -246,7 +250,7 @@ loan_status = [
 
 class FlatHomeLoan(models.Model):
     unique_member_shares = models.OneToOneField(Members, on_delete=models.CASCADE, related_name='banks')
-    wing_flat = models.OneToOneField(WingFlatUnique, on_delete=models.CASCADE)
+    wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
     bank_loan_name = models.CharField(max_length=300)
     bank_loan_object = models.CharField(max_length=300)
     bank_loan_date = models.DateField()
@@ -264,7 +268,7 @@ class FlatHomeLoan(models.Model):
 
 class FlatGST(models.Model):
     unique_member_shares = models.OneToOneField(Members, on_delete=models.CASCADE)
-    wing_flat = models.OneToOneField(WingFlatUnique, on_delete=models.CASCADE)
+    wing_flat = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
     gst_number = models.CharField(max_length=300)
     gst_state = models.CharField(max_length=300)
     gst_billing_name = models.CharField(max_length=300)

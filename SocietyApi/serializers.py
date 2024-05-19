@@ -288,6 +288,7 @@ class FlatDetailSerializers(serializers.ModelSerializer):
 
 class FlatHomeLoanSerializers(serializers.ModelSerializer):
     flat_name_formatted = serializers.SerializerMethodField()
+    bank_noc_file_formatted = serializers.SerializerMethodField()
 
     class Meta:
         model = FlatHomeLoan
@@ -297,6 +298,11 @@ class FlatHomeLoanSerializers(serializers.ModelSerializer):
     def get_flat_name_formatted(self, obj):
         flat = obj.wing_flat
         return flat.wing_flat_unique
+
+    def get_bank_noc_file_formatted(self, obj):
+        if obj.bank_noc_file:
+            return os.path.basename(obj.bank_noc_file.name)
+        return None
 
 
 class FlatGSTSerializers(serializers.ModelSerializer):
@@ -315,6 +321,7 @@ class FlatGSTSerializers(serializers.ModelSerializer):
 
 class FlatMemberVehicleSerializer(serializers.ModelSerializer):
     flat_name_formatted = serializers.SerializerMethodField()
+    rc_copy_formatted = serializers.SerializerMethodField()
 
     class Meta:
         model = FlatMemberVehicle
@@ -324,6 +331,11 @@ class FlatMemberVehicleSerializer(serializers.ModelSerializer):
     def get_flat_name_formatted(self, obj):
         flat = obj.wing_flat
         return flat.wing_flat_unique
+
+    def get_rc_copy_formatted(self, obj):
+        if obj.rc_copy:
+            return os.path.basename(obj.rc_copy.name)
+        return None
 
 
 
@@ -396,6 +408,11 @@ class AddNomineesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Nominees
         fields = '__all__'
+
+    def validate_nominee_sharein_percent(self, value):
+        if value <= 0 or value > 100:
+            raise serializers.ValidationError("Ownership percentage should be between 1 & 100%!", code='invalid_ownership_percent')
+        return value
 
 
 class MemberSerializersForAttendance(serializers.ModelSerializer):

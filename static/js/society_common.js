@@ -1289,6 +1289,9 @@ new Vue({
 
 // MEMBERS PAGE START
 
+// Create an event bus
+var eventBus = new Vue();
+
 // MEMBER MASTER TABLE AND EDIT
 var app = new Vue({
     el: '#memberMasterTableVue',
@@ -1339,6 +1342,7 @@ var app = new Vue({
         addNomineeError: {},
         flat_status: [],
         flatFormData: {},
+        updateData: false,
 
         // Not Found Error Msg:
         flatDataFoundErrorMsg: {},
@@ -1353,6 +1357,8 @@ var app = new Vue({
         // Error
         newErrors: {},
         ownership_error: '',
+        moreThanOnePrimaryError: '',
+        shareinPercent: '',
     },
     methods: {
         // ADD VEHICLE START
@@ -1482,8 +1488,11 @@ var app = new Vue({
             axios.get(`http://127.0.0.1:8000/api/home-loan/${id}/`)
                 .then(response => {
                     this.homeLoanData = response.data;
-                    delete this.homeLoanData.bank_noc_file;
+                    // delete this.homeLoanData.bank_noc_file;
                     this.addHomeLoanOnEdit = false;
+                    if(this.homeLoanData.bank_loan_status === 'closed'){
+                        this.attach_noc = true;
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -1607,8 +1616,10 @@ var app = new Vue({
                 });
         },
         addNomineeOnEdit(member_id, member_name) {
+            this.errors = {};
             this.addNewNomineeMemberId = member_id;
             this.addNewNomineeMemberName = member_name;
+            this.nominee.nominee_state = '';
             $('#editMemberModal').modal('hide');
             $('#addNomineeModal').modal('show');
         },
@@ -1666,9 +1677,9 @@ var app = new Vue({
                 });
         },
         loanFormSubmit(id) {
+            const formData = new FormData();
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            const formData = new FormData();
             for (const key in this.homeLoanData) {
                 if (Object.prototype.hasOwnProperty.call(this.homeLoanData, key)) {
                     if(key !== 'date_of_cessation'){
@@ -1676,6 +1687,12 @@ var app = new Vue({
                     }
                 }
             }
+
+            const fileInput = this.$refs.bank_noc_file;
+            if (fileInput.files && fileInput.files.length > 0) {
+                formData.append('bank_noc_file', fileInput.files[0])
+            }
+
             axios.patch(`http://127.0.0.1:8000/api/home-loan/${id}/`, formData)
                 .then(response => {
                     toastr.success(response.message, "Home Loan Updated Successfully!");
@@ -1706,6 +1723,7 @@ var app = new Vue({
                 });
         },
         vehicleEditSubmit() {
+            $('#loader').show();
             let successfulSubmissions = 0;
             let failedSubmissions = 0;
             this.vehicleData.forEach((form, index) => {
@@ -1726,10 +1744,14 @@ var app = new Vue({
                 formData.append('data', JSON.stringify(payload));
 
                 const refName = 'rc_copy_' + index;
-                const inputElement = this.$refs[refName];
-                if (inputElement && inputElement.length > 0) {
-                    console.log("doc ==>", inputElement[0].files[0]);
-                    formData.append('rc_copy', inputElement[0].files[0]);
+                let inputElement = this.$refs[refName];
+                if(index === 0){
+                    inputElement = inputElement[1]
+                }else{
+                    inputElement = inputElement[0]
+                }
+                if (inputElement && inputElement.files && inputElement.files.length > 0) {
+                    formData.append('rc_copy', inputElement.files[0]);
                 }
 
                 axios.defaults.xsrfCookieName = 'csrftoken';
@@ -1740,21 +1762,36 @@ var app = new Vue({
                     }
                 })
                     .then(response => {
+                        $('#loader').hide();
                         successfulSubmissions++;
                         if (successfulSubmissions === this.vehicleData.length) {
+                            toastr.options = {
+                                closeButton: true,
+                                positionClass: 'toast-top-center',
+                                timeOut: 5000
+                            };
                             toastr.success(response.message, "Vehicle Data Updated Successfully!");
                             $('#editMemberModal').modal('hide');
                         }
                     })
                     .catch(errors => {
+                        $('#loader').hide();
                         failedSubmissions++;
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 5000
+                        };
                         toastr.error("Please Correct All Errors!");
                         console.log("Error: ", errors);
                     });
             });
         },
         addVehicleOnEditModal() {
-            this.forms = [{}];
+            this.errors = '';
+            this.forms = [{
+                select_charge: 'no',
+            }]
             $('#editMemberModal').modal('hide');
             $('#addVehicleModal').modal('show');
         },
@@ -1763,6 +1800,7 @@ var app = new Vue({
             $('#editMemberModal').modal('show');
         },
         addVehicleOnEditButton() {
+            $('#loader').show();
             let successfulSubmissions = 0;
             this.forms.forEach((form, index) => {
                 const vehicleDataOnEdit = new FormData();
@@ -1796,8 +1834,14 @@ var app = new Vue({
                     }
                 })
                     .then(response => {
+                        $('#loader').hide();
                         successfulSubmissions++;
                         if (successfulSubmissions === this.forms.length) {
+                            toastr.options = {
+                                closeButton: true,
+                                positionClass: 'toast-top-center',
+                                timeOut: 5000
+                            };
                             toastr.success(response.message, "Vehicle Data Added Successfully!");
                             $('#addVehicleModal').modal('hide');
                             $('#editMemberModal').modal('show');
@@ -1805,8 +1849,15 @@ var app = new Vue({
                         }
                     })
                     .catch(errors => {
-                        console.error('Error submitting form data:', errors);
-                        this.errors = errors.response.data.errors;
+                        $('#loader').hide();
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 5000
+                        };
+                        toastr.error("Please Correct All Errors!");
+                        this.errors = errors.response.data;
+                        console.error('Error submitting vehicle data:', errors.response.data);
                     });
             });
         },
@@ -1831,6 +1882,7 @@ var app = new Vue({
             this.errors = {};
             this.newErrors = {};
             let showToastrError = true;
+            let primaryCount = 0;
 
             let cessation = ''
             this.memberformData.forEach((form, index) => {
@@ -1844,6 +1896,34 @@ var app = new Vue({
                     totalPercent += parseFloat(form.ownership_percent);
                 }
             });
+
+            this.memberformData.forEach((form, index) => {
+                if (form.member_is_primary) {
+                    primaryCount++;
+                }
+            });
+
+            if (primaryCount === 0) {
+                $('#loader').hide();
+                this.moreThanOnePrimaryError = "Please select at least one primary member.";
+                toastr.options = {
+                    closeButton: true,
+                    positionClass: 'toast-top-center',
+                    timeOut: 5000
+                    };
+                toastr.error("Please select at least one primary member.");
+                return;
+            } else if (primaryCount > 1) {
+                $('#loader').hide();
+                this.moreThanOnePrimaryError = "Only one member can be set as primary.";
+                toastr.options = {
+                    closeButton: true,
+                    positionClass: 'toast-top-center',
+                    timeOut: 5000
+                    };
+                toastr.error("Only one member can be set as primary.");
+                return;
+            }
 
             if (totalPercent > 100){
                 this.ownership_error = 'Ownership exceeding! Addition of all ownership % should be 100 for this flat!';
@@ -1890,55 +1970,117 @@ var app = new Vue({
                     formData.append('other_attachment', inputElementDoc[0].files[0]);
                 }
 
-                axios.defaults.xsrfCookieName = 'csrftoken';
-                axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-                axios.patch(`http://127.0.0.1:8000/api/members/${form.id}/`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                    .then(response => {
-                        this.$set(this.newErrors, index, null);
-                        successfulSubmissions++;
-                        if (successfulSubmissions === this.memberformData.length) {
-                            $('#loader').hide();
-                            toastr.options = {
-                                closeButton: true,
-                                positionClass: 'toast-top-center',
-                                timeOut: 5000
-                              };
-                            toastr.success(response.message, "Member Updated Successfully!");
-                            $('#editMemberModal').modal('hide');
-                            setTimeout(function() {
-                                location.reload();
-                            }, 600);
+                // if(cessation){
+                //     alert("cession present")
+                //     $('#loader').show();
+                //     setTimeout(() => {
+                //         Swal.fire({
+                //             title: "Are you sure?",
+                //             icon: 'warning',
+                //             html: 'You have added cessation date. Once you add cessation date, present data of member will be added in history for this flat! <br><br> Click cancel and remove cessation date or Ok to continue',
+                //             buttons: true,
+                //             showCancelButton: true, // Adding cancel button
+                //             cancelButtonText: 'Cancel', // Custom text for cancel button
+                //             timerProgressBar: true,
+                //             didOpen: (toast) => {
+                //                 $('#loader').hide();
+                //                 toast.addEventListener('mouseenter', Swal.stopTimer);
+                //                 toast.addEventListener('mouseleave', Swal.resumeTimer);
+                //             }
+                //             }).then((result) => {
+                //                 if (result.dismiss === Swal.DismissReason.timer || result.isConfirmed) {
+                //                     axios.defaults.xsrfCookieName = 'csrftoken';
+                //                     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+                //                     axios.patch(`http://127.0.0.1:8000/api/members/${form.id}/`, formData, {
+                //                         headers: {
+                //                             'Content-Type': 'multipart/form-data'
+                //                         }
+                //                     })
+                //                         .then(response => {
+                //                             alert("clicked")
+                //                             $('#loader').hide();
+                //                             this.$set(this.newErrors, index, null);
+                //                             successfulSubmissions++;
+                //                             if (successfulSubmissions === this.memberformData.length) {
+                //                                 toastr.options = {
+                //                                     closeButton: true,
+                //                                     positionClass: 'toast-top-center',
+                //                                     timeOut: 5000
+                //                                 };
+                //                                 toastr.success(response.message, "Member Updated Successfully!");
+                //                                 $('#editMemberModal').modal('hide');
+                //                                 setTimeout(function() {
+                //                                     location.reload();
+                //                                 }, 600);
+                //                             }
+                //                         })
+                //                         .catch(error => {
+                //                             $('#loader').hide();
+                //                             if(showToastrError){
+                //                                 toastr.options = {
+                //                                     closeButton: true,
+                //                                     positionClass: 'toast-top-center',
+                //                                     timeOut: 5000
+                //                                 };
+                //                                 toastr.error("Please Correct All Errors!");
+                //                                 showToastrError = false;
+                //                             }
+                //                             this.$set(this.newErrors, index, error.response.data);
+                //                         });
+                //                 } else {
+                //                     console.log("Cancel clicked");
+                //                 }
+                //             });
+                //     }, 100);
+                // }else{
+                    $('#loader').show();
+                    axios.defaults.xsrfCookieName = 'csrftoken';
+                    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+                    axios.patch(`http://127.0.0.1:8000/api/members/${form.id}/`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
                         }
-                        // Update Datatable, DONT DELETE USEFULL LATER.
-                        // console.log("RESPONSE DATA===>", response.data);
-                        // const index = this.members.findIndex(item => item.id === form.id);
-                        // if (index !== -1) {
-                        //     this.$set(this.members, index, response.data);
-                        // }
-                        // console.log("LOG LOG LOG", this.members);
                     })
-                    .catch(error => {
-                        if(showToastrError){
-                            $('#loader').hide();
-                            toastr.options = {
-                                closeButton: true,
-                                positionClass: 'toast-top-center',
-                                timeOut: 5000
-                              };
-                            toastr.error("Please Correct All Errors!");
-                            showToastrError = false;
-                        }
-                        this.$set(this.newErrors, index, error.response.data);
-                    });
+                        .then(response => {
+                            this.$set(this.newErrors, index, null);
+                            successfulSubmissions++;
+                            if (successfulSubmissions === this.memberformData.length) {
+                                $('#loader').hide();
+                                toastr.options = {
+                                    closeButton: true,
+                                    positionClass: 'toast-top-center',
+                                    timeOut: 5000
+                                };
+                                toastr.success(response.message, "Member Updated Successfully!");
+                                $('#editMemberModal').modal('hide');
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 600);
+                            }
+                        })
+                        .catch(error => {
+                            console.log("Error in Member Form=>", error.response.data);
+                            if(showToastrError){
+                                $('#loader').hide();
+                                toastr.options = {
+                                    closeButton: true,
+                                    positionClass: 'toast-top-center',
+                                    timeOut: 5000
+                                };
+                                toastr.error("Please Correct All Errors!");
+                                showToastrError = false;
+                            }
+                            this.$set(this.newErrors, index, error.response.data);
+                        });
+                // }
             });
         },
         addMemberData(id, flat_id, flat_name) {
+            // Emit an event with the member ID
+            eventBus.$emit('memberIdSelected', flat_id);
+
             this.flatName = flat_name;
-            $('#flatDropdown').val(flat_id);
+            // $('#flatDropdown').val(flat_id);
             $('#selectedFlat').html(flat_name);
             $('#addMemberModal').modal('show');
         },
@@ -2006,13 +2148,8 @@ var app = new Vue({
                     console.error('Error fetching data:', error);
                 });
         },
-        clearErrors() {
-            this.errors = {};
-        },
         handleChangeFile() {
 
-        },
-        submitBothDocs() {
         },
         handleFileChange() {
 
@@ -2068,9 +2205,11 @@ var app = new Vue({
                 console.error('Error fetching data:', error);
             });
 
-        // $('#houseHelpUpdation').on('hidden.bs.modal', () => {
-        //     this.clearErrors();
-        // });
+        $('#editMemberModal').on('hidden.bs.modal', () => {
+            this.moreThanOnePrimaryError = '';
+            this.newErrors = {};
+            this.ownership_error = '';
+        });
     },
 });
 
@@ -2083,7 +2222,9 @@ new Vue({
         formData: new FormData(),
         formData2: new FormData(),
         forms: [
-            {}
+            {
+                nominee_state: ''
+            }
         ],
         errors: {
             non_field_errors: ''
@@ -2092,36 +2233,29 @@ new Vue({
         flat_having_primary_mem: true,
         ownershipError: '',
         nomError: {},
+        primary_member_msg: '',
+        attach_noc: false,
+        vehicleError: {},
         isValid: true,
+        vehicleBlockError: '',
+        vehicleRcCopy: '',
+        bank_noc_file_error: '',
+        flatId: null,
+    },
+    created() {
+        // Listen for the event and update the memberId and other data
+        eventBus.$on('memberIdSelected', (flat_id) => {
+            this.flatId = flat_id;
+        });
     },
     methods: {
         addForm() {
             this.forms.push({});
-            this.formData.wing_flat = $('#flatDropdown').val();
             const newIndex = this.forms.length - 1;
             this.errors = this.errors.filter(error => error.index !== newIndex);
         },
         removeForm(index) {
-            this.formData.wing_flat = $('#flatDropdown').val();
             this.forms.splice(index, 1);
-        },
-        hasError(index, field) {
-            // return this.errors.some(error => error.index === index && error[field]);
-        },
-        getError(index, field) {
-            // const error = this.errors.find(error => error.index === index);
-            // return error ? error[field][0] : '';
-        },
-        validateNominees(fieldName, form, index) {
-            if (!form[fieldName]) {
-              // Initialize nomError for this form if it doesn't exist
-              if (!this.nomError[index]) {
-                this.$set(this.nomError, index, {});
-              }
-              // Update the error message for the field
-              this.$set(this.nomError[index], fieldName, `This field is required`);
-              this.isValid = false;
-            }
         },
         calculateAge(admissionDate) {
             const today = new Date();
@@ -2136,11 +2270,69 @@ new Vue({
 
             return age;
         },
+        validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        },
+
+        validateAadhar(aadhar) {
+            return /^\d{12}$/.test(aadhar);
+        },
+
+        validatePan(pan) {
+            return /^\d{10}$/.test(pan);
+        },
+        validatePercent(percent) {
+            return percent >= 1 && percent <= 100;
+        },
+        validateNominees(fieldName, form, index) {
+            if (!form[fieldName]) {
+                // Initialize nomError for this form if it doesn't exist
+                if (!this.nomError[index]) {
+                    this.$set(this.nomError, index, {});
+                }
+                // Update the error message for the field
+                this.$set(this.nomError[index], fieldName, `This field is required.`);
+            } else {
+                // Additional validation for specific fields
+                if (fieldName === 'nominee_email' && !this.validateEmail(form[fieldName])) {
+                    if (!this.nomError[index]) {
+                        this.$set(this.nomError, index, {});
+                    }
+                    this.$set(this.nomError[index], fieldName, `Invalid email address`);
+                }
+                if (fieldName === 'nominee_aadhar_no' && !this.validateAadhar(form[fieldName])) {
+                    if (!this.nomError[index]) {
+                        this.$set(this.nomError, index, {});
+                    }
+                    this.$set(this.nomError[index], fieldName, `Aadhar number must be 12 digits`);
+                }
+                if (fieldName === 'nominee_pan_no' && !this.validatePan(form[fieldName])) {
+                    if (!this.nomError[index]) {
+                        this.$set(this.nomError, index, {});
+                    }
+                    this.$set(this.nomError[index], fieldName, `PAN number must be 10 characters`);
+                }
+                if (fieldName === 'nominee_sharein_percent' && !this.validatePercent(form[fieldName])) {
+                    if (!this.nomError[index]) {
+                        this.$set(this.nomError, index, {});
+                    }
+                    this.$set(this.nomError[index], fieldName, `Percentage should be between 1 to 100`);
+                    this.isValid = false;
+                }
+            }
+        },
         submitMembers(addAnother) {
-            this.formData.wing_flat = $('#flatDropdown').val();
+            $('#loader').show();
             if(!this.formData.wing_flat){
                 this.formData.wing_flat = null;
             }
+
+            if(addAnother){
+                this.formData.wing_flat = this.flatId;
+                console.log("Removing the hidden id and using emit to get the id, so the id is:", this.flatId);
+            }
+
             if(!this.formData.member_position){
                 this.formData.member_position = null;
             }
@@ -2169,6 +2361,7 @@ new Vue({
             const payload = {};
             for (const key in this.formData) {
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    console.log("key===", key);
                     if (this.formData[key] !== null) {
                         if(key === 'date_of_admission'){
                             payload['age_at_date_of_admission'] = this.calculateAge(this.formData[key]);
@@ -2177,18 +2370,35 @@ new Vue({
                     }
                 }
             }
+
+            const newFormData = new FormData();
+
+            if (this.$refs.sales_agreement.files[0]) {
+                newFormData.append('sales_agreement', this.$refs.sales_agreement.files[0]);
+            }
+
+            if (this.$refs.other_attachment && this.$refs.other_attachment.files && this.$refs.other_attachment.files.length > 0) {
+                newFormData.append('other_attachment', this.$refs.other_attachment.files[0]);
+            }
+
             payload['nominees'] = this.forms;
-            this.formData.append('data', JSON.stringify(payload));
+            newFormData.append('data', JSON.stringify(payload));
 
             axios.defaults.xsrfCookieName = 'csrftoken';
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.post('http://127.0.0.1:8000/api/members/', this.formData, {
+            axios.post('http://127.0.0.1:8000/api/members/', newFormData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             })
                 .then(response => {
-                    toastr.success(response.message, "Member Added Successfully!");
+                    $('#loader').hide();
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success("Member Added Successfully!");
                     if(addAnother === true){
                         setTimeout(function() {
                             location.reload();
@@ -2198,18 +2408,24 @@ new Vue({
                     }
                 })
                 .catch(error => {
+                    $('#loader').hide();
                     this.errors = error.response.data;
                     console.log("Member form error!", this.errors);
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.error("Pls Correct All Errors!");
                 });
             // $("#redirectToShares").trigger("click");
-
         },
         getOwnership(flat_no, event) {
             let inputValue = event.target.value;
             if (flat_no) {
                 axios.get(`http://127.0.0.1:8000/get_ownership/${flat_no}/`)
                     .then(response => {
-                        let existingOwnership = response.data.ownership_total
+                        let existingOwnership = response.data.ownership_total;
                         if (inputValue >= existingOwnership) {
                             this.ownershipError = `This flat left with ${100 - existingOwnership} ownership!`
                         } else {
@@ -2224,35 +2440,339 @@ new Vue({
         handleChangeFile() {
             if (this.$refs.sales_agreement.files[0]) {
                 this.formData.append('sales_agreement', this.$refs.sales_agreement.files[0]);
-                console.log(this.$refs.sales_agreement.files[0]);
             }
             if (this.$refs.other_attachment.files[0]) {
                 this.formData.append('other_attachment', this.$refs.other_attachment.files[0]);
             }
         },
         get_checkbox_value(event) {
-            console.log("cahnge ecveny", event.target.value);
             axios.get(`http://127.0.0.1:8000/non-primary/${event.target.value}/`)
                 .then(response => {
                     console.log(response.data.member_status);
-                    this.flat_having_primary_mem = response.data.member_status
+                    this.primary_member_msg = '';
+                    if(response.data.member_status){
+                        this.primary_member_msg = `Note: This member will be primary member.`;
+                        this.formData.member_is_primary = true;
+                    }
+                    this.flat_having_primary_mem = response.data.member_status;
                 })
                 .catch(error => {
+                    this.primary_member_msg = '';
                     this.required_docs_errors = error.response.data
                 });
         },
         nextAction() {
-            console.log('Form data submitted successfully. Proceeding to the next action.');
+            this.formData = {};
+            this.errors = {};
             $("#redirectToShares").trigger("click");
+
+            // FETCH ALL WINGS FOR SHARES AGAIN
+            axios.get(`http://127.0.0.1:8000/api/wing/?form_type=shares_form`)
+                .then(response => {
+                    this.formData.wing_flat = '';
+                    this.units = response.data;
+
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
         },
+
+        // SHARES DETAILS START
+        submitSharesForm() {
+            $('#loader').show();
+            this.errors = {};
+            const formData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    formData.append(key, this.formData[key]);
+                }
+            }
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/shares/', formData)
+                .then(response => {
+                    $('#loader').hide();
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success("Shares Added Successfully!");
+                    this.rediretToHomeLoan();
+                })
+                .catch(error => {
+                    $('#loader').hide();
+                    this.errors = error.response.data;
+                    console.log("Shares Form Error", this.errors);
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.error("Pls Correct All Errors!");
+                });
+            // $("#hLoan").trigger("click");
+        },
+        // SHARES DETAILS END
+
+        // HOME LOAN START
+        rediretToHomeLoan(){
+            this.formData = {};
+            this.errors = {};
+            $("#hLoan").trigger("click");
+
+            // FETCH ALL WINGS FOR SHARES AGAIN
+            axios.get(`http://127.0.0.1:8000/api/wing/?form_type=home_loan`)
+                .then(response => {
+                    this.formData.wing_flat = '';
+                    this.formData.bank_loan_status = 'active';
+                    this.units = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        submitHomeLoanForm() {
+            $('#loader').show();
+            this.errors = {};
+            const formData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    formData.append(key, this.formData[key]);
+                }
+            }
+            if (this.$refs.bank_noc_file && this.$refs.bank_noc_file.files && this.$refs.bank_noc_file.files.length > 0) {
+                formData.append('bank_noc_file', this.$refs.bank_noc_file.files[0]);
+            }
+            if(this.attach_noc){
+                $('#loader').hide();
+                this.bank_noc_file_error = "Please Attach Noc File."
+            }
+
+            $('#loader').show();
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/home-loan/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(response => {
+                    $('#loader').hide();
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success("Home Loan Data Added Successfully!");
+                    this.redirectToGST();
+                })
+                .catch(error => {
+                    $('#loader').hide();
+                    this.errors = error.response.data;
+                    console.log('Home Loan Form Error:', response.data);
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.error("Pls Correct All Errors!");
+                });
+            // $("#redirectToGst").trigger("click");
+        },
+        loanStatus(event) {
+            this.attach_noc = false;
+            if (event.target.value == 'closed') {
+                this.attach_noc = true;
+            }
+        },
+        // HOME LOAN END
+
+        // GST START
+        redirectToGST(){
+            this.formData = {};
+            this.errors = {};
+            $("#redirectToGst").trigger("click");
+
+            // FETCH ALL WINGS FOR SHARES AGAIN
+            axios.get(`http://127.0.0.1:8000/api/wing/?form_type=gst_form`)
+                .then(response => {
+                    this.forms = [{}];
+                    this.formData.wing_flat = '';
+                    this.formData.gst_state = '';
+                    this.units = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        submitGSTForm() {
+            $('#loader').show();
+            this.errors = {};
+            const formData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    formData.append(key, this.formData[key]);
+                }
+            }
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/flat-gst/', formData)
+                .then(response => {
+                    $('#loader').hide();
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success("GST Data Added Successfully!");
+                    this.redirectToVehicle();
+                })
+                .catch(error => {
+                    $('#loader').hide();
+                    this.errors = error.response.data;
+                    console.log('Error In GST Form:', response.data);
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.error("Pls Correct All Errors!");
+                });
+            // $("#addGstNext").trigger("click");
+        },
+        redirectToVehicle() {
+            this.formData = {};
+            this.errors = {};
+            this.form = [{
+                select_charge: ''
+            }];
+            $("#addGstNext").trigger("click");
+
+            // FETCH ALL WINGS FOR SHARES AGAIN
+            axios.get(`http://127.0.0.1:8000/api/wing/?form_type=vehicle_form`)
+                .then(response => {
+                    this.formData.wing_flat = '';
+                    this.units = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        // GST END
+
+        // VEHICLE START
+        validateVehicle(fieldName, form, index) {
+            if (!form[fieldName]) {
+                this.isValid = false;
+                if (!this.vehicleError[index]) {
+                    this.$set(this.vehicleError, index, {});
+                }
+                this.$set(this.vehicleError[index], fieldName, `This field is required.`);
+            }else {
+                this.isValid = true;
+            }
+        },
+        submitVehicle() {
+            let successfulSubmissions = 0;
+            this.vehicleBlockError = '';
+            if (!this.formData.wing_flat){
+                this.vehicleBlockError = 'This field is required.'
+            }
+            if(!this.formData.rc_copy){
+                this.vehicleRcCopy = 'This field is required.'
+            }
+
+            this.forms.forEach((form, index) => {
+                this.validateVehicle('wing_flat', form, index);
+                this.validateVehicle('parking_lot', form, index);
+                this.validateVehicle('vehicle_type', form, index);
+                this.validateVehicle('vehicle_number', form, index);
+                this.validateVehicle('vehicle_brand', form, index);
+                this.validateVehicle('sticker_number', form, index);
+                this.validateVehicle('select_charge', form, index);
+                this.validateVehicle('chargable', form, index);
+            });
+
+            if (this.isValid){
+                this.forms.forEach((form, index) => {
+                    const formData = new FormData();
+
+                    const payload = {
+                        wing_flat: this.formData.wing_flat,
+                        parking_lot: form.parking_lot,
+                        vehicle_type: form.vehicle_type,
+                        vehicle_number: form.vehicle_number,
+                        vehicle_brand: form.vehicle_brand,
+                        sticker_number: form.sticker_number,
+                        select_charge: form.select_charge,
+                        chargable: form.chargable ? form.chargable : '',
+                    }
+
+                    formData.append('data', JSON.stringify(payload));
+
+                    const refName = 'rc_copy_' + index;
+                    const inputElement = this.$refs[refName];
+                    if (inputElement && inputElement.length > 0) {
+                        formData.append('rc_copy', inputElement[0].files[0]);
+                    }
+
+
+                    axios.post('http://127.0.0.1:8000/api/vehicle/', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                        .then(response => {
+                            toastr.options = {
+                                closeButton: true,
+                                positionClass: 'toast-top-center',
+                                timeOut: 5000
+                            };
+                            successfulSubmissions++;
+                            if (successfulSubmissions === this.forms.length) {
+                                toastr.success("Vehicle Data Added Successfully!");
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success!',
+                                    text: 'Member Details Added!',
+                                    showConfirmButton: true,
+                                    timer: 2000, // Auto dismiss after 2 seconds
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                                    }
+                                }).then((result) => {
+                                    if (result.dismiss === Swal.DismissReason.timer || result.isConfirmed) {
+                                        window.location.href = '/members-detail'
+                                    }
+                                });
+                            }
+                        })
+                        .catch(errors => {
+                            console.error('Error submitting form data:', errors);
+                            toastr.options = {
+                                closeButton: true,
+                                positionClass: 'toast-top-center',
+                                timeOut: 5000
+                            };
+                            toastr.error("Pls Correct All Errors!");
+                        });
+                });
+            }
+        },
+        // VEHICLE END
+
         getFormNumber: index => index + 1
     },
     mounted() {
-        axios.get(`http://127.0.0.1:8000/api/wing/?wing_flat=1&form_type=member_form`)
+        this.formData.wing_flat = '';
+        this.formData.member_position = '';
+        this.formData.member_state = '';
+        axios.get(`http://127.0.0.1:8000/api/wing/?form_type=member_form`)
             .then(response => {
-                this.formData.wing_flat = '';
-                this.formData.member_position = '';
-                this.formData.member_state = '';
                 this.units = response.data;
             })
             .catch(error => {
@@ -2304,7 +2824,7 @@ new Vue({
         },
         loanStatus(event) {
             this.attach_noc = false;
-            if (event.target.value == 'yes') {
+            if (event.target.value == 'closed') {
                 this.attach_noc = true;
             }
         },
@@ -2334,293 +2854,7 @@ new Vue({
     },
 });
 
-// Add Shares Details
-new Vue({
-    el: '#sharesAddVue',
-    data: {
-        units: [],
-        formData: {},
-        errors: {},
-    },
-    methods: {
-        submitSharesForm() {
-            console.log("callinng");
-            this.errors = {};
-            const formData = new FormData();
-            for (const key in this.formData) {
-                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-                    formData.append(key, this.formData[key]);
-                }
-            }
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.post('http://127.0.0.1:8000/api/shares/', formData)
-                .then(response => {
-                    console.log('Form submitted successfully:', response.data);
-                    toastr.options = {
-                        closeButton: true,
-                        positionClass: 'toast-top-center',
-                        timeOut: 5000
-                    };
-                    toastr.success("Shares Added Successfully!");
-                    this.nextAction();
-                })
-                .catch(error => {
-                    this.errors = error.response.data;
-                    toastr.options = {
-                        closeButton: true,
-                        positionClass: 'toast-top-center',
-                        timeOut: 5000
-                    };
-                    toastr.error("Pls Correct All Errors!");
-                });
-            // $("#hLoan").trigger("click");
-        },
-        nextAction() {
-            console.log('Form data submitted successfully. Proceeding to the next action.');
-            $("#hLoan").trigger("click");
-        },
-    },
-    mounted() {
-        axios.get(`http://127.0.0.1:8000/api/wing/`)
-            .then(response => {
-                this.units = response.data;
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    },
-});
-
-
-// Add Home Loan Details
-new Vue({
-    el: '#homeLoanVue',
-    data: {
-        units: [],
-        formData: {},
-        errors: {},
-        attach_noc: false,
-    },
-    methods: {
-        submitHomeLoanForm() {
-            this.errors = {};
-            const formData = new FormData();
-            for (const key in this.formData) {
-                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-                    formData.append(key, this.formData[key]);
-                }
-            }
-            if (this.$refs.bank_noc_file && this.$refs.bank_noc_file.files && this.$refs.bank_noc_file.files.length > 0) {
-                console.log("File present");
-                formData.append('bank_noc_file', this.$refs.bank_noc_file.files[0]);
-            }
-
-            // axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.post('http://127.0.0.1:8000/api/home-loan/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-                .then(response => {
-                    console.log('Form submitted successfully:', response.data);
-                    toastr.options = {
-                        closeButton: true,
-                        positionClass: 'toast-top-center',
-                        timeOut: 5000
-                    };
-                    toastr.success("Home Loan Data Added Successfully!");
-                    this.nextAction();
-                })
-                .catch(error => {
-                    this.errors = error.response.data;
-                    toastr.options = {
-                        closeButton: true,
-                        positionClass: 'toast-top-center',
-                        timeOut: 5000
-                    };
-                    toastr.error("Pls Correct All Errors!");
-                });
-            // $("#redirectToGst").trigger("click");
-        },
-        loanStatus(event) {
-            this.attach_noc = false;
-            if (event.target.value == 'yes') {
-                this.attach_noc = true;
-            }
-        },
-        nextAction() {
-            console.log('Form data submitted successfully. Proceeding to the next action.');
-            $("#redirectToGst").trigger("click");
-        },
-    },
-    mounted() {
-        axios.get(`http://127.0.0.1:8000/api/wing/`)
-            .then(response => {
-                this.units = response.data;
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    },
-});
-
-
-// Add GST Details
-new Vue({
-    el: '#GSTaddVue',
-    data: {
-        units: [],
-        formData: {},
-        errors: {},
-    },
-    methods: {
-        submitGSTForm() {
-            console.log("callinng");
-            this.errors = {};
-            const formData = new FormData();
-            for (const key in this.formData) {
-                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-                    formData.append(key, this.formData[key]);
-                }
-            }
-            axios.defaults.xsrfCookieName = 'csrftoken';
-            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-            axios.post('http://127.0.0.1:8000/api/flat-gst/', formData)
-                .then(response => {
-                    console.log('Form submitted successfully:', response.data);
-                    toastr.options = {
-                        closeButton: true,
-                        positionClass: 'toast-top-center',
-                        timeOut: 5000
-                    };
-                    toastr.success("GST Data Added Successfully!");
-                    this.nextAction();
-                })
-                .catch(error => {
-                    this.errors = error.response.data;
-                    toastr.options = {
-                        closeButton: true,
-                        positionClass: 'toast-top-center',
-                        timeOut: 5000
-                    };
-                    toastr.error("Pls Correct All Errors!");
-                });
-            // $("#addGstNext").trigger("click");
-        },
-        nextAction() {
-            console.log('Form data submitted successfully. Proceeding to the next action.');
-            $("#addGstNext").trigger("click");
-        },
-    },
-    mounted() {
-        axios.get(`http://127.0.0.1:8000/api/wing/`)
-            .then(response => {
-                this.units = response.data;
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    },
-});
-
-
-// Add Vehicle Details
-new Vue({
-    el: '#addVehicleVue',
-    data: {
-        units: [],
-        formData: {},
-        forms: [
-            {}
-        ],
-        errors: [],
-        // wing_flat: '',
-    },
-    methods: {
-        addForm() {
-            this.forms.push({});
-            const newIndex = this.forms.length - 1;
-            this.errors = this.errors.filter(error => error.index !== newIndex);
-        },
-        removeForm(index) {
-            this.forms.splice(index, 1);
-        },
-        hasError(index, field) {
-            return this.errors.some(error => error.index === index && error[field]);
-        },
-        getError(index, field) {
-            const error = this.errors.find(error => error.index === index);
-            return error ? error[field][0] : '';
-        },
-        submitVehicle() {
-            // console.log("wing_flat ==>", this.formData.wing_flat);
-            this.forms.forEach((form, index) => {
-                const formData = new FormData();
-
-                const payload = {
-                    wing_flat: this.formData.wing_flat,
-                    parking_lot: form.parking_lot,
-                    vehicle_type: form.vehicle_type,
-                    vehicle_number: form.vehicle_number,
-                    vehicle_brand: form.vehicle_brand,
-                    sticker_number: form.sticker_number,
-                    chargable: form.chargable ? form.chargable : '',
-                }
-
-                formData.append('data', JSON.stringify(payload));
-
-                const refName = 'rc_copy_' + index;
-                const inputElement = this.$refs[refName];
-                if (inputElement && inputElement.length > 0) {
-                    console.log("doc ==>", inputElement[0].files[0]);
-                    formData.append('rc_copy', inputElement[0].files[0]);
-                }
-
-
-                axios.post('http://127.0.0.1:8000/api/vehicle/', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                })
-                    .then(response => {
-                        console.log('Form data submitted successfully:', response.data);
-                        toastr.options = {
-                            closeButton: true,
-                            positionClass: 'toast-top-center',
-                            timeOut: 5000
-                        };
-                        toastr.success("Vehicle Data Added Successfully!");
-                    })
-                    .catch(errors => {
-                        console.error('Error submitting form data:', errors);
-                        toastr.options = {
-                            closeButton: true,
-                            positionClass: 'toast-top-center',
-                            timeOut: 5000
-                        };
-                        toastr.error("Pls Correct All Errors!");
-                    });
-            });
-        },
-        getFormNumber: index => index + 1
-    },
-    mounted() {
-        axios.get(`http://127.0.0.1:8000/api/wing/`)
-            .then(response => {
-                this.units = response.data;
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    },
-});
-
-
 // MEMBERS PAGE END
-
-
 
 
 // HOUSE HELP START
