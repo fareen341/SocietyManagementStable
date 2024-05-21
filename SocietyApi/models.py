@@ -308,10 +308,10 @@ class FlatMemberVehicle(models.Model):
 
 class TenantMaster(models.Model):
     tenant_name = models.CharField(max_length=300)
-    tenant_pan_number = models.CharField(max_length=300)
+    tenant_pan_number = models.CharField(max_length=10,  unique=True, validators=[RegexValidator(regex='^[a-zA-Z0-9]{10}$', message='PAN number must be exactly 10 digits')])
+    tenant_aadhar_number = models.CharField(max_length=12,  unique=True, validators=[RegexValidator(regex='^[a-zA-Z0-9]{12}$', message='Aadhar number must be exactly 12 digits')])
     tenant_pan_doc = models.FileField(upload_to='files/')
     tenant_contact = models.CharField(max_length=300)
-    tenant_aadhar_number = models.CharField(max_length=300)
     tenant_aadhar_doc = models.FileField(upload_to='files/')
     tenant_address = models.CharField(max_length=300)
     tenant_city = models.CharField(max_length=300)
@@ -320,6 +320,10 @@ class TenantMaster(models.Model):
     tenant_email = models.CharField(max_length=300)
     tenant_other_doc = models.FileField(upload_to='files/', null=True, blank=True)
     tenant_doc_specification = models.CharField(max_length=300, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        self.tenant_pan_number = self.tenant_pan_number.upper()
+        super(TenantMaster, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.tenant_name
