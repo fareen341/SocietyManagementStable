@@ -38,6 +38,21 @@ def create_initial_objects(sender, **kwargs):
         Childs.objects.create(name='Direct Expenses', parent=expenses)
         Childs.objects.create(name='Indirect Expenses', parent=expenses)
 
+        # CHILDS OF LIABILITIES WHICH NEEDS TO BE SHOW IN (BALANCE SHEET)
+        Childs.objects.create(name="A. Subscription Towards Shares", parent=liabilities)
+        Childs.objects.create(name="Reserve Fund and Other Funds", parent=liabilities)
+        Childs.objects.create(name="Secured Loans", parent=liabilities)
+        Childs.objects.create(name="Unsecured Loans", parent=liabilities)
+        Childs.objects.create(name="Deposits", parent=liabilities)
+        Childs.objects.create(name="Current Liabilities And Provisions", parent=liabilities)
+        Childs.objects.create(name="Interest Accrued Due But Not Paid", parent=liabilities)
+
+        # CHILDS OF ASSETS WHICH NEEDS TO BE SHOW IN (BALANCE SHEET)
+        Childs.objects.create(name='Cash And Bank Balances', parent=assets)
+        Childs.objects.create(name='Loans And Advances', parent=assets)
+        Childs.objects.create(name='Profit And Loss Account', parent=assets)
+
+
         print("Initial objects of childs models created successfully")
 
 

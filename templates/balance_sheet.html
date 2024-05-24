@@ -17,12 +17,11 @@
           {% endverbatim %}
         </div>
     </div>
-    <div class="row" id="balanceSheetVue">
-      {% verbatim %}
+    <div class="row">
       <h3 class="text-center">BALANCE SHEET AS ON 31/03/24</h3>
       <div class="col-lg-6">
         <table class="table table-bordered">
-          <thead>
+          <thead class="dark-border table-dark">
             <tr>
               <th scope="col">Previous Year</th>
               <th scope="col">Liabilities</th>
@@ -33,65 +32,129 @@
           <tbody>
             <tr>
               <td></td>
-              <td>I. Share Capital:</td>
+              <td><h4>Share Capital:</h4></td>
               <td></td>
               <td></td>
             </tr>
             <tr>
             <tr>
               <td></td>
-              <td>I-A. Subscription towards shares:
+              <td>
                 <br>
-                <div v-for="(ledger, index) in group1" :key="ledger.id">
-                  -> {{ ledger.ledger_name }}
-                </div>
+                {% for group, items in group1.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
               </td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td>II. Reserve Fund and Other Funds:</td>
+              <td>
+                <br>
+                {% for group, items in group2.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
               <td>3000.00</td>
             </tr>
             <tr>
               <td></td>
-              <td>III. Secured Loans:</td>
+              <td>
+                <br>
+                {% for group, items in group3.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td>V. Unsecured Loans:</td>
+              <td>
+                <br>
+                {% for group, items in group4.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td>VI. Deposits:</td>
+              <td>
+                <br>
+                {% for group, items in group5.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td>VII. Current Liabilities and Provisions:</td>
+              <td>
+                <br>
+                {% for group, items in group6.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td>IX. Interest accrued due but not paid:</td>
+              <td>
+                <br>
+                {% for group, items in group7.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td>Income & Expenditure A/c</td>
+              <td><h3>Income & Expenditure A/c</h3></td>
               <td></td>
             </tr>
           </tbody>
         </table>
       </div>
-      {% endverbatim %}
 
 
       <div class="col-lg-6">
         <table class="table table-bordered">
-          <thead>
+          <thead class="table-dark">
             <tr>
               <th scope="col">Previous Year</th>
               <th scope="col">Assets</th>
@@ -102,46 +165,103 @@
           <tbody>
             <tr>
               <td></td>
-              <td>VII. Fixed Assets:</td>
+              <td>
+                <br>
+                {% for group, items in group8.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td>II. Investments</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td rowspan="2"></td>
-              <td>I. Cash and Bank balances<td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>(a) Cash on hand</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td>IV. Loans and Advances:</td>
-              <td></td>
+              <td>
+                <br>
+                {% for group, items in group9.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
+              <td>3000.00</td>
             </tr>
             <tr>
               <td></td>
-              <td>VI. Current Assets:</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td>X. Profit and Loss Account:</td>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td>Accumulated losses not written off from the reserve or any other fund</td>
+
+              <td>
+                <br>
+                {% for group, items in group10.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              <td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td>Income & Expenditure A/c</td>
+              <td>
+                <br>
+                {% for group, items in group11.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <br>
+                {% for group, items in group12.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <br>
+                {% for group, items in group13.items %}
+                <h4>{{ group }}:</h4>
+                <ul>
+                    {% for item in items %}
+                        <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+              {% endfor %}
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><h3>Accumulated losses not <br>written off from the reserve or any other fund</h3></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><h3>Income & Expenditure A/c</h3></td>
               <td></td>
             </tr>
           </tbody>

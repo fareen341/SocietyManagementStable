@@ -4197,164 +4197,83 @@ new Vue({
 })
 
 
+// BELOW FUNCTIONALITY DOING USING DJANGO JINJA
+// new Vue({
+//     el: '#profitAndLossVue',
+//     data: {
+//         ledgers: [],
+//         expense_ledgers: [],
+//         income_ledgers: [],
+//     },
+//     mounted() {
+//         axios.defaults.xsrfCookieName = 'csrftoken';
+//         axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
+//         // Income
+//         axios.get(`http://127.0.0.1:8000/api/ledger_group/Income`)
+//             .then(response => {
+//                 axios.get(`http://127.0.0.1:8000/get_ledgers/?group_list=${response.data.sub_group}`)
+//                     .then(response => {
+//                         this.income_ledgers = response.data.ledgers;
+//                     })
+//                     .catch(error => {
+//                         console.error('Error fetching data:', error);
+//                     });
+//             })
+//             .catch(error => {
+//                 console.error('Error fetching data:', error);
+//             });
 
-//Sale Voucher
-  new Vue({
-    el: '#sales',
-    data: {
-      sales: [{
-        amount: '',
-      }] // Initial purchase div
-    },
-    methods: {
-        addSale() {
-        this.sales.push({}); // Add an empty object to the array
-      },
-      openModal(id) {
-        // alert(id);
-        // alert(typeof(id));
-
-        // const result = this.purchases.find(item => item.id === index);
-
-        // console.log(this.purchases);
-        // console.log(result);
-        // Open modal for the specific purchase item using the index
-        $('#addSaleCostCenter').modal('show');
-      }
-    }
-  });
-
-
-  //Expense Voucher
-  new Vue({
-    el: '#expenses',
-    data: {
-      expenses: [{
-        expense_amount: '',
-      }] // Initial purchase div
-    },
-    methods: {
-        addExpense() {
-        this.expenses.push({}); // Add an empty object to the array
-      },
-      openModal(id) {
-        // alert(id);
-        // alert(typeof(id));
-
-        // const result = this.purchases.find(item => item.id === index);
-
-        // console.log(this.purchases);
-        // console.log(result);
-        // Open modal for the specific purchase item using the index
-        $('#addExpenseCostCenter').modal('show');
-      }
-    }
-  });
-
-
-//Income Voucher
-new Vue({
-    el: '#incomes',
-    data: {
-        incomes: [{
-        income_amount: '',
-        }] // Initial purchase div
-    },
-    methods: {
-        addIncome() {
-        this.incomes.push({}); // Add an empty object to the array
-        },
-        openModal(id) {
-        // alert(id);
-        // alert(typeof(id));
-
-        // const result = this.purchases.find(item => item.id === index);
-
-        // console.log(this.purchases);
-        // console.log(result);
-        // Open modal for the specific purchase item using the index
-        $('#addIncomeCostCenter').modal('show');
-        }
-    }
-});
-
-
-new Vue({
-    el: '#profitAndLossVue',
-    data: {
-        ledgers: [],
-        expense_ledgers: [],
-        income_ledgers: [],
-    },
-    mounted() {
-        axios.defaults.xsrfCookieName = 'csrftoken';
-        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
-        // Income
-        axios.get(`http://127.0.0.1:8000/api/ledger_group/Income`)
-            .then(response => {
-                axios.get(`http://127.0.0.1:8000/get_ledgers/?group_list=${response.data.sub_group}`)
-                    .then(response => {
-                        this.income_ledgers = response.data.ledgers;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                    });
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-
-        // Expenses
-        axios.get(`http://127.0.0.1:8000/api/ledger_group/Expenses`)
-            .then(response => {
-                axios.get(`http://127.0.0.1:8000/get_ledgers/?group_list=${response.data.sub_group}`)
-                    .then(response => {
-                        this.expense_ledgers = response.data.ledgers;
-                        console.log("=============", this.expense_ledgers);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                    });
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }
-});
+//         // Expenses
+//         axios.get(`http://127.0.0.1:8000/api/ledger_group/Expenses`)
+//             .then(response => {
+//                 axios.get(`http://127.0.0.1:8000/get_ledgers/?group_list=${response.data.sub_group}`)
+//                     .then(response => {
+//                         this.expense_ledgers = response.data.ledgers;
+//                         console.log("=============", this.expense_ledgers);
+//                     })
+//                     .catch(error => {
+//                         console.error('Error fetching data:', error);
+//                     });
+//             })
+//             .catch(error => {
+//                 console.error('Error fetching data:', error);
+//             });
+//     }
+// });
 
 
 
-new Vue({
-    el: '#balanceSheetVue',
-    data: {
-        ledgers: [],
-        group1: [],
-        income_ledgers: [],
-    },
-    mounted() {
-        axios.defaults.xsrfCookieName = 'csrftoken';
-        axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+// new Vue({
+//     el: '#balanceSheetVue',
+//     data: {
+//         ledgers: [],
+//         group1: [],
+//         income_ledgers: [],
+//     },
+//     mounted() {
+//         axios.defaults.xsrfCookieName = 'csrftoken';
+//         axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-        // Groups
-        axios.get(`http://127.0.0.1:8000/get_ledgers/?group_list=${category}`)
-            .then(response => {
-                this.group1 = response.data.ledgers;
-                console.log("group===========", this.group1);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
+//         // Groups
+//         const encodedParam = encodeURIComponent('A. Subscription towards shares');
+//         axios.get(`http://127.0.0.1:8000/get_ledgers/?group_list=A. Subscription towards shares`)
+//             .then(response => {
+//                 this.group1 = response.data.ledgers;
+//                 console.log("group===========", this.group1);
+//             })
+//             .catch(error => {
+//                 console.error('Error fetching data:', error);
+//             });
 
-        // Expenses
-        axios.get(`http://127.0.0.1:8000/get_ledgers/${response.data.sub_group}`)
-            .then(response => {
-                this.expense_ledgers = response.data.ledgers;
-                console.log("=============", this.expense_ledgers);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }
-});
+//         // Expenses
+//         axios.get(`http://127.0.0.1:8000/get_ledgers/${response.data.sub_group}`)
+//             .then(response => {
+//                 this.expense_ledgers = response.data.ledgers;
+//                 console.log("=============", this.expense_ledgers);
+//             })
+//             .catch(error => {
+//                 console.error('Error fetching data:', error);
+//             });
+//     }
+// });

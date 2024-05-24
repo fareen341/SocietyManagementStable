@@ -1136,42 +1136,19 @@ class UnitTestView(viewsets.ModelViewSet):
 class LedgerView(viewsets.ModelViewSet):
     queryset = Ledger.objects.all()
     serializer_class = LedgerSerializers
-    # filterset_class = LedgerFilter
-
-    @action(detail=False, methods=['get'])
-    # def get_ledgers(self, request, group_list):
-    #     print("Group List:", group_list)  # Check the value of group_list
-    #     group_names = group_list.split(',')
-    #     print("Group Names:", group_names)  # Check the list of group names
-    #     ledgers = Ledger.objects.filter(group_name__in=group_names)
-    #     serialized_ledgers = LedgerSerializers(ledgers, many=True)
-    #     return Response({"ledgers": serialized_ledgers.data}, status=status.HTTP_200_OK)
-
-    def get_ledgers(self, request):
-        # if request.method == 'GET':
-        ledgers = []
-        ledger = request.GET.get('ledger', None)
-        group_list = request.GET.get('group_list', None)
-
-        if(group_list):
-            group_names = group_list.split(',')
-            ledgers = Ledger.objects.filter(group_name__in=group_names)
-            serialized_ledgers = LedgerSerializers(ledgers, many=True)
-            ledgers = serialized_ledgers.data
-        return Response({"ledgers": ledgers}, status=status.HTTP_200_OK)
-
-
-
 
     # @action(detail=False, methods=['get'])
-    # def get_ledgers(self, request, group_list):
-    #     # group_list = list(group_list)
-    #     print("group name===============", group_list)
-    #     # all_cost_centers = Ledger.objects.filter(group_name__in=group_list).values_list('name', flat=True).order_by('name')
-    #     # ledgers = Ledger.objects.filter(group_name__in=('Capital', 'Bank'))
-    #     ledgers = Ledger.objects.filter(group_name__in=group_list)
-    #     print("===========", ledgers)
-    #     return JsonResponse({"ledgers": list(ledgers)})
+    # def get_ledgers(self, request):
+    #     ledgers = []
+    #     ledger = request.GET.get('ledger', None)
+    #     group_list = request.GET.get('group_list', None)
+
+    #     if(group_list):
+    #         group_names = group_list.split(',')
+    #         ledgers = Ledger.objects.filter(group_name=group_names)
+    #         serialized_ledgers = LedgerSerializers(ledgers, many=True)
+    #         ledgers = serialized_ledgers.data
+    #     return Response({"ledgers": ledgers}, status=status.HTTP_200_OK)
 
 
 class PurchaseVoucherView(viewsets.ModelViewSet):

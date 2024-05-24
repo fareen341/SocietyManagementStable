@@ -17,54 +17,58 @@
           {% endverbatim %}
         </div>
     </div>
-    <div class="row" id="profitAndLossVue">
-      {% verbatim %}
+    <div class="row">
       <h3 class="text-center">BALANCE SHEET AS ON 31/03/24</h3>
 
       <div class="col-lg-6">
         <table class="table table-bordered">
-          <thead>
+          <thead class="table-dark">
             <tr>
               <th scope="col">Previous Year</th>
               <th></th>
               <th scope="col">Expenditure</th>
               <th scope="col">Current Year</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(ledger, index) in expense_ledgers" :key="ledger.id">
-              <th scope="row"></th>
+            {% for income_ledger in incomes %}
+            <tr>
+              <td></td>
               <td>To</td>
-              <td>{{ ledger.ledger_name }}</td>
+              <td>{{ income_ledger.ledger_name }}</td>
               <td></td>
               <td></td>
             </tr>
-          </tbody>
+            {% endfor %}
+            </tbody>
         </table>
       </div>
 
       <div class="col-lg-6">
         <table class="table table-bordered">
-          <thead>
+          <thead class="table-dark">
             <tr>
               <th scope="col">Previous Year</th>
               <th></th>
               <th scope="col">Income</th>
               <th scope="col">Current Year</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(ledger, index) in income_ledgers" :key="ledger.id">
-              <th scope="row"></th>
+            {% for expense_ledger in expense %}
+            <tr>
+              <td></td>
               <td>To</td>
-              <td>{{ ledger.ledger_name }}</td>
+              <td>{{ expense_ledger.ledger_name }}</td>
               <td></td>
               <td></td>
             </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
-      {% endverbatim %}
     </div>
 
 </div>
