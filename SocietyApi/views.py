@@ -1185,6 +1185,19 @@ class LedgerView(viewsets.ModelViewSet):
     queryset = Ledger.objects.all()
     serializer_class = LedgerSerializers
 
+    # @action(detail=False, methods=['get'])
+    # def get_ledgers(self, request):
+    #     ledgers = []
+    #     ledger = request.GET.get('ledger', None)
+    #     group_list = request.GET.get('group_list', None)
+
+    #     if(group_list):
+    #         group_names = group_list.split(',')
+    #         ledgers = Ledger.objects.filter(group_name=group_names)
+    #         serialized_ledgers = LedgerSerializers(ledgers, many=True)
+    #         ledgers = serialized_ledgers.data
+    #     return Response({"ledgers": ledgers}, status=status.HTTP_200_OK)
+
 
 class PurchaseVoucherView(viewsets.ModelViewSet):
     queryset = PurchaseVoucherModel.objects.all()

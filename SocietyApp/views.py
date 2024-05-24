@@ -314,8 +314,9 @@ def ledger_creation(request):
     })
 
 
-def get_all_child_investments(parent, cost_center=False):
+def get_all_child_investments(parent, cost_center=False, balance_sheet=False):
     all_childs = []
+    balance_sheet_childs = []
     def traverse_children(investment, depth=0):
         child = 0
         if cost_center:
@@ -326,9 +327,14 @@ def get_all_child_investments(parent, cost_center=False):
             for child in children:
                 show = f"{'→'* depth} {child}"
                 # show = f"{child}"
-                all_childs.append(show)
+                if balance_sheet:
+                    balance_sheet_childs.append(child)
+                else:
+                    all_childs.append(show)
                 traverse_children(child, depth + 1)
     traverse_children(parent)
+    if balance_sheet:
+        return balance_sheet_childs
     return all_childs
 
 
@@ -383,3 +389,163 @@ def get_cost_center_datatable(request, id=None):
 def voucher_creation(request):
     datatable_columns = [0, 1]
     return render(request, 'voucher_creation_new.html', {'datatable_columns': datatable_columns})
+
+
+from collections import defaultdict
+
+
+def balance_sheet(request):
+    datatable_columns = [0, 1]
+
+    # GROUPS OF LIALIBILITIES.
+    # group1 = Ledger.objects.filter(group_name="A. Subscription Towards Shares")
+    group1 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="A. Subscription Towards Shares"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("A. Subscription Towards Shares")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group1[ledger.group_name].append(ledger.ledger_name)
+    group1 = dict(group1)
+
+    # group2 = Ledger.objects.filter(group_name="Reserve Fund And Other Funds")
+    group2 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Reserve Fund And Other Funds"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Reserve Fund And Other Funds")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group2[ledger.group_name].append(ledger.ledger_name)
+    group2 = dict(group2)
+
+    # group3 = Ledger.objects.filter(group_name="Secured Loans")
+    group3 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Secured Loans"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Secured Loans")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group3[ledger.group_name].append(ledger.ledger_name)
+    group3 = dict(group3)
+
+    # group4 = Ledger.objects.filter(group_name="Unsecured Loans")
+    group4 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Unsecured Loans"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Unsecured Loans")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group4[ledger.group_name].append(ledger.ledger_name)
+    group4 = dict(group4)
+
+    # group5 = Ledger.objects.filter(group_name="Deposits")
+    group5 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Deposits"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Deposits")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group5[ledger.group_name].append(ledger.ledger_name)
+    group5 = dict(group5)
+
+    # group6 = Ledger.objects.filter(group_name="Current Liabilities And Provisions")
+    group6 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Current Liabilities And Provisions"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Current Liabilities And Provisions")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group6[ledger.group_name].append(ledger.ledger_name)
+    group6 = dict(group6)
+
+    # group7 = Ledger.objects.filter(group_name="Interest Accrued Due But Not Paid")
+    group7 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Interest Accrued Due But Not Paid"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Interest Accrued Due But Not Paid")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group7[ledger.group_name].append(ledger.ledger_name)
+    group7 = dict(group7)
+
+
+    # GROUPS OF ASSETS
+    # group8 = Ledger.objects.filter(group_name="Fixed Assets")
+    group8 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Fixed Assets"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Fixed Assets")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group8[ledger.group_name].append(ledger.ledger_name)
+    group8 = dict(group8)
+
+    # group9 = Ledger.objects.filter(group_name="Investment")
+    group9 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Investment"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Investment")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group9[ledger.group_name].append(ledger.ledger_name)
+    group9 = dict(group9)
+
+    # group10 = Ledger.objects.filter(group_name="Cash And Bank Balances")
+    group10 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Cash And Bank Balances"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Cash And Bank Balances")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group10[ledger.group_name].append(ledger.ledger_name)
+    group10 = dict(group10)
+
+    # group11 = Ledger.objects.filter(group_name="Loans And Advances")
+    group11 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Loans And Advances"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Loans And Advances")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group11[ledger.group_name].append(ledger.ledger_name)
+    group11 = dict(group11)
+
+    # group12 = Ledger.objects.filter(group_name="Current Assets")
+    group12 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Current Assest"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Current Assest")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group12[ledger.group_name].append(ledger.ledger_name)
+    group12 = dict(group12)
+
+    # group13 = Ledger.objects.filter(group_name="Profit And Loss Account")
+    group13 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Profit And Loss Account"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Profit And Loss Account")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group13[ledger.group_name].append(ledger.ledger_name)
+    group13 = dict(group13)
+
+
+    return render(request, 'balance_sheet.html', {
+        'datatable_columns': datatable_columns,
+        'group1': group1,
+        'group2': group2,
+        'group3': group3,
+        'group4': group4,
+        'group5': group5,
+        'group6': group6,
+        'group7': group7,
+        'group8': group8,
+        'group9': group9,
+        'group10': group10,
+        'group11': group11,
+        'group12': group12,
+        'group13': group13,
+    })
+
+
+def profit_and_loss(request):
+    datatable_columns = [0, 1]
+    # INCOME
+    income_groups = get_all_child_investments(Childs.objects.get(name="Income"), cost_center=False, balance_sheet=True)
+    income_groups.append("Income")
+    incomes = Ledger.objects.filter(group_name__in=income_groups)
+
+    # EXPENSE
+    expense_groups = get_all_child_investments(Childs.objects.get(name="Expenses"), cost_center=False, balance_sheet=True)
+    expense_groups.append("Expenses")
+    expense = Ledger.objects.filter(group_name__in=expense_groups)
+    return render(request, 'profit_and_loss.html', {'datatable_columns': datatable_columns, 'incomes': incomes, 'expense': expense})
+
