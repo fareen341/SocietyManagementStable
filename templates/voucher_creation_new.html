@@ -652,7 +652,7 @@
             </div>
 
             <!-- CREATE MODAL FOR ADD COST CENTER -->
-            <div class="modal fade" id="purchaseCostCenterModal" tabindex="-1"
+            <div class="modal fade" id="purchaseCostCenterModal" tabindex="-1" data-bs-backdrop="static"
                 aria-labelledby="purchaseCostCenterModalLabel" aria-hidden="true">
                 {% verbatim %}
                 <div class="modal-dialog modal-lg">
@@ -663,25 +663,26 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group">
+                                <span v-if="amountMatchedError" class="text-center">{{ amountMatchedError }}</span>
                                 <h5 class="text-center">Add Cost Center </h5>
 
-                                <div class="row mb-3" v-for="(item, index) in items" :key="index">
+                                <div class="row mb-3" v-for="(item, index) in items" :key="item.id">
                                     <div class="col-5">
                                         <div class="sty-input-wrapper w-100">
-                                            <select class="w-100 sty-inp form-control groupSelectionUpdate" id="faren">
+                                            <select ref="select2" :ref="'select2-' + item.id" v-select2>
                                                 <option value="">Select Cost Center</option>
                                                 <option v-for="item in costCenterData" :value="item.id">{{ item.name }}</option>
                                             </select>
                                         </div>
-                                        <span v-if="costCenterError && costCenterError.cost_center_name" class="error">{{ costCenterError && costCenterError.cost_center_name}}</span>
+                                        <span v-if="costCenterError && costCenterError.cost_center_name || costCenterNotProvided" class="error">{{ costCenterError && costCenterError.cost_center_name || costCenterNotProvided}}</span>
                                         <span v-else></span>
                                     </div>
 
                                     <div class="col-5">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="number" class="sty-inp form-control" style="height: 36px;" v-model="item.cost_center_amount" @keyup.enter="addMoreOnEnterKey" placeholder="Press Enter To Add More Input" id="faren2">
+                                            <input type="number" class="sty-inp form-control" style="height: 36px;" v-model="item.cost_center_amount" @keyup.enter="addMoreOnEnterKey(item.id, true)" placeholder="Press Enter To Add More Input" id="faren2">
                                         </div>
-                                        <span v-if="costCenterError && costCenterError.cost_center_amount" class="error">{{ costCenterError && costCenterError.cost_center_amount }}</span>
+                                        <span v-if="costCenterError && costCenterError.cost_center_amount || costCenterAmtNotProvided" class="error">{{ costCenterError && costCenterError.cost_center_amount || costCenterAmtNotProvided }}</span>
                                         <span v-else></span>
                                     </div>
 
@@ -1031,7 +1032,7 @@
                                     </div>
                                 </div>
 
-                                
+
                                 <table class="table table-sm table-bordered">
                                     <thead class="table-dark">
                                         <th style="text-align:center;">Select Type</th>
@@ -1982,498 +1983,569 @@
 </script>
 
 <script>
-
-    /* DATATABLE */
-    $(document).ready(function () {
-        $('#costCenterDatatable').on('shown.bs.tab', function (e) {
-            $($.fn.dataTable.tables(true)).DataTable()
-                .columns.adjust();
-        });
-
-        var table = $('#costCenterDatatable, #purchaseVoucherDatatable').DataTable({
-            "dom": '<"dt-buttons"Br><"clear">ftipl',
-            buttons: [
-                {
-                    extend: 'colvis',
-                    text: 'More Column',
-                    postfixButtons: [
-                        'colvisRestore'
-                    ]
-                },
-                {
-                    extend: 'searchBuilder',
-                    text: 'Filter'
-                },
-                {
-                    extend: 'print',
-                    exportOptions: {
-                        // columns: ':visible',
-                        columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
-                        modifier: { search: 'applied', order: 'applied' },
-
-                    }
-                },
-                {
-                    extend: 'print',
-                    text: 'Print All',
-                    exportOptions: {
-                        columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
-                        // modifier: { search: 'applied', order: 'applied' },
-
-                    }
-                },
-            ],
-
-            order: [],
-            "stripeClasses": [],
-
-            columnDefs: [
-
-                { "visible": true, "targets": datatable_columns },
-                { "visible": false, "targets": '_all' },
-            ],
-            fixedColumns: {
-                left: 2
-            },
-            // "paging": true,
-            // 'pageLength': '5',
-            pagingType: "simple",
-            paginate: {
-                previous: "<",
-                next: ">"
-            },
-            scrollCollapse: false,
-            scrollX: true
-        });
-
-
+/* DATATABLE */
+$(document).ready(function () {
+    $('#costCenterDatatable').on('shown.bs.tab', function (e) {
+        $($.fn.dataTable.tables(true)).DataTable()
+            .columns.adjust();
     });
 
-    new Vue({
-        el: '#costCenterEntirePage',
-        data: {
-            purchases: [{
-                ledger_name: '',
-                quantity: '',
-                rate: '',
-                amount: '',
-            }],
-            costCenterData: [],
-            vouchersList: [],
-            ledgerList: [],
-            items: [{
-                cost_center_name: '',
-                cost_center_amount: null,
-            }],
-            selectedBillNames: [],
-            showSave: false,
-            formData: {
-                voucher_type: '',
-                voucher_number: '',
-                booking_date: '',
-                voucher_name: '',
+    var table = $('#costCenterDatatable, #purchaseVoucherDatatable').DataTable({
+        "dom": '<"dt-buttons"Br><"clear">ftipl',
+        buttons: [
+            {
+                extend: 'colvis',
+                text: 'More Column',
+                postfixButtons: [
+                    'colvisRestore'
+                ]
             },
-            costCenterError: {},
-            displayAmount: null,
-            totalAmountValue: 0,
-            errors: {},
-            subGroups: [],
-            groupError: {},
-            countries: [],
-            states: [],
-            cities: [],
-            errors: {},
-            subGroupsOnGroupModal: [],
-            name: '',
-            parent: '',
-            superParent: '',
+            {
+                extend: 'searchBuilder',
+                text: 'Filter'
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    // columns: ':visible',
+                    columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                    modifier: { search: 'applied', order: 'applied' },
+
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print All',
+                exportOptions: {
+                    columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                    // modifier: { search: 'applied', order: 'applied' },
+
+                }
+            },
+        ],
+
+        order: [],
+        "stripeClasses": [],
+
+        columnDefs: [
+
+            { "visible": true, "targets": datatable_columns },
+            { "visible": false, "targets": '_all' },
+        ],
+        fixedColumns: {
+            left: 2
         },
-        methods: {
-            // EXTRA
-            addMore() {
+        // "paging": true,
+        // 'pageLength': '5',
+        pagingType: "simple",
+        paginate: {
+            previous: "<",
+            next: ">"
+        },
+        scrollCollapse: false,
+        scrollX: true
+    });
 
-            },
-            updateSubGroups(event, calling_from_update=false){
-                this.subGroupsOnGroupModal = [];
-                event = event;
-                if(!calling_from_update){
-                    event = event.target.value
-                }
-                //if(!event.target.value){
-                if(!event){
-                    this.subGroupsOnGroupModal = '';
-                    return;
-                }
-                axios.defaults.xsrfCookieName = 'csrftoken';
-                axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-                //axios.get(`http://127.0.0.1:8000/api/ledger_group/${event.target.value}`)
-                axios.get(`http://127.0.0.1:8000/api/ledger_group/${event}`)
+
+});
+
+
+Vue.directive('select2', {
+    inserted(el, binding, vnode) {
+        $(el).select2({
+            dropdownParent: $('#purchaseCostCenterModal'),
+            width: '100%'
+        });
+    },
+    componentUpdated(el, binding, vnode) {
+        $(el).trigger('change'); // Re-trigger the change event to update the select2 state
+    },
+    unbind(el, binding, vnode) {
+        $(el).select2('destroy'); // Destroy Select2 instance
+    }
+});
+
+
+new Vue({
+    el: '#costCenterEntirePage',
+    data: {
+        purchases: [{
+            ledger_name: '',
+            quantity: '',
+            rate: '',
+            amount: '',
+        }],
+        costCenterData: [],
+        vouchersList: [],
+        ledgerList: [],
+        items: [{
+            id: '',
+            cost_center_name: '',
+            cost_center_amount: null,
+        }],
+        selectedBillNames: [],
+        showSave: false,
+        formData: {
+            voucher_type: '',
+            voucher_number: '',
+            booking_date: '',
+            voucher_name: '',
+        },
+        costCenterError: {},
+        displayAmount: null,
+        totalAmountValue: 0,
+        errors: {},
+        subGroups: [],
+        groupError: {},
+        countries: [],
+        states: [],
+        cities: [],
+        errors: {},
+        subGroupsOnGroupModal: [],
+        name: '',
+        parent: '',
+        superParent: '',
+        nextId: 1,
+        costCenterNotProvided: '',
+        costCenterAmtNotProvided: '',
+        totalAmount: 0,
+        amountMatchedError: '',
+        addRowOnSaveVar: false,
+    },
+    methods: {
+        // EXTRA
+        addMore() {
+
+        },
+        updateSubGroups(event, calling_from_update=false){
+            this.subGroupsOnGroupModal = [];
+            event = event;
+            if(!calling_from_update){
+                event = event.target.value
+            }
+            //if(!event.target.value){
+            if(!event){
+                this.subGroupsOnGroupModal = '';
+                return;
+            }
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            //axios.get(`http://127.0.0.1:8000/api/ledger_group/${event.target.value}`)
+            axios.get(`http://127.0.0.1:8000/api/ledger_group/${event}`)
+            .then(response => {
+                    this.subGroupsOnGroupModal = response.data.sub_group;
+                })
+                .catch(error => {
+                    console.error('Error fetching data in getting group:', error);
+                });
+        },
+        groupCreationModalClose(){
+            $('#groupCreationModal').modal('hide');
+            $('#createNewLedger').modal('show');
+        },
+        submitGroup(id){
+            function toTitleCase(str) {
+                return str.replace(
+                    /\w\S*/g,
+                    function(txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                    }
+                );
+            }
+
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+            this.parent = $('#groupSelection').val();
+            console.log("SELECTED ELEMENT======", this.parent);
+            data = {
+                "name": toTitleCase(this.name),
+                "superParent": this.superParent,
+                "parent": this.parent
+            }
+
+            axios.post('http://127.0.0.1:8000/api/leadger_group_creation/', data)
                 .then(response => {
-                        this.subGroupsOnGroupModal = response.data.sub_group;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data in getting group:', error);
-                    });
-            },
-            groupCreationModalClose(){
-                $('#groupCreationModal').modal('hide');
-                $('#createNewLedger').modal('show');
-            },
-            submitGroup(id){
-                function toTitleCase(str) {
-                    return str.replace(
-                      /\w\S*/g,
-                      function(txt) {
-                        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                      }
-                    );
-                }
+                    console.log("Response-->", response.data);
+                    $("#groupSelection").val('').trigger('change');
+                    this.name = '';
+                    this.errors = {}
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success(response.message, "Group Added Successfully!");
+                    $('#groupCreationModal').modal('hide');
+                    $('#createNewLedger').modal('show');
+                    this.subGroupsOnGroupModal.push(response.data.name);
+                })
+                .catch(error => {
+                    console.log("Errors -->", error.response.data);
+                    this.errors = error.response.data;
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 2000
+                    };
+                    toastr.error("Please Correct All Errors!");
+                    if(this.errors.sub_group_error){
+                        toastr.error("Sub Group Does Not Exists, Please Refresh The Page And Try Again!");
+                    }
+                });
+        },
+        // EXTRA
+        initializeSelect2($element) {
+            $element.select2({
+                dropdownParent: $('#purchaseVoucherCreate'),
+                width: '100%',
+            }).on('select2:open', () => {
+                $(".select2-results:not(:has(button.create-button))").append('<button class="create-button btn">+ Create New ledger</button>');
+                $('.select2-results').on('click', 'button.create-button', function () {
+                    $('#purchaseVoucherCreate').modal('hide');
+                    $('#createNewLedger').modal('show');
 
-                axios.defaults.xsrfCookieName = 'csrftoken';
-                axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-
-                this.parent = $('#groupSelection').val();
-                console.log("SELECTED ELEMENT======", this.parent);
-                data = {
-                    "name": toTitleCase(this.name),
-                    "superParent": this.superParent,
-                    "parent": this.parent
-                }
-
-                axios.post('http://127.0.0.1:8000/api/leadger_group_creation/', data)
+                    axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
                     .then(response => {
-                        console.log("Response-->", response.data);
-                        $("#groupSelection").val('').trigger('change');
-                        this.name = '';
-                        this.errors = {}
-                        toastr.options = {
-                            closeButton: true,
-                            positionClass: 'toast-top-center',
-                            timeOut: 5000
-                        };
-                        toastr.success(response.message, "Group Added Successfully!");
-                        $('#groupCreationModal').modal('hide');
-                        $('#createNewLedger').modal('show');
-                        this.subGroupsOnGroupModal.push(response.data.name);
+                        this.subGroups = response.data.sub_group;
+                        console.log("data==============", this.subGroups);
+                        $('#ledgerSelection').select2({
+                            dropdownParent: $('#createNewLedger'),
+                            width: '100%',
+                            }).on('select2:open', () => {
+                                $(".select2-results:not(:has(button.create-button))").append('<button class="create-button btn">+ Create New Group</button>');
+                                $('.select2-results').on('click', 'button.create-button', function () {
+                                    $('#createNewLedger').modal('hide');
+                                    $('#groupCreationModal').modal('show');
+
+                                    $('#groupSelection').select2({
+                                        dropdownParent: $('#groupCreationModal'),
+                                        width: '100%',
+                                    });
+                                    ///////////
+
+                                    //axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
+                                    //.then(response => {
+                                    //    this.subGroups = response.data.sub_group;
+                                    //    console.log("data==============", this.subGroups);
+                                    //    $('#ledgerSelection').select2({
+                                    //        dropdownParent: $('#createNewLedger'),
+                                    //        width: '100%',
+                                    //    });
+                                    //})
+                                    //.catch(error => {
+                                    //    console.error('Error fetching data:', error);
+                                    //});
+                                });
+                            });
                     })
                     .catch(error => {
-                        console.log("Errors -->", error.response.data);
-                        this.errors = error.response.data;
-                        toastr.options = {
-                            closeButton: true,
-                            positionClass: 'toast-top-center',
-                            timeOut: 2000
-                        };
-                        toastr.error("Please Correct All Errors!");
-                        if(this.errors.sub_group_error){
-                            toastr.error("Sub Group Does Not Exists, Please Refresh The Page And Try Again!");
-                        }
-                    });
-            },
-            // EXTRA
-            initializeSelect2($element) {
-                $element.select2({
-                    dropdownParent: $('#purchaseVoucherCreate'),
-                    width: '100%',
-                }).on('select2:open', () => {
-                    $(".select2-results:not(:has(button.create-button))").append('<button class="create-button btn">+ Create New ledger</button>');
-                    $('.select2-results').on('click', 'button.create-button', function () {
-                        $('#purchaseVoucherCreate').modal('hide');
-                        $('#createNewLedger').modal('show');
-
-                        axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
-                        .then(response => {
-                            this.subGroups = response.data.sub_group;
-                            console.log("data==============", this.subGroups);
-                            $('#ledgerSelection').select2({
-                                dropdownParent: $('#createNewLedger'),
-                                width: '100%',
-                                }).on('select2:open', () => {
-                                    $(".select2-results:not(:has(button.create-button))").append('<button class="create-button btn">+ Create New Group</button>');
-                                    $('.select2-results').on('click', 'button.create-button', function () {
-                                        $('#createNewLedger').modal('hide');
-                                        $('#groupCreationModal').modal('show');
-
-                                        $('#groupSelection').select2({
-                                            dropdownParent: $('#groupCreationModal'),
-                                            width: '100%',
-                                        });
-                                        ///////////
-
-                                        //axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
-                                        //.then(response => {
-                                        //    this.subGroups = response.data.sub_group;
-                                        //    console.log("data==============", this.subGroups);
-                                        //    $('#ledgerSelection').select2({
-                                        //        dropdownParent: $('#createNewLedger'),
-                                        //        width: '100%',
-                                        //    });
-                                        //})
-                                        //.catch(error => {
-                                        //    console.error('Error fetching data:', error);
-                                        //});
-                                    });
-                                });
-                        })
-                        .catch(error => {
-                            console.error('Error fetching data:', error);
-                        });
+                        console.error('Error fetching data:', error);
                     });
                 });
-            },addRowOnSave(){
+            });
+        },
+        initializeSelect2Twice($element) {
+            $element.select2({
+                dropdownParent: $('#purchaseCostCenterModal'),
+                width: '100%',
+            })
+        },
+        addRowOnSave(){
+            //this.addRowOnSaveVar = false;
+            this.addMoreOnEnterKey('', false);
+            if(this.addRowOnSaveVar){
                 $('#purchaseCostCenterModal').modal('hide');
                 $('#purchaseVoucherCreate').modal('show');
+
+                this.items.forEach(item => {
+                    const select2Refrence = this.$refs[`select2-${item.id}`];
+                    $(select2Refrence).select2();
+                    const selectedValue = $(select2Refrence).val();
+                    console.log(`ID: ${item.id}, Cost Center Name: ${selectedValue}, Cost Center Amount: ${item.cost_center_amount}`);
+                });
+                this.items = [{}];
+                this.totalAmount = 0;
+                //this.nextId = 1;
+
                 this.purchases.push({
                     ledger_name: '',
                     quantity: '',
                     rate: '',
                     amount: ''
                 });
-                //this.$nextTick(() => {
-                //    const $newDropdown = $('.selectLedger').last();
-                //    this.initializeSelect2($newDropdown);
-                //});
                 this.$nextTick(() => {
                     this.initializeSelect2($('.selectLedger'));
                 });
-            },
-            initializeSelect2Twice($element) {
-                $element.select2({
-                    dropdownParent: $('#purchaseCostCenterModal'),
-                    width: '100%',
-                })
-            },
-            addMoreOnEnterKey() {
-                this.items.push({
-                    cost_center_name: '',
-                    cost_center_amount: null
-                });
-
-                this.$nextTick(() => {
-                    this.initializeSelect2Twice($('.groupSelectionUpdate'));
-                });
-            },
-            removeItem(index) {
-                this.items.splice(index, 1);
-                let newVal = document.getElementsByClassName('groupSelectionUpdate')[index + 1].value;
-                console.log('new value=====================', newVal)
-
-                const $select = $('.groupSelectionUpdate').eq(index);
-                $select.val(newVal).trigger('change');
-
-                this.$nextTick(() => {
-                    this.initializeSelect2Twice($('.groupSelectionUpdate'));
-                });
-            },
-            openCostCenterModal(index) {
-                this.errors = {};
-                this.displayAmount = this.purchases[index]['amount'];
-                this.purchases[index]['ledger_name'] = document.getElementsByClassName('selectLedger')[index + 1].value;
-
-                axios.post(`http://127.0.0.1:8000/api/purchase_voucher_creation/`, this.purchases[index])
-                    .then(response => {
-                        $('#purchaseCostCenterModal').modal('show');
-                        $('#purchaseVoucherCreate').modal('hide');
-                        axios.get(`http://127.0.0.1:8000/api/cost_center/`)
-                            .then(response => {
-                                this.costCenterData = response.data;
-                            })
-                            .catch(error => {
-                                console.error('Error fetching data:', error);
-                            });
-
-                        // INITIALIZING SELECT2 FOR COST CENTER
-                        $('.groupSelectionUpdate').select2({
-                            dropdownParent: $('#purchaseCostCenterModal'),
-                            width: '100%',
-                        });
-                    })
-                    .catch(error => {
-                        this.$set(this.errors, index, error.response.data);
-                    });
-            },
-            openVoucherModal(modalName) {
-                $('#purchaseVoucherCreate').modal('show');
-
-                this.$nextTick(() => {
-                    this.initializeSelect2($('.selectLedger'));
-                });
-
-                // Fetch voucher data
-                axios.get(`http://127.0.0.1:8000/api/voucher_type/?voucher_type=${modalName}`)
-                    .then(response => {
-                        this.vouchersList = response.data;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                    });
-            },
-            totalBillAmount() {
-                return this.items.reduce((sum, item) => sum + parseInt(item.billAmount || 0, 10), 0);
-            },
-            removeCostCenter(index) {
-                this.purchases.splice(index, 1);
-                this.totalAmount();
-            },
-            totalAmount() {
-                this.totalAmountValue = this.purchases.reduce((total, item) => total + (item.amount || 0), 0);
-                return this.totalAmountValue;
-            },
-            calculateAmount(item) {
-                if (item.quantity !== undefined && item.rate !== undefined) {
-                    item.amount = item.quantity * item.rate;
-                    this.totalAmount();
-                }
-            },
-            //if (this.totalBillAmount() >= this.purchases.amount) {
-            //    this.showSave = true;
-            //    return;
-            //}
-            fetchVoucherNumber(event) {
-                if (!event.target.value) {
-                    this.formData.voucher_number = '';
-                    return;
-                }
-                axios.get(`http://127.0.0.1:8000/api/get_voucher_number/${event.target.value}`)
-                    .then(response => {
-                        console.log("Response in voucher number===>", response.data.voucher_number);
-                        this.formData.voucher_number = response.data.voucher_number;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                    });
-            },
-            createNewLedgerBtn() {
-                $('#purchaseVoucherCreate').modal('show');
-                $('#createNewLedger').modal('hide');
-            },
-            getCountries() {
-                axios.get('https://api.countrystatecity.in/v1/countries', {
-                    headers: {
-                        'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
-                    }
-                })
-                    .then(response => {
-                        this.countries = response.data;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching countries:', error);
-                    });
-            },
-            getStates() {
-                if (!this.formData.country) return;
-                axios.get(`https://api.countrystatecity.in/v1/countries/${this.formData.country}/states`, {
-                    headers: {
-                        'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
-                    }
-                })
-                    .then(response => {
-                        this.states = response.data;
-                        this.cities = [];
-                    })
-                    .catch(error => {
-                        console.error('Error fetching states:', error);
-                    });
-            },
-            getCities() {
-
-                axios.get(`https://api.countrystatecity.in/v1/countries/${this.formData.country}/states/${this.formData.state}/cities`, {
-                    headers: {
-                        'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
-                    }
-                })
-                    .then(response => {
-                        this.cities = response.data;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching cities:', error);
-                    });
-            },
-            getBranchName() {
-                // Make a GET request to the Razorpay IFSC API
-                var apiUrl = "https://ifsc.razorpay.com/" + this.formData.ifsc_code;
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to fetch branch name. Please check the IFSC code.');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        this.formData.bank_branch_name = data.BANK;
-                        this.formData.branch_name = data.BRANCH;
-                    })
-                    .catch(error => {
-                        this.formData.bank_branch_name = '';
-                        this.formData.branch_name = '';
-                    });
-            },
-            submitLedger(id){
-                if ($('#ledgerSelection').val() === '') {
-                    this.groupError = "This field may not be blank."
-                }
-
-                let ledgerData = new FormData();
-                for (const key in this.formData) {
-                    if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
-                        if (this.formData[key] !== null) {
-                            ledgerData.append(key, this.formData[key]);
-                        }
-                    }
-                }
-
-                // ADDING GROUP NAME USING JQUERY
-                ledgerData.append('group_name', $('#ledgerSelection').val());
-
-                // ADD
-                axios.defaults.xsrfCookieName = 'csrftoken';
-                axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-                axios.post('http://127.0.0.1:8000/api/ledger_creation/', ledgerData)
-                    .then(response => {
-                        alert('response');
-                        toastr.options = {
-                            closeButton: true,
-                            positionClass: 'toast-top-center',
-                            timeOut: 5000
-                        };
-                        toastr.success(response.message, "Ledger Created Successfully!");
-                        $('#createNewLedger').modal('hide');
-                        $('#purchaseVoucherCreate').modal('show');
-                        this.ledgerList.push(response.data);
-                        this.formData = {};
-                    })
-                    .catch(error => {
-                        this.errors = error.response.data
-                        console.log("Error: ->", this.errors);
-                    });
-            },
+            }
         },
-        mounted() {
-            this.getCountries();
 
-            // LEDGER DATATABLE DATA
-            axios.get('http://127.0.0.1:8000/api/ledger_creation/')
-                .then(response => {
-                    this.ledgerList = response.data;
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
+        addMoreOnEnterKey(item, flag) {
+            this.amountMatchedError = '';
+            this.costCenterNotProvided = '';
+            this.costCenterAmtNotProvided = '';
+            let select2Ref = this.$refs[`select2-${item}`];
+            let selectedValue = $(select2Ref).val();
+            alert(item);
+            alert(selectedValue);
+            if(!item){
+                item = 0;
+            }
 
-            // GROUPS DROPDOWN
-            axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
+            if(!selectedValue){
+                this.addRowOnSaveVar = false;
+                this.costCenterNotProvided = "This field cannot be empty."
+            }
+            if(this.items[item]['cost_center_amount'] === null){
+                this.addRowOnSaveVar = false;
+                this.costCenterAmtNotProvided = "This field cannot be empty."
+            }
+            if(this.items[item]['cost_center_amount'] !== null ){
+                //this.totalAmount = this.totalAmount + parseFloat(this.items[item]['cost_center_amount']);
+                this.totalAmount = this.items.reduce((acc, item) => {
+                    const amount = parseFloat(item.cost_center_amount) || 0;
+                    return acc + amount;
+                }, 0);
+                console.log("total amot==", this.totalAmount);
+                if(this.totalAmount > parseFloat(this.displayAmount)){
+                    this.addRowOnSaveVar = false;
+                    this.costCenterAmtNotProvided = "Given amount should be equal or less than total amount."
+                }
+                else if(this.totalAmount === parseFloat(this.displayAmount)){
+                    this.amountMatchedError = "Can't add more cost center, it cannot exceed the total amount."
+                }
+            }
+
+            if(selectedValue && (this.items[item]['cost_center_amount'] !== null && this.totalAmount < parseFloat(this.displayAmount))){
+                this.addRowOnSaveVar = true;
+                //this.costCenterNotProvided = '';
+                //this.costCenterAmtNotProvided = '';
+                if(flag){
+                    this.items.push({
+                        id: this.nextId++,
+                        cost_center_name: '',
+                        cost_center_amount: null
+                    });
+                }
+            }
+        },
+        removeItem(index, id) {
+            const selectElement = this.$refs['select2-' + id];
+            if (selectElement) {
+                $(selectElement).select2('destroy');
+            }
+            this.items.splice(index, 1);
+            //this.items.splice(index, 1);
+        },
+        openCostCenterModal(index) {
+            this.errors = {};
+            this.displayAmount = this.purchases[index]['amount'];
+            this.purchases[index]['ledger_name'] = document.getElementsByClassName('selectLedger')[index + 1].value;
+
+            axios.post(`http://127.0.0.1:8000/api/purchase_voucher_creation/`, this.purchases[index])
                 .then(response => {
-                    this.subGroups = response.data.sub_group;
-                    $('#ledgerSelection').select2({
-                        dropdownParent: $('#ledgerCreation'),
+                    $('#purchaseCostCenterModal').modal('show');
+                    $('#purchaseVoucherCreate').modal('hide');
+                    axios.get(`http://127.0.0.1:8000/api/cost_center/`)
+                        .then(response => {
+                            this.costCenterData = response.data;
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                        });
+
+                    // INITIALIZING SELECT2 FOR COST CENTER
+                    $('.groupSelectionUpdate').select2({
+                        dropdownParent: $('#purchaseCostCenterModal'),
                         width: '100%',
                     });
                 })
                 .catch(error => {
+                    this.$set(this.errors, index, error.response.data);
+                });
+        },
+        openVoucherModal(modalName) {
+            $('#purchaseVoucherCreate').modal('show');
+
+            this.$nextTick(() => {
+                this.initializeSelect2($('.selectLedger'));
+            });
+
+            // Fetch voucher data
+            axios.get(`http://127.0.0.1:8000/api/voucher_type/?voucher_type=${modalName}`)
+                .then(response => {
+                    this.vouchersList = response.data;
+                })
+                .catch(error => {
                     console.error('Error fetching data:', error);
                 });
-        }
-    });
+        },
+        totalBillAmount() {
+            return this.items.reduce((sum, item) => sum + parseInt(item.billAmount || 0, 10), 0);
+        },
+        removeCostCenter(index) {
+            this.purchases.splice(index, 1);
+            //this.totalAmount();
+        },
+        //totalAmount() {
+        //    this.totalAmountValue = this.purchases.reduce((total, item) => total + (item.amount || 0), 0);
+        //    return this.totalAmountValue;
+        //},
+        calculateAmount(item) {
+            if (item.quantity !== undefined && item.rate !== undefined) {
+                item.amount = item.quantity * item.rate;
+                //this.totalAmount();
+            }
+        },
+        //if (this.totalBillAmount() >= this.purchases.amount) {
+        //    this.showSave = true;
+        //    return;
+        //}
+        fetchVoucherNumber(event) {
+            if (!event.target.value) {
+                this.formData.voucher_number = '';
+                return;
+            }
+            axios.get(`http://127.0.0.1:8000/api/get_voucher_number/${event.target.value}`)
+                .then(response => {
+                    console.log("Response in voucher number===>", response.data.voucher_number);
+                    this.formData.voucher_number = response.data.voucher_number;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        createNewLedgerBtn() {
+            $('#purchaseVoucherCreate').modal('show');
+            $('#createNewLedger').modal('hide');
+        },
+        getCountries() {
+            axios.get('https://api.countrystatecity.in/v1/countries', {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+                .then(response => {
+                    this.countries = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching countries:', error);
+                });
+        },
+        getStates() {
+            if (!this.formData.country) return;
+            axios.get(`https://api.countrystatecity.in/v1/countries/${this.formData.country}/states`, {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+                .then(response => {
+                    this.states = response.data;
+                    this.cities = [];
+                })
+                .catch(error => {
+                    console.error('Error fetching states:', error);
+                });
+        },
+        getCities() {
+
+            axios.get(`https://api.countrystatecity.in/v1/countries/${this.formData.country}/states/${this.formData.state}/cities`, {
+                headers: {
+                    'X-CSCAPI-KEY': 'UkJTWGNaT3BVb2I5RnBZSzFzajRubklKSUVWbFVnMjhrMjdrYmZqdA=='
+                }
+            })
+                .then(response => {
+                    this.cities = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching cities:', error);
+                });
+        },
+        getBranchName() {
+            // Make a GET request to the Razorpay IFSC API
+            var apiUrl = "https://ifsc.razorpay.com/" + this.formData.ifsc_code;
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch branch name. Please check the IFSC code.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.formData.bank_branch_name = data.BANK;
+                    this.formData.branch_name = data.BRANCH;
+                })
+                .catch(error => {
+                    this.formData.bank_branch_name = '';
+                    this.formData.branch_name = '';
+                });
+        },
+        submitLedger(id){
+            if ($('#ledgerSelection').val() === '') {
+                this.groupError = "This field may not be blank."
+            }
+
+            let ledgerData = new FormData();
+            for (const key in this.formData) {
+                if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                    if (this.formData[key] !== null) {
+                        ledgerData.append(key, this.formData[key]);
+                    }
+                }
+            }
+
+            // ADDING GROUP NAME USING JQUERY
+            ledgerData.append('group_name', $('#ledgerSelection').val());
+
+            // ADD
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            axios.post('http://127.0.0.1:8000/api/ledger_creation/', ledgerData)
+                .then(response => {
+                    alert('response');
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success(response.message, "Ledger Created Successfully!");
+                    $('#createNewLedger').modal('hide');
+                    $('#purchaseVoucherCreate').modal('show');
+                    this.ledgerList.push(response.data);
+                    this.formData = {};
+                })
+                .catch(error => {
+                    this.errors = error.response.data
+                    console.log("Error: ->", this.errors);
+                });
+        },
+    },
+    mounted() {
+        this.getCountries();
+
+        // LEDGER DATATABLE DATA
+        axios.get('http://127.0.0.1:8000/api/ledger_creation/')
+            .then(response => {
+                this.ledgerList = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // GROUPS DROPDOWN
+        axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
+            .then(response => {
+                this.subGroups = response.data.sub_group;
+                $('#ledgerSelection').select2({
+                    dropdownParent: $('#ledgerCreation'),
+                    width: '100%',
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    }
+});
 
 </script>
 {% endblock body %}
