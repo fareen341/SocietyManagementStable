@@ -948,20 +948,17 @@ class CreateGroupForLedgerView(viewsets.ModelViewSet):
 
 
     def partial_update(self, request, *args, **kwargs):
-        print("Requested data:", request.data)
-        errors = {}
-        name = request.data.get('name')
-        parent_name = request.data.get('parent')
-        super_parent = request.data.get('superParent')
-        if super_parent:
-            try:
-                child_obj = Childs.objects.get(name=name)
-                child_obj.parent = Childs.objects.get(name=super_parent)
-                child_obj.save()
-            except Childs.DoesNotExist:
-                print("does not exists")
-        return Response("PATCH request processed successfully", status=status.HTTP_200_OK)
-
+        data = request.data.copy()
+        name = data.get('name')
+        parent_data = data.get('parent')
+        super_parent = data.get('superParent')
+        parent_name = Childs.objects.get(name=super_parent).id
+        if parent_data:
+            parent_name = Childs.objects.get(name=parent_data).id
+        data['parent'] = parent_name
+        request._full_data = data
+        return self.update(request, *args, **kwargs)
+        
 
     @action(detail=False, methods=['get'])
     def select_ledger_group(self, request, group_name):

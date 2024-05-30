@@ -1,38 +1,3 @@
-SOCIETY CREATION IS PENDING :
-FROM BANK CREATION,
-I have taken from vue, so remove django loop and add vue's loop
-
-
-
-tmrw start from member
-
-
-
-
-Emily Smith
-Daniel Johnson
-Sophia Williams
-Noah Brown
-Olivia Jones
-Liam Davis
-Ava Martinez
-William Taylor
-Isabella Anderson
-James Wilson
-Mia Garcia
-Benjamin Rodriguez
-Charlotte Lopez
-Alexander Lee
-Amelia Hernandez
-Michael Moore
-Harper Martin
-Ethan Clark
-Evelyn Perez
-Lucas Hall
-
-
-
-
 CHANGES TO BE DONE IN SOC:
 1. When creating Flat:
     when wings get created i need to add user with that flat name:
@@ -43,22 +8,8 @@ CHANGES TO BE DONE IN SOC:
             Name: AWING1FAREEN
 
 2. For Flat Details -> on view -> flat_status is not fetching from serializers
-
-
-FLAT ID:
-suggestions
-MEETING ID
-USER ID
-
-
-
-
-
-1. Edit option to be add on edit of members?
-2. unit register to show all or current?
-
-
-
+3. COUNTRY STATE API
+4. SOME ISSUE IN COST CENTER MODAL
 
 Bug fixes:
 DropDown value not getting
@@ -69,8 +20,15 @@ In meetings edit show attendance
 at the time of add or update give toastr and page refresh
 change all the table heading
 add nominees should come only when required
+1. Add vehicle - doc not getting add
+2. sweet alert not working
+3. make pan and aadhar unitque
 
-
+ADD FEATURES LATER:
+1. Login
+2. Authentication/Authorization (login)
+3. Mobile app
+4. Delete functionality for all the 
 
 
 ========================================ACCOUNTS============================================================
@@ -96,27 +54,8 @@ amount:
 ==================================== ************ ===================================================
 1. Can more than one bank be primary.
 
+=================================== ********* =====================================================
+                                    PRIORITY
 
-=========================== ** ============================
-BUGS:
-
-1. correspondance city not working.
-2. View icon for other document not working.
-
-
-========================== ** =================================
-Add loader in other all forms like socity creation
-
-
-
-===========================================================
-in shares only show flats whos member exists and that flat does not have shares added already.
-send success message on all forms of member master creation.
-and redirect to master page.
-
-
-
-===================================================================
-1. Add vehicle - doc not getting add
-2. sweet alert not working
-3. make pan and aadhar unitque
+group update
+accound module
