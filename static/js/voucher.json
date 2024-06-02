@@ -1,0 +1,34 @@
+jv does'nt have bank details?
+
+
+
+
+{
+    "voucher_type": "purchase",
+    "voucher_number": "PUR123",
+    "voucher_date": "12-02-2024",
+    "ledgers_related_vendor":
+    [
+        {
+            "ledger1": "bank",
+            "dr_cr": "Dr",
+            "debit_amount": "20",
+            "credit_amount": "20",
+            "against_refrence":
+            [
+                {
+                    "company": 200,
+                    "salary": 300
+                }
+            ],
+            "cost_center":
+            [
+                {
+                    "company": 200,
+                    "salary": 300
+                }
+            ]
+        }
+    ]
+}
+

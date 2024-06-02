@@ -46,6 +46,50 @@
     </ul>
     <div class="tab-content" id="costCenterEntirePage">
 
+        <!-- AGAINST REFRENCE MODAL (ARM) -->
+        <div class="modal fade" id="addRefrenceModal" tabindex="-1" aria-labelledby="addRefrenceModalLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="addRefrenceModalLabel">Add Against Refrence </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="closeRefrenceModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h3>Total Amount To Be Allocated</h3>
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-dark">
+                                <th style="text-align:center;">Id</th>
+                                <th style="text-align:center;">Voucher No.</th>
+                                <th style="text-align:center;">Date</th>
+                                <th style="text-align:center;">Pending Amt.</th>
+                                <th style="text-align:center;">Final Amt.</th>
+                                <th style="text-align:center;">Allocate Amt.</th>
+                            </thead>
+                            <tbody>
+                                {% verbatim %}
+                                <tr v-for="(item, index) in againstRefrences" :key="index">
+                                    <td>{{ item.voucher_id }}</td>
+                                    <td>{{ item.voucher_number }}</td>
+                                    <td>{{ item.voucher_date }}</td>
+                                    <td>{{ item.pending_amount }}</td>
+                                    <td>{{ item.final_Amount }}</td>
+                                    <td class="text-center">
+                                        <input class="mt-1" v-model="item.allocated_amount" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" placeholder="Enter Allocate Amt">
+                                    </td>
+                                </tr>
+                                {% endverbatim %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="closeRefrenceModal">Close</button>
+                        <button type="button" class="btn btn-primary" @click="openCostCenter">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div class="tab-pane fade show active" id="purchase-tab-pane" role="tabpanel" aria-labelledby="purchase-tab"
             tabindex="0">
             <div class="gap-4">
@@ -455,7 +499,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="purchaseVoucherCreateLabel">Add Purchase Voucher</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" @click="destroySelect2"></button>
                         </div>
                         <div class="modal-body">
                             <!-- Your form fields for adding cost center here -->
@@ -494,10 +538,9 @@
 
                                             <div class="col-lg-4 mb-3">
                                                 <div class="sty-input-wrapper w-100">
-                                                    <select class="w-100 sty-inp form-control selectLedger" id="faren">
+                                                    <select class="w-100 sty-inp form-control selectLedger">
                                                         <option value="">Select Ledger</option>
-                                                        <option v-for="ledger in ledgerList" :value="ledger.id">{{
-                                                            ledger.ledger_name }}</option>
+                                                        <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
                                                     </select>
                                                     <label class="sty-label">Vendor Name</label>
                                                 </div>
@@ -650,63 +693,65 @@
                 </div>
                 {% endverbatim %}
             </div>
+        </div>
 
-            <!-- CREATE MODAL FOR ADD COST CENTER -->
-            <div class="modal fade" id="purchaseCostCenterModal" tabindex="-1" data-bs-backdrop="static"
-                aria-labelledby="purchaseCostCenterModalLabel" aria-hidden="true">
-                {% verbatim %}
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <span class="modal-title" style="font-size: 21px;" id="purchaseCostCenterModalLabel">Total Amount:</span>
+        <!-- CREATE MODAL FOR ADD COST CENTER (CSM) -->
+        <div class="modal fade" id="CostCenterModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="CostCenterModalLabel" aria-hidden="true">
+         {% verbatim %}
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="modal-title" style="font-size: 21px;" id="CostCenterModalLabel">Add Cost Center</span>
+                        <span class="text-right"><input style="border: none; border-color: transparent; outline: none; font-size: 21px;" type="number" v-model="displayAmount" readonly></span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <span v-if="amountMatchedError" class="text-center">{{ amountMatchedError }}</span>
+                            <span style="font-size: 21px;" id="CostCenterModalLabel">Total Amount:</span>
                             <span class="text-right"><input style="border: none; border-color: transparent; outline: none; font-size: 21px;" type="number" v-model="displayAmount" readonly></span>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <span v-if="amountMatchedError" class="text-center">{{ amountMatchedError }}</span>
-                                <h5 class="text-center">Add Cost Center </h5>
 
-                                <div class="row mb-3" v-for="(item, index) in items" :key="item.id">
-                                    <div class="col-5">
-                                        <div class="sty-input-wrapper w-100">
-                                            <select ref="select2" :ref="'select2-' + item.id" v-select2>
-                                                <option value="">Select Cost Center</option>
-                                                <option v-for="item in costCenterData" :value="item.id">{{ item.name }}</option>
-                                            </select>
-                                        </div>
-                                        <span v-if="costCenterError && costCenterError.cost_center_name || costCenterNotProvided" class="error">{{ costCenterError && costCenterError.cost_center_name || costCenterNotProvided}}</span>
-                                        <span v-else></span>
+                            <div class="row mb-3" v-for="(item, index) in items" :key="item.id">
+                                <div class="col-5">
+                                    <div class="sty-input-wrapper w-100">
+                                        <!-- <select class="costCenterSelect2" v-model="items[index].id"> -->
+                                        <select class="w-100 sty-inp form-control" v-model="item.cost_center_name">
+                                            <option value="">Select Cost Center</option>
+                                            <option v-for="costCenter in costCenterData" :value="costCenter.id">{{ costCenter.name }}</option>
+                                        </select>
                                     </div>
+                                    <span v-if="costCenterError && costCenterError.cost_center_name || costCenterNotProvided" class="error">{{ costCenterError && costCenterError.cost_center_name || costCenterNotProvided}}</span>
+                                    <span v-else></span>
+                                </div>
 
-                                    <div class="col-5">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input type="number" class="sty-inp form-control" style="height: 36px;" v-model="item.cost_center_amount" @keyup.enter="addMoreOnEnterKey(item.id, true)" placeholder="Press Enter To Add More Input" id="faren2">
-                                        </div>
-                                        <span v-if="costCenterError && costCenterError.cost_center_amount || costCenterAmtNotProvided" class="error">{{ costCenterError && costCenterError.cost_center_amount || costCenterAmtNotProvided }}</span>
-                                        <span v-else></span>
+                                <div class="col-5">
+                                    <div class="sty-input-wrapper w-100">
+                                        <!-- <input type="number" class="sty-inp form-control" style="height: 36px;" v-model="item.cost_center_amount" @keyup.enter="addMoreOnEnterKey(item.id, true)" placeholder="Press Enter To Add More Input" id="faren2"> -->
+                                        <input type="number" class="sty-inp form-control" v-model="item.cost_center_amount" @keyup.enter="addMoreCostCenterOnEnterKey" placeholder="Press Enter To Add More Input">
                                     </div>
+                                    <span v-if="costCenterError && costCenterError.cost_center_amount || costCenterAmtNotProvided" class="error">{{ costCenterError && costCenterError.cost_center_amount || costCenterAmtNotProvided }}</span>
+                                    <span v-else></span>
+                                </div>
 
-                                    <div class="col-2" v-if="index !== 0">
-                                        <div class="sty-input-wrapper w-100 mt-2">
-                                            <span @click="removeItem(index)"><i class="fa-solid fa-trash-can"></i></span>
-                                        </div>
+                                <div class="col-2" v-if="index !== 0">
+                                    <div class="sty-input-wrapper w-100 mt-2">
+                                        <span @click="removeItem(index)"><i class="fa-solid fa-trash-can"></i></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" :disabled="showSave" @click="addRowOnSave">Save</button>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- <button type="button" class="btn btn-primary" :disabled="showSave" @click="addRowOnSave">Save</button> -->
+                        <button type="button" class="btn btn-primary" :disabled="showSave" @click="addRowOnSaveOnMainModal">Save</button>
                     </div>
                 </div>
-                {% endverbatim %}
             </div>
+         {% endverbatim %}
         </div>
 
         <div class="tab-pane fade" id="sale-tab-pane" role="tabpanel" aria-labelledby="sale-tab" tabindex="0">
             <div class="d-flex">
-                <button type="button" class="ms-auto add-mem-btn" data-bs-toggle="modal"
-                    data-bs-target="#salesVoucherCreation">Create Sales Voucher</button>
+                <button type="button" class="ms-auto add-mem-btn" @click="openVoucherModal('sale_voucher')">Create Sales Voucher</button>
             </div>
             {% verbatim %}
             <div>
@@ -748,147 +793,150 @@
             </div>
             {% endverbatim %}
 
-            <!-- CREATE MODAL FOR PURCHASE VOUCHER -->
-            <div class="modal fade" id="salesVoucherCreation" tabindex="-1" aria-labelledby="salesVoucherCreationLabel"
-                aria-hidden="true">
+            <!-- CREATE MODAL FOR SALES VOUCHER(SVM) -->
+            <div class="modal fade" id="salesVoucherCreation" tabindex="-1" aria-labelledby="salesVoucherCreationLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="heading">Sales Voucher Creation</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+                        {% verbatim %}
                         <div class="modal-body">
-                            <div class="form-group">
-                                <div class="container pt-4">
-                                    <form action="">
-                                        <div class="row">
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <select class="w-100 sty-inp form-control" name="" id="">
-                                                        <option value="">Voucher 1</option>
-                                                        <option value="">Voucher 2</option>
-                                                    </select>
-                                                    <label class="sty-label" for="">Voucher Type</label>
-                                                </div>
-                                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <select class="w-100 sty-inp form-control" v-model="formData2.voucher_type" @change="fetchVoucherNumber($event)">
+                                            <option value="">Select Voucher Type</option>
+                                            <option v-for="voucher in vouchersList" :value="voucher.id">{{ voucher.voucher_name }}</option>
+                                        </select>
+                                        <label class="sty-label" for="">Voucher Type</label>
+                                    </div>
+                                </div>
 
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <input class="sty-inp form-control" type="text" name="" id="">
-                                                    <label class="sty-label" for="">Voucher Number</label>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="text" v-model="formData2.voucher_number">
+                                        <label class="sty-label" for="">Voucher Number</label>
+                                    </div>
+                                </div>
 
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <input class="sty-inp form-control w-100" type="date" name="" id="">
-                                                    <label class="sty-label" for="">Booking Date</label>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="date" v-model="formData2.booking_date">
+                                        <label class="sty-label" for="">Booking Date</label>
+                                    </div>
+                                </div>
 
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <input class="sty-inp form-control w-100" type="text" name="" id="">
-                                                    <label class="sty-label" for="">Vendor Name</label>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <select class="w-100 sty-inp form-control selectLedgerOnSale">
+                                            <option value="">Select Ledger</option>
+                                            <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
+                                        </select>
+                                        <label class="sty-label">Vendor Name</label>
+                                    </div>
+                                </div>
 
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <input class="sty-inp form-control w-100" type="date" name="" id="">
-                                                    <label class="sty-label" for="">Invoice Date</label>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control w-100" type="date"
+                                            v-model="formData2.invoice_date">
+                                        <label class="sty-label">Invoice Date</label>
+                                    </div>
+                                </div>
 
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <input class="sty-inp form-control w-100" type="text" name="" id="">
-                                                    <label class="sty-label" for="">Vendor Invoice Number</label>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control w-100" type="text"
+                                            v-model="formData2.invoice_number">
+                                        <label class="sty-label" for="">Vendor Invoice Number</label>
+                                    </div>
+                                </div>
 
-                                            <hr class="mt-1 mb-3">
+                            </div>
+                            <hr class="mt-1 mb-3">
+                            <div>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th style="text-align:center;" width="5%">Select Ledger</th>
+                                            <th style="text-align:center;">Quantity</th>
+                                            <th style="text-align:center;" width="5%">Rate</th>
+                                            <th style="text-align:center;" width="5%">Amount</th>
+                                            <th style="text-align:center;" width="5%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, index) in purchases" :key="index">
+                                            <td style="text-align:center;" width="5%">
+                                                <select class="selectLedgerOnSale" style="width: 50%; border: none; border-color: transparent;">
+                                                    <option value="">Select Ledger</option>
+                                                    <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
+                                                </select>
+                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].ledger_name">{{  errors[index].ledger_name[0] }}</p>
+                                                <span v-else></span>
+                                            </td>
 
-                                            <div class="col-12" id="purchases">
-                                                <div v-for="(item, index) in purchases" :key="index">
-                                                    <div class="row" :id="'purchase' + (index + 1)">
-                                                        <div class="col-4 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="text"
-                                                                    name="" :id="'product' + (index + 1)">
-                                                                <label class="sty-label" for="">Ledger</label>
-                                                            </div>
-                                                        </div>
+                                            <td style="text-align:center;" width="5%">
+                                                <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Quantity" v-model="item.quantity" @input="calculateAmount(item)">
+                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].quantity">{{ errors[index].quantity[0] }}</p>
+                                                <span v-else></span>
+                                            </td>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="number"
-                                                                    name="" :id="'quantity' + (index + 1)">
-                                                                <label class="sty-label" for="">Quantity</label>
-                                                            </div>
-                                                        </div>
+                                            <td style="text-align:center;" width="5%">
+                                                <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Rate" v-model="item.rate" @input="calculateAmount(item)" @keyup.enter="openCostCenter2(index)" >
+                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].rate">{{ errors[index].rate[0] }}</p>
+                                                <span v-else></span>
+                                            </td>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="text"
-                                                                    name="" :id="'rate' + (index + 1)">
-                                                                <label class="sty-label" for="">Rate</label>
-                                                            </div>
-                                                        </div>
+                                            <td style="text-align:center;" width="5%">
+                                                <input type="text" style="width: 60%; border: none; border-color: transparent; outline: none;" placeholder="Amount" v-model="item.amount" @keyup.tab.prevent="openCostCenter2(index)" readonly>
+                                            </td>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="number"
-                                                                    name="" v-model="item.account"
-                                                                    :id="'amount' + (index + 1)">
-                                                                <label class="sty-label" for="">Amount</label>
-                                                            </div>
-                                                        </div>
+                                            <td style="text-align:center;" width="5%">
+                                                <span style="width: 60%; border: none; border-color: transparent;" @click="removeCostCenter(index)" v-if="index !== 0" >
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </span>
+                                                <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </span>
+                                                <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
+                                                <span v-else></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="text-align:center;" colspan="3">Total</th>
+                                            <td style="text-align: center;">
+                                                <input type="text" style="width: 50%; border: none; border-color: transparent; outline: none;" placeholder="Total Amount" v-model="totalAmountValue" readonly>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                                                        <div class="col-2 mb-3">
-                                                            <button class="btn btn-primary"
-                                                                @click="purchseCostCenter(item.account)"
-                                                                type="button">Add Cost Center</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex mb-4 mt-3" style="justify-content: space-between;">
-                                                    <button class="btn btn-primary" @click="addMore" type="button">Add
-                                                        More</button>
-                                                    <div class=" sty-input-wrapper me-3">
-                                                        <input class="sty-inp" type="number" name="" id="">
-                                                        <label for="" class="sty-label">Total Amount</label>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-6">
-                                                        <div class="sty-input-wrapper w-100">
-                                                            <input type="text" class="sty-inp w-100 form-control"
-                                                                name="" id="">
-                                                            <label for="" class="sty-label">Amount in Words</label>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-6">
-                                                        <div class="sty-input-wrapper w-100">
-                                                            <textarea class="sty-inp w-100 form-control" name="" id=""
-                                                                cols="30" rows="1"></textarea>
-                                                            <label for="" class="sty-label">Narration</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <hr class="mt-1 mb-3">
-                                                <button class="btn btn-primary mb-3" type="submit">Submit</button>
-                                            </div>
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="text" class="sty-inp form-control">
+                                            <label class="sty-label" for="">Amount in Words</label>
                                         </div>
-                                    </form>
+                                    </div>
+
+                                    <div class="col-6 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <textarea class="sty-inp form-control" cols="30" rows="1" v-model="formData2.narration"></textarea>
+                                            <label class="sty-label" for="">Narration</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="saveReceiptVoucherDetails('formData2')">Save</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
+                        {% endverbatim %}
                     </div>
                 </div>
             </div>
@@ -898,314 +946,139 @@
         <div class="tab-pane fade" id="journal-tab-pane" role="tabpanel" aria-labelledby="journal-tab" tabindex="0">
 
             <div class="container">
-                <button class="add-mem-btn" data-bs-toggle="modal" data-bs-target="#journalVoucherCreate">Create Journal
-                    Voucher</button>
+                <button class="add-mem-btn" @click="openVoucherModal('journal_voucher')">Create Journal Voucher</button>
             </div>
 
-            <!-- Create Journal Voucher Modal -->
-            <div class="modal fade" id="journalVoucherCreate" tabindex="-1" aria-labelledby="journalVoucherLabel"
-                aria-hidden="true">
+            <!-- Create Journal Voucher Modal(JVM) -->
+            <div class="modal fade" id="journalVoucherCreate" tabindex="-1" aria-labelledby="journalVoucherLabel" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="journalVoucherLabel">Journal Voucher Creation</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+                        {% verbatim %}
                         <div class="modal-body">
-                            <form action="">
-                                <div class="row">
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <select class="w-100 sty-inp form-control" name="" id="">
-                                                <option value="">Voucher 1</option>
-                                                <option value="">Voucher 2</option>
-                                            </select>
-                                            <label class="sty-label" for="">Voucher Type</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="text" name="" id="">
-                                            <label class="sty-label" for="">Voucher Number</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="date" name="" id="">
-                                            <label class="sty-label" for="">Voucher Date</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="date" name="" id="">
-                                            <label class="sty-label" for="">Booking Date</label>
-                                        </div>
+                            <div class="row">
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <select class="w-100 sty-inp form-control" v-model="formData.voucher_type" @change="fetchVoucherNumber($event)">
+                                            <option value="">Select Voucher Type</option>
+                                            <option v-for="voucher in vouchersList" :value="voucher.id">{{ voucher.voucher_name }}</option>
+                                        </select>
+                                        <label class="sty-label" for="">Voucher Type</label>
                                     </div>
                                 </div>
 
-                                <hr class="mt-1 mb-3">
-
-                                <div class="" id="journals">
-                                    <div class="row">
-                                        <div class="col-1 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <select name="" class="sty-inp form-control">
-                                                    <option value="dr">DR</option>
-                                                    <option value="cr">CR</option>
-                                                </select>
-                                                <label class="sty-label" for="">DR/CR</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-3 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="text" name="">
-                                                <label class="sty-label" for="">Ledger Name</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Debit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Credit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <button class="btn btn-primary">
-                                                Against Reference
-                                            </button>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <button class="btn btn-primary">
-                                                Cost Center
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-2 mb-3">
-                                            <button class="btn btn-primary" type="button">Add More</button>
-                                        </div>
-                                        <div class="col-2 mb-3">
-
-                                        </div>
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Debit Total Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Credit Total Amount</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-6 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="text" class="sty-inp form-control" name="" id="">
-                                                <label class="sty-label" for="">Amount in Words</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-6 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <textarea class="sty-inp form-control" name="" id="" cols="30"
-                                                    rows="1"></textarea>
-                                                <label class="sty-label" for="">Narration</label>
-                                            </div>
-                                        </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="text" v-model="formData.voucher_number">
+                                        <label class="sty-label" for="">Voucher Number</label>
                                     </div>
                                 </div>
 
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="date" v-model="formData.voucher_date" @input="setSameDateAsVoucherDate">
+                                        <label class="sty-label" for="">Voucher Date</label>
+                                    </div>
+                                </div>
 
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="date" v-model="formData.booking_date">
+                                        <label class="sty-label" for="">Booking Date</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="mt-1 mb-3">
+                            <div>
                                 <table class="table table-sm table-bordered">
                                     <thead class="table-dark">
                                         <th style="text-align:center;">Select Type</th>
-                                        <th style="text-align:center;">Select Mode</th>
                                         <th style="text-align:center;">Ledger Name</th>
                                         <th style="text-align:center;">Debit Amount</th>
                                         <th style="text-align:center;">Credit Amount</th>
                                         <th style="text-align:center;">Actions</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        <tr v-for="(item, index) in purchases" :key="index">
                                             <td style="text-align:center;">
-                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
-                                                    <option value="">-------</option>
-                                                    <option value="">DR</option>
-                                                    <option value="">CR</option>
+                                                <select class="mt-2" style="width: 75%; border: none; border-color: transparent; background-color: white; text-align:center;" v-model="item.payment_option">
+                                                    <option value="">Dr/Cr</option>
+                                                    <option value="dr">DR</option>
+                                                    <option value="cr">CR</option>
                                                 </select>
                                             </td>
-                                            <td style="text-align:center;">
-                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
-                                                    <option value="">-------</option>
-                                                    <option value="">Bank</option>
-                                                    <option value="">Cash</option>
+                                            <td class="text-center">
+                                                <select class="selectLedgerOnJournal" style="width: 50%; border: none; border-color: transparent;">
+                                                    <option value="">Select Ledger</option>
+                                                    <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
                                                 </select>
                                             </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
+                                            <td class="text-center">
+                                                <input class="mt-1" v-show="item.payment_option === 'dr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.debit_amount" placeholder="Enter Debit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
                                             </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
+                                            <td class="text-center">
+                                                <input class="mt-1" v-show="item.payment_option === 'cr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.credit_amount" placeholder="Enter Credit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
                                             </td>
                                             <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
-                                                <span class="ms-auto me-auto" >
-                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
+                                                <span class="ms-auto me-auto" @click="removeCostCenter(index)" v-if="index !== 0">
+                                                    <i class="fa-solid mt-2 fs-6 fa-trash-can" style="color: #fa0000"></i>
                                                 </span>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td style="text-align:center;">
-                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
-                                                    <option value="">-------</option>
-                                                    <option value="">DR</option>
-                                                    <option value="">CR</option>
-                                                </select>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
-                                                    <option value="">-------</option>
-                                                    <option value="">Bank</option>
-                                                    <option value="">Cash</option>
-                                                </select>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
-                                            </td>
-                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
-                                                <span class="ms-auto me-auto" >
-                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="text-align:center;">
-                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
-                                                    <option value="">-------</option>
-                                                    <option value="">DR</option>
-                                                    <option value="">CR</option>
-                                                </select>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
-                                                    <option value="">-------</option>
-                                                    <option value="">Bank</option>
-                                                    <option value="">Cash</option>
-                                                </select>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
-                                            </td>
-                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
-                                                <span class="ms-auto me-auto" >
-                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="text-align:center;">
-                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
-                                                    <option value="">-------</option>
-                                                    <option value="">DR</option>
-                                                    <option value="">CR</option>
-                                                </select>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
-                                                    <option value="">-------</option>
-                                                    <option value="">Bank</option>
-                                                    <option value="">Cash</option>
-                                                </select>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
-                                            </td>
-                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
-                                                <span class="ms-auto me-auto" >
-                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td style="text-align:center;">
-                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="">
-                                                    <option value="">-------</option>
-                                                    <option value="">DR</option>
-                                                    <option value="">CR</option>
-                                                </select>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <select class="ms-auto me-auto form-control" style="width: 75%; border-color: transparent;" name="" id="" placeholder="Select Mode">
-                                                    <option value="">-------</option>
-                                                    <option value="">Bank</option>
-                                                    <option value="">Cash</option>
-                                                </select>
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="text" style="width: 75%; border-color: transparent;" placeholder="Enter Ledger">
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Debit Amount">
-                                            </td>
-                                            <td style="text-align:center;">
-                                                <input class="ms-auto me-auto form-control" type="number" style="width: 75%; border-color: transparent;" placeholder="Enter Credit Amount">
-                                            </td>
-                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
-                                                <span class="ms-auto me-auto" >
-                                                    <i class="fa-solid mt-2 fs-5 fa-trash-can" style="color: #fa0000"></i>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th id="total" colspan="3">Total :</th>
-                                            <td style="text-align: center">Debit Total: <span class="ms-3">200</span></td>
-                                            <td style="text-align: center">Credit Total: <span class="ms-3">200</span></td>
+                                            <th id="total" colspan="2" class="text-center">Total :</th>
+                                            <td style="text-align: center" v-model="formData.debit_total">Debit Total: <span class="ms-3">{{ formData.debit_total }}</span></td>
+                                            <td style="text-align: center" v-model="formData.credit_total">Credit Total: <span class="ms-3">{{ formData.credit_total }}</span></td>
                                         </tr>
                                     </tbody>
                                 </table>
-                            </form>
+
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="text" class="sty-inp form-control">
+                                            <label class="sty-label" for="">Amount in Words</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <textarea class="sty-inp form-control" cols="30" rows="1" v-model="formData.narration"></textarea>
+                                            <label class="sty-label" for="">Narration</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="text" v-model="formData.cheque_number">
+                                            <label class="sty-label" for="">Cheque Number</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="date" v-model="formData.cheque_date">
+                                            <label class="sty-label" for="">Date</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="text" v-model="formData.bank_name">
+                                            <label class="sty-label" for="">Bank Name</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="saveReceiptVoucherDetails">Save</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
+                        {% endverbatim %}
                     </div>
                 </div>
             </div>
@@ -1598,187 +1471,139 @@
         <div class="tab-pane fade" id="payment-tab-pane" role="tabpanel" aria-labelledby="payment-tab" tabindex="0">
 
             <div class="container">
-                <button class="add-mem-btn" data-bs-toggle="modal" data-bs-target="#paymentVoucherCreate">Create Payment
-                    Voucher</button>
+                <button class="add-mem-btn" @click="openVoucherModal('payment_voucher')">Create Payment Voucher</button>
             </div>
 
-            <!-- Create Payment Voucher Modal -->
-            <div class="modal fade" id="paymentVoucherCreate" tabindex="-1" aria-labelledby="paymentVoucherLabel"
-                aria-hidden="true">
+            <!-- Create Payment Voucher Modal(PVM) -->
+            <div class="modal fade" id="paymentVoucherCreate" tabindex="-1" aria-labelledby="paymentVoucherLabel" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="paymentVoucherLabel">Payment Voucher Creation</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+                        {% verbatim %}
                         <div class="modal-body">
-                            <form action="">
-                                <div class="row">
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <select class="w-100 sty-inp form-control" name="" id="">
-                                                <option value="">Voucher 1</option>
-                                                <option value="">Voucher 2</option>
-                                            </select>
-                                            <label class="sty-label" for="">Voucher Type</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="text" name="" id="">
-                                            <label class="sty-label" for="">Voucher Number</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="date" name="" id="">
-                                            <label class="sty-label" for="">Voucher Date</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="date" name="" id="">
-                                            <label class="sty-label" for="">Booking Date</label>
-                                        </div>
+                            <div class="row">
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <select class="w-100 sty-inp form-control" v-model="formData.voucher_type" @change="fetchVoucherNumber($event)">
+                                            <option value="">Select Voucher Type</option>
+                                            <option v-for="voucher in vouchersList" :value="voucher.id">{{ voucher.voucher_name }}</option>
+                                        </select>
+                                        <label class="sty-label" for="">Voucher Type</label>
                                     </div>
                                 </div>
 
-                                <hr class="mt-1 mb-3">
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="text" v-model="formData.voucher_number">
+                                        <label class="sty-label" for="">Voucher Number</label>
+                                    </div>
+                                </div>
 
-                                <div class="" id="payments">
-                                    <!-- <div v-for="(item, index) in payments" :key="index"> -->
-                                    <div class="row">
-                                        <div class="col-1 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <select name="" class="sty-inp form-control">
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="date" v-model="formData.voucher_date" @input="setSameDateAsVoucherDate">
+                                        <label class="sty-label" for="">Voucher Date</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="date" v-model="formData.booking_date">
+                                        <label class="sty-label" for="">Booking Date</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="mt-1 mb-3">
+                            <div>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-dark">
+                                        <th style="text-align:center;">Select Type</th>
+                                        <th style="text-align:center;">Ledger Name</th>
+                                        <th style="text-align:center;">Debit Amount</th>
+                                        <th style="text-align:center;">Credit Amount</th>
+                                        <th style="text-align:center;">Actions</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, index) in purchases" :key="index">
+                                            <td style="text-align:center;">
+                                                <select class="mt-2" style="width: 75%; border: none; border-color: transparent; background-color: white; text-align:center;" v-model="item.payment_option">
+                                                    <option value="">Dr/Cr</option>
                                                     <option value="dr">DR</option>
                                                     <option value="cr">CR</option>
                                                 </select>
-                                                <label class="sty-label" for="">DR/CR</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <select class="sty-inp form-control" name="" id="">
-                                                    <option value="">Bank</option>
-                                                    <option value="">Cash</option>
+                                            </td>
+                                            <td class="text-center">
+                                                <select class="selectLedgerOnPurchase" style="width: 50%; border: none; border-color: transparent;">
+                                                    <option value="">Select Ledger</option>
+                                                    <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
                                                 </select>
-                                                <label for="" class="sty-label">Bank/Cash</label>
-                                            </div>
-                                        </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <input class="mt-1" v-show="item.payment_option === 'dr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.debit_amount" placeholder="Enter Debit Amount" @keyup.enter="openRefrenceModal($event, index)">
+                                            </td>
+                                            <td class="text-center">
+                                                <input class="mt-1" v-show="item.payment_option === 'cr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.credit_amount" placeholder="Enter Credit Amount" @keyup.enter="openRefrenceModal($event, index)">
+                                            </td>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" @click="removeCostCenter(index)" v-if="index !== 0">
+                                                    <i class="fa-solid mt-2 fs-6 fa-trash-can" style="color: #fa0000"></i>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th id="total" colspan="2" class="text-center">Total :</th>
+                                            <td style="text-align: center" v-model="formData.debit_total">Debit Total: <span class="ms-3">{{ formData.debit_total }}</span></td>
+                                            <td style="text-align: center" v-model="formData.credit_total">Credit Total: <span class="ms-3">{{ formData.credit_total }}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <!-- <input class="sty-inp form-control" type="text" name="" > -->
-                                                <select class="sty-inp form-control" name="" id="">
-                                                    <option value="">Ledger 1</option>
-                                                    <option value="">Ledger 2</option>
-                                                    <option value="">Ledger 3</option>
-                                                </select>
-                                                <label class="sty-label" for="">Ledger Name</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Debit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Credit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <button class="btn btn-primary">
-                                                Against Reference
-                                            </button>
-                                        </div>
-
-                                        <div class="col-lg-1 mb-3">
-                                            <button class="btn btn-primary">
-                                                Cost
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <!-- </div> -->
-                                    <div class="row">
-                                        <div class="col-2 mb-3">
-                                            <button class="btn btn-primary" type="button">Add More</button>
-                                        </div>
-                                        <div class="col-3 mb-3">
-                                            <!-- this is empty to manage the space accordingly -->
-                                        </div>
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Debit Total Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Credit Total Amount</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control" name="" id="">
+                                            <input type="text" class="sty-inp form-control">
                                             <label class="sty-label" for="">Amount in Words</label>
                                         </div>
                                     </div>
 
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <textarea class="sty-inp form-control" name="" id="" cols="30"
-                                                rows="1"></textarea>
+                                            <textarea class="sty-inp form-control" cols="30" rows="1" v-model="formData.narration"></textarea>
                                             <label class="sty-label" for="">Narration</label>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-4 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="text" name="" id="">
+                                            <input class="sty-inp form-control" type="text" v-model="formData.cheque_number">
                                             <label class="sty-label" for="">Cheque Number</label>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-4 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="date" name="" id="">
+                                            <input class="sty-inp form-control" type="date" v-model="formData.cheque_date">
                                             <label class="sty-label" for="">Date</label>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-4 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="text" name="" id="">
+                                            <input class="sty-inp form-control" type="text" v-model="formData.bank_name">
                                             <label class="sty-label" for="">Bank Name</label>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="saveReceiptVoucherDetails">Save</button>
                                 </div>
-                                <button class="btn btn-primary" type="submit">Submit</button>
-                            </form>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
+                        {% endverbatim %}
                     </div>
                 </div>
             </div>
@@ -1787,187 +1612,218 @@
         <div class="tab-pane fade" id="receipt-tab-pane" role="tabpanel" aria-labelledby="receipt-tab" tabindex="0">
 
             <div class="container">
-                <button class="add-mem-btn" data-bs-toggle="modal" data-bs-target="#receiptVoucherCreate">Create Receipt
-                    Voucher</button>
+                <button class="add-mem-btn" @click="openVoucherModal('receipt_voucher')">Create Receipt Voucher</button>
             </div>
 
-            <!-- Create Receipt Voucher Modal -->
-            <div class="modal fade" id="receiptVoucherCreate" tabindex="-1" aria-labelledby="receiptVoucherLabel"
-                aria-hidden="true">
+            <!-- Create Receipt Voucher Modal(RVM) -->
+            <div class="modal fade" id="receiptVoucherCreate" tabindex="-1" aria-labelledby="receiptVoucherLabel" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="receiptVoucherLabel">Receipt Voucher Creation</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+                        {% verbatim %}
                         <div class="modal-body">
-                            <form action="">
-                                <div class="row">
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <select class="w-100 sty-inp form-control" name="" id="">
-                                                <option value="">Voucher 1</option>
-                                                <option value="">Voucher 2</option>
-                                            </select>
-                                            <label class="sty-label" for="">Voucher Type</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="text" name="" id="">
-                                            <label class="sty-label" for="">Voucher Number</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="date" name="" id="">
-                                            <label class="sty-label" for="">Voucher Date</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="date" name="" id="">
-                                            <label class="sty-label" for="">Booking Date</label>
-                                        </div>
+                            <div class="row">
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <select class="w-100 sty-inp form-control" v-model="formData.voucher_type" @change="fetchVoucherNumber($event)">
+                                            <option value="">Select Voucher Type</option>
+                                            <option v-for="voucher in vouchersList" :value="voucher.id">{{ voucher.voucher_name }}</option>
+                                        </select>
+                                        <label class="sty-label" for="">Voucher Type</label>
                                     </div>
                                 </div>
 
-                                <hr class="mt-1 mb-3">
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="text" v-model="formData.voucher_number">
+                                        <label class="sty-label" for="">Voucher Number</label>
+                                    </div>
+                                </div>
 
-                                <div class="" id="receipts">
-                                    <!-- <div v-for="(item, index) in receipts" :key="index"> -->
-                                    <div class="row">
-                                        <div class="col-1 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <select name="" class="sty-inp form-control">
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="date" v-model="formData.voucher_date" @input="setSameDateAsVoucherDate">
+                                        <label class="sty-label" for="">Voucher Date</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="date" v-model="formData.booking_date">
+                                        <label class="sty-label" for="">Booking Date</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr class="mt-1 mb-3">
+                            <div>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-dark">
+                                        <th style="text-align:center;">Select Type</th>
+                                        <th style="text-align:center;">Ledger Name</th>
+                                        <th style="text-align:center;">Debit Amount</th>
+                                        <th style="text-align:center;">Credit Amount</th>
+                                        <th style="text-align:center;">Actions</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, index) in purchases" :key="index">
+                                            <td style="text-align:center;">
+                                                <select class="mt-2" style="width: 75%; border: none; border-color: transparent; background-color: white; text-align:center;" v-model="item.payment_option">
+                                                    <option value="">Dr/Cr</option>
                                                     <option value="dr">DR</option>
                                                     <option value="cr">CR</option>
                                                 </select>
-                                                <label class="sty-label" for="">DR/CR</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <select class="sty-inp form-control" name="" id="">
-                                                    <option value="">Bank</option>
-                                                    <option value="">Cash</option>
+                                            </td>
+                                            <td class="text-center">
+                                                <select class="selectLedgerOnReceipt" style="width: 50%; border: none; border-color: transparent;">
+                                                    <option value="">Select Ledger</option>
+                                                    <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
                                                 </select>
-                                                <label for="" class="sty-label">Bank/Cash</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <!-- <input class="sty-inp form-control" type="text" name="" > -->
-                                                <select class="sty-inp form-control" name="" id="">
-                                                    <option value="">Ledger 1</option>
-                                                    <option value="">Ledger 2</option>
-                                                    <option value="">Ledger 3</option>
-                                                </select>
-                                                <label class="sty-label" for="">Ledger Name</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Debit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input type="number" class="sty-inp form-control" name="">
-                                                <label class="sty-label" for="">Credit Amount</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-2 mb-3">
-                                            <button class="btn btn-primary">
-                                                Against Reference
-                                            </button>
-                                        </div>
-
-                                        <div class="col-lg-1 mb-3">
-                                            <button class="btn btn-primary">
-                                                Cost
-                                            </button>
+                                            </td>
+                                            <td class="text-center">
+                                                <input class="mt-1" v-show="item.payment_option === 'dr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.debit_amount" placeholder="Enter Debit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
+                                            </td>
+                                            <td class="text-center">
+                                                <input class="mt-1" v-show="item.payment_option === 'cr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.credit_amount" placeholder="Enter Credit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
+                                            </td>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" @click="removeCostCenter(index)" v-if="index !== 0">
+                                                    <i class="fa-solid mt-2 fs-6 fa-trash-can" style="color: #fa0000"></i>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th id="total" colspan="2" class="text-center">Total :</th>
+                                            <td style="text-align: center" v-model="formData.debit_total">Debit Total: <span class="ms-3">{{ formData.debit_total }}</span></td>
+                                            <td style="text-align: center" v-model="formData.credit_total">Credit Total: <span class="ms-3">{{ formData.credit_total }}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <!-- <div class="row">
+                                    <div class="col-1 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <select name="" class="sty-inp form-control">
+                                                <option value="dr">DR</option>
+                                                <option value="cr">CR</option>
+                                            </select>
+                                            <label class="sty-label" for="">DR/CR</label>
                                         </div>
                                     </div>
-                                    <!-- </div> -->
-                                    <div class="row">
-                                        <div class="col-2 mb-3">
-                                            <button class="btn btn-primary" type="button">Add More</button>
-                                        </div>
-                                        <div class="col-3 mb-3">
-                                            <!-- this is empty to manage the space accordingly -->
-                                        </div>
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Debit Total Amount</label>
-                                            </div>
-                                        </div>
 
-                                        <div class="col-lg-2 mb-3">
-                                            <div class="sty-input-wrapper w-100">
-                                                <input class="sty-inp form-control" type="number" name="" id="">
-                                                <label class="sty-label" for="">Credit Total Amount</label>
-                                            </div>
+                                    <div class="col-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <select class="sty-inp form-control" name="" id="">
+                                                <option value="">Bank</option>
+                                                <option value="">Cash</option>
+                                            </select>
+                                            <label for="" class="sty-label">Bank/Cash</label>
                                         </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <select class="sty-inp form-control" name="" id="">
+                                                <option value="">Ledger 1</option>
+                                                <option value="">Ledger 2</option>
+                                                <option value="">Ledger 3</option>
+                                            </select>
+                                            <label class="sty-label" for="">Ledger Name</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="number" class="sty-inp form-control" name="">
+                                            <label class="sty-label" for="">Debit Amount</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="number" class="sty-inp form-control" name="">
+                                            <label class="sty-label" for="">Credit Amount</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <button class="btn btn-primary">
+                                            Against Reference
+                                        </button>
+                                    </div>
+
+                                    <div class="col-lg-1 mb-3">
+                                        <button class="btn btn-primary">
+                                            Cost
+                                        </button>
                                     </div>
                                 </div>
+
+                                <div class="row">
+                                    <div class="col-2 mb-3">
+                                        <button class="btn btn-primary" type="button">Add More</button>
+                                    </div>
+                                    <div class="col-3 mb-3">
+                                    </div>
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="number" @keyup.enter="openCostCenterModal(index)">
+                                            <label class="sty-label" for="">Debit Total Amount</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-2 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="number">
+                                            <label class="sty-label" for="">Credit Total Amount</label>
+                                        </div>
+                                    </div>
+                                </div> -->
+
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control" name="" id="">
+                                            <input type="text" class="sty-inp form-control">
                                             <label class="sty-label" for="">Amount in Words</label>
                                         </div>
                                     </div>
 
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <textarea class="sty-inp form-control" name="" id="" cols="30"
-                                                rows="1"></textarea>
+                                            <textarea class="sty-inp form-control" cols="30" rows="1" v-model="formData.narration"></textarea>
                                             <label class="sty-label" for="">Narration</label>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-4 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="text" name="" id="">
+                                            <input class="sty-inp form-control" type="text" v-model="formData.cheque_number">
                                             <label class="sty-label" for="">Cheque Number</label>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-4 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="date" name="" id="">
+                                            <input class="sty-inp form-control" type="date" v-model="formData.cheque_date">
                                             <label class="sty-label" for="">Date</label>
                                         </div>
                                     </div>
 
                                     <div class="col-lg-4 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input class="sty-inp form-control" type="text" name="" id="">
+                                            <input class="sty-inp form-control" type="text" v-model="formData.bank_name">
                                             <label class="sty-label" for="">Bank Name</label>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="saveReceiptVoucherDetails">Save</button>
                                 </div>
-                                <button class="btn btn-primary" type="submit">Submit</button>
-                            </form>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
+                        {% endverbatim %}
                     </div>
                 </div>
             </div>
@@ -2053,7 +1909,7 @@ $(document).ready(function () {
 Vue.directive('select2', {
     inserted(el, binding, vnode) {
         $(el).select2({
-            dropdownParent: $('#purchaseCostCenterModal'),
+            dropdownParent: $('#CostCenterModal'),
             width: '100%'
         });
     },
@@ -2069,12 +1925,7 @@ Vue.directive('select2', {
 new Vue({
     el: '#costCenterEntirePage',
     data: {
-        purchases: [{
-            ledger_name: '',
-            quantity: '',
-            rate: '',
-            amount: '',
-        }],
+        purchases: [{}],
         costCenterData: [],
         vouchersList: [],
         ledgerList: [],
@@ -2089,8 +1940,8 @@ new Vue({
             voucher_type: '',
             voucher_number: '',
             booking_date: '',
-            voucher_name: '',
         },
+        formData2: {},
         costCenterError: {},
         displayAmount: null,
         totalAmountValue: 0,
@@ -2111,6 +1962,31 @@ new Vue({
         totalAmount: 0,
         amountMatchedError: '',
         addRowOnSaveVar: false,
+        completeJSON: {
+            related_ledgers: [],
+        },
+        indexNumber: 0,
+        voucher_type_to_open: '',
+        modalNameToOpen: '',
+        className: '',
+        againstRefrences: [
+            {
+                'voucher_id': 1,
+                'voucher_number': 'VOUCHER-123-2024',
+                'voucher_date': '20-01-2024',
+                'pending_amount': 200,
+                'final_Amount': 500,
+                'allocated_amount': null
+            },
+            {
+                'voucher_id': 2,
+                'voucher_number': 'VOUCHER-456-2024',
+                'voucher_date': '21-02-2024',
+                'pending_amount': 300,
+                'final_Amount': 500,
+                'allocated_amount': null
+            },
+        ]
     },
     methods: {
         // EXTRA
@@ -2195,9 +2071,9 @@ new Vue({
                 });
         },
         // EXTRA
-        initializeSelect2($element) {
+        initializeSelect2($element, dropdown) {
             $element.select2({
-                dropdownParent: $('#purchaseVoucherCreate'),
+                dropdownParent: $(`#${dropdown}`),
                 width: '100%',
             }).on('select2:open', () => {
                 $(".select2-results:not(:has(button.create-button))").append('<button class="create-button btn">+ Create New ledger</button>');
@@ -2247,7 +2123,7 @@ new Vue({
         },
         initializeSelect2Twice($element) {
             $element.select2({
-                dropdownParent: $('#purchaseCostCenterModal'),
+                dropdownParent: $('#CostCenterModal'),
                 width: '100%',
             })
         },
@@ -2255,7 +2131,7 @@ new Vue({
             //this.addRowOnSaveVar = false;
             this.addMoreOnEnterKey('', false);
             if(this.addRowOnSaveVar){
-                $('#purchaseCostCenterModal').modal('hide');
+                $('#CostCenterModal').modal('hide');
                 $('#purchaseVoucherCreate').modal('show');
 
                 this.items.forEach(item => {
@@ -2275,7 +2151,7 @@ new Vue({
                     amount: ''
                 });
                 this.$nextTick(() => {
-                    this.initializeSelect2($('.selectLedger'));
+                    this.initializeSelect2($('.selectLedger'), 'purchaseVoucherCreate');
                 });
             }
         },
@@ -2330,21 +2206,171 @@ new Vue({
             }
         },
         removeItem(index, id) {
-            const selectElement = this.$refs['select2-' + id];
-            if (selectElement) {
-                $(selectElement).select2('destroy');
-            }
+            // TRY DESTROYING THE SELECT2 BEFORE REMOVING THE ROW
             this.items.splice(index, 1);
-            //this.items.splice(index, 1);
+        },
+        setSameDateAsVoucherDate(){
+            if(!this.formData.booking_date){
+                this.formData.booking_date = this.formData.voucher_date;
+            }
+        },
+        openRefrenceModal(event, index){
+            this.indexNumber = index;
+            $(`#${this.modalNameToOpen}`).modal('hide');
+            $('#addRefrenceModal').modal('show');
+
+            this.purchases[index]['ledger_name'] = document.querySelectorAll(`.${this.className}`)[index].value;
+            related_ledgers = this.purchases[index];
+            related_ledgers['against_refrence'] = []
+            related_ledgers['cost_center'] = []
+            this.completeJSON['related_ledgers'].push(related_ledgers);
+        },
+        closeRefrenceModal(){
+            $('#receiptVoucherCreate').modal('show');
+            $('#addRefrenceModal').modal('hide');
+        },
+        openCostCenter2(index){
+            alert(this.className)
+            // USEFULL FOR SALES, PURCHASE, ETC.
+            $(`#${this.modalNameToOpen}`).modal('hide');
+            $('#CostCenterModal').modal('show');
+
+            this.purchases[index]['ledger_name'] = document.querySelectorAll(`.${this.className}`)[index].value;
+            related_ledgers = this.purchases[index];
+            related_ledgers['cost_center'] = []
+            this.completeJSON['related_ledgers'].push(related_ledgers);
+
+            this.items = [{
+                cost_center_name: '',
+                cost_center_amount: null
+            }]
+            axios.get(`http://127.0.0.1:8000/api/cost_center/`)
+                .then(response => {
+                    this.costCenterData = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        openCostCenter(){
+            // SAVE AGAINST REFRENCE IN BEFORE OPENING COST CENTER.
+            this.againstRefrences.forEach(item => {
+                let against_refrences = {
+                    'voucher_id': item.voucher_id,
+                    'voucher_number': item.voucher_number,
+                    'voucher_date': item.voucher_date,
+                    'pending_amount': item.pending_amount,
+                    'final_Amount': item.final_Amount,
+                    'allocated_amount': parseFloat(item.allocated_amount)
+                }
+                this.completeJSON.related_ledgers[this.indexNumber]['against_refrence'].push(against_refrences);
+            });
+
+            $('#addRefrenceModal').modal('hide');
+            $('#CostCenterModal').modal('show');
+
+            // HARDCODING THIS, WHEN VOUCHER NUMBER ACTUAL DATA WILL COME UNCOMMENT BELOW CODE AND REMOVE UNCOMMENTED CODE
+            // this.againstRefrences = {};
+
+            this.$nextTick(() => {
+                this.initializeSelect2ForCostCenter($('.costCenterSelect2'), 'CostCenterModal');
+            });
+
+            this.items = [{
+                cost_center_name: '',
+                cost_center_amount: null
+            }]
+            axios.get(`http://127.0.0.1:8000/api/cost_center/`)
+                .then(response => {
+                    this.costCenterData = response.data;
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        },
+        totalAmountOnTable() {
+            let debit_amount = 0;
+            let credit_amount = 0;
+            this.purchases.forEach(item => {
+                if (!isNaN(parseFloat(item.debit_amount))) {
+                    debit_amount += parseFloat(item.debit_amount);
+                }
+                // Check if item.credit_amount is a valid number
+                if (!isNaN(parseFloat(item.credit_amount))) {
+                    credit_amount += parseFloat(item.credit_amount);
+                }
+            });
+            this.formData.debit_total = debit_amount;
+            this.formData.credit_total = credit_amount;
+        },
+        addRowOnSaveOnMainModal(){
+            // ADD COST CENTER BRFORE ADDING ANOTHER ROW
+            this.items.forEach(item => {
+                let cost_center = {
+                    'voucher_id': item.cost_center_name,
+                    'voucher_number': item.cost_center_amount,
+                }
+                this.completeJSON.related_ledgers[this.indexNumber]['cost_center'].push(cost_center);
+            });
+
+
+            $('.costCenterSelect2').select2('destroy');
+            this.items = [{}];
+
+            $('#CostCenterModal').modal('hide');
+            $(`#${this.modalNameToOpen}`).modal('show');
+            this.totalAmountOnTable()
+            this.purchases.push({
+                payment_option: '',
+            });
+            this.$nextTick(() => {
+                this.initializeSelect2($(`.${this.className}`), this.modalNameToOpen);
+            });
+        },
+        saveReceiptVoucherDetails(form_data){
+            this.completeJSON['voucher_type_actual'] = this.voucher_type_to_open;
+            if(form_data === "formData2"){
+                for (const key in this.formData) {
+                    if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
+                        if (this.formData[key] !== null) {
+                            this.completeJSON[key] = this.formData[key];
+                        }
+                    }
+                }
+            }
+            console.log("Final data===========", this.completeJSON)
+
+            // RESET EVERYTHING, FOR NEW VOUCHER
+            // this.formData = {};
+            // this.againstRefrences = [],
+            // this.items = [{}];
+            // this.purchases = [{}];
+            // this.completeJSON = {};
+        },
+        addMoreCostCenterOnEnterKey(){
+            this.items.push({
+                id: '',
+                cost_center_name: '',
+                cost_center_amount: null,
+            });
+            this.$nextTick(() => {
+                this.initializeSelect2ForCostCenter($('.costCenterSelect2'), 'CostCenterModal');
+            });
+        },
+        initializeSelect2ForCostCenter($element, dropdown) {
+            $element.select2({
+                dropdownParent: $(`#${dropdown}`),
+                width: '100%',
+            })
         },
         openCostCenterModal(index) {
             this.errors = {};
             this.displayAmount = this.purchases[index]['amount'];
-            this.purchases[index]['ledger_name'] = document.getElementsByClassName('selectLedger')[index + 1].value;
+            this.purchases[index]['ledger_name'] = document.getElementsByClassName(this.className)[index + 1].value;
 
             axios.post(`http://127.0.0.1:8000/api/purchase_voucher_creation/`, this.purchases[index])
                 .then(response => {
-                    $('#purchaseCostCenterModal').modal('show');
+                    $('#CostCenterModal').modal('show');
                     $('#purchaseVoucherCreate').modal('hide');
                     axios.get(`http://127.0.0.1:8000/api/cost_center/`)
                         .then(response => {
@@ -2356,7 +2382,7 @@ new Vue({
 
                     // INITIALIZING SELECT2 FOR COST CENTER
                     $('.groupSelectionUpdate').select2({
-                        dropdownParent: $('#purchaseCostCenterModal'),
+                        dropdownParent: $('#CostCenterModal'),
                         width: '100%',
                     });
                 })
@@ -2364,17 +2390,69 @@ new Vue({
                     this.$set(this.errors, index, error.response.data);
                 });
         },
+        destroySelect2(){
+            $('#purchaseVoucherCreate').modal('hide');
+            $('.selectLedger').select2('destroy');
+        },
         openVoucherModal(modalName) {
-            $('#purchaseVoucherCreate').modal('show');
+            //this.completeJSON = {};
+            this.purchases = [{
+                'payment_option': ''
+            }]
+            if(modalName === 'purchase_voucher'){
+                this.voucher_type_to_open = modalName;
+                this.modalNameToOpen = "purchaseVoucherCreate";
+                this.className = 'selectLedger';
+                $(`#${this.modalNameToOpen}`).modal('show');
+            }
+            if(modalName === 'sale_voucher'){
+                this.voucher_type_to_open = modalName;
+                this.modalNameToOpen = "salesVoucherCreation";
+                this.className = 'selectLedgerOnSale';
+                $(`#${this.modalNameToOpen}`).modal('show');
+            }
+            if(modalName === 'general_voucher'){
+                this.voucher_type_to_open = modalName;
+                this.modalNameToOpen = "journalVoucherCreate";
+                this.className = 'selectLedgerOnJournal';
+                $(`#${this.modalNameToOpen}`).modal('show');
+            }
+            if(modalName === 'expenses_voucher'){
+                this.voucher_type_to_open = modalName;
+                this.modalNameToOpen = "journalVoucherCreate";
+                this.className = 'selectLedgerOnJournal';
+                $(`#${this.modalNameToOpen}`).modal('show');
+            }
+            if(modalName === 'income_voucher'){
+                this.voucher_type_to_open = modalName;
+                this.modalNameToOpen = "journalVoucherCreate";
+                this.className = 'selectLedgerOnJournal';
+                $(`#${this.modalNameToOpen}`).modal('show');
+            }
+            if(modalName === 'payment_voucher'){
+                this.voucher_type_to_open = modalName;
+                this.modalNameToOpen = "paymentVoucherCreate";
+                this.className = 'selectLedgerOnPurchase';
+                $(`#${this.modalNameToOpen}`).modal('show');
+            }
+            if(modalName === 'receipt_voucher'){
+                this.voucher_type_to_open = modalName;
+                this.modalNameToOpen = "receiptVoucherCreate";
+                this.className = 'selectLedgerOnReceipt';
+                $(`#${this.modalNameToOpen}`).modal('show');
+            }
+
+
 
             this.$nextTick(() => {
-                this.initializeSelect2($('.selectLedger'));
+                this.initializeSelect2($(`.${this.className}`), this.modalNameToOpen);
             });
 
             // Fetch voucher data
             axios.get(`http://127.0.0.1:8000/api/voucher_type/?voucher_type=${modalName}`)
                 .then(response => {
                     this.vouchersList = response.data;
+                    console.log("voucher is:==>", this.vouchersList)
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -2544,6 +2622,11 @@ new Vue({
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
+
+
+        //$('#receiptVoucherCreate').on('hidden.bs.modal', () => {
+
+        //});
     }
 });
 
