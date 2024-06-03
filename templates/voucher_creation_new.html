@@ -645,11 +645,11 @@
 
                                                                 <td style="text-align:center;" width="5%">
                                                                     <span style="width: 60%; border: none; border-color: transparent;" @click="removeCostCenter(index)" v-if="index !== 0" >
-                                                                        <i class="fa-solid fa-trash-can"></i>
+                                                                        <i class="fa-solid fa-trash-can text-danger"></i>
                                                                     </span>
-                                                                    <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
+                                                                    <!-- <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
                                                                         <i class="fa-solid fa-pen"></i>
-                                                                    </span>
+                                                                    </span> -->
                                                                     <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
                                                                     <span v-else></span>
                                                                 </td>
@@ -734,7 +734,7 @@
 
                                 <div class="col-2" v-if="index !== 0">
                                     <div class="sty-input-wrapper w-100 mt-2">
-                                        <span @click="removeItem(index)"><i class="fa-solid fa-trash-can"></i></span>
+                                        <span @click="removeItem(index)"><i class="fa-solid fa-trash-can text-danger"></i></span>
                                     </div>
                                 </div>
                             </div>
@@ -896,11 +896,11 @@
 
                                             <td style="text-align:center;" width="5%">
                                                 <span style="width: 60%; border: none; border-color: transparent;" @click="removeCostCenter(index)" v-if="index !== 0" >
-                                                    <i class="fa-solid fa-trash-can"></i>
+                                                    <i class="fa-solid fa-trash-can text-danger"></i>
                                                 </span>
-                                                <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
+                                                <!-- <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
                                                     <i class="fa-solid fa-pen"></i>
-                                                </span>
+                                                </span> -->
                                                 <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
                                                 <span v-else></span>
                                             </td>
@@ -1128,7 +1128,7 @@
             </div>
             {% endverbatim %}
 
-            <!-- CREATE MODAL FOR PURCHASE VOUCHER(EVM) -->
+            <!-- CREATE MODAL FOR EXPENSE VOUCHER(EVM) -->
             <div class="modal fade" id="expenseVoucherCreate" tabindex="-1" aria-labelledby="expenseVoucherCreateLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-xl">
@@ -1232,11 +1232,11 @@
 
                                             <td style="text-align:center;" width="5%">
                                                 <span style="width: 60%; border: none; border-color: transparent;" @click="removeCostCenter(index)" v-if="index !== 0" >
-                                                    <i class="fa-solid fa-trash-can"></i>
+                                                    <i class="fa-solid fa-trash-can text-danger"></i>
                                                 </span>
-                                                <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
+                                                <!-- <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
                                                     <i class="fa-solid fa-pen"></i>
-                                                </span>
+                                                </span> -->
                                                 <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
                                                 <span v-else></span>
                                             </td>
@@ -1323,13 +1323,13 @@
             </div>
             {% endverbatim %}
 
-            <!-- CREATE MODAL FOR PURCHASE VOUCHER -->
+            <!-- CREATE MODAL FOR INCOME VOUCHER(INMF) -->
             <div class="modal fade" id="incomeVoucherCreate" tabindex="-1" aria-labelledby="incomeVoucherCreateLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="heading">Expense Voucher Creation</h5>
+                            <h5 class="modal-title" id="heading">Income Voucher Creation</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         {% verbatim %}
@@ -1427,11 +1427,11 @@
 
                                             <td style="text-align:center;" width="5%">
                                                 <span style="width: 60%; border: none; border-color: transparent;" @click="removeCostCenter(index)" v-if="index !== 0" >
-                                                    <i class="fa-solid fa-trash-can"></i>
+                                                    <i class="fa-solid fa-trash-can text-danger"></i>
                                                 </span>
-                                                <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
+                                                <!-- <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
                                                     <i class="fa-solid fa-pen"></i>
-                                                </span>
+                                                </span> -->
                                                 <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
                                                 <span v-else></span>
                                             </td>
