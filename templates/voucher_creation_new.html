@@ -917,7 +917,7 @@
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control">
+                                            <input type="text" class="sty-inp form-control" style="text-transform: capitalize;" v-model="formData2.amount_in_words" readonly>
                                             <label class="sty-label" for="">Amount in Words</label>
                                         </div>
                                     </div>
@@ -1039,7 +1039,7 @@
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control">
+                                            <input type="text" class="sty-inp form-control" v-model="formData.amount_in_words" style="text-transform: capitalize;">
                                             <label class="sty-label" for="">Amount in Words</label>
                                         </div>
                                     </div>
@@ -1953,7 +1953,7 @@ new Vue({
             totalAmountValue: null,
         },
         costCenterError: {
-            
+
         },
         displayAmount: null,
         totalAmountValue: 0,
@@ -2250,13 +2250,15 @@ new Vue({
                 }
             });
             this.totalAmountValue = total_amount;
+            this.formData2.amount_in_words = window.numberToWords.toWords(this.totalAmountValue);
         },
         openCostCenter2(index){
+            this.indexNumber = index;
             // USEFULL FOR SALES, PURCHASE, ETC.
             $(`#${this.modalNameToOpen}`).modal('hide');
             $('#CostCenterModal').modal('show');
 
-            this.purchases[index]['ledger_name'] = document.querySelectorAll(`.${this.className}`)[index].value;
+            this.purchases[index]['ledger_name'] = document.querySelectorAll(`.${this.className}`)[index + 1].value;
             related_ledgers = this.purchases[index];
             related_ledgers['cost_center'] = []
             this.completeJSON['related_ledgers'].push(related_ledgers);
@@ -2323,6 +2325,9 @@ new Vue({
             });
             this.formData.debit_total = debit_amount;
             this.formData.credit_total = credit_amount;
+            // this.totalAmountValue = total_amount;
+            let sum = debit_amount + credit_amount;
+            this.formData.amount_in_words = window.numberToWords.toWords(sum);
         },
         addRowOnSaveOnMainModal(){
             // ADD COST CENTER BRFORE ADDING ANOTHER ROW
@@ -2334,6 +2339,7 @@ new Vue({
                 this.completeJSON.related_ledgers[this.indexNumber]['cost_center'].push(cost_center);
             });
 
+            console.log("final==========", this.completeJSON.related_ledgers[this.indexNumber]['cost_center'])
 
             $('.costCenterSelect2').select2('destroy');
             this.items = [{}];
@@ -2362,6 +2368,7 @@ new Vue({
         },
         saveVoucherDetailsHavingFormData2(){
             this.completeJSON['voucher_type_actual'] = this.voucher_type_to_open;
+            this.completeJSON['ledger_name'] = document.getElementsByClassName(this.className)[0].value;
             for (const key in this.formData2) {
                 if (Object.prototype.hasOwnProperty.call(this.formData2, key)) {
                     if (this.formData2[key] !== null) {
