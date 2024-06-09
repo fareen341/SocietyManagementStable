@@ -54,7 +54,7 @@ router.register('voucher_type', apiviews.VoucherTypeView, basename='voucher_type
 router.register('voucher_indexing', apiviews.VoucherIndexingView, basename='voucher_indexing')
 router.register('unit_test_api', apiviews.UnitTestView, basename='unit_test_api')
 router.register('purchase_voucher_creation', apiviews.PurchaseVoucherView, basename='purchase_voucher_creation')
-
+router.register('shares_on_ledger_creation', apiviews.SharesOnLedgerView, basename='shares_on_ledger_creation')
 
 
 # URLS

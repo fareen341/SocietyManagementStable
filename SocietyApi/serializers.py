@@ -662,3 +662,9 @@ class PurchaseVoucherSerializers(serializers.ModelSerializer):
     class Meta:
         model = PurchaseVoucherModel
         fields = '__all__'
+
+
+class SharesOnLedgerSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = SharesOnLedgerModel
+        fields = '__all__'

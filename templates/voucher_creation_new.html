@@ -89,13 +89,407 @@
             </div>
         </div>
 
+        <!-- Create New Ledger Modal -->
+        <div class="modal fade" id="createNewLedger" tabindex="-1" aria-labelledby="createNewLedgerLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="createNewLedgerLabel">Ledger Creation Form</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="createNewLedgerBtn"></button>
+                </div>
+                <div class="modal-body">
+                    {% verbatim %}
+                    <form @submit.prevent="submitLedger(formData.id)" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-lg-4 pe-3 mb-3" style="border-right: 1px solid grey;">
+                                <div class="sty-input-wrapper w-100 mb-2">
+                                    <input type="text" class="sty-inp form-control w-100"
+                                        v-model="formData.ledger_name"
+                                        :class="{ 'error-message': errors.ledger_name }">
+                                    <label class="sty-label">Ledger Name</label>
+                                    <span v-if="errors.ledger_name" class="error">{{ errors.ledger_name[0]
+                                        }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100 mb-2">
+                                    <input type="text" class="sty-inp form-control w-100"
+                                        v-model="formData.alis" :class="{ 'error-message': errors.alis }">
+                                    <label class="sty-label">Alias</label>
+                                    <span v-if="errors.alis" class="error">{{ errors.alis[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100 mb-2">
+                                    <select class="w-100 sty-inp" style="background-color: white;"
+                                        id="ledgerSelection">
+                                        <option value="">Select Sub Group</option>
+                                        <option v-for="item in subGroups" :value="item">{{ item }}</option>
+                                    </select>
+                                    <label class="sty-label">Group Name</label>
+                                    <span v-if="groupError && Object.keys(groupError).length > 0" class="error">{{ groupError }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100 mb-2">
+                                    <input type="text" class="sty-inp form-control w-100"
+                                        v-model="formData.pan_number"
+                                        :class="{ 'error-message': errors.pan_number }">
+                                    <label class="sty-label">PAN Number</label>
+                                    <span v-if="errors.pan_number" class="error">{{ errors.pan_number[0]
+                                        }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3 pe-3" style="border-right: 1px solid grey;">
+                                <div class="sty-input-wrapper w-100 mb-2">
+                                    <select class="form-control sty-inp w-100" v-model="formData.nature"
+                                        :class="{ 'error-message': errors.nature }">
+                                        <option value="" selected>Select Nature</option>
+                                        <option value="fixed_nature">Fixed</option>
+                                        <option value="variable_nature">Variable</option>
+                                    </select>
+                                    <label class="sty-label">Nature Type</label>
+                                    <span v-if="errors.nature" class="error">{{ errors.nature[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100 mb-2"
+                                    v-show="formData.nature === 'variable_nature'">
+                                    <select class="form-control sty-inp w-100" v-model="formData.based_on"
+                                        :class="{ 'error-message': errors.based_on }">
+                                        <option value="" selected>Select Type</option>
+                                        <option value="area">Area</option>
+                                        <option value="fixed">Fixed</option>
+                                    </select>
+                                    <label class="sty-label">Based On</label>
+                                    <span v-if="errors.based_on" class="error">{{ errors.based_on[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div v-show="formData.nature === 'variable_nature' && formData.based_on === 'area'"
+                                    class="sty-input-wrapper w-100" :class="{ 'error-message': errors.area }">
+                                    <input type="number" class="form-control sty-inp w-100"
+                                        v-model="formData.area">
+                                    <label class="sty-label">Area</label>
+                                    <span v-if="errors.area" class="error">{{ errors.area[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div v-show="formData.nature === 'variable_nature' && formData.based_on === 'fixed'"
+                                    class="sty-input-wrapper w-100" :class="{ 'error-message': errors.fixed }">
+                                    <input type="number" class="form-control sty-inp w-100"
+                                        v-model="formData.fixed">
+                                    <label class="sty-label">Fixed</label>
+                                    <span v-if="errors.fixed" class="error">{{ errors.fixed[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100 mb-2">
+                                    <input type="text" class="sty-inp form-control w-100"
+                                        v-model="formData.gst_number"
+                                        :class="{ 'error-message': errors.gst_number }">
+                                    <label class="sty-label">GST Number</label>
+                                    <span v-if="errors.gst_number" class="error">{{ errors.gst_number[0]
+                                        }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100 mb-2">
+                                    <input type="text" class="sty-inp form-control w-100"
+                                        v-model="formData.contact_person_name"
+                                        :class="{ 'error-message': errors.contact_person_name }">
+                                    <label class="sty-label">Contact Person Name</label>
+                                    <span v-if="errors.contact_person_name" class="error">{{
+                                        errors.contact_person_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100"
+                                        v-model="formData.contact_person_number"
+                                        :class="{ 'error-message': errors.contact_person_number }">
+                                    <label class="sty-label">Contact Person Number</label>
+                                    <span v-if="errors.contact_person_number" class="error">{{
+                                        errors.contact_person_number[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="email" class="sty-inp form-control w-100"
+                                        v-model="formData.contact_person_email"
+                                        :class="{ 'error-message': errors.contact_person_email }">
+                                    <label class="sty-label">Contact Person Email ID</label>
+                                    <span v-if="errors.contact_person_email" class="error">{{
+                                        errors.contact_person_email[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="col-lg-12">
+                                <div class="sty-input-wrapper mb-3 w-100">
+                                    <textarea class="sty-inp form-control w-100" cols="30" rows="1"
+                                        v-model="formData.address"
+                                        :class="{ 'error-message': errors.address }"></textarea>
+                                    <label class="sty-label">Address</label>
+                                    <span v-if="errors.address" class="error">{{ errors.address[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+
+                                <div class="row mb-3">
+
+                                    <div class="col-lg-3 sty-input-wrapper">
+                                        <select id="country" @change="getStates"
+                                            class="sty-inp form-control w-100" v-model="formData.country"
+                                            :class="{ 'error-message': errors.country }">
+                                            <option value="">Select Country</option>
+                                            <option v-for="country in countries" :value="country.iso2">{{
+                                                country.name }}</option>
+                                        </select>
+                                        <label class="sty-label">Country</label>
+                                        <span v-if="errors.country" class="error">{{ errors.country[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+
+                                    <div class="col-lg-3 sty-input-wrapper">
+                                        <select class="sty-inp form-control w-100" id="state"
+                                            @change="getCities" :disabled="!formData.country"
+                                            v-model="formData.state" :class="{ 'error-message': errors.state }">
+                                            <option value="">Select State</option>
+                                            <option v-for="state in states" :value="state.iso2">{{ state.name }}
+                                            </option>
+                                        </select>
+                                        <label for="" class="sty-label">State</label>
+                                        <span v-if="errors.state" class="error">{{ errors.state[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+
+                                    <div class="col-lg-3 sty-input-wrapper">
+                                        <select id="city" class="sty-inp form-control w-100"
+                                            :disabled="!formData.state" v-model="formData.city"
+                                            :class="{ 'error-message': errors.city }">
+                                            <option value="">Select City</option>
+                                            <option v-for="city in cities" :value="city.name">{{ city.name }}
+                                            </option>
+                                        </select>
+                                        <label for="" class="sty-label">City</label>
+                                        <span v-if="errors.city" class="error">{{ errors.city[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+
+                                    <div class="col-lg-3 sty-input-wrapper">
+                                        <input type="text" class="sty-inp form-control w-100"
+                                            v-model="formData.pin_code"
+                                            :class="{ 'error-message': errors.pin_code }">
+                                        <label class="sty-label">Pincode</label>
+                                        <span v-if="errors.pin_code" class="error">{{ errors.pin_code[0]
+                                            }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100"
+                                        v-model="formData.beneficiary_name"
+                                        :class="{ 'error-message': errors.beneficiary_name }">
+                                    <label class="sty-label">Beneficiary Name</label>
+                                    <span v-if="errors.beneficiary_name" class="error">{{
+                                        errors.beneficiary_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="number" class="sty-inp form-control w-100"
+                                        v-model="formData.account_no"
+                                        :class="{ 'error-message': errors.account_no }">
+                                    <label class="sty-label">Account Number</label>
+                                    <span v-if="errors.account_no" class="error">{{ errors.account_no[0]
+                                        }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" v-model="formData.ifsc_code" id="ifsc" name="ifsc"
+                                        @input="getBranchName" class="sty-inp form-control w-100"
+                                        :class="{ 'error-message': errors.ifsc_code }">
+                                    <label class="sty-label">IFSC Code</label>
+                                    <span v-if="errors.ifsc_code" class="error">{{ errors.ifsc_code[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100"
+                                        v-model="formData.bank_name" id="bank" name="bank"
+                                        :class="{ 'error-message': errors.bank_name }">
+                                    <label class="sty-label">Bank Name</label>
+                                    <span v-if="errors.bank_name" class="error">{{ errors.bank_name[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <div class="sty-input-wrapper w-100">
+                                    <input type="text" class="sty-inp form-control w-100"
+                                        v-model="formData.branch_name" id="branch" name="branch">
+                                    <label class="sty-label">Branch Name</label>
+                                    <span v-if="errors.branch_name" class="error">{{ errors.branch_name[0]
+                                        }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 mb-3 ">
+                                <div class="sty-input-wrapper d-flex w-100">
+                                    <input type="number" class="sty-inp form-control w-100"
+                                        v-model="formData.opening_balance"
+                                        :class="{ 'error-message': errors.opening_balance }">
+                                    <label class="sty-label">Opening Balance</label>
+                                    <span v-if="errors.opening_balance" class="error">{{
+                                        errors.opening_balance[0] }}</span>
+                                    <span v-else></span>
+
+                                    <select class="sty-inp form-control w-25" v-model="formData.dr_cr"
+                                        :class="{ 'error-message': errors.dr_cr }">
+                                        <option value="">Dr/Cr</option>
+                                        <option value="dr">Dr</option>
+                                        <option value="cr">Cr</option>
+                                    </select>
+                                    <span v-if="errors.dr_cr" class="error">{{ errors.dr_cr[0] }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                @click="createNewLedgerBtn">Close</button>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                    {% endverbatim %}
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <!-- GROUP CREATE MODAL -->
+        <div class="modal fade" id="groupCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+                <div class="modal-content">
+                    {% verbatim %}
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Group Creation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="groupCreationModalClose"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="sty-input-wrapper w-100 mb-3">
+                                <input type="text" class="sty-inp form-control" v-model="name" :style="{ borderColor: errors.group_name || errors.already_exist ? 'red' : '' || errors.same_child_parent ? 'red' : '' }" style="text-transform: capitalize;">
+                                <label class="sty-label">Group Name</label>
+                                <span v-if="errors.group_name || errors.already_exist || errors.same_child_parent" class="error">{{ errors.group_name || errors.already_exist || errors.same_child_parent }}</span>
+                                <span v-else></span>
+                            </div>
+
+                            <div class="sty-input-wrapper w-100 mb-3">
+                                <div class="w-100 sty-input-wrapper">
+                                    <select class="w-100 sty-inp" style="background-color: white;" @change="updateSubGroups($event)" v-model="superParent">
+                                        <option value="">Select Under Group</option>
+                                        <option value="Assets">Assets</option>
+                                        <option value="Liabilities">Liabilities</option>
+                                        <option value="Income">Income</option>
+                                        <option value="Expenses">Expenses</option>
+                                        <option value="Bank">Bank</option>
+                                    </select>
+                                    <label class="sty-label">Under Group</label>
+                                    <span v-if="errors.parent_name" class="error">{{ errors.parent_name }}</span>
+                                    <span v-else></span>
+                                </div>
+                            </div>
+
+                            <div class="sty-input-wrapper w-100 mb-3">
+                                <select class="w-100 sty-inp" id="groupSelection" style="background-color: white;" :style="{ borderColor: errors.under_group ? 'red' : '' }">
+                                    <option value="">Select Sub Group</option>
+                                    <option v-for="item in subGroupsOnGroupModal" :value="item">{{ item }}</option>
+                                </select>
+                                <label class="sty-label">Sub Group</label>
+                                <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
+                                <span v-else></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="groupCreationModalClose">Close</button>
+                        <button type="button" class="btn btn-primary" @click="submitGroup(0)">Add Group</button>
+                    </div>
+                    {% endverbatim %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ADD SHARES(CSM) -->
+        <div class="modal fade" id="createShareModal" tabindex="-1" aria-labelledby="createShareModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+            {% verbatim %}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="createShareModalLabel">Add Shares Detail</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="sty-input-wrapper w-100 mb-3">
+                                <input type="text" class="sty-inp form-control" v-model="sharesData.shares_name" :class="{ 'error-message': errors.shares_name }">
+                                <label class="sty-label">Shares Name</label>
+                                <span v-if="errors.shares_name" class="error">{{ errors.shares_name[0] }}</span>
+                                <span v-else></span>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="sty-input-wrapper w-100 mb-3">
+                                <select class="w-100 sty-inp" style="background-color: white;" v-model="sharesData.shares_type" :class="{ 'error-message': errors.shares_type }">
+                                    <option value="Select Shares Type">Select Shares Type</option>
+                                    <option value="unit">Unit</option>
+                                    <option value="pieces">Pieces</option>
+                                </select>
+                                <label class="sty-label">Shares Type</label>
+                                <span v-if="errors.shares_type" class="error">{{ errors.shares_type[0] }}</span>
+                                <span v-else></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" @click="submitShares">Add</button>
+                </div>
+            </div>
+            {% endverbatim %}
+            </div>
+        </div>
+
 
         <div class="tab-pane fade show active" id="purchase-tab-pane" role="tabpanel" aria-labelledby="purchase-tab"
             tabindex="0">
             <div class="gap-4">
                 <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#purchaseVoucherCreate">Create Purchase Voucher</button> -->
-                <button type="button" class="btn btn-primary" @click="openVoucherModal('purchase_voucher')">Create
-                    Purchase Voucher</button>
+                <button type="button" class="btn btn-primary" @click="openVoucherModal('purchase_voucher')">Create Purchase Voucher</button>
             </div>
             {% verbatim %}
             <div>
@@ -137,561 +531,152 @@
             </div>
             {% endverbatim %}
 
-            <!-- Create New Ledger Modal -->
-            <div class="modal fade" id="createNewLedger" tabindex="-1" aria-labelledby="createNewLedgerLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-xl modal-dialog-scrollable">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="createNewLedgerLabel">Ledger Creation Form</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                                @click="createNewLedgerBtn"></button>
-                        </div>
-                        <div class="modal-body">
-                            {% verbatim %}
-                            <form @submit.prevent="submitLedger(formData.id)" enctype="multipart/form-data">
-                                <div class="row">
-                                    <div class="col-lg-4 pe-3 mb-3" style="border-right: 1px solid grey;">
-                                        <div class="sty-input-wrapper w-100 mb-2">
-                                            <input type="text" class="sty-inp form-control w-100"
-                                                v-model="formData.ledger_name"
-                                                :class="{ 'error-message': errors.ledger_name }">
-                                            <label class="sty-label">Ledger Name</label>
-                                            <span v-if="errors.ledger_name" class="error">{{ errors.ledger_name[0]
-                                                }}</span>
-                                            <span v-else></span>
-                                        </div>
-
-                                        <div class="sty-input-wrapper w-100 mb-2">
-                                            <input type="text" class="sty-inp form-control w-100"
-                                                v-model="formData.alis" :class="{ 'error-message': errors.alis }">
-                                            <label class="sty-label">Alias</label>
-                                            <span v-if="errors.alis" class="error">{{ errors.alis[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-
-                                        <div class="sty-input-wrapper w-100 mb-2">
-                                            <select class="w-100 sty-inp" style="background-color: white;"
-                                                id="ledgerSelection">
-                                                <option value="">Select Sub Group</option>
-                                                <option v-for="item in subGroups" :value="item">{{ item }}</option>
-                                            </select>
-                                            <label class="sty-label">Group Name</label>
-                                            <span v-if="groupError && Object.keys(groupError).length > 0" class="error">{{ groupError }}</span>
-                                            <span v-else></span>
-                                        </div>
-
-                                        <div class="sty-input-wrapper w-100 mb-2">
-                                            <input type="text" class="sty-inp form-control w-100"
-                                                v-model="formData.pan_number"
-                                                :class="{ 'error-message': errors.pan_number }">
-                                            <label class="sty-label">PAN Number</label>
-                                            <span v-if="errors.pan_number" class="error">{{ errors.pan_number[0]
-                                                }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3 pe-3" style="border-right: 1px solid grey;">
-                                        <div class="sty-input-wrapper w-100 mb-2">
-                                            <select class="form-control sty-inp w-100" v-model="formData.nature"
-                                                :class="{ 'error-message': errors.nature }">
-                                                <option value="" selected>Select Nature</option>
-                                                <option value="fixed_nature">Fixed</option>
-                                                <option value="variable_nature">Variable</option>
-                                            </select>
-                                            <label class="sty-label">Nature Type</label>
-                                            <span v-if="errors.nature" class="error">{{ errors.nature[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-
-                                        <div class="sty-input-wrapper w-100 mb-2"
-                                            v-show="formData.nature === 'variable_nature'">
-                                            <select class="form-control sty-inp w-100" v-model="formData.based_on"
-                                                :class="{ 'error-message': errors.based_on }">
-                                                <option value="" selected>Select Type</option>
-                                                <option value="area">Area</option>
-                                                <option value="fixed">Fixed</option>
-                                            </select>
-                                            <label class="sty-label">Based On</label>
-                                            <span v-if="errors.based_on" class="error">{{ errors.based_on[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-
-                                        <div v-show="formData.nature === 'variable_nature' && formData.based_on === 'area'"
-                                            class="sty-input-wrapper w-100" :class="{ 'error-message': errors.area }">
-                                            <input type="number" class="form-control sty-inp w-100"
-                                                v-model="formData.area">
-                                            <label class="sty-label">Area</label>
-                                            <span v-if="errors.area" class="error">{{ errors.area[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-
-                                        <div v-show="formData.nature === 'variable_nature' && formData.based_on === 'fixed'"
-                                            class="sty-input-wrapper w-100" :class="{ 'error-message': errors.fixed }">
-                                            <input type="number" class="form-control sty-inp w-100"
-                                                v-model="formData.fixed">
-                                            <label class="sty-label">Fixed</label>
-                                            <span v-if="errors.fixed" class="error">{{ errors.fixed[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100 mb-2">
-                                            <input type="text" class="sty-inp form-control w-100"
-                                                v-model="formData.gst_number"
-                                                :class="{ 'error-message': errors.gst_number }">
-                                            <label class="sty-label">GST Number</label>
-                                            <span v-if="errors.gst_number" class="error">{{ errors.gst_number[0]
-                                                }}</span>
-                                            <span v-else></span>
-                                        </div>
-
-                                        <div class="sty-input-wrapper w-100 mb-2">
-                                            <input type="text" class="sty-inp form-control w-100"
-                                                v-model="formData.contact_person_name"
-                                                :class="{ 'error-message': errors.contact_person_name }">
-                                            <label class="sty-label">Contact Person Name</label>
-                                            <span v-if="errors.contact_person_name" class="error">{{
-                                                errors.contact_person_name[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-
-                                        <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control w-100"
-                                                v-model="formData.contact_person_number"
-                                                :class="{ 'error-message': errors.contact_person_number }">
-                                            <label class="sty-label">Contact Person Number</label>
-                                            <span v-if="errors.contact_person_number" class="error">{{
-                                                errors.contact_person_number[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-
-                                        <div class="sty-input-wrapper w-100">
-                                            <input type="email" class="sty-inp form-control w-100"
-                                                v-model="formData.contact_person_email"
-                                                :class="{ 'error-message': errors.contact_person_email }">
-                                            <label class="sty-label">Contact Person Email ID</label>
-                                            <span v-if="errors.contact_person_email" class="error">{{
-                                                errors.contact_person_email[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <hr>
-
-                                    <div class="col-lg-12">
-                                        <div class="sty-input-wrapper mb-3 w-100">
-                                            <textarea class="sty-inp form-control w-100" cols="30" rows="1"
-                                                v-model="formData.address"
-                                                :class="{ 'error-message': errors.address }"></textarea>
-                                            <label class="sty-label">Address</label>
-                                            <span v-if="errors.address" class="error">{{ errors.address[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-
-                                        <div class="row mb-3">
-
-                                            <div class="col-lg-3 sty-input-wrapper">
-                                                <select id="country" @change="getStates"
-                                                    class="sty-inp form-control w-100" v-model="formData.country"
-                                                    :class="{ 'error-message': errors.country }">
-                                                    <option value="">Select Country</option>
-                                                    <option v-for="country in countries" :value="country.iso2">{{
-                                                        country.name }}</option>
-                                                </select>
-                                                <label class="sty-label">Country</label>
-                                                <span v-if="errors.country" class="error">{{ errors.country[0] }}</span>
-                                                <span v-else></span>
-                                            </div>
-
-                                            <div class="col-lg-3 sty-input-wrapper">
-                                                <select class="sty-inp form-control w-100" id="state"
-                                                    @change="getCities" :disabled="!formData.country"
-                                                    v-model="formData.state" :class="{ 'error-message': errors.state }">
-                                                    <option value="">Select State</option>
-                                                    <option v-for="state in states" :value="state.iso2">{{ state.name }}
-                                                    </option>
-                                                </select>
-                                                <label for="" class="sty-label">State</label>
-                                                <span v-if="errors.state" class="error">{{ errors.state[0] }}</span>
-                                                <span v-else></span>
-                                            </div>
-
-                                            <div class="col-lg-3 sty-input-wrapper">
-                                                <select id="city" class="sty-inp form-control w-100"
-                                                    :disabled="!formData.state" v-model="formData.city"
-                                                    :class="{ 'error-message': errors.city }">
-                                                    <option value="">Select City</option>
-                                                    <option v-for="city in cities" :value="city.name">{{ city.name }}
-                                                    </option>
-                                                </select>
-                                                <label for="" class="sty-label">City</label>
-                                                <span v-if="errors.city" class="error">{{ errors.city[0] }}</span>
-                                                <span v-else></span>
-                                            </div>
-
-                                            <div class="col-lg-3 sty-input-wrapper">
-                                                <input type="text" class="sty-inp form-control w-100"
-                                                    v-model="formData.pin_code"
-                                                    :class="{ 'error-message': errors.pin_code }">
-                                                <label class="sty-label">Pincode</label>
-                                                <span v-if="errors.pin_code" class="error">{{ errors.pin_code[0]
-                                                    }}</span>
-                                                <span v-else></span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <hr>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control w-100"
-                                                v-model="formData.beneficiary_name"
-                                                :class="{ 'error-message': errors.beneficiary_name }">
-                                            <label class="sty-label">Beneficiary Name</label>
-                                            <span v-if="errors.beneficiary_name" class="error">{{
-                                                errors.beneficiary_name[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input type="number" class="sty-inp form-control w-100"
-                                                v-model="formData.account_no"
-                                                :class="{ 'error-message': errors.account_no }">
-                                            <label class="sty-label">Account Number</label>
-                                            <span v-if="errors.account_no" class="error">{{ errors.account_no[0]
-                                                }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input type="text" v-model="formData.ifsc_code" id="ifsc" name="ifsc"
-                                                @input="getBranchName" class="sty-inp form-control w-100"
-                                                :class="{ 'error-message': errors.ifsc_code }">
-                                            <label class="sty-label">IFSC Code</label>
-                                            <span v-if="errors.ifsc_code" class="error">{{ errors.ifsc_code[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control w-100"
-                                                v-model="formData.bank_name" id="bank" name="bank"
-                                                :class="{ 'error-message': errors.bank_name }">
-                                            <label class="sty-label">Bank Name</label>
-                                            <span v-if="errors.bank_name" class="error">{{ errors.bank_name[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control w-100"
-                                                v-model="formData.branch_name" id="branch" name="branch">
-                                            <label class="sty-label">Branch Name</label>
-                                            <span v-if="errors.branch_name" class="error">{{ errors.branch_name[0]
-                                                }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3 ">
-                                        <div class="sty-input-wrapper d-flex w-100">
-                                            <input type="number" class="sty-inp form-control w-100"
-                                                v-model="formData.opening_balance"
-                                                :class="{ 'error-message': errors.opening_balance }">
-                                            <label class="sty-label">Opening Balance</label>
-                                            <span v-if="errors.opening_balance" class="error">{{
-                                                errors.opening_balance[0] }}</span>
-                                            <span v-else></span>
-
-                                            <select class="sty-inp form-control w-25" v-model="formData.dr_cr"
-                                                :class="{ 'error-message': errors.dr_cr }">
-                                                <option value="">Dr/Cr</option>
-                                                <option value="dr">Dr</option>
-                                                <option value="cr">Cr</option>
-                                            </select>
-                                            <span v-if="errors.dr_cr" class="error">{{ errors.dr_cr[0] }}</span>
-                                            <span v-else></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                                        @click="createNewLedgerBtn">Close</button>
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-                                </div>
-                            </form>
-                            {% endverbatim %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- GROUP CREATE MODAL -->
-            <div class="modal fade" id="groupCreationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-                    <div class="modal-content">
-                        {% verbatim %}
-                        <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Group Creation</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" @click="groupCreationModalClose"></button>
-                        </div>
-                        <div class="modal-body">
-
-                            <div class="row">
-                                <div class="sty-input-wrapper w-100 mb-3">
-                                    <input type="text" class="sty-inp form-control" v-model="name" :style="{ borderColor: errors.group_name || errors.already_exist ? 'red' : '' || errors.same_child_parent ? 'red' : '' }" style="text-transform: capitalize;">
-                                    <label class="sty-label">Group Name</label>
-                                    <span v-if="errors.group_name || errors.already_exist || errors.same_child_parent" class="error">{{ errors.group_name || errors.already_exist || errors.same_child_parent }}</span>
-                                    <span v-else></span>
-                                </div>
-
-                                <div class="sty-input-wrapper w-100 mb-3">
-                                    <div class="w-100 sty-input-wrapper">
-                                        <select class="w-100 sty-inp" style="background-color: white;" @change="updateSubGroups($event)" v-model="superParent">
-                                            <option value="">Select Under Group</option>
-                                            <option value="Assets">Assets</option>
-                                            <option value="Liabilities">Liabilities</option>
-                                            <option value="Income">Income</option>
-                                            <option value="Expenses">Expenses</option>
-                                            <option value="Bank">Bank</option>
-                                        </select>
-                                        <label class="sty-label">Under Group</label>
-                                        <span v-if="errors.parent_name" class="error">{{ errors.parent_name }}</span>
-                                        <span v-else></span>
-                                    </div>
-                                </div>
-
-                                <div class="sty-input-wrapper w-100 mb-3">
-                                    <select class="w-100 sty-inp" id="groupSelection" style="background-color: white;" :style="{ borderColor: errors.under_group ? 'red' : '' }">
-                                        <option value="">Select Sub Group</option>
-                                        <option v-for="item in subGroupsOnGroupModal" :value="item">{{ item }}</option>
-                                    </select>
-                                    <label class="sty-label">Sub Group</label>
-                                    <span v-if="errors.under_group" class="error">{{ errors.under_group }}</span>
-                                    <span v-else></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="groupCreationModalClose">Close</button>
-                            <button type="button" class="btn btn-primary" @click="submitGroup(0)">Add Group</button>
-                        </div>
-                        {% endverbatim %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- CREATE MODAL FOR PURCHASE VOUCHER -->
-            <div class="modal fade" id="purchaseVoucherCreate" tabindex="-1"
-                aria-labelledby="purchaseVoucherCreateLabel" aria-hidden="true">
-                {% verbatim %}
+            <!-- CREATE MODAL FOR PURCHASE VOUCHER(PUVM) -->
+            <div class="modal fade" id="purchaseVoucherCreate" tabindex="-1" data-bs-backdrop="static" aria-labelledby="purchaseVoucherCreateLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="purchaseVoucherCreateLabel">Add Purchase Voucher</h5>
                             <button type="button" class="btn-close" @click="destroySelect2"></button>
                         </div>
+                        {% verbatim %}
                         <div class="modal-body">
-                            <!-- Your form fields for adding cost center here -->
-                            <div class="form-group">
-                                <div class="container pt-4">
-                                    <form action="">
-                                        <div class="row">
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <select class="w-100 sty-inp form-control"
-                                                        v-model="formData.voucher_type"
-                                                        @change="fetchVoucherNumber($event)">
-                                                        <option value="">Select Voucher Type</option>
-                                                        <option v-for="voucher in vouchersList" :value="voucher.id">{{
-                                                            voucher.voucher_name }}</option>
-                                                    </select>
-                                                    <label class="sty-label">Voucher Type</label>
-                                                </div>
-                                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <select class="w-100 sty-inp form-control" v-model="formData2.voucher_type" @change="fetchVoucherNumber2($event)">
+                                            <option value="">Select Voucher Type</option>
+                                            <option v-for="voucher in vouchersList" :value="voucher.id">{{ voucher.voucher_name }}</option>
+                                        </select>
+                                        <label class="sty-label" for="">Voucher Type</label>
+                                    </div>
+                                </div>
 
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <input class="sty-inp form-control" type="text"
-                                                        v-model="formData.voucher_number">
-                                                    <label class="sty-label">Voucher Number</label>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="text" v-model="formData2.voucher_number">
+                                        <label class="sty-label" for="">Voucher Number</label>
+                                    </div>
+                                </div>
 
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <input class="sty-inp form-control w-100" type="date"
-                                                        v-model="formData.booking_date">
-                                                    <label class="sty-label">Booking Date</label>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="date" v-model="formData2.booking_date">
+                                        <label class="sty-label" for="">Booking Date</label>
+                                    </div>
+                                </div>
 
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <select class="w-100 sty-inp form-control selectLedger">
-                                                        <option value="">Select Ledger</option>
-                                                        <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
-                                                    </select>
-                                                    <label class="sty-label">Vendor Name</label>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <select class="w-100 sty-inp form-control selectLedger">
+                                            <option value="">Select Ledger</option>
+                                            <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
+                                        </select>
+                                        <label class="sty-label">Vendor Name</label>
+                                    </div>
+                                </div>
 
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <input class="sty-inp form-control w-100" type="date"
-                                                        v-model="formData.invoice_date">
-                                                    <label class="sty-label">Invoice Date</label>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control w-100" type="date"
+                                            v-model="formData2.invoice_date">
+                                        <label class="sty-label">Invoice Date</label>
+                                    </div>
+                                </div>
 
-                                            <div class="col-lg-4 mb-3">
-                                                <div class="sty-input-wrapper w-100">
-                                                    <input class="sty-inp form-control w-100" type="text"
-                                                        v-model="formData.invoice_number">
-                                                    <label class="sty-label" for="">Vendor Invoice Number</label>
-                                                </div>
-                                            </div>
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control w-100" type="text"
+                                            v-model="formData2.invoice_number">
+                                        <label class="sty-label" for="">Vendor Invoice Number</label>
+                                    </div>
+                                </div>
 
-                                            <hr class="mt-1 mb-3">
+                            </div>
+                            <hr class="mt-1 mb-3">
+                            <div>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th style="text-align:center;" width="5%">Select Ledger</th>
+                                            <th style="text-align:center;">Quantity</th>
+                                            <th style="text-align:center;" width="5%">Rate</th>
+                                            <th style="text-align:center;" width="5%">Amount</th>
+                                            <th style="text-align:center;" width="5%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, index) in purchases" :key="index">
+                                            <td style="text-align:center;" width="5%">
+                                                <select class="selectLedger" style="width: 50%; border: none; border-color: transparent;">
+                                                    <option value="">Select Shares</option>
+                                                    <option v-for="shares in sharesList" :value="shares.id">{{ shares.shares_name }}</option>
+                                                </select>
+                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].shares_name">{{  errors[index].ledger_name[0] }}</p>
+                                                <span v-else></span>
+                                            </td>
 
-                                            <div class="col-12" id="purchases">
-                                                <!-- <div v-for="(item, index) in purchases" :key="index">
-                                                    <div class="row" :id="'purchase' + (index + 1)">
-                                                        <div class="col-4 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <select class="w-100 sty-inp form-control selectLedger" v-model="item.ledger_name">
-                                                                    <option value="">Select Ledger</option>
-                                                                    <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
-                                                                </select>
-                                                                <label class="sty-label">Ledger</label>
-                                                            </div>
-                                                        </div>
+                                            <td style="text-align:center;" width="5%">
+                                                <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Quantity" v-model="item.quantity" @input="calculateAmount(item)">
+                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].quantity">{{ errors[index].quantity[0] }}</p>
+                                                <span v-else></span>
+                                            </td>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="number" v-model="item.quantity" @input="calculateAmount(item)">
-                                                                <label class="sty-label">Quantity</label>
-                                                            </div>
-                                                        </div>
+                                            <td style="text-align:center;" width="5%">
+                                                <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Rate" v-model="item.rate" @input="calculateAmount(item)" @keyup.enter="openCostCenter2(index)" >
+                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].rate">{{ errors[index].rate[0] }}</p>
+                                                <span v-else></span>
+                                            </td>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="text" v-model="item.rate" @input="calculateAmount(item)">
-                                                                <label class="sty-label">Rate</label>
-                                                            </div>
-                                                        </div>
+                                            <td style="text-align:center;" width="5%">
+                                                <input type="text" style="width: 60%; border: none; border-color: transparent; outline: none;" placeholder="Amount" v-model="item.amount" @keyup.tab.prevent="openCostCenter2(index)" readonly>
+                                            </td>
 
-                                                        <div class="col-2 mb-3">
-                                                            <div class="sty-input-wrapper w-100">
-                                                                <input class="sty-inp form-control w-100" type="number" v-model="item.amount" readonly>
-                                                                <label class="sty-label">Amount</label>
-                                                            </div>
-                                                        </div>
+                                            <td style="text-align:center;" width="5%">
+                                                <span style="width: 60%; border: none; border-color: transparent;" @click="removeCostCenter(index)" v-if="index !== 0" >
+                                                    <i class="fa-solid fa-trash-can text-danger"></i>
+                                                </span>
+                                                <!-- <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </span> -->
+                                                <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
+                                                <span v-else></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th style="text-align:center;" colspan="3">Total</th>
+                                            <td style="text-align: center;">
+                                                <input type="text" style="width: 50%; border: none; border-color: transparent; outline: none;" placeholder="Total Amount" v-model="totalAmountValue" readonly>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
 
-                                                        <div class="col-2 mb-3">
-                                                            <button class="btn btn-primary" @click="purchseCostCenter(item.amount)" type="button">Add Cost Center</button>
-                                                            <button class="btn btn-primary" @click="removeCostCenter(index)" v-if="index !== 0" type="button">Remove</button>
-                                                        </div>
-                                                    </div>
-                                                </div> -->
-
-                                                <h5 class="text-center">Cost Center</h5>
-                                                    <table class="table table-sm table-bordered">
-                                                        <thead class="table-dark">
-                                                            <tr>
-                                                                <th style="text-align:center;" width="5%">Select Ledger</th>
-                                                                <th style="text-align:center;">Quantity</th>
-                                                                <th style="text-align:center;" width="5%">Rate</th>
-                                                                <th style="text-align:center;" width="5%">Amount</th>
-                                                                <th style="text-align:center;" width="5%">Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr v-for="(item, index) in purchases" :key="index">
-                                                                <td style="text-align:center;" width="5%">
-                                                                    <select class="selectLedger" style="width: 50%; border: none; border-color: transparent;">
-                                                                        <option value="">Select Ledger</option>
-                                                                        <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
-                                                                    </select>
-                                                                    <p class="mt-1 text-danger" v-if="errors[index] && errors[index].ledger_name">{{  errors[index].ledger_name[0] }}</p>
-                                                                    <span v-else></span>
-                                                                </td>
-
-                                                                <td style="text-align:center;" width="5%">
-                                                                    <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Quantity" v-model="item.quantity" @input="calculateAmount(item)">
-                                                                    <p class="mt-1 text-danger" v-if="errors[index] && errors[index].quantity">{{ errors[index].quantity[0] }}</p>
-                                                                    <span v-else></span>
-                                                                </td>
-
-                                                                <td style="text-align:center;" width="5%">
-                                                                    <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Rate" v-model="item.rate" @input="calculateAmount(item)" @keyup.enter="openCostCenterModal(index)" >
-                                                                    <p class="mt-1 text-danger" v-if="errors[index] && errors[index].rate">{{ errors[index].rate[0] }}</p>
-                                                                    <span v-else></span>
-                                                                </td>
-
-                                                                <td style="text-align:center;" width="5%">
-                                                                    <input type="text" style="width: 60%; border: none; border-color: transparent; outline: none;" placeholder="Amount" v-model="item.amount" @keyup.tab.prevent="openCostCenterModal(index)" readonly>
-                                                                </td>
-
-                                                                <td style="text-align:center;" width="5%">
-                                                                    <span style="width: 60%; border: none; border-color: transparent;" @click="removeCostCenter(index)" v-if="index !== 0" >
-                                                                        <i class="fa-solid fa-trash-can text-danger"></i>
-                                                                    </span>
-                                                                    <!-- <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
-                                                                        <i class="fa-solid fa-pen"></i>
-                                                                    </span> -->
-                                                                    <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
-                                                                    <span v-else></span>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th style="text-align:center;" colspan="3">Total</th>
-                                                                <td style="text-align: center;">
-                                                                    <input type="text" style="width: 50%; border: none; border-color: transparent; outline: none;" placeholder="Total Amount" v-model="totalAmountValue" readonly>
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-
-                                                <div class="row mb-3">
-                                                    <div class="col-6">
-                                                        <div class="sty-input-wrapper w-100">
-                                                            <input type="text" class="sty-inp w-100 form-control">
-                                                            <label for="" class="sty-label">Amount in Words</label>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-6">
-                                                        <div class="sty-input-wrapper w-100">
-                                                            <textarea class="sty-inp w-100 form-control" cols="30"
-                                                                rows="1"></textarea>
-                                                            <label for="" class="sty-label">Narration</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input type="text" class="sty-inp form-control" style="text-transform: capitalize;" v-model="formData2.amount_in_words" readonly>
+                                            <label class="sty-label" for="">Amount in Words</label>
                                         </div>
-                                    </form>
+                                    </div>
+
+                                    <div class="col-6 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <textarea class="sty-inp form-control" cols="30" rows="1" v-model="formData2.narration"></textarea>
+                                            <label class="sty-label" for="">Narration</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" @click="saveVoucherDetailsHavingFormData2">Save</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save</button>
-                        </div>
+                        {% endverbatim %}
                     </div>
                 </div>
-                {% endverbatim %}
             </div>
         </div>
 
@@ -871,10 +856,10 @@
                                         <tr v-for="(item, index) in purchases" :key="index">
                                             <td style="text-align:center;" width="5%">
                                                 <select class="selectLedgerOnSale" style="width: 50%; border: none; border-color: transparent;">
-                                                    <option value="">Select Ledger</option>
-                                                    <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
+                                                    <option value="">Select Shares</option>
+                                                    <option v-for="shares in sharesList" :value="shares.id">{{ shares.shares_name }}</option>
                                                 </select>
-                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].ledger_name">{{  errors[index].ledger_name[0] }}</p>
+                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].shares_name">{{  errors[index].ledger_name[0] }}</p>
                                                 <span v-else></span>
                                             </td>
 
@@ -1981,6 +1966,12 @@ new Vue({
         voucher_type_to_open: '',
         modalNameToOpen: '',
         className: '',
+        addShares: false,
+        sharesList: [],
+        sharesData: {
+            shares_name: '',
+            shares_type: 'Select Shares Type'
+        },
         againstRefrences: [
             {
                 'voucher_id': 1,
@@ -2083,61 +2074,68 @@ new Vue({
                 });
         },
         // EXTRA
+        submitShares(){
+            axios.post(`http://127.0.0.1:8000/api/shares_on_ledger_creation/`, this.sharesData)
+                .then(response => {
+                    toastr.options = {
+                        closeButton: true,
+                        positionClass: 'toast-top-center',
+                        timeOut: 5000
+                    };
+                    toastr.success("Shares Details Added!");
+                    this.sharesList.push(response.data);
+                    $(`#createShareModal`).modal('hide');
+                    $(`#${this.modalNameToOpen}`).modal('show');
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                    console.error('Error fetching shares data:', this.errors);
+                });
+        },
         initializeSelect2($element, dropdown) {
+            let buttonName = 'Ledger';
+            let addShares = this.addShares;
+            let modalName = this.modalNameToOpen;
+            if(this.addShares){
+                buttonName = 'Share'
+            }
             $element.select2({
                 dropdownParent: $(`#${dropdown}`),
                 width: '100%',
             }).on('select2:open', () => {
-                $(".select2-results:not(:has(button.create-button))").append('<button class="create-button btn">+ Create New ledger</button>');
+                $(".select2-results:not(:has(button.create-button))").append(`<button class="create-button btn">+ Create New ${buttonName}</button>`);
                 $('.select2-results').on('click', 'button.create-button', function () {
-                    $('#purchaseVoucherCreate').modal('hide');
-                    $('#createNewLedger').modal('show');
+                    $(`#${modalName}`).modal('hide');
+                    if(!addShares){
+                        $('#createNewLedger').modal('show');
 
-                    axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
-                    .then(response => {
-                        this.subGroups = response.data.sub_group;
-                        console.log("data==============", this.subGroups);
-                        $('#ledgerSelection').select2({
-                            dropdownParent: $('#createNewLedger'),
-                            width: '100%',
-                            }).on('select2:open', () => {
-                                $(".select2-results:not(:has(button.create-button))").append('<button class="create-button btn">+ Create New Group</button>');
-                                $('.select2-results').on('click', 'button.create-button', function () {
-                                    $('#createNewLedger').modal('hide');
-                                    $('#groupCreationModal').modal('show');
-
-                                    $('#groupSelection').select2({
-                                        dropdownParent: $('#groupCreationModal'),
-                                        width: '100%',
+                        axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
+                        .then(response => {
+                            this.subGroups = response.data.sub_group;
+                            console.log("data==============", this.subGroups);
+                            $('#ledgerSelection').select2({
+                                dropdownParent: $('#createNewLedger'),
+                                width: '100%',
+                                }).on('select2:open', () => {
+                                    $(".select2-results:not(:has(button.create-button))").append('<button class="create-button btn">+ Create New Group</button>');
+                                    $('.select2-results').on('click', 'button.create-button', function () {
+                                        $('#createNewLedger').modal('hide');
+                                        $('#groupCreationModal').modal('show');
+                                        $('#groupSelection').select2({
+                                            dropdownParent: $('#groupCreationModal'),
+                                            width: '100%',
+                                        });
                                     });
-                                    ///////////
-
-                                    //axios.get(`http://127.0.0.1:8000/api/ledger_group/all/`)
-                                    //.then(response => {
-                                    //    this.subGroups = response.data.sub_group;
-                                    //    console.log("data==============", this.subGroups);
-                                    //    $('#ledgerSelection').select2({
-                                    //        dropdownParent: $('#createNewLedger'),
-                                    //        width: '100%',
-                                    //    });
-                                    //})
-                                    //.catch(error => {
-                                    //    console.error('Error fetching data:', error);
-                                    //});
                                 });
-                            });
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                    });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error);
+                        });
+                    }else{
+                        $('#createShareModal').modal('show');
+                    }
                 });
             });
-        },
-        initializeSelect2Twice($element) {
-            $element.select2({
-                dropdownParent: $('#CostCenterModal'),
-                width: '100%',
-            })
         },
         addRowOnSave(){
             //this.addRowOnSaveVar = false;
@@ -2431,36 +2429,42 @@ new Vue({
                 'payment_option': ''
             }]
             if(modalName === 'purchase_voucher'){
+                this.addShares = true;
                 this.voucher_type_to_open = modalName;
                 this.modalNameToOpen = "purchaseVoucherCreate";
                 this.className = 'selectLedger';
                 $(`#${this.modalNameToOpen}`).modal('show');
             }
             if(modalName === 'sale_voucher'){
+                this.addShares = true;
                 this.voucher_type_to_open = modalName;
                 this.modalNameToOpen = "salesVoucherCreation";
                 this.className = 'selectLedgerOnSale';
                 $(`#${this.modalNameToOpen}`).modal('show');
             }
             if(modalName === 'general_voucher'){
+                this.addShares = false;
                 this.voucher_type_to_open = modalName;
                 this.modalNameToOpen = "journalVoucherCreate";
                 this.className = 'selectLedgerOnJournal';
                 $(`#${this.modalNameToOpen}`).modal('show');
             }
             if(modalName === 'expenses_voucher'){
+                this.addShares = false;
                 this.voucher_type_to_open = modalName;
                 this.modalNameToOpen = "expenseVoucherCreate";
                 this.className = 'selectLedgerOnExpenses';
                 $(`#${this.modalNameToOpen}`).modal('show');
             }
             if(modalName === 'income_voucher'){
+                this.addShares = false;
                 this.voucher_type_to_open = modalName;
                 this.modalNameToOpen = "incomeVoucherCreate";
                 this.className = 'selectLedgerOnIncome';
                 $(`#${this.modalNameToOpen}`).modal('show');
             }
             if(modalName === 'payment_voucher'){
+                this.addShares = false;
                 this.voucher_type_to_open = modalName;
                 this.modalNameToOpen = "paymentVoucherCreate";
                 this.className = 'selectLedgerOnPurchase';
@@ -2474,7 +2478,7 @@ new Vue({
             }
 
             this.$nextTick(() => {
-                this.initializeSelect2($(`.${this.className}`), this.modalNameToOpen);
+                this.initializeSelect2($(`.${this.className}`), this.modalNameToOpen, this.addShares);
             });
 
             // Fetch voucher data
@@ -2539,8 +2543,8 @@ new Vue({
                 });
         },
         createNewLedgerBtn() {
-            $('#purchaseVoucherCreate').modal('show');
             $('#createNewLedger').modal('hide');
+            $(`#${this.modalNameToOpen}`).modal('show');
         },
         getCountries() {
             axios.get('https://api.countrystatecity.in/v1/countries', {
@@ -2645,6 +2649,15 @@ new Vue({
     },
     mounted() {
         this.getCountries();
+
+        // SHARES DATATABLE DATA
+        axios.get('http://127.0.0.1:8000/api/shares_on_ledger_creation/')
+            .then(response => {
+                this.sharesList = response.data;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
 
         // LEDGER DATATABLE DATA
         axios.get('http://127.0.0.1:8000/api/ledger_creation/')

@@ -2,7 +2,7 @@ from django.db import models
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
-
+from SocietyApp.models import *
 
 
 # Create your models here.
@@ -505,3 +505,46 @@ class PurchaseVoucherModel(models.Model):
     quantity = models.FloatField()
     rate = models.FloatField()
     amount = models.FloatField()
+
+
+shares_type = [
+    ('pieces', 'Pieces'),
+    ('unit', 'Unit')
+]
+
+class SharesOnLedgerModel(models.Model):
+    shares_name = models.CharField(max_length=200)
+    shares_type = models.CharField(max_length=200, choices=shares_type)
+
+
+class VoucherCreationModel(models.Model):
+    voucher_name = models.CharField(max_length=100)
+    voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
+    voucher_number = models.CharField(max_length=200)
+    voucher_date = models.DateField()
+    booking_date = models.DateField()
+    amounts_in_words = models.CharField(max_length=250)
+    narration = models.CharField(max_length=300)
+    cheque_number = models.CharField(max_length=100)
+    voucher_date = models.DateField()
+    bank_name = models.CharField(max_length=100)
+
+
+# total amt can be anything, debit or credit
+class RelatedLedgersModel(models.Model):
+    ledger_name = models.ForeignKey(Ledger, on_delete=models.CASCADE)
+    debit_amt = models.IntegerField()
+    credit_amt = models.IntegerField()
+
+
+class AgainstRefrenceModel(models.Model):
+    voucher_number = models.ForeignKey(VoucherCreationModel, on_delete=models.CASCADE)
+    date = models.DateField()
+    pending_amt = models.IntegerField()
+    final_amt = models.IntegerField()
+    allocated_amt = models.IntegerField()
+
+
+class CostCenterModal(models.Model):
+    name = models.ForeignKey(CostCenter, on_delete=models.CASCADE)
+    amount = models.IntegerField()

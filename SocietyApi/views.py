@@ -958,7 +958,7 @@ class CreateGroupForLedgerView(viewsets.ModelViewSet):
         data['parent'] = parent_name
         request._full_data = data
         return self.update(request, *args, **kwargs)
-        
+
 
     @action(detail=False, methods=['get'])
     def select_ledger_group(self, request, group_name):
@@ -1199,3 +1199,10 @@ class LedgerView(viewsets.ModelViewSet):
 class PurchaseVoucherView(viewsets.ModelViewSet):
     queryset = PurchaseVoucherModel.objects.all()
     serializer_class = PurchaseVoucherSerializers
+
+
+class SharesOnLedgerView(viewsets.ModelViewSet):
+    queryset = SharesOnLedgerModel.objects.all()
+    serializer_class = SharesOnLedgerSerializers
+
+

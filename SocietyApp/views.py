@@ -294,7 +294,7 @@ def unit_master(request):
 
 
 def ledger_creation(request):
-    datatable_columns = [0, 1, 2]
+    datatable_columns = [0, 2]
     # GROUPS LIST VIEW
     under_grps = ["Assets", "Liabilities", "Income", "Expenses", "Bank"]
     all_child_investments = {}
@@ -398,10 +398,10 @@ def balance_sheet(request):
     datatable_columns = [0, 1]
 
     # GROUPS OF LIALIBILITIES.
-    # group1 = Ledger.objects.filter(group_name="A. Subscription Towards Shares")
+    # group1 = Ledger.objects.filter(group_name="Subscription Towards Shares")
     group1 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="A. Subscription Towards Shares"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("A. Subscription Towards Shares")
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Subscription Towards Shares"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Subscription Towards Shares")
     filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
     for ledger in filtered_ledgers:
         group1[ledger.group_name].append(ledger.ledger_name)

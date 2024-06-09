@@ -13,6 +13,7 @@
             <li class=""><a href="#2" data-toggle="tab"><i class="fa-solid fa-l"></i></a></li>
             <li class=""><a href="#3" data-toggle="tab"><i class="fa-solid fa-c"></i></a></li>
             <li class=""><a href="#4" data-toggle="tab"><i class="fa-solid fa-v"></i></a></li>
+            <li class=""><a href="#5" data-toggle="tab"><i class="fa-solid fa-v"></i></a></li>
         </ul>
     </div>
 
@@ -1473,6 +1474,91 @@
             </div>
         </div>
 
+        <div class="tab-pane" id="5">
+            <div id="sharesVue">
+                <div class="d-flex" style="flex-direction: column;">
+                    <!-- Button trigger modal -->
+                    <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#createShareModal">
+                        Create Share
+                    </button>
+                </div>
+
+                <!-- CREATE VOUCHER TYPE INDEXING MODAL -->
+                <div class="modal fade" id="createShareModal" tabindex="-1" aria-labelledby="createShareModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+                    {% verbatim %}
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="createShareModalLabel" v-if="!showDetailModal">{{ buttonName }} Shares</h1>
+                            <h1 class="modal-title fs-5" id="createShareModalLabel" v-if="showDetailModal">Shares Detail</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row" v-if="!showDetailModal">
+                                <div class="col-6">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="text" class="sty-inp form-control" v-model="formData.shares_name" :class="{ 'error-message': errors.shares_name }">
+                                        <label class="sty-label">Shares Name</label>
+                                        <span v-if="errors.shares_name" class="error">{{ errors.shares_name[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <select class="w-100 sty-inp" style="background-color: white;" v-model="formData.shares_type" :class="{ 'error-message': errors.shares_type }">
+                                            <option value="Select Shares Type">Select Shares Type</option>
+                                            <option value="unit">Unit</option>
+                                            <option value="pieces">Pieces</option>
+                                        </select>
+                                        <label class="sty-label">Shares Type</label>
+                                        <span v-if="errors.shares_type" class="error">{{ errors.shares_type[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" v-if="showDetailModal">
+                                <p>shares_name: {{ formData.shares_name }}</p>
+                                <p>shares_type: {{ formData.shares_type }}</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" @click="submitShares(formData.id)">{{ buttonName }}</button>
+                        </div>
+                    </div>
+                    {% endverbatim %}
+                    </div>
+                </div>
+
+                <div class="container mt-3 mb-4" style="margin-bottom: 200px !important;">
+                    <div class="table-responsive" id="voucherTypeTableDiv">
+                        {% verbatim %}
+                        <table id="led_sharesDatatable" class="order-column dt-table display table-sm w-100">
+                            <thead>
+                                <tr>
+                                    <th>Actions</th>
+                                    <th>Id</th>
+                                    <th>Shares Name</th>
+                                    <th>Shares Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(shares, index) in sharesData" :key="index">
+                                    <td>
+                                        <span @click="viewRequestedData(shares.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                        <span @click="editRequestedData(shares.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                                    </td>
+                                    <td v-for="(value, key) in shares" :key="key">{{ value }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        {% endverbatim %}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -2025,7 +2111,6 @@ var app = new Vue({
         },
         errors: {},
         voucherType: [],
-        errors: {},
         voucherIndexingError: {},
     },
     methods: {
@@ -2179,71 +2264,168 @@ var app = new Vue({
 });
 
 
+// SHARES VUE
+var app = new Vue({
+    el: '#sharesVue',
+    data: {
+        formData: {
+            shares_name: '',
+            shares_type: 'Select Shares Type',
+        },
+        errors: {},
+        sharesData: [],
+        buttonName: 'Add',
+        showDetailModal: false,
+    },
+    methods: {
+        submitShares(id){
+            if(id){
+                axios.patch(`http://127.0.0.1:8000/api/shares_on_ledger_creation/${id}/`, this.formData)
+                    .then(response => {
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 5000
+                        };
+                        toastr.success(response.message, "Shares Details Updated!");
+                        setTimeout(function() {
+                            location.reload();
+                        }, 600);
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data;
+                        console.error('Error fetching shares data:', this.errors);
+                    });
+            }else{
+                // TO ADD SHARES DETAILS
+                axios.post(`http://127.0.0.1:8000/api/shares_on_ledger_creation/`, this.formData)
+                    .then(response => {
+                        toastr.options = {
+                            closeButton: true,
+                            positionClass: 'toast-top-center',
+                            timeOut: 5000
+                        };
+                        toastr.success(response.message, "Shares Details Added!");
+                        $('#createShareModal').modal('hide');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 600);
+                    })
+                    .catch(error => {
+                        this.errors = error.response.data;
+                        console.error('Error fetching shares data:', this.errors);
+                    });
+            }
+        },
+        editRequestedData(id){
+            this.showDetailModal = false;
+            this.buttonName = 'Update';
+            $('#createShareModal').modal('show');
+            axios.patch(`http://127.0.0.1:8000/api/shares_on_ledger_creation/${id}/`)
+                .then(response => {
+                    this.formData = response.data;
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                    console.error('Error fetching shares data:', this.errors);
+                });
+        },
+        viewRequestedData(id){
+            this.showDetailModal = true;
+            $('#createShareModal').modal('show');
+            axios.patch(`http://127.0.0.1:8000/api/shares_on_ledger_creation/${id}/`)
+                .then(response => {
+                    this.formData = response.data;
+                })
+                .catch(error => {
+                    this.errors = error.response.data;
+                    console.error('Error fetching shares data:', this.errors);
+                });
+        }
+
+    },
+    mounted() {
+        axios.get('http://127.0.0.1:8000/api/shares_on_ledger_creation/')
+            .then(response => {
+                this.sharesData = response.data;
+                $(document).ready(function () {
+                    $('#led_sharesDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                this.errors = error.response.data;
+                console.error('Error fetching data:', this.errors);
+            });
+
+        // $('#voucherTypeCreationModal, #voucherTypeUpdateModal').on('hidden.bs.modal', () => {
+        //     this.formData = {};
+        //     this.forms = [{}];
+        //     this.errors = {};
+        // });
+    }
+});
+
+
 /* LEDGER CREATION DATATABLE, COMMON FOR ALL 4 DATATABLE ON LEDGER PAGE */
 $(document).ready(function() {
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e){
+    // Adjust column sizes when a tab is shown
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
         $($.fn.dataTable.tables(true)).DataTable()
-           .columns.adjust();
-     });
-
-    var table = $('#led_groupDatatable, #led_ledgerDatatable, #led_costCenterDatatable, #led_voucherTypeDatatable').DataTable({
-        "dom": '<"dt-buttons"Br><"clear">ftipl',
-        buttons: [
-            {
-                extend: 'colvis',
-                text: 'More Column',
-                postfixButtons: [
-                    'colvisRestore'
-                ]
-            },
-            {
-                extend: 'searchBuilder',
-                text: 'Filter'
-            },
-            {
-                extend: 'print',
-                exportOptions: {
-                    // columns: ':visible',
-                    columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
-                    modifier: { search: 'applied', order: 'applied' },
-
-                }
-            },
-            {
-                extend: 'print',
-                text: 'Print All',
-                exportOptions: {
-                    columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
-                    // modifier: { search: 'applied', order: 'applied' },
-
-                }
-            },
-        ],
-
-        order: [],
-        "stripeClasses": [],
-
-        columnDefs: [
-
-            { "visible": true, "targets": datatable_columns },
-            { "visible": false, "targets": '_all' },
-        ],
-        fixedColumns: {
-            left: 2
-        },
-        // "paging": true,
-        // 'pageLength': '5',
-        pagingType: "simple",
-        paginate: {
-            previous: "<",
-            next: ">"
-        },
-        scrollCollapse: false,
-        scrollX: true
+            .columns.adjust();
     });
 
+    var table = $('#led_groupDatatable, #led_ledgerDatatable, #led_costCenterDatatable, #led_voucherTypeDatatable, #led_sharesDatatable').DataTable({
+         "dom": '<"dt-buttons"Br><"clear">ftipl',
+         buttons: [
+             {
+                 extend: 'colvis',
+                 text: 'More Column',
+                 postfixButtons: [
+                     'colvisRestore'
+                 ]
+             },
+             {
+                 extend: 'searchBuilder',
+                 text: 'Filter'
+             },
+             {
+                 extend: 'print',
+                 exportOptions: {
+                     // columns: ':visible',
+                     columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                     modifier: { search: 'applied', order: 'applied' },
+                 }
+             },
+             {
+                 extend: 'print',
+                 text: 'Print All',
+                 exportOptions: {
+                     columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                     // modifier: { search: 'applied', order: 'applied' },/
+                 }
+             },
+         ],
+         order: [],
+         "stripeClasses": [],
+         columnDefs: [
+             { "visible": true, "targets": datatable_columns },
+             { "visible": false, "targets": '_all' },
+         ],
+         fixedColumns: {
+             left: 2
+         },
+         // "paging": true,
+         // 'pageLength': '5',
+         pagingType: "simple",
+         paginate: {
+             previous: "<",
+             next: ">"
+         },
+         scrollCollapse: false,
+         scrollX: true
+     });
     // Set the DataTable info text to be centered
-    $('#led_groupDatatable_info, #led_ledgerDatatable_info, #led_costCenterDatatable_info, #led_voucherTypeDatatable_info').css({
+    $('#led_groupDatatable_info, #led_ledgerDatatable_info, #led_costCenterDatatable_info, #led_voucherTypeDatatable_info, #led_sharesDatatable_info').css({
         'text-align': 'center',
         'position': 'relative',
         'left': '40%',
@@ -2251,17 +2433,15 @@ $(document).ready(function() {
         // 'margin-right': 'auto',
         'display': 'block'
     });
-
     // Adjust the info text position when the table is redrawn
     table.on('draw.dt', function () {
-        $('#led_groupDatatable_info, #led_ledgerDatatable_info, #led_costCenterDatatable_info, #led_voucherTypeDatatable_info').css({
+        $('#led_groupDatatable_info, #led_ledgerDatatable_info, #led_costCenterDatatable_info, #led_voucherTypeDatatable_info, #led_sharesDatatable_info').css({
             'text-align': 'center',
             'margin-left': 'auto',
             'margin-right': 'auto'
         });
     });
 });
-
 
 </script>
 

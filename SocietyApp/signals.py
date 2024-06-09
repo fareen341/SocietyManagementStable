@@ -20,7 +20,7 @@ def create_initial_objects(sender, **kwargs):
         # CHILDS OF ASSETS
         Childs.objects.create(name='Fixed Assets', parent=assets)
         Childs.objects.create(name='Investment', parent=assets)
-        Childs.objects.create(name='Current Assest', parent=assets)
+        current_assets = Childs.objects.create(name='Current Assest', parent=assets)
         Childs.objects.create(name='Misc Assets', parent=assets)
 
         # CHILDS OF LIABILITIES
@@ -39,18 +39,21 @@ def create_initial_objects(sender, **kwargs):
         Childs.objects.create(name='Indirect Expenses', parent=expenses)
 
         # CHILDS OF LIABILITIES WHICH NEEDS TO BE SHOW IN (BALANCE SHEET)
-        Childs.objects.create(name="A. Subscription Towards Shares", parent=liabilities)
+        Childs.objects.create(name="Subscription Towards Shares", parent=liabilities)
         Childs.objects.create(name="Reserve Fund and Other Funds", parent=liabilities)
         Childs.objects.create(name="Secured Loans", parent=liabilities)
         Childs.objects.create(name="Unsecured Loans", parent=liabilities)
         Childs.objects.create(name="Deposits", parent=liabilities)
         Childs.objects.create(name="Current Liabilities And Provisions", parent=liabilities)
-        Childs.objects.create(name="Interest Accrued Due But Not Paid", parent=liabilities)
+        Childs.objects.create(name='Interest Accrued Due But Not Paid', parent=liabilities)
 
         # CHILDS OF ASSETS WHICH NEEDS TO BE SHOW IN (BALANCE SHEET)
         Childs.objects.create(name='Cash And Bank Balances', parent=assets)
         Childs.objects.create(name='Loans And Advances', parent=assets)
         Childs.objects.create(name='Profit And Loss Account', parent=assets)
+
+        print('SIGNALS NOT GETTING CALLED, WHEN CALLED VERIFY BEWLO DATA IS GETTING CREATED OR NOT!')
+        Childs.objects.create(name="Sundry Debtors", parent=current_assets)
 
 
         print("Initial objects of childs models created successfully")

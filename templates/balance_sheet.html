@@ -5,7 +5,7 @@
 
 {% block body %}
 
-<div class="container-fluid">
+<div class="container-fluid mb-5">
     <div class="row">
         <div class="col-lg-5 ms-auto me-auto" id="societyHead">
           {% verbatim %}
@@ -15,8 +15,8 @@
             <p style="font-family: 'Calibri', sans-serif;" class="print-head-content">{{ society.society_reg_address }}, {{ society.socity_state }}, {{ society.pin_code }}</p>
           </div>
           {% endverbatim %}
-        </div>
     </div>
+
     <div class="row">
       <h3 class="text-center">BALANCE SHEET AS ON 31/03/24</h3>
       <div class="col-lg-6">
@@ -32,7 +32,7 @@
           <tbody>
             <tr>
               <td></td>
-              <td><h4>Share Capital:</h4></td>
+              <td><h5>Share Capital</h5></td>
               <td></td>
               <td></td>
             </tr>
@@ -41,17 +41,17 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group1.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group1.items %}
-                <h4>A. Subscription Towards Shares</h4>
-              {% endif %}
+                <h5><u>Subscription Towards Shares</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group1.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td></td>
             </tr>
@@ -59,17 +59,17 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group2.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group2.items %}
-                <h4>Reserve Fund And Other Funds</h4>
-              {% endif %}
+                <h5><u>Reserve Fund And Other Funds</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group2.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td>3000.00</td>
             </tr>
@@ -77,17 +77,17 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group3.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group3.items %}
-                <h4>Secured Loans</h4>
-              {% endif %}
+                <h5><u>Secured Loans</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group3.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td></td>
             </tr>
@@ -95,17 +95,17 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group4.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group4.items %}
-                <h4>Unsecured Loans</h4>
-              {% endif %}
+                <h5><u>Unsecured Loans</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group4.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td></td>
             </tr>
@@ -113,17 +113,17 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group5.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group5.items %}
-                <h4>Deposits</h4>
-              {% endif %}
+                <h5><u>Deposits</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group5.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td></td>
             </tr>
@@ -131,17 +131,17 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group6.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group6.items %}
-                <h4>Current Liabilities And Provisions</h4>
-              {% endif %}
+                <h5><u>Current Liabilities And Provisions</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group6.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td></td>
             </tr>
@@ -149,23 +149,23 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group7.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group7.items %}
-                <h4>Interest Accrued Due But Not Paid</h4>
-              {% endif %}
+                <h5><u>Interest Accrued Due But Not Paid</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group7.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td><h4>Income & Expenditure A/c</h4></td>
+              <td><h5>Income & Expenditure A/c</h5></td>
               <td></td>
             </tr>
           </tbody>
@@ -188,17 +188,17 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group8.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group8.items %}
-                <h4>Fixed Assets</h4>
-              {% endif %}
+                <h5><u>Fixed Assets</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group8.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td></td>
             </tr>
@@ -206,17 +206,17 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group9.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group9.items %}
-                <h4>Investment</h4>
-              {% endif %}
+                <h5><u>Investment</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group9.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td>3000.00</td>
             </tr>
@@ -224,18 +224,17 @@
               <td></td>
 
               <td>
-                <br>
-                {% for group, items in group10.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group10.items %}
-                <h4>Cash And Bank Balances</h4>
-              {% endif %}
+                <br><h5><u>Cash And Bank Balances</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group10.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               <td>
               <td></td>
             </tr>
@@ -243,17 +242,18 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group11.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group11.items %}
-                <h4>Loans And Advances</h4>
-              {% endif %}
+                <br>
+                <h5><u>Loans And Advances</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group11.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td></td>
             </tr>
@@ -261,17 +261,17 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group12.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group12.items %}
-                <h4>Current Assest</h4>
-              {% endif %}
+                <h5><u>Current Assest</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group12.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td></td>
             </tr>
@@ -279,28 +279,28 @@
               <td></td>
               <td>
                 <br>
-                {% for group, items in group13.items %}
-                <h4>{{ group }}:</h4>
-                <ul>
-                    {% for item in items %}
-                        <li>{{ item }}</li>
-                    {% endfor %}
-                </ul>
-              {% endfor %}
-              {% if not group13.items %}
-                <h4>Profit And Loss Account</h4>
-              {% endif %}
+                <h5><u>Profit And Loss Account</u></h5>
+                <div class="ms-3">
+                  {% for group, items in group13.items %}
+                  <h5>Ledgers under {{ group }}:</h5>
+                  <ul>
+                      {% for item in items %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                  </ul>
+                  {% endfor %}
+                </div>
               </td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td><h4>Accumulated losses not <br>written off from the reserve or any other fund</h4></td>
+              <td><h5>Accumulated losses not <br>written off from the reserve or any other fund</h5></td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td><h4>Income & Expenditure A/c</h4></td>
+              <td><h5>Income & Expenditure A/c</h5></td>
               <td></td>
             </tr>
           </tbody>
