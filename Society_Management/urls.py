@@ -54,7 +54,10 @@ router.register('voucher_type', apiviews.VoucherTypeView, basename='voucher_type
 router.register('voucher_indexing', apiviews.VoucherIndexingView, basename='voucher_indexing')
 router.register('unit_test_api', apiviews.UnitTestView, basename='unit_test_api')
 router.register('purchase_voucher_creation', apiviews.PurchaseVoucherView, basename='purchase_voucher_creation')
-router.register('shares_on_ledger_creation', apiviews.SharesOnLedgerView, basename='shares_on_ledger_creation')
+router.register('shares_on_ledger_creation', apiviews.ShareOnLedgerView, basename='shares_on_ledger_creation')
+router.register('voucher_create_ledger', apiviews.VoucherCreationView, basename='voucher_create_ledger')
+router.register('general_ledger_api', apiviews.GeneralLedgerView, basename='general_ledger_api')
+
 
 
 # URLS
@@ -80,7 +83,8 @@ urlpatterns = [
     path('voucher_creation', views.voucher_creation, name='voucher_creation'),
     path('balance_sheet/', views.balance_sheet, name='balance_sheet'),
     path('profit_and_loss/', views.profit_and_loss, name='profit_and_loss'),
-
+    path('general_ledger/', views.general_ledger, name='general_ledger'),
+    
 
     # UNIT TEST
     path('unit_test', views.unit_test, name='unit_test'),

@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<div class="container">
+    <div class="mt-3">
+        <table id="generalLedgerVue" class="display dt-table order-column" style="width:100%">
+            <!-- <table id="houseHelpDataTable"> -->
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Particulars</th>
+                    <th>Voucher Type</th>
+                    <th>Voucher Number</th>
+                    <th>Debit (₹)</th>
+                    <th>Credit (₹)</th>
+                    <th>Balance (₹)</th>
+                </tr>
+            </thead>
+            {% verbatim %}
+            <tbody>
+                <tr v-for="(item, index) in generalLedger" :key="index">
+                    <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+                </tr>
+            </tbody>
+            {% endverbatim %}
+        </table>
+    </div>
+</div>
+
+
+<script>
+    let datatable_columns = {{ datatable_columns }};
+</script>
+
+<script>
+var app = new Vue({
+    el: '#generalLedgerVue',
+    data: {
+        generalLedger: {},
+        errors: {}
+    },
+    methods: {
+        
+    },
+    mounted() {
+        axios.get(`http://127.0.0.1:8000/api/general_ledger_api/`)
+            .then(response => {
+                this.generalLedger = response.data;
+                console.log(this.generalLedger);
+            })
+            .catch(error => {
+                this.errors = error.response.data;
+                console.error('Error fetching shares data:', this.errors);
+            });
+    }
+});
+</script>
+
+<script>
+    $(document).ready(function() {
+    // Adjust column sizes when a tab is shown
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        $($.fn.dataTable.tables(true)).DataTable()
+            .columns.adjust();
+    });
+
+    var table = $('#generalLedgerVue').DataTable({
+         "dom": '<"dt-buttons"Br><"clear">ftipl',
+         buttons: [
+             {
+                 extend: 'colvis',
+                 text: 'More Column',
+                 postfixButtons: [
+                     'colvisRestore'
+                 ]
+             },
+             {
+                 extend: 'searchBuilder',
+                 text: 'Filter'
+             },
+             {
+                 extend: 'print',
+                 exportOptions: {
+                     // columns: ':visible',
+                     columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                     modifier: { search: 'applied', order: 'applied' },
+                 }
+             },
+             {
+                 extend: 'print',
+                 text: 'Print All',
+                 exportOptions: {
+                     columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                     // modifier: { search: 'applied', order: 'applied' },/
+                 }
+             },
+         ],
+         order: [],
+         "stripeClasses": [],
+         columnDefs: [
+             { "visible": true, "targets": datatable_columns },
+             { "visible": false, "targets": '_all' },
+         ],
+         fixedColumns: {
+             left: 2
+         },
+         // "paging": true,
+         // 'pageLength': '5',
+         pagingType: "simple",
+         paginate: {
+             previous: "<",
+             next: ">"
+         },
+         scrollCollapse: false,
+         scrollX: true
+     });
+    // Set the DataTable info text to be centered
+    $('#generalLedgerVue_info').css({
+        'text-align': 'center',
+        'position': 'relative',
+        'left': '40%',
+        'padding-top': '20px',
+        // 'margin-right': 'auto',
+        'display': 'block'
+    });
+    // Adjust the info text position when the table is redrawn
+    table.on('draw.dt', function () {
+        $('#generalLedgerVue_info').css({
+            'text-align': 'center',
+            'margin-left': 'auto',
+            'margin-right': 'auto'
+        });
+    });
+});
+</script>
+{% endblock body %}

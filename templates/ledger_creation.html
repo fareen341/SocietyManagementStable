@@ -13,7 +13,7 @@
             <li class=""><a href="#2" data-toggle="tab"><i class="fa-solid fa-l"></i></a></li>
             <li class=""><a href="#3" data-toggle="tab"><i class="fa-solid fa-c"></i></a></li>
             <li class=""><a href="#4" data-toggle="tab"><i class="fa-solid fa-v"></i></a></li>
-            <li class=""><a href="#5" data-toggle="tab"><i class="fa-solid fa-v"></i></a></li>
+            <li class=""><a href="#5" data-toggle="tab"><i class="fa-solid fa-s"></i></a></li>
         </ul>
     </div>
 
@@ -1479,7 +1479,7 @@
                 <div class="d-flex" style="flex-direction: column;">
                     <!-- Button trigger modal -->
                     <button type="button" style="width: max-content;" class="ms-auto add-mem-btn float-end me-4" data-bs-toggle="modal" data-bs-target="#createShareModal">
-                        Create Share
+                        Create Stock
                     </button>
                 </div>
 
@@ -1489,8 +1489,8 @@
                     {% verbatim %}
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="createShareModalLabel" v-if="!showDetailModal">{{ buttonName }} Shares</h1>
-                            <h1 class="modal-title fs-5" id="createShareModalLabel" v-if="showDetailModal">Shares Detail</h1>
+                            <h1 class="modal-title fs-5" id="createShareModalLabel" v-if="!showDetailModal">{{ buttonName }} Stock</h1>
+                            <h1 class="modal-title fs-5" id="createShareModalLabel" v-if="showDetailModal">Stock Detail</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -1498,7 +1498,7 @@
                                 <div class="col-6">
                                     <div class="sty-input-wrapper w-100 mb-3">
                                         <input type="text" class="sty-inp form-control" v-model="formData.shares_name" :class="{ 'error-message': errors.shares_name }">
-                                        <label class="sty-label">Shares Name</label>
+                                        <label class="sty-label">Stock Name</label>
                                         <span v-if="errors.shares_name" class="error">{{ errors.shares_name[0] }}</span>
                                         <span v-else></span>
                                     </div>
@@ -1507,11 +1507,11 @@
                                 <div class="col-6">
                                     <div class="sty-input-wrapper w-100 mb-3">
                                         <select class="w-100 sty-inp" style="background-color: white;" v-model="formData.shares_type" :class="{ 'error-message': errors.shares_type }">
-                                            <option value="Select Shares Type">Select Shares Type</option>
+                                            <option value="Select Shares Type">Select Stock Type</option>
                                             <option value="unit">Unit</option>
                                             <option value="pieces">Pieces</option>
                                         </select>
-                                        <label class="sty-label">Shares Type</label>
+                                        <label class="sty-label">Stock Type</label>
                                         <span v-if="errors.shares_type" class="error">{{ errors.shares_type[0] }}</span>
                                         <span v-else></span>
                                     </div>

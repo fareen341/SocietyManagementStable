@@ -666,5 +666,56 @@ class PurchaseVoucherSerializers(serializers.ModelSerializer):
 
 class SharesOnLedgerSerializers(serializers.ModelSerializer):
     class Meta:
-        model = SharesOnLedgerModel
+        model = ShareOnLedgerModel
         fields = '__all__'
+
+
+class VoucherCreationSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = VoucherCreationModel
+        fields = '__all__'
+
+    def create(self, validated_data):
+        indexing_data = validated_data.pop('related_ledgers', None)
+        print("indexing_data -------======================================", indexing_data)
+        voucher_type = VoucherCreationModel.objects.create(**validated_data)
+        return voucher_type
+
+
+class RelatedLedgersSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = RelatedLedgersModel
+        fields = '__all__'
+
+
+class RelatedSharesSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = RelatedSharesModel
+        fields = '__all__'
+
+
+class AgainstRefrenceSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = AgainstRefrenceModel
+        fields = '__all__'
+
+
+class CostCenterOnLedgerSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = CostCenterOnLedger
+        fields = '__all__'
+
+
+class GeneralLedgerSerializers(serializers.ModelSerializer):
+    particulars_name = serializers.SerializerMethodField()
+    voucher_type_choices = serializers.SerializerMethodField() 
+
+    class Meta:
+        model = GeneralLedger
+        fields = ['date', 'particulars_name', 'voucher_type_choices', 'voucher_number', 'debit', 'credit', 'balance']
+
+    def get_particulars_name(self, obj):
+        return obj.particulars.ledger_name
+
+    def get_voucher_type_choices(self, obj):
+        return obj.voucher_type.voucher_type

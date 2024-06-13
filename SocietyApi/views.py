@@ -1201,8 +1201,94 @@ class PurchaseVoucherView(viewsets.ModelViewSet):
     serializer_class = PurchaseVoucherSerializers
 
 
-class SharesOnLedgerView(viewsets.ModelViewSet):
-    queryset = SharesOnLedgerModel.objects.all()
+class ShareOnLedgerView(viewsets.ModelViewSet):
+    queryset = ShareOnLedgerModel.objects.all()
     serializer_class = SharesOnLedgerSerializers
+
+
+class VoucherCreationView(viewsets.ModelViewSet):
+    queryset = VoucherCreationModel.objects.all()
+    serializer_class = VoucherCreationSerializers
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['voucher_type__voucher_type']
+
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        print("requested data================", request.data)
+        # Step 1: Save the main voucher data
+        voucher_serializer = self.get_serializer(data=request.data)
+        voucher_serializer.is_valid(raise_exception=True)
+        voucher = voucher_serializer.save()
+
+        # Step 2: Save related ledgers
+        related_ledgers_data = request.data.get('related_ledgers', [])
+        print("Related ledgers data:", related_ledgers_data)
+        for ledger_data in related_ledgers_data:
+            ledger_data['voucher_type'] = voucher.id  # Link the voucher
+            ledger_serializer = RelatedLedgersSerializers(data=ledger_data)
+            if ledger_serializer.is_valid():
+                related_ledger = ledger_serializer.save()
+                print(f"Saved Related Ledger: {related_ledger}")
+            else:
+                print("Related Ledger serializer errors:", ledger_serializer.errors)
+                return Response(ledger_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            
+            # Step 3: Save cost centers for each related ledger
+            against_refrence_data = ledger_data.get('against_refrence', [])
+            print("against_refrence centers data=================---------------:", against_refrence_data)
+            for against_refrence in against_refrence_data:
+                against_refrence['against_related_ledger'] = related_ledger.id  # Link the related ledger
+                against_refrence_serializer = AgainstRefrenceSerializers(data=against_refrence)
+                if against_refrence_serializer.is_valid():
+                    against_refrence_serializer.save()
+                    print(f"Saved Refrence: {against_refrence_serializer.data}")
+                else:
+                    print("Refrence serializer errors:", against_refrence_serializer.errors)
+                    return Response(against_refrence_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+            # Step 3: Save cost centers for each related ledger
+            cost_centers_data = ledger_data.get('cost_center', [])
+            print("Cost centers data:", cost_centers_data)
+            for cost_center_data in cost_centers_data:
+                cost_center_data['related_ledger'] = related_ledger.id  # Link the related ledger
+                cost_center_serializer = CostCenterOnLedgerSerializers(data=cost_center_data)
+                if cost_center_serializer.is_valid():
+                    cost_center_serializer.save()
+                    print(f"Saved Cost Center: {cost_center_serializer.data}")
+                else:
+                    print("Cost Center serializer errors:", cost_center_serializer.errors)
+                    return Response(cost_center_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+        headers = self.get_success_headers(voucher_serializer.data)
+        return Response(voucher_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        
+
+class RelatedLedgersView(viewsets.ModelViewSet):
+    queryset = RelatedLedgersModel.objects.all()
+    serializer_class = RelatedLedgersSerializers
+
+
+class RelatedSharesView(viewsets.ModelViewSet):
+    queryset = RelatedSharesModel.objects.all()
+    serializer_class = RelatedSharesSerializers
+
+
+class AgainstRefrenceView(viewsets.ModelViewSet):
+    queryset = AgainstRefrenceModel.objects.all()
+    serializer_class = AgainstRefrenceSerializers
+
+
+class CostCenterOnLedgerView(viewsets.ModelViewSet):
+    queryset = CostCenterOnLedger.objects.all()
+    serializer_class = CostCenterOnLedgerSerializers
+
+
+class GeneralLedgerView(viewsets.ModelViewSet):
+    queryset = GeneralLedger.objects.all()
+    serializer_class = GeneralLedgerSerializers
 
 

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+ {% extends 'base.html' %}
 {% load static %}
 
 {% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
@@ -68,13 +68,13 @@
                             <tbody>
                                 {% verbatim %}
                                 <tr v-for="(item, index) in againstRefrences" :key="index">
-                                    <td>{{ item.voucher_id }}</td>
+                                    <td>{{ item.against_voucher }}</td>
                                     <td>{{ item.voucher_number }}</td>
                                     <td>{{ item.voucher_date }}</td>
-                                    <td>{{ item.pending_amount }}</td>
-                                    <td>{{ item.final_Amount }}</td>
+                                    <td>{{ item.pending_amt }}</td>
+                                    <td>{{ item.final_amt }}</td>
                                     <td class="text-center">
-                                        <input class="mt-1" v-model="item.allocated_amount" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" placeholder="Enter Allocate Amt">
+                                        <input class="mt-1" v-model="item.allocated_amt" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" placeholder="Enter Allocate Amt">
                                     </td>
                                 </tr>
                                 {% endverbatim %}
@@ -447,7 +447,7 @@
             {% verbatim %}
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="createShareModalLabel">Add Shares Detail</h1>
+                    <h1 class="modal-title fs-5" id="createShareModalLabel">Add Stock Detail</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -455,7 +455,7 @@
                         <div class="col-6">
                             <div class="sty-input-wrapper w-100 mb-3">
                                 <input type="text" class="sty-inp form-control" v-model="sharesData.shares_name" :class="{ 'error-message': errors.shares_name }">
-                                <label class="sty-label">Shares Name</label>
+                                <label class="sty-label">Stock Name</label>
                                 <span v-if="errors.shares_name" class="error">{{ errors.shares_name[0] }}</span>
                                 <span v-else></span>
                             </div>
@@ -464,11 +464,11 @@
                         <div class="col-6">
                             <div class="sty-input-wrapper w-100 mb-3">
                                 <select class="w-100 sty-inp" style="background-color: white;" v-model="sharesData.shares_type" :class="{ 'error-message': errors.shares_type }">
-                                    <option value="Select Shares Type">Select Shares Type</option>
+                                    <option value="Select Stock Type">Select Stock Type</option>
                                     <option value="unit">Unit</option>
                                     <option value="pieces">Pieces</option>
                                 </select>
-                                <label class="sty-label">Shares Type</label>
+                                <label class="sty-label">Stock Type</label>
                                 <span v-if="errors.shares_type" class="error">{{ errors.shares_type[0] }}</span>
                                 <span v-else></span>
                             </div>
@@ -499,33 +499,25 @@
                         <tr>
                             <th>Actions</th>
                             <th>Id</th>
-                            <th>Name</th>
-                            <th>PAN No.</th>
-                            <th>PAN Document</th>
-                            <th>Contact</th>
-                            <th>Aadhar No.</th>
-                            <th>Aadhar Document</th>
-                            <th>Address</th>
-                            <th>City</th>
-                            <th>State</th>
-                            <th>Pin Code</th>
-                            <th>Email</th>
-                            <th>Other Document</th>
-                            <th>Other Document Specification</th>
-                            <!-- <th v-for="(value, key) in tenantData[0]" :key="key">{{ key }}</th> -->
+                            <th>voucher_name</th>
+                            <th>voucher_type</th>
+                            <th>voucher_number</th>
+                            <th>booking_date</th>
+                            <th>amount_in_words</th>
+                            <th>narration</th>
+                            <th>cheque_number</th>
+                            <th>voucher_date</th>
+                            <th>bank_name</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <tr v-for="(tenantData, index) in tenantData" :key="index">
+                        <tr v-for="(item, index) in purchaseVoucherDatatable" :key="index">
                             <td>
-                                <span @click="viewRequestedData(tenantData.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
-                                <span @click="editRequestedData(tenantData.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                                <span @click="viewRequestedData(item.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                <span @click="editRequestedData(item.id)"><i class="fa-solid fa-pen-to-square"></i></span>
                             </td>
-                            <td v-for="(value, key) in tenantData" :key="key">
-                                <span v-if="key === 'tenant_address'">{{ sliceAddress(value) }}</span>
-                                <span v-else>{{ value }}</span>
-                            </td>
-                        </tr> -->
+                            <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -598,7 +590,7 @@
                                 <table class="table table-sm table-bordered">
                                     <thead class="table-dark">
                                         <tr>
-                                            <th style="text-align:center;" width="5%">Select Ledger</th>
+                                            <th style="text-align:center;" width="5%">Stock</th>
                                             <th style="text-align:center;">Quantity</th>
                                             <th style="text-align:center;" width="5%">Rate</th>
                                             <th style="text-align:center;" width="5%">Amount</th>
@@ -609,7 +601,7 @@
                                         <tr v-for="(item, index) in purchases" :key="index">
                                             <td style="text-align:center;" width="5%">
                                                 <select class="selectLedger" style="width: 50%; border: none; border-color: transparent;">
-                                                    <option value="">Select Shares</option>
+                                                    <option value="">Select Stock</option>
                                                     <option v-for="shares in sharesList" :value="shares.id">{{ shares.shares_name }}</option>
                                                 </select>
                                                 <p class="mt-1 text-danger" v-if="errors[index] && errors[index].shares_name">{{  errors[index].ledger_name[0] }}</p>
@@ -692,7 +684,7 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <span v-if="amountMatchedError" class="text-center">{{ amountMatchedError }}</span>
-                            <span style="font-size: 21px;" id="CostCenterModalLabel">Total Amount:</span>
+                            <span style="font-size: 21px;" id="CostCenterModalLabel">Total Amount:</span><span style="font-size: 21px;" class="ms-5">0</span>
                             <span class="text-right"><input style="border: none; border-color: transparent; outline: none; font-size: 21px;" type="number" v-model="displayAmount" readonly></span>
 
                             <div class="row mb-3" v-for="(item, index) in items" :key="item.id">
@@ -740,40 +732,32 @@
             </div>
             {% verbatim %}
             <div>
-                <table id="purchaseVoucherDatatable" class="display dt-table order-column" style="width:100%">
+                <table id="salesVoucherDatatable" class="display dt-table order-column" style="width:100%">
                     <!-- <table id="houseHelpDataTable"> -->
-                    <thead>
-                        <tr>
-                            <th>Actions</th>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>PAN No.</th>
-                            <th>PAN Document</th>
-                            <th>Contact</th>
-                            <th>Aadhar No.</th>
-                            <th>Aadhar Document</th>
-                            <th>Address</th>
-                            <th>City</th>
-                            <th>State</th>
-                            <th>Pin Code</th>
-                            <th>Email</th>
-                            <th>Other Document</th>
-                            <th>Other Document Specification</th>
-                            <!-- <th v-for="(value, key) in tenantData[0]" :key="key">{{ key }}</th> -->
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- <tr v-for="(tenantData, index) in tenantData" :key="index">
-                            <td>
-                                <span @click="viewRequestedData(tenantData.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
-                                <span @click="editRequestedData(tenantData.id)"><i class="fa-solid fa-pen-to-square"></i></span>
-                            </td>
-                            <td v-for="(value, key) in tenantData" :key="key">
-                                <span v-if="key === 'tenant_address'">{{ sliceAddress(value) }}</span>
-                                <span v-else>{{ value }}</span>
-                            </td>
-                        </tr> -->
-                    </tbody>
+                        <thead>
+                            <tr>
+                                <th>Actions</th>
+                                <th>Id</th>
+                                <th>voucher_name</th>
+                                <th>voucher_type</th>
+                                <th>voucher_number</th>
+                                <th>booking_date</th>
+                                <th>amount_in_words</th>
+                                <th>narration</th>
+                                <th>cheque_number</th>
+                                <th>voucher_date</th>
+                                <th>bank_name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in salesVoucherDatatable" :key="index">
+                                <td>
+                                    <span @click="viewRequestedData(item.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                    <span @click="editRequestedData(item.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                                </td>
+                                <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+                            </tr>
+                        </tbody>
                 </table>
             </div>
             {% endverbatim %}
@@ -856,7 +840,7 @@
                                         <tr v-for="(item, index) in purchases" :key="index">
                                             <td style="text-align:center;" width="5%">
                                                 <select class="selectLedgerOnSale" style="width: 50%; border: none; border-color: transparent;">
-                                                    <option value="">Select Shares</option>
+                                                    <option value="">Select Stock</option>
                                                     <option v-for="shares in sharesList" :value="shares.id">{{ shares.shares_name }}</option>
                                                 </select>
                                                 <p class="mt-1 text-danger" v-if="errors[index] && errors[index].shares_name">{{  errors[index].ledger_name[0] }}</p>
@@ -933,6 +917,38 @@
             <div class="container">
                 <button class="add-mem-btn" @click="openVoucherModal('general_voucher')">Create Journal Voucher</button>
             </div>
+
+            {% verbatim %}
+            <div>
+                <table id="generalVoucherDatatable" class="display dt-table order-column" style="width:100%">
+                    <!-- <table id="houseHelpDataTable"> -->
+                    <thead>
+                        <tr>
+                            <th>Actions</th>
+                            <th>Id</th>
+                            <th>voucher_name</th>
+                            <th>voucher_type</th>
+                            <th>voucher_number</th>
+                            <th>booking_date</th>
+                            <th>amount_in_words</th>
+                            <th>narration</th>
+                            <th>cheque_number</th>
+                            <th>voucher_date</th>
+                            <th>bank_name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in generalVoucherDatatable" :key="index">
+                            <td>
+                                <span @click="viewRequestedData(item.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                <span @click="editRequestedData(item.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                            </td>
+                            <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% endverbatim %}
 
             <!-- Create Journal Voucher Modal(JVM) -->
             <div class="modal fade" id="journalVoucherCreate" tabindex="-1" aria-labelledby="journalVoucherLabel" data-bs-backdrop="static" aria-hidden="true">
@@ -1075,39 +1091,31 @@
             </div>
             {% verbatim %}
             <div>
-                <table id="purchaseVoucherDatatable" class="display dt-table order-column" style="width:100%">
+                <table id="expenseVoucherDatatable" class="display dt-table order-column" style="width:100%">
                     <!-- <table id="houseHelpDataTable"> -->
                     <thead>
                         <tr>
                             <th>Actions</th>
                             <th>Id</th>
-                            <th>Name</th>
-                            <th>PAN No.</th>
-                            <th>PAN Document</th>
-                            <th>Contact</th>
-                            <th>Aadhar No.</th>
-                            <th>Aadhar Document</th>
-                            <th>Address</th>
-                            <th>City</th>
-                            <th>State</th>
-                            <th>Pin Code</th>
-                            <th>Email</th>
-                            <th>Other Document</th>
-                            <th>Other Document Specification</th>
-                            <!-- <th v-for="(value, key) in tenantData[0]" :key="key">{{ key }}</th> -->
+                            <th>voucher_name</th>
+                            <th>voucher_type</th>
+                            <th>voucher_number</th>
+                            <th>booking_date</th>
+                            <th>amount_in_words</th>
+                            <th>narration</th>
+                            <th>cheque_number</th>
+                            <th>voucher_date</th>
+                            <th>bank_name</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <tr v-for="(tenantData, index) in tenantData" :key="index">
+                        <tr v-for="(item, index) in expenseVoucherDatatable" :key="index">
                             <td>
-                                <span @click="viewRequestedData(tenantData.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
-                                <span @click="editRequestedData(tenantData.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                                <span @click="viewRequestedData(item.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                <span @click="editRequestedData(item.id)"><i class="fa-solid fa-pen-to-square"></i></span>
                             </td>
-                            <td v-for="(value, key) in tenantData" :key="key">
-                                <span v-if="key === 'tenant_address'">{{ sliceAddress(value) }}</span>
-                                <span v-else>{{ value }}</span>
-                            </td>
-                        </tr> -->
+                            <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -1127,7 +1135,7 @@
                             <div class="row">
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
-                                        <select class="w-100 sty-inp form-control" v-model="formData2.voucher_type" @change="fetchVoucherNumber2($event)">
+                                        <select class="w-100 sty-inp form-control" v-model="formData.voucher_type" @change="fetchVoucherNumber($event)">
                                             <option value="">Select Voucher Type</option>
                                             <option v-for="voucher in vouchersList" :value="voucher.id">{{ voucher.voucher_name }}</option>
                                         </select>
@@ -1137,100 +1145,66 @@
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
-                                        <input class="sty-inp form-control" type="text" v-model="formData2.voucher_number">
+                                        <input class="sty-inp form-control" type="text" v-model="formData.voucher_number">
                                         <label class="sty-label" for="">Voucher Number</label>
                                     </div>
                                 </div>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
-                                        <input class="sty-inp form-control" type="date" v-model="formData2.booking_date">
+                                        <input class="sty-inp form-control" type="date" v-model="formData.voucher_date" @input="setSameDateAsVoucherDate">
+                                        <label class="sty-label" for="">Voucher Date</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="date" v-model="formData.booking_date">
                                         <label class="sty-label" for="">Booking Date</label>
                                     </div>
                                 </div>
-
-                                <div class="col-lg-4 mb-3">
-                                    <div class="sty-input-wrapper w-100">
-                                        <select class="w-100 sty-inp form-control selectLedgerOnExpenses">
-                                            <option value="">Select Ledger</option>
-                                            <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
-                                        </select>
-                                        <label class="sty-label">Vendor Name</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 mb-3">
-                                    <div class="sty-input-wrapper w-100">
-                                        <input class="sty-inp form-control w-100" type="date"
-                                            v-model="formData2.invoice_date">
-                                        <label class="sty-label">Invoice Date</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 mb-3">
-                                    <div class="sty-input-wrapper w-100">
-                                        <input class="sty-inp form-control w-100" type="text"
-                                            v-model="formData2.invoice_number">
-                                        <label class="sty-label" for="">Vendor Invoice Number</label>
-                                    </div>
-                                </div>
-
                             </div>
                             <hr class="mt-1 mb-3">
                             <div>
                                 <table class="table table-sm table-bordered">
                                     <thead class="table-dark">
-                                        <tr>
-                                            <th style="text-align:center;" width="5%">Select Ledger</th>
-                                            <th style="text-align:center;">Quantity</th>
-                                            <th style="text-align:center;" width="5%">Rate</th>
-                                            <th style="text-align:center;" width="5%">Amount</th>
-                                            <th style="text-align:center;" width="5%">Action</th>
-                                        </tr>
+                                        <th style="text-align:center;">Select Type</th>
+                                        <th style="text-align:center;">Ledger Name</th>
+                                        <th style="text-align:center;">Debit Amount</th>
+                                        <th style="text-align:center;">Credit Amount</th>
+                                        <th style="text-align:center;">Actions</th>
                                     </thead>
                                     <tbody>
                                         <tr v-for="(item, index) in purchases" :key="index">
-                                            <td style="text-align:center;" width="5%">
+                                            <td style="text-align:center;">
+                                                <select class="mt-2" style="width: 75%; border: none; border-color: transparent; background-color: white; text-align:center;" v-model="item.payment_option">
+                                                    <option value="">Dr/Cr</option>
+                                                    <option value="dr">DR</option>
+                                                    <option value="cr">CR</option>
+                                                </select>
+                                            </td>
+                                            <td class="text-center">
                                                 <select class="selectLedgerOnExpenses" style="width: 50%; border: none; border-color: transparent;">
                                                     <option value="">Select Ledger</option>
                                                     <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
                                                 </select>
-                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].ledger_name">{{  errors[index].ledger_name[0] }}</p>
-                                                <span v-else></span>
                                             </td>
-
-                                            <td style="text-align:center;" width="5%">
-                                                <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Quantity" v-model="item.quantity" @input="calculateAmount(item)">
-                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].quantity">{{ errors[index].quantity[0] }}</p>
-                                                <span v-else></span>
+                                            <td class="text-center">
+                                                <input class="mt-1" v-show="item.payment_option === 'dr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.debit_amount" placeholder="Enter Debit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
                                             </td>
-
-                                            <td style="text-align:center;" width="5%">
-                                                <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Rate" v-model="item.rate" @input="calculateAmount(item)" @keyup.enter="openCostCenter2(index)" >
-                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].rate">{{ errors[index].rate[0] }}</p>
-                                                <span v-else></span>
+                                            <td class="text-center">
+                                                <input class="mt-1" v-show="item.payment_option === 'cr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.credit_amount" placeholder="Enter Credit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
                                             </td>
-
-                                            <td style="text-align:center;" width="5%">
-                                                <input type="text" style="width: 60%; border: none; border-color: transparent; outline: none;" placeholder="Amount" v-model="item.amount" @keyup.tab.prevent="openCostCenter2(index)" readonly>
-                                            </td>
-
-                                            <td style="text-align:center;" width="5%">
-                                                <span style="width: 60%; border: none; border-color: transparent;" @click="removeCostCenter(index)" v-if="index !== 0" >
-                                                    <i class="fa-solid fa-trash-can text-danger"></i>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" @click="removeCostCenter(index)" v-if="index !== 0">
+                                                    <i class="fa-solid mt-2 fs-6 fa-trash-can" style="color: #fa0000"></i>
                                                 </span>
-                                                <!-- <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
-                                                    <i class="fa-solid fa-pen"></i>
-                                                </span> -->
-                                                <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
-                                                <span v-else></span>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th style="text-align:center;" colspan="3">Total</th>
-                                            <td style="text-align: center;">
-                                                <input type="text" style="width: 50%; border: none; border-color: transparent; outline: none;" placeholder="Total Amount" v-model="totalAmountValue" readonly>
-                                            </td>
+                                            <th id="total" colspan="2" class="text-center">Total :</th>
+                                            <td style="text-align: center" v-model="formData.debit_total">Debit Total: <span class="ms-3">{{ formData.debit_total }}</span></td>
+                                            <td style="text-align: center" v-model="formData.credit_total">Credit Total: <span class="ms-3">{{ formData.credit_total }}</span></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1238,22 +1212,42 @@
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control">
+                                            <input type="text" class="sty-inp form-control" v-model="formData.amount_in_words" style="text-transform: capitalize;">
                                             <label class="sty-label" for="">Amount in Words</label>
                                         </div>
                                     </div>
 
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <textarea class="sty-inp form-control" cols="30" rows="1" v-model="formData2.narration"></textarea>
+                                            <textarea class="sty-inp form-control" cols="30" rows="1" v-model="formData.narration"></textarea>
                                             <label class="sty-label" for="">Narration</label>
                                         </div>
                                     </div>
 
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="text" v-model="formData.cheque_number">
+                                            <label class="sty-label" for="">Cheque Number</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="date" v-model="formData.cheque_date">
+                                            <label class="sty-label" for="">Date</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="text" v-model="formData.bank_name">
+                                            <label class="sty-label" for="">Bank Name</label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" @click="saveVoucherDetailsHavingFormData2">Save</button>
+                                    <button type="button" class="btn btn-primary" @click="saveReceiptVoucherDetails">Save</button>
                                 </div>
                             </div>
                         </div>
@@ -1270,39 +1264,31 @@
             </div>
             {% verbatim %}
             <div>
-                <table id="purchaseVoucherDatatable" class="display dt-table order-column" style="width:100%">
+                <table id="incomeVoucherDatatable" class="display dt-table order-column" style="width:100%">
                     <!-- <table id="houseHelpDataTable"> -->
                     <thead>
                         <tr>
                             <th>Actions</th>
                             <th>Id</th>
-                            <th>Name</th>
-                            <th>PAN No.</th>
-                            <th>PAN Document</th>
-                            <th>Contact</th>
-                            <th>Aadhar No.</th>
-                            <th>Aadhar Document</th>
-                            <th>Address</th>
-                            <th>City</th>
-                            <th>State</th>
-                            <th>Pin Code</th>
-                            <th>Email</th>
-                            <th>Other Document</th>
-                            <th>Other Document Specification</th>
-                            <!-- <th v-for="(value, key) in tenantData[0]" :key="key">{{ key }}</th> -->
+                            <th>voucher_name</th>
+                            <th>voucher_type</th>
+                            <th>voucher_number</th>
+                            <th>booking_date</th>
+                            <th>amount_in_words</th>
+                            <th>narration</th>
+                            <th>cheque_number</th>
+                            <th>voucher_date</th>
+                            <th>bank_name</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- <tr v-for="(tenantData, index) in tenantData" :key="index">
+                        <tr v-for="(item, index) in incomeVoucherDatatable" :key="index">
                             <td>
-                                <span @click="viewRequestedData(tenantData.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
-                                <span @click="editRequestedData(tenantData.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                                <span @click="viewRequestedData(item.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                <span @click="editRequestedData(item.id)"><i class="fa-solid fa-pen-to-square"></i></span>
                             </td>
-                            <td v-for="(value, key) in tenantData" :key="key">
-                                <span v-if="key === 'tenant_address'">{{ sliceAddress(value) }}</span>
-                                <span v-else>{{ value }}</span>
-                            </td>
-                        </tr> -->
+                            <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -1322,7 +1308,7 @@
                             <div class="row">
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
-                                        <select class="w-100 sty-inp form-control" v-model="formData2.voucher_type" @change="fetchVoucherNumber2($event)">
+                                        <select class="w-100 sty-inp form-control" v-model="formData.voucher_type" @change="fetchVoucherNumber($event)">
                                             <option value="">Select Voucher Type</option>
                                             <option v-for="voucher in vouchersList" :value="voucher.id">{{ voucher.voucher_name }}</option>
                                         </select>
@@ -1332,100 +1318,66 @@
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
-                                        <input class="sty-inp form-control" type="text" v-model="formData2.voucher_number">
+                                        <input class="sty-inp form-control" type="text" v-model="formData.voucher_number">
                                         <label class="sty-label" for="">Voucher Number</label>
                                     </div>
                                 </div>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
-                                        <input class="sty-inp form-control" type="date" v-model="formData2.booking_date">
+                                        <input class="sty-inp form-control" type="date" v-model="formData.voucher_date" @input="setSameDateAsVoucherDate">
+                                        <label class="sty-label" for="">Voucher Date</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 mb-3">
+                                    <div class="sty-input-wrapper w-100">
+                                        <input class="sty-inp form-control" type="date" v-model="formData.booking_date">
                                         <label class="sty-label" for="">Booking Date</label>
                                     </div>
                                 </div>
-
-                                <div class="col-lg-4 mb-3">
-                                    <div class="sty-input-wrapper w-100">
-                                        <select class="w-100 sty-inp form-control selectLedgerOnIncome">
-                                            <option value="">Select Ledger</option>
-                                            <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
-                                        </select>
-                                        <label class="sty-label">Vendor Name</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 mb-3">
-                                    <div class="sty-input-wrapper w-100">
-                                        <input class="sty-inp form-control w-100" type="date"
-                                            v-model="formData2.invoice_date">
-                                        <label class="sty-label">Invoice Date</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 mb-3">
-                                    <div class="sty-input-wrapper w-100">
-                                        <input class="sty-inp form-control w-100" type="text"
-                                            v-model="formData2.invoice_number">
-                                        <label class="sty-label" for="">Vendor Invoice Number</label>
-                                    </div>
-                                </div>
-
                             </div>
                             <hr class="mt-1 mb-3">
                             <div>
                                 <table class="table table-sm table-bordered">
                                     <thead class="table-dark">
-                                        <tr>
-                                            <th style="text-align:center;" width="5%">Select Ledger</th>
-                                            <th style="text-align:center;">Quantity</th>
-                                            <th style="text-align:center;" width="5%">Rate</th>
-                                            <th style="text-align:center;" width="5%">Amount</th>
-                                            <th style="text-align:center;" width="5%">Action</th>
-                                        </tr>
+                                        <th style="text-align:center;">Select Type</th>
+                                        <th style="text-align:center;">Ledger Name</th>
+                                        <th style="text-align:center;">Debit Amount</th>
+                                        <th style="text-align:center;">Credit Amount</th>
+                                        <th style="text-align:center;">Actions</th>
                                     </thead>
                                     <tbody>
                                         <tr v-for="(item, index) in purchases" :key="index">
-                                            <td style="text-align:center;" width="5%">
+                                            <td style="text-align:center;">
+                                                <select class="mt-2" style="width: 75%; border: none; border-color: transparent; background-color: white; text-align:center;" v-model="item.payment_option">
+                                                    <option value="">Dr/Cr</option>
+                                                    <option value="dr">DR</option>
+                                                    <option value="cr">CR</option>
+                                                </select>
+                                            </td>
+                                            <td class="text-center">
                                                 <select class="selectLedgerOnIncome" style="width: 50%; border: none; border-color: transparent;">
                                                     <option value="">Select Ledger</option>
                                                     <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
                                                 </select>
-                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].ledger_name">{{  errors[index].ledger_name[0] }}</p>
-                                                <span v-else></span>
                                             </td>
-
-                                            <td style="text-align:center;" width="5%">
-                                                <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Quantity" v-model="item.quantity" @input="calculateAmount(item)">
-                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].quantity">{{ errors[index].quantity[0] }}</p>
-                                                <span v-else></span>
+                                            <td class="text-center">
+                                                <input class="mt-1" v-show="item.payment_option === 'dr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.debit_amount" placeholder="Enter Debit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
                                             </td>
-
-                                            <td style="text-align:center;" width="5%">
-                                                <input type="text" style="width: 60%; border: none; border-color: transparent;" placeholder="Enter Rate" v-model="item.rate" @input="calculateAmount(item)" @keyup.enter="openCostCenter2(index)" >
-                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].rate">{{ errors[index].rate[0] }}</p>
-                                                <span v-else></span>
+                                            <td class="text-center">
+                                                <input class="mt-1" v-show="item.payment_option === 'cr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.credit_amount" placeholder="Enter Credit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
                                             </td>
-
-                                            <td style="text-align:center;" width="5%">
-                                                <input type="text" style="width: 60%; border: none; border-color: transparent; outline: none;" placeholder="Amount" v-model="item.amount" @keyup.tab.prevent="openCostCenter2(index)" readonly>
-                                            </td>
-
-                                            <td style="text-align:center;" width="5%">
-                                                <span style="width: 60%; border: none; border-color: transparent;" @click="removeCostCenter(index)" v-if="index !== 0" >
-                                                    <i class="fa-solid fa-trash-can text-danger"></i>
+                                            <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                                                <span class="ms-auto me-auto" @click="removeCostCenter(index)" v-if="index !== 0">
+                                                    <i class="fa-solid mt-2 fs-6 fa-trash-can" style="color: #fa0000"></i>
                                                 </span>
-                                                <!-- <span style="width: 60%; border: none; border-color: transparent;" @click="openCostCenterModal(index + 1, item.id)">
-                                                    <i class="fa-solid fa-pen"></i>
-                                                </span> -->
-                                                <span v-if="errors.wing_flat" class="error">{{ errors.wing_flat[0] }}</span>
-                                                <span v-else></span>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <th style="text-align:center;" colspan="3">Total</th>
-                                            <td style="text-align: center;">
-                                                <input type="text" style="width: 50%; border: none; border-color: transparent; outline: none;" placeholder="Total Amount" v-model="totalAmountValue" readonly>
-                                            </td>
+                                            <th id="total" colspan="2" class="text-center">Total :</th>
+                                            <td style="text-align: center" v-model="formData.debit_total">Debit Total: <span class="ms-3">{{ formData.debit_total }}</span></td>
+                                            <td style="text-align: center" v-model="formData.credit_total">Credit Total: <span class="ms-3">{{ formData.credit_total }}</span></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -1433,22 +1385,42 @@
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control">
+                                            <input type="text" class="sty-inp form-control" v-model="formData.amount_in_words" style="text-transform: capitalize;">
                                             <label class="sty-label" for="">Amount in Words</label>
                                         </div>
                                     </div>
 
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <textarea class="sty-inp form-control" cols="30" rows="1" v-model="formData2.narration"></textarea>
+                                            <textarea class="sty-inp form-control" cols="30" rows="1" v-model="formData.narration"></textarea>
                                             <label class="sty-label" for="">Narration</label>
                                         </div>
                                     </div>
 
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="text" v-model="formData.cheque_number">
+                                            <label class="sty-label" for="">Cheque Number</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="date" v-model="formData.cheque_date">
+                                            <label class="sty-label" for="">Date</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 mb-3">
+                                        <div class="sty-input-wrapper w-100">
+                                            <input class="sty-inp form-control" type="text" v-model="formData.bank_name">
+                                            <label class="sty-label" for="">Bank Name</label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" @click="saveVoucherDetailsHavingFormData2">Save</button>
+                                    <button type="button" class="btn btn-primary" @click="saveReceiptVoucherDetails">Save</button>
                                 </div>
                             </div>
                         </div>
@@ -1464,6 +1436,38 @@
             <div class="container">
                 <button class="add-mem-btn" @click="openVoucherModal('payment_voucher')">Create Payment Voucher</button>
             </div>
+
+            {% verbatim %}
+            <div>
+                <table id="paymentVoucherDatatable" class="display dt-table order-column" style="width:100%">
+                    <!-- <table id="houseHelpDataTable"> -->
+                    <thead>
+                        <tr>
+                            <th>Actions</th>
+                            <th>Id</th>
+                            <th>voucher_name</th>
+                            <th>voucher_type</th>
+                            <th>voucher_number</th>
+                            <th>booking_date</th>
+                            <th>amount_in_words</th>
+                            <th>narration</th>
+                            <th>cheque_number</th>
+                            <th>voucher_date</th>
+                            <th>bank_name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in paymentVoucherDatatable" :key="index">
+                            <td>
+                                <span @click="viewRequestedData(item.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                <span @click="editRequestedData(item.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                            </td>
+                            <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% endverbatim %}
 
             <!-- Create Payment Voucher Modal(PVM) -->
             <div class="modal fade" id="paymentVoucherCreate" tabindex="-1" aria-labelledby="paymentVoucherLabel" data-bs-backdrop="static" aria-hidden="true">
@@ -1555,7 +1559,7 @@
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control">
+                                            <input type="text" class="sty-inp form-control" style="text-transform: capitalize;" v-model="formData.amount_in_words" readonly>
                                             <label class="sty-label" for="">Amount in Words</label>
                                         </div>
                                     </div>
@@ -1605,6 +1609,38 @@
             <div class="container">
                 <button class="add-mem-btn" @click="openVoucherModal('receipt_voucher')">Create Receipt Voucher</button>
             </div>
+
+            {% verbatim %}
+            <div>
+                <table id="receiptVoucherDatatable" class="display dt-table order-column" style="width:100%">
+                    <!-- <table id="houseHelpDataTable"> -->
+                    <thead>
+                        <tr>
+                            <th>Actions</th>
+                            <th>Id</th>
+                            <th>voucher_name</th>
+                            <th>voucher_type</th>
+                            <th>voucher_number</th>
+                            <th>booking_date</th>
+                            <th>amount_in_words</th>
+                            <th>narration</th>
+                            <th>cheque_number</th>
+                            <th>voucher_date</th>
+                            <th>bank_name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in receiptVoucherDatatable" :key="index">
+                            <td>
+                                <span @click="viewRequestedData(item.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                <span @click="editRequestedData(item.id)"><i class="fa-solid fa-pen-to-square"></i></span>
+                            </td>
+                            <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% endverbatim %}
 
             <!-- Create Receipt Voucher Modal(RVM) -->
             <div class="modal fade" id="receiptVoucherCreate" tabindex="-1" aria-labelledby="receiptVoucherLabel" data-bs-backdrop="static" aria-hidden="true">
@@ -1775,7 +1811,7 @@
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control">
+                                            <input type="text" class="sty-inp form-control" style="text-transform: capitalize;" v-model="formData.amount_in_words" readonly>
                                             <label class="sty-label" for="">Amount in Words</label>
                                         </div>
                                     </div>
@@ -1832,12 +1868,13 @@
 <script>
 /* DATATABLE */
 $(document).ready(function () {
-    $('#costCenterDatatable').on('shown.bs.tab', function (e) {
+    // Adjust column sizes when a tab is shown
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
         $($.fn.dataTable.tables(true)).DataTable()
             .columns.adjust();
     });
 
-    var table = $('#costCenterDatatable, #purchaseVoucherDatatable').DataTable({
+    var table = $('#costCenterDatatable, #purchaseVoucherDatatable, #salesVoucherDatatable, #generalVoucherDatatable, #expenseVoucherDatatable, #incomeVoucherDatatable, #paymentVoucherDatatable, #receiptVoucherDatatable').DataTable({
         "dom": '<"dt-buttons"Br><"clear">ftipl',
         buttons: [
             {
@@ -1970,24 +2007,31 @@ new Vue({
         sharesList: [],
         sharesData: {
             shares_name: '',
-            shares_type: 'Select Shares Type'
+            shares_type: 'Select Stock Type'
         },
+        purchaseVoucherDatatable: {},
+        salesVoucherDatatable: {},
+        generalVoucherDatatable: {},
+        expenseVoucherDatatable: {},
+        incomeVoucherDatatable: {},
+        paymentVoucherDatatable: {},
+        receiptVoucherDatatable: {},
         againstRefrences: [
             {
-                'voucher_id': 1,
+                'against_voucher': 1,
                 'voucher_number': 'VOUCHER-123-2024',
-                'voucher_date': '20-01-2024',
-                'pending_amount': 200,
-                'final_Amount': 500,
-                'allocated_amount': null
+                'voucher_date': '2000-09-09',
+                'pending_amt': 200,
+                'final_amt': 500,
+                'allocated_amt': null
             },
             {
-                'voucher_id': 2,
+                'against_voucher': 2,
                 'voucher_number': 'VOUCHER-456-2024',
-                'voucher_date': '21-02-2024',
-                'pending_amount': 300,
-                'final_Amount': 500,
-                'allocated_amount': null
+                'voucher_date': '2000-09-09',
+                'pending_amt': 300,
+                'final_amt': 500,
+                'allocated_amt': null
             },
         ]
     },
@@ -2097,7 +2141,7 @@ new Vue({
             let addShares = this.addShares;
             let modalName = this.modalNameToOpen;
             if(this.addShares){
-                buttonName = 'Share'
+                buttonName = 'Stock'
             }
             $element.select2({
                 dropdownParent: $(`#${dropdown}`),
@@ -2229,7 +2273,7 @@ new Vue({
             $(`#${this.modalNameToOpen}`).modal('hide');
             $('#addRefrenceModal').modal('show');
 
-            this.purchases[index]['ledger_name'] = document.querySelectorAll(`.${this.className}`)[index].value;
+            this.purchases[index]['ledger_name'] = parseInt(document.querySelectorAll(`.${this.className}`)[index].value);
             related_ledgers = this.purchases[index];
             related_ledgers['against_refrence'] = []
             related_ledgers['cost_center'] = []
@@ -2256,7 +2300,7 @@ new Vue({
             $(`#${this.modalNameToOpen}`).modal('hide');
             $('#CostCenterModal').modal('show');
 
-            this.purchases[index]['ledger_name'] = document.querySelectorAll(`.${this.className}`)[index + 1].value;
+            this.purchases[index]['ledger_name'] = parseInt(document.querySelectorAll(`.${this.className}`)[index + 1].value);
             related_ledgers = this.purchases[index];
             related_ledgers['cost_center'] = []
             this.completeJSON['related_ledgers'].push(related_ledgers);
@@ -2277,12 +2321,12 @@ new Vue({
             // SAVE AGAINST REFRENCE IN BEFORE OPENING COST CENTER.
             this.againstRefrences.forEach(item => {
                 let against_refrences = {
-                    'voucher_id': item.voucher_id,
+                    'against_voucher': item.against_voucher,
                     'voucher_number': item.voucher_number,
                     'voucher_date': item.voucher_date,
-                    'pending_amount': item.pending_amount,
-                    'final_Amount': item.final_Amount,
-                    'allocated_amount': parseFloat(item.allocated_amount)
+                    'pending_amt': item.pending_amt,
+                    'final_amt': item.final_amt,
+                    'allocated_amt': parseFloat(item.allocated_amt)
                 }
                 this.completeJSON.related_ledgers[this.indexNumber]['against_refrence'].push(against_refrences);
             });
@@ -2324,15 +2368,14 @@ new Vue({
             this.formData.debit_total = debit_amount;
             this.formData.credit_total = credit_amount;
             // this.totalAmountValue = total_amount;
-            let sum = debit_amount + credit_amount;
-            this.formData.amount_in_words = window.numberToWords.toWords(sum);
+            this.formData.amount_in_words = window.numberToWords.toWords(debit_amount);
         },
         addRowOnSaveOnMainModal(){
             // ADD COST CENTER BRFORE ADDING ANOTHER ROW
             this.items.forEach(item => {
                 let cost_center = {
-                    'voucher_id': item.cost_center_name,
-                    'voucher_number': item.cost_center_amount,
+                    'cost_center': item.cost_center_name,
+                    'amount': item.cost_center_amount,
                 }
                 this.completeJSON.related_ledgers[this.indexNumber]['cost_center'].push(cost_center);
             });
@@ -2354,7 +2397,7 @@ new Vue({
             });
         },
         saveReceiptVoucherDetails(){
-            this.completeJSON['voucher_type_actual'] = this.voucher_type_to_open;
+            this.completeJSON['voucher_name'] = this.voucher_type_to_open;
             for (const key in this.formData) {
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
                     if (this.formData[key] !== null) {
@@ -2363,9 +2406,17 @@ new Vue({
                 }
             }
             console.log("Final data===========", this.completeJSON)
+
+            axios.post(`http://127.0.0.1:8000/api/voucher_create_ledger/`, this.completeJSON)
+                .then(response => {
+                    console.log("Success", response.data)
+                })
+                .catch(error => {
+                    console.log("Error", error.response.data)
+                });
         },
         saveVoucherDetailsHavingFormData2(){
-            this.completeJSON['voucher_type_actual'] = this.voucher_type_to_open;
+            this.completeJSON['voucher_name'] = this.voucher_type_to_open;
             this.completeJSON['ledger_name'] = document.getElementsByClassName(this.className)[0].value;
             for (const key in this.formData2) {
                 if (Object.prototype.hasOwnProperty.call(this.formData2, key)) {
@@ -2375,6 +2426,14 @@ new Vue({
                 }
             }
             console.log("Final data===========", this.completeJSON)
+
+            axios.post(`http://127.0.0.1:8000/api/voucher_create_ledger/`, this.completeJSON)
+                .then(response => {
+                    console.log("Success", response.data)
+                })
+                .catch(error => {
+                    console.log("Error", error.response.data)
+                });
         },
         addMoreCostCenterOnEnterKey(){
             this.items.push({
@@ -2395,7 +2454,7 @@ new Vue({
         openCostCenterModal(index) {
             this.errors = {};
             this.displayAmount = this.purchases[index]['amount'];
-            this.purchases[index]['ledger_name'] = document.getElementsByClassName(this.className)[index + 1].value;
+            this.purchases[index]['ledger_name'] = parseInt(document.getElementsByClassName(this.className)[index + 1].value);
 
             axios.post(`http://127.0.0.1:8000/api/purchase_voucher_creation/`, this.purchases[index])
                 .then(response => {
@@ -2649,6 +2708,97 @@ new Vue({
     },
     mounted() {
         this.getCountries();
+
+        // PUCM DATATABLE
+        axios.get('http://127.0.0.1:8000/api/voucher_create_ledger/?voucher_type__voucher_type=purchase_voucher')
+            .then(response => {
+                this.purchaseVoucherDatatable = response.data;
+                console.log("DATA----------------", this.purchaseVoucherDatatable)
+                $(document).ready(function () {
+                    $('#purchaseVoucherDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // SVM DATATABLE
+        axios.get('http://127.0.0.1:8000/api/voucher_create_ledger/?voucher_type__voucher_type=sale_voucher')
+            .then(response => {
+                this.salesVoucherDatatable = response.data;
+                console.log("DATA----------------", this.salesVoucherDatatable)
+                $(document).ready(function () {
+                    $('#salesVoucherDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // JVM DATATABLE
+        axios.get('http://127.0.0.1:8000/api/voucher_create_ledger/?voucher_type__voucher_type=general_voucher')
+            .then(response => {
+                this.generalVoucherDatatable = response.data;
+                console.log("DATA----------------", this.generalVoucherDatatable)
+                $(document).ready(function () {
+                    $('#generalVoucherDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // EVM DATATABLE
+        axios.get('http://127.0.0.1:8000/api/voucher_create_ledger/?voucher_type__voucher_type=expenses_voucher')
+            .then(response => {
+                this.expenseVoucherDatatable = response.data;
+                console.log("DATA----------------", this.expenseVoucherDatatable)
+                $(document).ready(function () {
+                    $('#expenseVoucherDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // IVM DATATABLE
+        axios.get('http://127.0.0.1:8000/api/voucher_create_ledger/?voucher_type__voucher_type=income_voucher')
+            .then(response => {
+                this.incomeVoucherDatatable = response.data;
+                console.log("DATA----------------", this.incomeVoucherDatatable)
+                $(document).ready(function () {
+                    $('#incomeVoucherDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // PVM DATATABLE
+        axios.get('http://127.0.0.1:8000/api/voucher_create_ledger/?voucher_type__voucher_type=payment_voucher')
+            .then(response => {
+                this.paymentVoucherDatatable = response.data;
+                console.log("DATA----------------", this.paymentVoucherDatatable)
+                $(document).ready(function () {
+                    $('#paymentVoucherDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        // RVM DATATABLE
+        axios.get('http://127.0.0.1:8000/api/voucher_create_ledger/?voucher_type__voucher_type=receipt_voucher')
+            .then(response => {
+                this.receiptVoucherDatatable = response.data;
+                console.log("DATA----------------", this.receiptVoucherDatatable)
+                $(document).ready(function () {
+                    $('#receiptVoucherDatatable').DataTable();
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
 
         // SHARES DATATABLE DATA
         axios.get('http://127.0.0.1:8000/api/shares_on_ledger_creation/')

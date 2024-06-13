@@ -512,7 +512,7 @@ shares_type = [
     ('unit', 'Unit')
 ]
 
-class SharesOnLedgerModel(models.Model):
+class ShareOnLedgerModel(models.Model):
     shares_name = models.CharField(max_length=200)
     shares_type = models.CharField(max_length=200, choices=shares_type)
 
@@ -521,30 +521,59 @@ class VoucherCreationModel(models.Model):
     voucher_name = models.CharField(max_length=100)
     voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
     voucher_number = models.CharField(max_length=200)
-    voucher_date = models.DateField()
     booking_date = models.DateField()
-    amounts_in_words = models.CharField(max_length=250)
+    amount_in_words = models.CharField(max_length=250)
     narration = models.CharField(max_length=300)
-    cheque_number = models.CharField(max_length=100)
-    voucher_date = models.DateField()
-    bank_name = models.CharField(max_length=100)
+    cheque_number = models.CharField(max_length=100, null=True, blank=True)
+    voucher_date = models.DateField(null=True, blank=True)
+    bank_name = models.CharField(max_length=100, null=True, blank=True)
 
 
-# total amt can be anything, debit or credit
+# Total amt can be anything, debit or credit
 class RelatedLedgersModel(models.Model):
+    voucher_type = models.ForeignKey(VoucherCreationModel, on_delete=models.CASCADE)
     ledger_name = models.ForeignKey(Ledger, on_delete=models.CASCADE)
-    debit_amt = models.IntegerField()
-    credit_amt = models.IntegerField()
+    debit_amt = models.IntegerField(null=True, blank=True)
+    credit_amt = models.IntegerField(null=True, blank=True)
+    
+    quantity = models.IntegerField(null=True, blank=True)
+    rate = models.IntegerField(null=True, blank=True)
+    amount = models.IntegerField(null=True, blank=True)
+    total = models.IntegerField(null=True, blank=True)
+
+
+# SHARES LEDGER
+class RelatedSharesModel(models.Model):
+    voucher_type = models.ForeignKey(VoucherCreationModel, on_delete=models.CASCADE)
+    ledger_name = models.ForeignKey(Ledger, on_delete=models.CASCADE)
+    quantity = models.IntegerField(null=True, blank=True)
+    rate = models.IntegerField(null=True, blank=True)
+    amount = models.IntegerField(null=True, blank=True)
+    total = models.IntegerField(null=True, blank=True)
 
 
 class AgainstRefrenceModel(models.Model):
-    voucher_number = models.ForeignKey(VoucherCreationModel, on_delete=models.CASCADE)
-    date = models.DateField()
+    # voucher_type = models.ForeignKey(VoucherCreationModel, on_delete=models.CASCADE)
+    against_related_ledger = models.ForeignKey(RelatedLedgersModel, on_delete=models.CASCADE)
+    voucher_number = models.CharField(max_length=100)
+    voucher_date = models.DateField()
     pending_amt = models.IntegerField()
     final_amt = models.IntegerField()
     allocated_amt = models.IntegerField()
 
 
-class CostCenterModal(models.Model):
-    name = models.ForeignKey(CostCenter, on_delete=models.CASCADE)
+class CostCenterOnLedger(models.Model):
+    related_ledger = models.ForeignKey(RelatedLedgersModel, on_delete=models.CASCADE, null=True, blank=True)
+    # cost_center_related_shares = models.ForeignKey(RelatedSharesModel, on_delete=models.CASCADE, null=True, blank=True)
+    cost_center = models.ForeignKey(CostCenter, on_delete=models.CASCADE)
     amount = models.IntegerField()
+
+
+class GeneralLedger(models.Model):
+    date = models.DateField()
+    particulars = models.ForeignKey(Ledger, on_delete=models.CASCADE)
+    voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
+    voucher_number = models.CharField(max_length=100, null=True, blank=True)
+    debit = models.IntegerField()
+    credit = models.IntegerField()
+    balance = models.IntegerField()

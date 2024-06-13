@@ -2,6 +2,9 @@ from django.shortcuts import render
 from  SocietyApi.models import *
 from SocietyApi.serializers import *
 from .models import *
+from django.http import HttpResponse, JsonResponse
+from collections import defaultdict
+
 
 # Create your views here.
 
@@ -225,12 +228,6 @@ def unit_register(request):
     return render(request, 'register/unit_register.html', context)
 
 
-
-
-from django.http import HttpResponse, JsonResponse
-
-
-
 def form_j_view(request):
     datatable_columns = []
     data = []
@@ -251,7 +248,6 @@ def form_j_view(request):
         SO, THAT MEMBER WILL BE DEFAULTER
         AND ONLY MEMBER WILL BE SHOWN IN FORM J
     '''
-
     flats = WingFlatUnique.objects.values('id', 'wing_flat_unique').distinct().order_by('wing_flat_unique')
     for flat in flats:
         print("FLATS==========", flat)
@@ -387,11 +383,8 @@ def get_cost_center_datatable(request, id=None):
 
 
 def voucher_creation(request):
-    datatable_columns = [0, 1]
+    datatable_columns = [0, 2, 3, 4, 5]
     return render(request, 'voucher_creation_new.html', {'datatable_columns': datatable_columns})
-
-
-from collections import defaultdict
 
 
 def balance_sheet(request):
@@ -517,7 +510,6 @@ def balance_sheet(request):
         group13[ledger.group_name].append(ledger.ledger_name)
     group13 = dict(group13)
 
-
     return render(request, 'balance_sheet.html', {
         'datatable_columns': datatable_columns,
         'group1': group1,
@@ -549,3 +541,7 @@ def profit_and_loss(request):
     expense = Ledger.objects.filter(group_name__in=expense_groups)
     return render(request, 'profit_and_loss.html', {'datatable_columns': datatable_columns, 'incomes': incomes, 'expense': expense})
 
+
+def general_ledger(request):
+    datatable_columns = [1, 2, 3, 4, 5, 6]
+    return render(request, 'general_ledger.html', {'datatable_columns': datatable_columns})
