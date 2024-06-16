@@ -28,7 +28,7 @@ ADD FEATURES LATER:
 1. Login
 2. Authentication/Authorization (login)
 3. Mobile app
-4. Delete functionality for all the 
+4. Delete functionality for all the
 
 
 ========================================ACCOUNTS============================================================
@@ -57,5 +57,9 @@ amount:
 =================================== ********* =====================================================
                                     PRIORITY
 
-group update
-accound module
+
+IN voucher creation on save 4 actions are getting performed:
+1. save the voucher itself data.
+2. create general entry for all those ledgers.
+3. calculation of debit and credit amount to show running balance.
+4. show that running balance on balance sheet.
