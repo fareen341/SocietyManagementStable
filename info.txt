@@ -63,3 +63,7 @@ IN voucher creation on save 4 actions are getting performed:
 2. create general entry for all those ledgers.
 3. calculation of debit and credit amount to show running balance.
 4. show that running balance on balance sheet.
+
+
+
+Either show 2 entries for tds payable onw ith dr and one with cr.

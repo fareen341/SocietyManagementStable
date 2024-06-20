@@ -1236,7 +1236,7 @@
             </div>
         </div>
 
-        <div class="tab-pane fade" id="expense-tab-pane" role="tabpanel" data-bs-backdrop="static" aria-labelledby="expense-tab" tabindex="0">
+        <div class="tab-pane fade" id="expense-tab-pane" role="tabpanel" aria-labelledby="expense-tab" tabindex="0">
             <div class="d-flex">
                 <button type="button" class="ms-auto add-mem-btn" @click="openVoucherModal('expenses_voucher')" data-bs-toggle="modal" data-bs-target="#expenseVoucherCreate">Create Expense Voucher</button>
             </div>
@@ -1273,8 +1273,7 @@
             {% endverbatim %}
 
             <!-- CREATE MODAL FOR EXPENSE VOUCHER(EVM) -->
-            <div class="modal fade" id="expenseVoucherCreate" tabindex="-1" aria-labelledby="expenseVoucherCreateLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="expenseVoucherCreate" tabindex="-1" aria-labelledby="expenseVoucherCreateLabel" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -1446,8 +1445,7 @@
             {% endverbatim %}
 
             <!-- CREATE MODAL FOR INCOME VOUCHER(INMF) -->
-            <div class="modal fade" id="incomeVoucherCreate" tabindex="-1" aria-labelledby="incomeVoucherCreateLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="incomeVoucherCreate" tabindex="-1" aria-labelledby="incomeVoucherCreateLabel" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
