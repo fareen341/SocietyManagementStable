@@ -33,4 +33,5 @@ admin.site.register(RelatedLedgersModel)
 admin.site.register(RelatedSharesModel)
 admin.site.register(AgainstRefrenceModel)
 admin.site.register(CostCenterOnLedger)
+admin.site.register(GeneralLedger)
 

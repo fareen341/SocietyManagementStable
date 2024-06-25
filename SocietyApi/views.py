@@ -1222,48 +1222,38 @@ class VoucherCreationView(viewsets.ModelViewSet):
 
         # Step 2: Save related ledgers
         related_ledgers_data = request.data.get('related_ledgers', [])
-        print("Related ledgers data:", related_ledgers_data)
         for ledger_data in related_ledgers_data:
             ledger_data['voucher_type'] = voucher.id  # Link the voucher
             ledger_serializer = RelatedLedgersSerializers(data=ledger_data)
             if ledger_serializer.is_valid():
                 related_ledger = ledger_serializer.save()
-                print(f"Saved Related Ledger: {related_ledger}")
             else:
-                print("Related Ledger serializer errors:", ledger_serializer.errors)
                 return Response(ledger_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-            
+
             # Step 3: Save cost centers for each related ledger
             against_refrence_data = ledger_data.get('against_refrence', [])
-            print("against_refrence centers data=================---------------:", against_refrence_data)
             for against_refrence in against_refrence_data:
                 against_refrence['against_related_ledger'] = related_ledger.id  # Link the related ledger
                 against_refrence_serializer = AgainstRefrenceSerializers(data=against_refrence)
                 if against_refrence_serializer.is_valid():
                     against_refrence_serializer.save()
-                    print(f"Saved Refrence: {against_refrence_serializer.data}")
                 else:
-                    print("Refrence serializer errors:", against_refrence_serializer.errors)
                     return Response(against_refrence_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
             # Step 3: Save cost centers for each related ledger
             cost_centers_data = ledger_data.get('cost_center', [])
-            print("Cost centers data:", cost_centers_data)
             for cost_center_data in cost_centers_data:
                 cost_center_data['related_ledger'] = related_ledger.id  # Link the related ledger
                 cost_center_serializer = CostCenterOnLedgerSerializers(data=cost_center_data)
                 if cost_center_serializer.is_valid():
                     cost_center_serializer.save()
-                    print(f"Saved Cost Center: {cost_center_serializer.data}")
                 else:
-                    print("Cost Center serializer errors:", cost_center_serializer.errors)
                     return Response(cost_center_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
         headers = self.get_success_headers(voucher_serializer.data)
-        print("requested data================ again", request.data)
 
         # from top to bottom
         first_val = request.data['related_ledgers'][0]['payment_option']
@@ -1272,26 +1262,50 @@ class VoucherCreationView(viewsets.ModelViewSet):
         single_val_condn = True
         final_val = []
         for req in request.data['related_ledgers'][1:]:
-            print("printing inside ======================================>",req['payment_option'])
             if req['payment_option'] == first_val:
                 if first_done:
-                    print("-------------------2---------------------")
-                    print("going in first done condition -=-=-=-=-")
                     final_val.append({request.data['related_ledgers'][0]['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
+                    GeneralLedger.objects.create(
+                        date = request.data['booking_date'],
+                        from_ledger = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
+                        particulars = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
+                        voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
+                        voucher_number = request.data['voucher_number'],
+                        debit = request.data['related_ledgers'].get('debit_amount', None),
+                        credit = request.data['related_ledgers'].get('credit_amount', None),
+                        balance = 90
+                    )
                     first_done = False
-                    
+
                 if first_val != last_val:
-                    print("-------------------1---------------------")
                     final_val.append({req['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
+                    GeneralLedger.objects.create(
+                        date = request.data['booking_date'],
+                        from_ledger = Ledger.objects.get(id=req['ledger_name']),
+                        particulars = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
+                        voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
+                        voucher_number = request.data['voucher_number'],
+                        debit = request.data['related_ledgers'].get('debit_amount', None),
+                        credit = request.data['related_ledgers'].get('credit_amount', None),
+                        balance = 90
+                    )
                     single_val_condn = False
-                
+
             elif single_val_condn:
-                print("-------------------3---------------------")
                 single_val_condn = False
                 final_val.append({request.data['related_ledgers'][0]['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
+                GeneralLedger.objects.create(
+                        date = request.data['booking_date'],
+                        from_ledger = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
+                        particulars = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
+                        voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
+                        voucher_number = request.data['voucher_number'],
+                        debit = request.data['related_ledgers'].get('debit_amount', None),
+                        credit = request.data['related_ledgers'].get('credit_amount', None),
+                        balance = 90
+                    )
 
-        print("final list ------------------>", final_val)
-        print("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
+        print("FINAL VALUE 000000000000------------------", final_val)
 
 
         # from bottom to top
@@ -1301,27 +1315,52 @@ class VoucherCreationView(viewsets.ModelViewSet):
         single_val_condn = True
         reverse_val = []
         for req in request.data['related_ledgers'][::-1]:
-            print("printing inside ======================================>",req['payment_option'])
             if req['payment_option'] == first_val:
                 if first_done:
-                    print("-------------------2---------------------")
-                    print("going in first done condition -=-=-=-=-")
                     reverse_val.append({request.data['related_ledgers'][-1]['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
+                    GeneralLedger.objects.create(
+                        date = request.data['booking_date'],
+                        from_ledger = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
+                        particulars = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
+                        voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
+                        voucher_number = request.data['voucher_number'],
+                        debit = request.data['related_ledgers'].get('debit_amount', None),
+                        credit = request.data['related_ledgers'].get('credit_amount', None),
+                        balance = 90
+                    )
                     first_done = False
-                    
+
                 if first_val != last_val:
-                    print("-------------------1---------------------")
                     reverse_val.append({req['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
+                    GeneralLedger.objects.create(
+                        date = request.data['booking_date'],
+                        from_ledger = Ledger.objects.get(id=req['ledger_name']),
+                        particularsfrom_ledger = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
+                        voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
+                        voucher_number = request.data['voucher_number'],
+                        debit = request.data['related_ledgers'].get('debit_amount', None),
+                        credit = request.data['related_ledgers'].get('credit_amount', None),
+                        balance = 90
+                    )
                     single_val_condn = False
-                
+
             elif single_val_condn:
-                print("-------------------3---------------------")
                 single_val_condn = False
                 reverse_val.append({request.data['related_ledgers'][-1]['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
-                
-        print("reverse_val list ------------------>", reverse_val)
+                GeneralLedger.objects.create(
+                        date = request.data['booking_date'],
+                        from_ledger = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
+                        particulars = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
+                        voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
+                        voucher_number = request.data['voucher_number'],
+                        debit = request.data['related_ledgers'].get('debit_amount', None),
+                        credit = request.data['related_ledgers'].get('credit_amount', None),
+                        balance = 90
+                    )
+
+        print("FINAL VALUE REVERSE 000000000000------------------", reverse_val)
         return Response(voucher_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        
+
 
 class RelatedLedgersView(viewsets.ModelViewSet):
     queryset = RelatedLedgersModel.objects.all()

@@ -535,7 +535,7 @@ class RelatedLedgersModel(models.Model):
     ledger_name = models.ForeignKey(Ledger, on_delete=models.CASCADE)
     debit_amt = models.IntegerField(null=True, blank=True)
     credit_amt = models.IntegerField(null=True, blank=True)
-    
+
     quantity = models.IntegerField(null=True, blank=True)
     rate = models.IntegerField(null=True, blank=True)
     amount = models.IntegerField(null=True, blank=True)
@@ -571,9 +571,10 @@ class CostCenterOnLedger(models.Model):
 
 class GeneralLedger(models.Model):
     date = models.DateField()
-    particulars = models.ForeignKey(Ledger, on_delete=models.CASCADE)
+    from_ledger = models.ForeignKey(Ledger, on_delete=models.CASCADE, related_name='from_ledger', null=True)
+    particulars = models.ForeignKey(Ledger, on_delete=models.CASCADE, related_name='particulars')
     voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
     voucher_number = models.CharField(max_length=100, null=True, blank=True)
-    debit = models.IntegerField()
-    credit = models.IntegerField()
+    debit = models.IntegerField(null=True, blank=True)
+    credit = models.IntegerField(null=True, blank=True)
     balance = models.IntegerField()
