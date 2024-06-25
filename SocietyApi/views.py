@@ -1215,7 +1215,6 @@ class VoucherCreationView(viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):
-        print("requested data================", request.data)
         # Step 1: Save the main voucher data
         voucher_serializer = self.get_serializer(data=request.data)
         voucher_serializer.is_valid(raise_exception=True)
@@ -1264,6 +1263,63 @@ class VoucherCreationView(viewsets.ModelViewSet):
 
 
         headers = self.get_success_headers(voucher_serializer.data)
+        print("requested data================ again", request.data)
+
+        # from top to bottom
+        first_val = request.data['related_ledgers'][0]['payment_option']
+        last_val = request.data['related_ledgers'][-1]['payment_option']
+        first_done = True
+        single_val_condn = True
+        final_val = []
+        for req in request.data['related_ledgers'][1:]:
+            print("printing inside ======================================>",req['payment_option'])
+            if req['payment_option'] == first_val:
+                if first_done:
+                    print("-------------------2---------------------")
+                    print("going in first done condition -=-=-=-=-")
+                    final_val.append({request.data['related_ledgers'][0]['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
+                    first_done = False
+                    
+                if first_val != last_val:
+                    print("-------------------1---------------------")
+                    final_val.append({req['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
+                    single_val_condn = False
+                
+            elif single_val_condn:
+                print("-------------------3---------------------")
+                single_val_condn = False
+                final_val.append({request.data['related_ledgers'][0]['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
+
+        print("final list ------------------>", final_val)
+        print("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
+
+
+        # from bottom to top
+        first_val = request.data['related_ledgers'][-1]['payment_option']
+        last_val = request.data['related_ledgers'][0]['payment_option']
+        first_done = True
+        single_val_condn = True
+        reverse_val = []
+        for req in request.data['related_ledgers'][::-1]:
+            print("printing inside ======================================>",req['payment_option'])
+            if req['payment_option'] == first_val:
+                if first_done:
+                    print("-------------------2---------------------")
+                    print("going in first done condition -=-=-=-=-")
+                    reverse_val.append({request.data['related_ledgers'][-1]['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
+                    first_done = False
+                    
+                if first_val != last_val:
+                    print("-------------------1---------------------")
+                    reverse_val.append({req['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
+                    single_val_condn = False
+                
+            elif single_val_condn:
+                print("-------------------3---------------------")
+                single_val_condn = False
+                reverse_val.append({request.data['related_ledgers'][-1]['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
+                
+        print("reverse_val list ------------------>", reverse_val)
         return Response(voucher_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         
 
