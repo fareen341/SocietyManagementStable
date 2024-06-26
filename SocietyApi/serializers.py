@@ -708,18 +708,19 @@ class CostCenterOnLedgerSerializers(serializers.ModelSerializer):
 
 class GeneralLedgerSerializers(serializers.ModelSerializer):
     particulars_name = serializers.SerializerMethodField()
-    from_ledger = serializers.SerializerMethodField()
+    from_ledger_name = serializers.SerializerMethodField()
     voucher_type_choices = serializers.SerializerMethodField()
 
     class Meta:
         model = GeneralLedger
-        fields = ['date', 'from_ledger', 'particulars_name', 'voucher_type_choices', 'voucher_number', 'debit', 'credit', 'balance']
+        fields = ['date', 'from_ledger_name', 'particulars_name', 'voucher_type_choices', 'voucher_number', 'debit', 'credit', 'balance']
 
     def get_particulars_name(self, obj):
         return obj.particulars.ledger_name
 
-    def get_from_ledger(self, obj):
-        return obj.from_ledger.ledger_name
+    def get_from_ledger_name(self, obj):
+        # Check if from_ledger is not None before accessing its attributes
+        return obj.from_ledger.ledger_name if obj.from_ledger else None
 
     def get_voucher_type_choices(self, obj):
         return obj.voucher_type.voucher_type
