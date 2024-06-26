@@ -32,3 +32,82 @@ jv does'nt have bank details?
     ]
 }
 
+
+
+
+
+
+{
+    "related_ledgers": [
+        {
+            "payment_option": "dr",
+            "debit_amount": "25000",
+            "ledger_name": 8,
+            "against_refrence": [
+                {
+                    "against_voucher": 1,
+                    "voucher_number": "VOUCHER-123-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 200,
+                    "final_amt": 500,
+                    "allocated_amt": 25000
+                },
+                {
+                    "against_voucher": 2,
+                    "voucher_number": "VOUCHER-456-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 300,
+                    "final_amt": 500,
+                    "allocated_amt": 25000
+                }
+            ],
+            "cost_center": [
+                {
+                    "cost_center": 1,
+                    "amount": "25000"
+                }
+            ]
+        },
+        {
+            "payment_option": "cr",
+            "credit_amount": "25000",
+            "ledger_name": 10,
+            "against_refrence": [
+                {
+                    "against_voucher": 1,
+                    "voucher_number": "VOUCHER-123-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 200,
+                    "final_amt": 500,
+                    "allocated_amt": 25000
+                },
+                {
+                    "against_voucher": 2,
+                    "voucher_number": "VOUCHER-456-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 300,
+                    "final_amt": 500,
+                    "allocated_amt": 25000
+                }
+            ],
+            "cost_center": [
+                {
+                    "cost_center": 3,
+                    "amount": "25000"
+                }
+            ]
+        }
+    ],
+    "voucher_name": "expenses_voucher",
+    "voucher_type": 4,
+    "voucher_number": 1,
+    "booking_date": "2024-06-28",
+    "voucher_date": "2024-06-28",
+    "debit_total": 25000,
+    "credit_total": 25000,
+    "amount_in_words": "twenty-five thousand",
+    "narration": "25000",
+    "cheque_number": "25000",
+    "cheque_date": "2000-09-09",
+    "bank_name": "25000"
+}

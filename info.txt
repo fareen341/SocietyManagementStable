@@ -67,3 +67,41 @@ IN voucher creation on save 4 actions are getting performed:
 
 
 Either show 2 entries for tds payable onw ith dr and one with cr.
+
+
+
+
+
+TEST CASES:
+case 1:
+dr
+cr
+
+
+case 2: NOT
+dr
+cr
+cr
+
+
+case 3:
+cr
+dr
+dr
+
+
+case 4:
+dr
+dr
+dr
+cr
+cr
+cr
+
+
+case 5:
+dr
+cr
+cr
+cr
+
