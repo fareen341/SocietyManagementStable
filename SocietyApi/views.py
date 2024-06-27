@@ -1265,6 +1265,7 @@ class VoucherCreationView(viewsets.ModelViewSet):
         # for req in request.data['related_ledgers'][1:]:
             if req['payment_option'] == first_val:
                 if first_done:
+                    print("index is======================>", index)
                     final_val.append({request.data['related_ledgers'][0]['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
                     GeneralLedger.objects.create(
                         date = request.data['booking_date'],
@@ -1272,8 +1273,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         particulars = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
                         voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
                         voucher_number = request.data['voucher_number'],
-                        debit = request.data['related_ledgers'][index + 1].get('debit_amount', None),
-                        credit = request.data['related_ledgers'][index + 1].get('credit_amount', None),
+                        debit = request.data['related_ledgers'][index].get('debit_amount', None),
+                        credit = request.data['related_ledgers'][index].get('credit_amount', None),
                         balance = 90
                     )
                     first_done = False
@@ -1347,8 +1348,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         particulars = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
                         voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
                         voucher_number = request.data['voucher_number'],
-                        debit = request.data['related_ledgers'][index + 1].get('debit_amount', None),
-                        credit = request.data['related_ledgers'][index + 1].get('credit_amount', None),
+                        debit = reverse_order[index + 1].get('debit_amount', None),
+                        credit = reverse_order[index + 1].get('credit_amount', None),
                         balance = 90
                     )
                     single_val_condn_rev = False
