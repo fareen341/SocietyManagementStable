@@ -136,9 +136,13 @@
                   {% for group, items in group6.items %}
                   <h5>Ledgers under {{ group }}:</h5>
                   <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
+                    {% for item in items %}
+                        {% for amt in unique_latest_entries %}
+                            {% if amt.from_ledger__ledger_name == item %}
+                                <li>{{ item }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
                   </ul>
                   {% endfor %}
                 </div>

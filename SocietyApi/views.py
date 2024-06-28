@@ -1262,11 +1262,24 @@ class VoucherCreationView(viewsets.ModelViewSet):
         single_val_condn = True
         final_val = []
         for index, req in enumerate(request.data['related_ledgers'][1:]):
-        # for req in request.data['related_ledgers'][1:]:
+            # all_ledgers = GeneralLedger.objects.filter(from_ledger=8).values('from_ledger__ledger_name')
+            # print('all ledgers---------->', all_ledgers)
             if req['payment_option'] == first_val:
                 if first_done:
-                    print("index is======================>", index)
                     final_val.append({request.data['related_ledgers'][0]['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
+                    running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][0]['ledger_name']).order_by('id').last()
+                    if running_balance:
+                        running_balance = running_balance.balance
+                    else: 
+                        running_balance = 0
+                    
+                    new_balance = 0
+                    debit = request.data['related_ledgers'][index].get('debit_amount', None)
+                    credit = request.data['related_ledgers'][index].get('credit_amount', None)
+                    if debit is not None:
+                        new_balance = running_balance + float(debit)
+                    else:
+                        new_balance = running_balance - float(credit)
                     GeneralLedger.objects.create(
                         date = request.data['booking_date'],
                         from_ledger = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
@@ -1275,12 +1288,25 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         voucher_number = request.data['voucher_number'],
                         debit = request.data['related_ledgers'][index].get('debit_amount', None),
                         credit = request.data['related_ledgers'][index].get('credit_amount', None),
-                        balance = 90
+                        balance = 0
                     )
                     first_done = False
 
                 if first_val != last_val:
                     final_val.append({req['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
+                    running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][0]['ledger_name']).order_by('id').last()
+                    if running_balance:
+                        running_balance = running_balance.balance
+                    else: 
+                        running_balance = 0
+                    
+                    new_balance = 0
+                    debit = request.data['related_ledgers'][index].get('debit_amount', None)
+                    credit = request.data['related_ledgers'][index].get('credit_amount', None)
+                    if debit is not None:
+                        new_balance = running_balance + float(debit)
+                    else:
+                        new_balance = running_balance - float(credit)
                     GeneralLedger.objects.create(
                         date = request.data['booking_date'],
                         from_ledger = Ledger.objects.get(id=req['ledger_name']),
@@ -1289,15 +1315,27 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         voucher_number = request.data['voucher_number'],
                         debit = request.data['related_ledgers'][index + 1].get('debit_amount', None),
                         credit = request.data['related_ledgers'][index + 1].get('credit_amount', None),
-                        balance = 90
+                        balance = 0
                     )
                     single_val_condn = False
 
             elif single_val_condn:
-                print("debit amount-->", request.data['related_ledgers'][index].get('debit_amount', None))
-                print("credit amount-->", request.data['related_ledgers'][index].get('credit_amount', None))
                 single_val_condn = False
                 final_val.append({request.data['related_ledgers'][0]['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
+                running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][0]['ledger_name']).order_by('id').last()
+                if running_balance:
+                    running_balance = running_balance.balance
+                else: 
+                    running_balance = 0
+                
+                new_balance = 0
+                debit = request.data['related_ledgers'][index].get('debit_amount', None)
+                credit = request.data['related_ledgers'][index].get('credit_amount', None)
+                if debit is not None:
+                    new_balance = running_balance + float(debit)
+                else:
+                    new_balance = running_balance - float(credit)
+
                 GeneralLedger.objects.create(
                         date = request.data['booking_date'],
                         from_ledger = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
@@ -1306,11 +1344,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         voucher_number = request.data['voucher_number'],
                         debit = request.data['related_ledgers'][index].get('debit_amount', None),
                         credit = request.data['related_ledgers'][index].get('credit_amount', None),
-                        balance = 90
+                        balance = new_balance
                     )
-
-        print("FINAL VALUE 000000000000------------------", final_val)
-
 
         # from bottom to top
         first_val = request.data['related_ledgers'][-1]['payment_option']
@@ -1321,12 +1356,24 @@ class VoucherCreationView(viewsets.ModelViewSet):
         length = len(request.data['related_ledgers'])
         reverse_order = request.data['related_ledgers'][::-1]
         for index, req in enumerate(reverse_order[1:]):
-        # for req in request.data['related_ledgers'][::-1]:
-            print("length is=========", index + length - 1)
             if req['payment_option'] == first_val:
                 if first_done:
-                    print("FIRST 1")
                     reverse_val.append({request.data['related_ledgers'][-1]['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
+                    running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][-1]['ledger_name']).order_by('id').last()
+                    print("11=====================================", running_balance)
+                    if running_balance:
+                        running_balance = running_balance.balance
+                    else: 
+                        running_balance = 0
+                    
+                    new_balance = 0
+                    debit = request.data['related_ledgers'][length - 1 - index].get('debit_amount', None)
+                    credit = request.data['related_ledgers'][length - 1 - index].get('credit_amount', None)
+                    if debit is not None:
+                        new_balance = running_balance + float(debit)
+                    else:
+                        new_balance = running_balance - float(credit)
+
                     GeneralLedger.objects.create(
                         date = request.data['booking_date'],
                         particulars = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
@@ -1335,13 +1382,31 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         voucher_number = request.data['voucher_number'],
                         debit = request.data['related_ledgers'][length - 1 - index].get('debit_amount', None),
                         credit = request.data['related_ledgers'][length - 1 - index].get('credit_amount', None),
-                        balance = 90
+                        balance = new_balance
                     )
                     first_done = False
 
                 if first_val != last_val:
-                    print("SEC 2")
                     reverse_val.append({req['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
+                    print("12=====================================", request.data['related_ledgers'][-1]['ledger_name'])
+
+                    running_balance = GeneralLedger.objects.filter(from_ledger=req['ledger_name']).order_by('id').last()
+                    if running_balance:
+                        running_balance = running_balance.balance
+                    else: 
+                        running_balance = 0
+                    
+                    new_balance = 0
+                    debit = reverse_order[index + 1].get('debit_amount', None)
+                    credit = reverse_order[index + 1].get('credit_amount', None)
+                    if debit is not None:
+                        print("going in debit============")
+                        new_balance = running_balance + float(debit)
+                    else:
+                        print("going in credit============", credit, debit)
+                        new_balance = running_balance - float(credit)
+
+
                     GeneralLedger.objects.create(
                         date = request.data['booking_date'],
                         from_ledger = Ledger.objects.get(id=req['ledger_name']),
@@ -1350,14 +1415,30 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         voucher_number = request.data['voucher_number'],
                         debit = reverse_order[index + 1].get('debit_amount', None),
                         credit = reverse_order[index + 1].get('credit_amount', None),
-                        balance = 90
+                        balance = new_balance
                     )
                     single_val_condn_rev = False
 
             elif single_val_condn_rev:
                 single_val_condn_rev = False
-                print("THISD 3")
                 reverse_val.append({request.data['related_ledgers'][-1]['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
+                print("13=====================================")
+
+                running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][-1]['ledger_name']).order_by('id').last()
+                if running_balance:
+                    running_balance = running_balance.balance
+                else: 
+                    running_balance = 0
+                
+                new_balance = 0
+                debit = request.data['related_ledgers'][length - 1].get('debit_amount', None)
+                credit = request.data['related_ledgers'][length - 1].get('credit_amount', None)
+                if debit is not None:
+                    new_balance = running_balance + float(debit)
+                else:
+                    new_balance = running_balance - float(credit)
+
+
                 GeneralLedger.objects.create(
                         date = request.data['booking_date'],
                         from_ledger = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
@@ -1366,10 +1447,13 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         voucher_number = request.data['voucher_number'],
                         debit = request.data['related_ledgers'][length - 1].get('debit_amount', None),
                         credit = request.data['related_ledgers'][length - 1].get('credit_amount', None),
-                        balance = 90
+                        balance = new_balance
                     )
 
-        print("FINAL VALUE REVERSE 000000000000------------------", reverse_val)
+        # # RUNNING AMT CALCULATION START
+        # for req in request.data['related_ledgers']:
+            
+        #     print('break ==================')
         return Response(voucher_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 

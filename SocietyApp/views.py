@@ -510,6 +510,16 @@ def balance_sheet(request):
         group13[ledger.group_name].append(ledger.ledger_name)
     group13 = dict(group13)
 
+
+    unique_latest_ids = (
+        GeneralLedger.objects.all()
+        .values('from_ledger')
+        .annotate(max_id=Max('id'))
+        .values_list('max_id', flat=True)
+    )
+
+    unique_latest_entries = GeneralLedger.objects.filter(id__in=unique_latest_ids).values_list("from_ledger__ledger_name")
+
     return render(request, 'balance_sheet.html', {
         'datatable_columns': datatable_columns,
         'group1': group1,
@@ -525,6 +535,7 @@ def balance_sheet(request):
         'group11': group11,
         'group12': group12,
         'group13': group13,
+        'unique_latest_entries': unique_latest_entries,
     })
 
 
@@ -543,5 +554,5 @@ def profit_and_loss(request):
 
 
 def general_ledger(request):
-    datatable_columns = [1, 2, 3, 4, 5, 6]
+    datatable_columns = [1, 2, 3, 4, 5, 6, 7]
     return render(request, 'general_ledger.html', {'datatable_columns': datatable_columns})
