@@ -105,3 +105,17 @@ cr
 cr
 cr
 
+
+
+======================================================================================
+FOR BALANCE AMT:
+
+1. opitimize code,
+2. apply rule.
+3. calculate amt:
+    if amt directly, 
+    if amount is Dr +, Cr -, then
+    cr = -5000
+    dr = +6000
+    then take amt directly, like
+    - 5000 + 6000

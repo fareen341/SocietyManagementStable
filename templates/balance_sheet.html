@@ -20,7 +20,7 @@
     <div class="row">
       <h3 class="text-center">BALANCE SHEET AS ON 31/03/24</h3>
       <div class="col-lg-6">
-        <table class="table table-bordered">
+        <table class="table table-borderless">
           <thead class="dark-border table-dark">
             <tr>
               <th scope="col">Previous Year</th>
@@ -32,144 +32,211 @@
           <tbody>
             <tr>
               <td></td>
-              <td><h5>Share Capital</h5></td>
+              <td><b>Share Capital</b></td>
               <td></td>
               <td></td>
             </tr>
             <tr>
+              
+            
             <tr>
               <td></td>
-              <td>
-                <br>
-                <h5><u>Subscription Towards Shares</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group1.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
+              <td><b>Subscription Towards Shares</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group1.items %}
+            <tr>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
                   {% endfor %}
-                </div>
-              </td>
-              <td></td>
+              {% endfor %}
             </tr>
+            {% endfor %}
+            </tr>
+
             <tr>
               <td></td>
-              <td>
-                <br>
-                <h5><u>Reserve Fund And Other Funds</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group2.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
+              <td><b>Reserve Fund And Other Funds</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group2.items %}
+            <tr>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
                   {% endfor %}
-                </div>
-              </td>
-              <td>3000.00</td>
+              {% endfor %}
             </tr>
+            {% endfor %}
+
+
             <tr>
               <td></td>
-              <td>
-                <br>
-                <h5><u>Secured Loans</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group3.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
+              <td><b>Secured Loans</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group3.items %}
+            <tr>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
                   {% endfor %}
-                </div>
-              </td>
-              <td></td>
+              {% endfor %}
             </tr>
+            {% endfor %}
+            
+
             <tr>
               <td></td>
-              <td>
-                <br>
-                <h5><u>Unsecured Loans</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group4.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
+              <td><b>Unsecured Loans</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group4.items %}
+            <tr>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
                   {% endfor %}
-                </div>
-              </td>
-              <td></td>
+              {% endfor %}
             </tr>
+            {% endfor %}
+
             <tr>
               <td></td>
-              <td>
-                <br>
-                <h5><u>Deposits</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group5.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
+              <td><b>Deposits</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group5.items %}
+            <tr>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            <p>{{ item }}</p>
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
                   {% endfor %}
-                </div>
-              </td>
-              <td></td>
+              {% endfor %}
             </tr>
+            {% endfor %}
+
             <tr>
               <td></td>
-              <td>
-                <br>
-                <h5><u>Current Liabilities And Provisions</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group6.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                    {% for item in items %}
-                        {% for amt in unique_latest_entries %}
-                            {% if amt.from_ledger__ledger_name == item %}
-                                <li>{{ item }}</li>
-                            {% endif %}
-                        {% endfor %}
+              <td><b>Current Liabilities And Provisions</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group6.items %}
+              {% for item in items %}
+              <tr>
+                    {% for amt in unique_latest_entries %}
+                        {% if amt.from_ledger__ledger_name == item %}
+                            <!-- <td>{{ amt.date }}</td> -->
+                            <td></td>
+                            <td class="ps-4">
+                              <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                              {{ item }}
+                            </td>
+                            <td>
+                              <!-- <br> -->
+                              {{ amt.balance }}
+                            </td>
+                            <td></td>
+                        {% endif %}
                     {% endfor %}
-                  </ul>
-                  {% endfor %}
-                </div>
-              </td>
-              <td></td>
-            </tr>
+              </tr>
+                {% endfor %}
+            {% endfor %}
+
             <tr>
               <td></td>
-              <td>
-                <br>
-                <h5><u>Interest Accrued Due But Not Paid</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group7.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
-                  {% endfor %}
-                </div>
-              </td>
+              <td><b>Interest Accrued Due But Not Paid</b></td>
+              <td></td>
               <td></td>
             </tr>
+            {% for group, items in group7.items %}
+            <tr>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
+                  {% endfor %}
+              {% endfor %}
+            </tr>
+            {% endfor %}
+
+
             <tr>
               <td></td>
-              <td><h5>Income & Expenditure A/c</h5></td>
+              <td><b>Income & Expenditure A/c</b></td>
+              <td></td>
               <td></td>
             </tr>
           </tbody>
@@ -178,7 +245,7 @@
 
 
       <div class="col-lg-6">
-        <table class="table table-bordered">
+        <table class="table table-borderless">
           <thead class="table-dark">
             <tr>
               <th scope="col">Previous Year</th>
@@ -190,121 +257,175 @@
           <tbody>
             <tr>
               <td></td>
-              <td>
-                <br>
-                <h5><u>Fixed Assets</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group8.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
-                  {% endfor %}
-                </div>
-              </td>
+              <td><b>Fixed Assets</b></td>
+              <td></td>
               <td></td>
             </tr>
+            {% for group, items in group8.items %}
             <tr>
-              <td></td>
-              <td>
-                <br>
-                <h5><u>Investment</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group9.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
                   {% endfor %}
-                </div>
-              </td>
-              <td>3000.00</td>
+              {% endfor %}
             </tr>
-            <tr>
-              <td></td>
+            {% endfor %}
 
-              <td>
-                <br><h5><u>Cash And Bank Balances</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group10.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
+            <tr>
+              <td></td>
+              <td><b>Investment</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group9.items %}
+            <tr>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
                   {% endfor %}
-                </div>
-              <td>
-              <td></td>
+              {% endfor %}
             </tr>
+            {% endfor %}
+
             <tr>
               <td></td>
-              <td>
-                <br>
-                <br>
-                <h5><u>Loans And Advances</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group11.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
+              <td><b>Cash And Bank Balances</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group10.items %}
+            <tr>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
                   {% endfor %}
-                </div>
-              </td>
-              <td></td>
+              {% endfor %}
             </tr>
+            {% endfor %}
+
             <tr>
               <td></td>
-              <td>
-                <br>
-                <h5><u>Current Assest</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group12.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
+              <td><b>Loans And Advances</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group11.items %}
+            <tr>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
                   {% endfor %}
-                </div>
-              </td>
-              <td></td>
+              {% endfor %}
             </tr>
+            {% endfor %}
+
             <tr>
               <td></td>
-              <td>
-                <br>
-                <h5><u>Profit And Loss Account</u></h5>
-                <div class="ms-3">
-                  {% for group, items in group13.items %}
-                  <h5>Ledgers under {{ group }}:</h5>
-                  <ul>
-                      {% for item in items %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                  </ul>
+              <td><b>Current Assest</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group12.items %}
+              {% for item in items %}
+            <tr>
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
                   {% endfor %}
-                </div>
-              </td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+            
+            <tr>
+              <td></td>
+              <td><b>Profit And Loss Account</b></td>
+              <td></td>
+              <td></td>
+            </tr>
+            {% for group, items in group13.items %}
+            <tr>
+              {% for item in items %}
+                  {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                          <td></td>
+                          <td class="ps-4">
+                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                            {{ item }}
+                          </td>
+                          <td>
+                            <!-- <br> -->
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
+                      {% endif %}
+                  {% endfor %}
+              {% endfor %}
+            </tr>
+            {% endfor %}
+
+
+            <tr>
+              <td></td>
+              <td><b>Accumulated losses not <br>written off from the reserve or any other fund</b></td>
               <td></td>
             </tr>
             <tr>
               <td></td>
-              <td><h5>Accumulated losses not <br>written off from the reserve or any other fund</h5></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td><h5>Income & Expenditure A/c</h5></td>
+              <td><b>Income & Expenditure A/c</b></td>
               <td></td>
             </tr>
           </tbody>

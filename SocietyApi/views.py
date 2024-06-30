@@ -1279,7 +1279,10 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     if debit is not None:
                         new_balance = running_balance + float(debit)
                     else:
-                        new_balance = running_balance - float(credit)
+                        if running_balance == 0:
+                            new_balance = float(credit)
+                        else:
+                            new_balance = running_balance - float(credit)
                     GeneralLedger.objects.create(
                         date = request.data['booking_date'],
                         from_ledger = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
@@ -1306,7 +1309,10 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     if debit is not None:
                         new_balance = running_balance + float(debit)
                     else:
-                        new_balance = running_balance - float(credit)
+                        if running_balance == 0:
+                            new_balance = float(credit)
+                        else:
+                            new_balance = running_balance - float(credit)
                     GeneralLedger.objects.create(
                         date = request.data['booking_date'],
                         from_ledger = Ledger.objects.get(id=req['ledger_name']),
@@ -1334,7 +1340,10 @@ class VoucherCreationView(viewsets.ModelViewSet):
                 if debit is not None:
                     new_balance = running_balance + float(debit)
                 else:
-                    new_balance = running_balance - float(credit)
+                    if running_balance == 0:
+                        new_balance = float(credit)
+                    else:
+                        new_balance = running_balance - float(credit)
 
                 GeneralLedger.objects.create(
                         date = request.data['booking_date'],
@@ -1372,7 +1381,10 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     if debit is not None:
                         new_balance = running_balance + float(debit)
                     else:
-                        new_balance = running_balance - float(credit)
+                        if running_balance == 0:
+                            new_balance = float(credit)
+                        else:
+                            new_balance = running_balance - float(credit)
 
                     GeneralLedger.objects.create(
                         date = request.data['booking_date'],
@@ -1403,8 +1415,10 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         print("going in debit============")
                         new_balance = running_balance + float(debit)
                     else:
-                        print("going in credit============", credit, debit)
-                        new_balance = running_balance - float(credit)
+                        if running_balance == 0:
+                            new_balance = float(credit)
+                        else:
+                            new_balance = running_balance - float(credit)
 
 
                     GeneralLedger.objects.create(
@@ -1433,10 +1447,14 @@ class VoucherCreationView(viewsets.ModelViewSet):
                 new_balance = 0
                 debit = request.data['related_ledgers'][length - 1].get('debit_amount', None)
                 credit = request.data['related_ledgers'][length - 1].get('credit_amount', None)
+                print(f"runnig amt: {running_balance}, debit: {debit}, credit: {credit}")
                 if debit is not None:
                     new_balance = running_balance + float(debit)
                 else:
-                    new_balance = running_balance - float(credit)
+                    if running_balance == 0:
+                            new_balance = float(credit)
+                    else:
+                        new_balance = running_balance - float(credit)
 
 
                 GeneralLedger.objects.create(

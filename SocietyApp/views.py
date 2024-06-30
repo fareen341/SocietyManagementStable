@@ -518,7 +518,8 @@ def balance_sheet(request):
         .values_list('max_id', flat=True)
     )
 
-    unique_latest_entries = GeneralLedger.objects.filter(id__in=unique_latest_ids).values_list("from_ledger__ledger_name")
+    unique_latest_entries = GeneralLedger.objects.filter(id__in=unique_latest_ids).values("from_ledger__ledger_name", 'balance', 'date')
+    print("entries ------>", unique_latest_entries)
 
     return render(request, 'balance_sheet.html', {
         'datatable_columns': datatable_columns,
