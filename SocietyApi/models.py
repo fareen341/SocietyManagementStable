@@ -476,6 +476,7 @@ class Ledger(models.Model):
     alis = models.CharField(max_length=200)
     based_on = models.CharField(max_length=200, null=True, blank=True)
     contact_person_name = models.CharField(max_length=200)
+    # make it a foreign key group name
     group_name = models.CharField(max_length=200)
     area = models.CharField(max_length=200, null=True, blank=True)
     contact_person_number = models.CharField(max_length=200)

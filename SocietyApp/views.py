@@ -519,7 +519,10 @@ def balance_sheet(request):
     )
 
     unique_latest_entries = GeneralLedger.objects.filter(id__in=unique_latest_ids).values("from_ledger__ledger_name", 'balance', 'date')
-    print("entries ------>", unique_latest_entries)
+
+    # TO GET THE ENTRY ON PARTICULAR DATE
+    # on_given_date_entries = GeneralLedger.objects.filter(date="2024-08-08").values("from_ledger__ledger_name", 'balance', 'date')
+    # print("entries on given date------>", on_given_date_entries)
 
     return render(request, 'balance_sheet.html', {
         'datatable_columns': datatable_columns,
@@ -547,11 +550,25 @@ def profit_and_loss(request):
     income_groups.append("Income")
     incomes = Ledger.objects.filter(group_name__in=income_groups)
 
+    unique_latest_ids = (
+        GeneralLedger.objects.all()
+        .values('from_ledger')
+        .annotate(max_id=Max('id'))
+        .values_list('max_id', flat=True)
+    )
+
+    unique_latest_entries = GeneralLedger.objects.filter(id__in=unique_latest_ids).values("from_ledger__ledger_name", 'balance', 'date')
+    print("entries ------>", unique_latest_entries)
+
     # EXPENSE
     expense_groups = get_all_child_investments(Childs.objects.get(name="Expenses"), cost_center=False, balance_sheet=True)
     expense_groups.append("Expenses")
     expense = Ledger.objects.filter(group_name__in=expense_groups)
-    return render(request, 'profit_and_loss.html', {'datatable_columns': datatable_columns, 'incomes': incomes, 'expense': expense})
+    return render(request, 'profit_and_loss.html', {
+        'datatable_columns': datatable_columns, 
+        'incomes': incomes, 'expense': expense,
+        'unique_latest_entries': unique_latest_entries,
+    })
 
 
 def general_ledger(request):

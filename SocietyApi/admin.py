@@ -1,6 +1,12 @@
 from django.contrib import admin
 from .models import *
 
+
+class GeneralLedgerAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in GeneralLedger._meta.get_fields()]
+
+
+
 # Register your models here.
 admin.site.register(SocietyCreation)
 admin.site.register(SocietyBank)
@@ -33,5 +39,5 @@ admin.site.register(RelatedLedgersModel)
 admin.site.register(RelatedSharesModel)
 admin.site.register(AgainstRefrenceModel)
 admin.site.register(CostCenterOnLedger)
-admin.site.register(GeneralLedger)
+admin.site.register(GeneralLedger, GeneralLedgerAdmin)
 

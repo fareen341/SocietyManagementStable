@@ -188,7 +188,6 @@
               <tr>
                     {% for amt in unique_latest_entries %}
                         {% if amt.from_ledger__ledger_name == item %}
-                            <!-- <td>{{ amt.date }}</td> -->
                             <td></td>
                             <td class="ps-4">
                               <!-- <h5>Ledgers under {{ group }}:</h5> -->
@@ -198,7 +197,8 @@
                               <!-- <br> -->
                               {{ amt.balance }}
                             </td>
-                            <td></td>
+                            <!-- <td></td> -->
+                            <td>{{ amt.date }}</td>
                         {% endif %}
                     {% endfor %}
               </tr>

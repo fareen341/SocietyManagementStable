@@ -27,21 +27,27 @@
               <th scope="col">Previous Year</th>
               <th></th>
               <th scope="col">Expenditure</th>
+              <th>Amt</th>
               <th scope="col">Current Year</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {% for income_ledger in incomes %}
+            {% for expense_ledger in expense %}
             <tr>
-              <td></td>
-              <td>To</td>
-              <td>{{ income_ledger.ledger_name }}</td>
-              <td></td>
-              <td></td>
+              {% for amt in unique_latest_entries %}
+                  {% if amt.from_ledger__ledger_name == expense_ledger.ledger_name %}
+                      <td></td>
+                      <td>To</td>
+                      <td>{{ expense_ledger.ledger_name }}</td>
+                      <td>{{ amt.balance }}</td>
+                      <td></td>
+                      <td></td>
+                  {% endif %}
+              {% endfor %}
             </tr>
             {% endfor %}
-            </tbody>
+          </tbody>
         </table>
       </div>
 
@@ -52,20 +58,26 @@
               <th scope="col">Previous Year</th>
               <th></th>
               <th scope="col">Income</th>
+              <th>Amt</th>
               <th scope="col">Current Year</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {% for expense_ledger in expense %}
+            {% for income_ledger in incomes %}
             <tr>
-              <td></td>
-              <td>To</td>
-              <td>{{ expense_ledger.ledger_name }}</td>
-              <td></td>
-              <td></td>
+              {% for amt in unique_latest_entries %}
+                  {% if amt.from_ledger__ledger_name == income_ledger.ledger_name %}
+                      <td></td>
+                      <td>By</td>
+                      <td>{{ income_ledger.ledger_name }}</td>
+                      <td>{{ amt.balance }}</td>
+                      <td></td>
+                      <td></td>
+                  {% endif %}
+              {% endfor %}
             </tr>
-            {% endfor %}
+            {% endfor %}            
           </tbody>
         </table>
       </div>
