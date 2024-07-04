@@ -377,6 +377,13 @@ p {
 }
 /* toast style end */
 
+.nav-texxt{
+    /* text-transform: uppercase; */
+    font-weight: bold;
+    color: #092635;
+    font-family: 'Calibri', sans-serif;
+    font-size: 14px;
+}
 
 .abc{
     text-transform: uppercase;
@@ -384,6 +391,7 @@ p {
     color: #6ebbff;
     font-family: 'Calibri', sans-serif;
 }
+
 .abc.active{
     border-bottom: 3px solid #007BFF !important;
     font-weight: bold;
@@ -405,9 +413,17 @@ p {
 }
 
 .view-label{
-    color: #000; font-weight: bold; font-size: 15px;
+    color: #000;
+    font-weight: bold;
+    font-size: 15px;
     font-family:"Calibri", sans-serif;
+}
 
+.dash-text{
+    /* color: #000; */
+    font-weight: bold;
+    /* font-size: 15px; */
+    font-family:"Calibri", sans-serif;
 }
 
 .view-inps{
@@ -519,7 +535,7 @@ display: block;
 background-color: #ddd;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown:hover .dropdown-menu {
 display: block;
 }
 .dt-table th,
@@ -1054,4 +1070,85 @@ text-align: center;
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+
+
+/* ///////////Logout Button CSS//////////////// */
+.Btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition-duration: .3s;
+    box-shadow: 2px 2px 10px rgba(0, 2, 2, 0.199);
+    /* background-color: rgb(219, 22, 22); */
+  }
+  
+  /* plus sign */
+  .sign {
+    width: 100%;
+    transition-duration: .3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .sign svg {
+    width: 18px;
+  }
+  
+  .sign svg path {
+    fill: white;
+  }
+  /* text */
+  .text {
+    position: absolute;
+    right: 0%;
+    width: 0%;
+    opacity: 0;
+    color: white;
+    font-size: 1em;
+    font-weight: 600;
+    transition-duration: .3s;
+  }
+  /* hover effect on button width */
+  .Btn:hover {
+    width: 120px;
+    border-radius: 40px;
+    transition-duration: .3s;
+  }
+  
+  .Btn:hover .sign {
+    width: 30%;
+    transition-duration: .3s;
+    padding-left: 20px;
+  }
+  /* hover effect button's text */
+  .Btn:hover .text {
+    opacity: 1;
+    width: 70%;
+    transition-duration: .3s;
+    padding-right: 10px;
+    padding-bottom: 5px;
+  }
+  /* button click effect*/
+  .Btn:active {
+    transform: translate(2px ,2px);
+  }
+
+
+.fareen {
+font-family: "Inconsolata", monospace;
+font-optical-sizing: auto;
+font-weight: 800;
+font-style: normal;
+/* font-variation-settings: */
+    /* "wdth" 100; */
 }
