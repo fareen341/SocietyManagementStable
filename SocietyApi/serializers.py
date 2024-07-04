@@ -724,3 +724,9 @@ class GeneralLedgerSerializers(serializers.ModelSerializer):
 
     def get_voucher_type_choices(self, obj):
         return obj.voucher_type.voucher_type
+
+
+class VistingCardSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = VistingCard
+        fields = '__all__'

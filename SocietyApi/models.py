@@ -579,3 +579,11 @@ class GeneralLedger(models.Model):
     debit = models.IntegerField(null=True, blank=True)
     credit = models.IntegerField(null=True, blank=True)
     balance = models.IntegerField()
+
+
+class VistingCard(models.Model):
+    name = models.CharField(max_length=400)
+    email = models.EmailField(max_length=300)
+    contact = models.CharField(max_length=400)
+    website = models.CharField(max_length=400)
+    address = models.CharField(max_length=400, default="Neque porro quisquam est qui dolorem ipsum quia dolor sit 403 sit.")

@@ -58,6 +58,8 @@ router.register('shares_on_ledger_creation', apiviews.ShareOnLedgerView, basenam
 router.register('voucher_create_ledger', apiviews.VoucherCreationView, basename='voucher_create_ledger')
 router.register('general_ledger_api', apiviews.GeneralLedgerView, basename='general_ledger_api')
 
+router.register('visting_card', apiviews.VistingCardView, basename='visting_card')
+
 
 
 # URLS

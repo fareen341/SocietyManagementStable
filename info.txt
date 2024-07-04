@@ -148,3 +148,19 @@ i made filter date as "2024-08-09" i should get below amt, i.e 7000 and not abov
         + GST         90000
             - CGST  - 30000
             - SGST  - 40000
+
+
+
+===================================================== VUE CDN EXAMPLE ===========================================
+
+new Vue({
+    el: '#app',
+    data: {
+    },
+    created: {
+    },
+    methods: {
+    },
+    mounted: {
+    }
+});
