@@ -1,0 +1,440 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+
+
+<div class="container-fluid"  style="background-color: rgb(237 245 250);">
+  <div class="container pt-3">
+  
+      <!-- <div class="row pt-2">
+          <div class="col-lg-4" style="border-right: 1px solid rgb(184, 173, 173);">
+              <div class="text-center">
+                  <p id="heading" style="text-decoration: underline; font-size: 18px;">Meetings</p>
+              </div>
+  
+              <div class="dash-meeting mt-3 m-3 " style="background: transparent; border-radius: 10px;">
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">First General Meeting</p>
+                              <p class="m-1 view-inps">12-06-2024</p>
+                          </div>
+                      </div>
+  
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">Annual General Meeting</p>
+                              <p class="m-1 view-inps">02-07-2024</p>
+                          </div>
+                      </div>
+  
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">Annual General Meeting</p>
+                              <p class="m-1 view-inps">02-07-2024</p>
+                          </div>
+                      </div>
+  
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">Annual General Meeting</p>
+                              <p class="m-1 view-inps">02-07-2024</p>
+                          </div>
+                      </div>
+  
+                  <div class=" mt-2">
+                      <p class="float-end" style="font-size: 13px; text-decoration: underline; font-weight: bold; color: #0d6efd; cursor: pointer;">View More</p>
+                  </div>
+              </div>
+  
+          </div>
+  
+          <div class="col-lg-4" style="border-right: 1px solid rgb(184, 173, 173);">
+              <div class="text-center">
+                  <p id="heading" style="text-decoration: underline; font-size: 18px;">Accounts</p>
+              </div>
+  
+              <div class="dash-meeting mt-3 m-3 " style="background: transparent; border-radius: 10px;">
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">First General Meeting</p>
+                              <p class="m-1 view-inps">12-06-2024</p>
+                          </div>
+                      </div>
+  
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">Annual General Meeting</p>
+                              <p class="m-1 view-inps">02-07-2024</p>
+                          </div>
+                      </div>
+  
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">Annual General Meeting</p>
+                              <p class="m-1 view-inps">02-07-2024</p>
+                          </div>
+                      </div>
+  
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">Annual General Meeting</p>
+                              <p class="m-1 view-inps">02-07-2024</p>
+                          </div>
+                      </div>
+  
+                  <div class=" mt-2">
+                      <p class="float-end" style="font-size: 13px; text-decoration: underline; font-weight: bold; color: #0d6efd; cursor: pointer;">View More</p>
+                  </div>
+              </div>
+  
+          </div>
+  
+          <div class="col-lg-4" style="border-right: 1px solid rgb(184, 173, 173);">
+              <div class="text-center">
+                  <p id="heading" style="text-decoration: underline; font-size: 18px;">Gate Management</p>
+              </div>
+  
+              <div class="dash-meeting mt-3 m-3 " style="background: transparent; border-radius: 10px;">
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">First General Meeting</p>
+                              <p class="m-1 view-inps">12-06-2024</p>
+                          </div>
+                      </div>
+  
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">Annual General Meeting</p>
+                              <p class="m-1 view-inps">02-07-2024</p>
+                          </div>
+                      </div>
+  
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">Annual General Meeting</p>
+                              <p class="m-1 view-inps">02-07-2024</p>
+                          </div>
+                      </div>
+  
+                      <div class="p-0 m-0 mb-3" style="border-radius: 10px; border-left: 3px solid #0d6efd; box-shadow:  7px 3px 15px rgb(190, 190, 190)">
+                          <div class="d-flex ps-2 pe-2 pt-1 pb-1" style="justify-content: space-between; align-items: center;">
+                              <p style="font-weight: 600;" class="m-1 dash-text">Annual General Meeting</p>
+                              <p class="m-1 view-inps">02-07-2024</p>
+                          </div>
+                      </div>
+  
+                  <div class=" mt-2">
+                      <p class="float-end" style="font-size: 13px; text-decoration: underline; font-weight: bold; color: #0d6efd; cursor: pointer;">View More</p>
+                  </div>
+              </div>
+  
+          </div>
+      </div> -->
+  
+      <div class="row mb-2 p-2">
+          <div class="col-lg-3 mb-3">
+              <div class="card shadow " style="background: linear-gradient(to right, #f2709c, #ff9472); color: #fff !important;">
+                  <div class="p-2">
+                      <span class="float-end "><i class="fas fa-cogs"></i></span>
+                      <h6 class="view-label" style="font-size: 17px !important; text-transform: uppercase; color: #fff !important;">My Complaints</h6>
+                      <h3 class="mb-3 view-label fw-bold fs-4" style="font-weight: normal; color: #fff !important;">1,587</h3>
+                      <!-- <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 text-xs font-medium bg-success text-white rounded me-1">+11%</span> -->
+                      <span class="text-muted view-label" style="color: #fff !important;">From Previous Period</span>
+                  </div>
+              </div>
+          </div>
+  
+          <div class="col-lg-3 mb-3">
+              <div class="card shadow" style="background: linear-gradient(to right, #FF8008, #FFC837); color: #fff !important;">
+                  <div class="p-2">
+                      <span class="float-end"><i class="fas fa-cogs"></i></span>
+                      <h6 class="view-label" style="font-size: 17px !important; text-transform: uppercase; color: #fff !important;">My Complaints</h6>
+                      <h3 class="mb-3 view-label fs-4" style="font-weight: bold; color: #fff !important;">1,587</h3>
+                      <!-- <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 text-xs font-medium bg-success text-white rounded me-1">+11%</span> -->
+                      <span class="text-muted view-label" style="color: #fff !important;">From Previous Period</span>
+                  </div>
+              </div>
+          </div>
+  
+          <div class="col-lg-3 mb-3">
+              <div class="card shadow" style="background: linear-gradient(to right, #3a7bd5, #00d2ff); color: #fff !important;">
+                  <div class="p-2">
+                      <span class="float-end"><i class="fas fa-cogs"></i></span>
+                      <h6 class="view-label" style="font-size: 17px !important; text-transform: uppercase; color: #fff !important;">My Complaints</h6>
+                      <h3 class="mb-3 view-label fs-4" style="font-weight: bold; color: #fff !important;">1,587</h3>
+                      <!-- <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 text-xs font-medium bg-success text-white rounded me-1">+11%</span> -->
+                      <span class="text-muted view-label" style="color: #fff !important;">From Previous Period</span>
+                  </div>
+              </div>
+          </div>
+  
+          <div class="col-lg-3 mb-3">
+              <div class="card shadow" style="background: linear-gradient(to right, #7474BF, #348AC7); color: #fff !important;">
+                  <div class="p-2">
+                      <span class="float-end"><i class="fas fa-cogs"></i></span>
+                      <h6 class="view-label" style="font-size: 17px !important; text-transform: uppercase; color: #fff !important;">My Complaints</h6>
+                      <h3 class="mb-3 view-label fs-4" style="font-weight: bold; color: #fff !important;">1,587</h3>
+                      <!-- <span class="inline-flex items-center gap-1.5 py-0.5 px-1.5 text-xs font-medium bg-success text-white rounded me-1">+11%</span> -->
+                      <span class="text-muted view-label" style="color: #fff !important;">From Previous Period</span>
+                  </div>
+              </div>
+          </div>
+  
+          
+      </div>
+  
+      <div class="container">
+  
+          <div class="row  mb-3" style="display: flex; justify-content: space-between;">
+      
+              <div class="col-lg-8 mb-3" >
+                  <div class="content p-2 shadow" style="background-color: #fff; border-radius: 6px; height: 100%; width: 100%;">
+                      <h4 class="fareen pt-2 mb-2">UPCOMING MEETINGS <span><i class="fa-solid fa-users fa-sm" style="color: #092635;"></i></span></h4>
+                      <div class="table-responsive">
+                          <table class="table align-middle w-100" style="padding-bottom: 0px !important; margin-bottom: 0px !important;">
+                              <thead>
+                                  <tr>
+                                      <th></th>
+                                      <th class="view-label text-muted" style="z-index: 0;">Meeting Type</th>
+                                      <th class="view-label text-muted" style="z-index: 0;">Meeting Place</th>
+                                      <th class="view-label text-muted" style="z-index: 0;">Meeting Time</th>
+                                      <th class="view-label text-muted" style="z-index: 0;">Meeting Date</th>
+                                      <th class="view-label text-muted" style="z-index: 0;">Suggestions</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                      <td>
+                                          <div class="d-icon p-2" style="border: 1px colid #000 !important; background-color:yellow; display: flex; justify-content: center; align-items: center; border-radius: 50%; height: 40px; width: 40px;">
+                                              <i class="fa-solid fa-f fw-bold fa-lg" style="color: #fff; font-weight: 800;"></i>
+                                          </div>
+                                      </td>
+                                      <td class="">First General Meeting</td>
+                                      <td class="">
+                                          Society Garden
+                                      </td>
+                                      <td class="">
+                                          12:00 PM
+                                      </td>
+                                      <td>
+                                          <div style="display: flex; flex-direction: column; align-items: center;">
+                                              <p class="m-0 fw-bold fs-5">12</p>
+                                              <span class="ps-1 pe-1" style="background-color: #a5a5a4; color: #fff; border-radius: 5px;">January</span>
+                                          </div>
+                                      </td>
+                                      <td><button class="btn btn-success">View</button></td>
+                                  </tr>
+      
+                                  <tr>
+                                      <td>
+                                          <div class="d-icon p-2" style="border: 1px colid #000 !important; background-color:rgb(0, 255, 42); display: flex; justify-content: center; align-items: center; border-radius: 50%; height: 40px; width: 40px;">
+                                              <i class="fa-solid fa-a fw-bold fa-lg" style="color: #fff; font-weight: 800;"></i>
+                                          </div>
+                                      </td>
+                                      <td>Annual General Meeting</td>
+                                      <td>
+                                          Society Club House
+                                      </td>
+                                      <td>
+                                          08:00 PM
+                                      </td>
+                                      <td>
+                                          <div style="display: flex; flex-direction: column; align-items: center;">
+                                              <p class="m-0 fw-bold fs-5">25</p>
+                                              <span class="ps-1 pe-1" style="background-color: #a5a5a4; color: #fff; border-radius: 5px;">April</span>
+                                          </div>
+                                      </td>
+                                      <td><button class="btn btn-success">View</button></td>
+                                  </tr>
+      
+                                  <tr>
+                                      <td>
+                                          <div class="d-icon p-2" style="border: 1px colid #000 !important; background-color:rgb(0, 132, 255); display: flex; justify-content: center; align-items: center; border-radius: 50%; height: 40px; width: 40px;">
+                                              <i class="fa-solid fa-m fw-bold fa-lg" style="color: #fff; font-weight: 800;"></i>
+                                          </div>
+                                      </td>
+                                      <td>Managing Committee Meeting</td>
+                                      <td>
+                                          Society Garden
+                                      </td>
+                                      <td>
+                                          04:00 PM
+                                      </td>
+                                      <td>
+                                          <div style="display: flex; flex-direction: column; align-items: center;">
+                                              <p class="m-0 fw-bold fs-5">05</p>
+                                              <span class="ps-1 pe-1" style="background-color: #a5a5a4; color: #fff; border-radius: 5px;">July</span>
+                                          </div>
+                                      </td>
+                                      <td><button class="btn btn-success">View</button></td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+      
+              <div class="col-lg-4 mb-3 ">
+                  <div class="shadow p-2" style="width: 100%; height: 100%; position: relative; background-color: #fff; border-radius: 6px;">
+                  <canvas id="myChart" style="height: 100%; width: 100%;"></canvas>
+                  </div>
+              </div>
+      
+          </div>
+      </div>
+  
+      <div class="container">
+          <div class="row mb-3">
+              <div class="col-lg-6 mb-3 " id="app" >
+                  <div class="content shadow p-2" style="background-color: #fff; border-radius: 6px;">
+                      <h4 class="fareen pt-2 mb-2">Polls <span><i class="fa-solid fa-chart-simple fa-sm" style="color: #092635;"></i></span></h4>
+                      <div class="progress-container mb-3" >
+                          {% verbatim %}
+                          <h5 class="text-muted pt-3 fareen">{{ displayText }}<span class="view-label" v-if="!showFullText" @click="showFullText = true" style="color: #2b96f1; text-decoration: underline; cursor: pointer;">Read More</span><span class="view-label" v-else @click="showFullText = false" style="color: #2b96f1; text-decoration: underline; cursor: pointer;">Read Less</span></h5>
+                          <div class="progress w-100 mb-3">
+                              <div class="progress-done" data-done="70">
+                                  70%
+                              </div>
+                          </div>
+                          {% endverbatim %}
+                      </div>
+      
+                      <div class="progress-container mb-3">
+                          <h5 class="text-muted fareen">Would you support the installation of CCTV cameras for enhanced security?</h5>
+                          <div class="progress w-100 mb-3">
+                              <div class="progress-done" data-done="38">
+                                  38%
+                              </div>
+                          </div>
+                      </div>
+      
+                      <div class="progress-container mb-3">
+                          <h5 class="text-muted fareen">Should we enforce stricter parking regulations within the society premises?</h5>
+                          <div class="progress w-100 mb-3">
+                              <div class="progress-done" data-done="56">
+                                  56%
+                              </div>
+                          </div>
+                      </div>
+      
+                      
+      
+                      <div>
+                          <p class="fareen"  style="color: #2b96f1; text-decoration: underline; cursor: pointer;">View More</p>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col-lg-6 mb-3" >
+                  <div class="content p-2 shadow" style="background-color: #fff; border-radius: 6px; height: 100%; width: 100%;">
+                      <h4 class="fareen pt-2 mb-3">NOTICE BOARD <span><i class="fa-solid fa-users fa-sm" style="color: #092635;"></i></span></h4>
+                      <!-- <div class="table-responsive">
+                          <table class="table align-middle w-100" style="padding-bottom: 0px !important; margin-bottom: 0px !important;">
+                              <thead>
+                                  <tr>
+                                      <th></th>
+                                      <th class="text-muted">Meeting Type</th>
+                                      <th class="text-muted">Meeting Date</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                      <td>
+                                          <div class="d-icon p-2" style="border: 1px colid #000 !important; background-color:yellow; display: flex; justify-content: center; align-items: center; border-radius: 50%; height: 40px; width: 40px;">
+                                              <i class="fa-solid fa-f fw-bold fa-lg" style="color: #fff; font-weight: 800;"></i>
+                                          </div>
+                                      </td>
+                                      <td class="">First General Meeting</td>
+                                      
+                                      
+                                      <td>
+                                          <div style="display: flex; flex-direction: column; align-items: center;">
+                                              <p class="m-0 fw-bold fs-5">12</p>
+                                              <span class="ps-1 pe-1" style="background-color: #a5a5a4; color: #fff; border-radius: 5px;">January</span>
+                                          </div>
+                                      </td>
+                                  </tr>
+      
+                                  <tr>
+                                      <td>
+                                          <div class="d-icon p-2" style="border: 1px colid #000 !important; background-color:rgb(0, 255, 42); display: flex; justify-content: center; align-items: center; border-radius: 50%; height: 40px; width: 40px;">
+                                              <i class="fa-solid fa-a fw-bold fa-lg" style="color: #fff; font-weight: 800;"></i>
+                                          </div>
+                                      </td>
+                                      <td>Annual General Meeting</td>
+                                      
+                                      
+                                      <td>
+                                          <div style="display: flex; flex-direction: column; align-items: center;">
+                                              <p class="m-0 fw-bold fs-5">25</p>
+                                              <span class="ps-1 pe-1" style="background-color: #a5a5a4; color: #fff; border-radius: 5px;">April</span>
+                                          </div>
+                                      </td>
+                                  </tr>
+      
+                                  <tr>
+                                      <td>
+                                          <div class="d-icon p-2" style="border: 1px colid #000 !important; background-color:rgb(0, 132, 255); display: flex; justify-content: center; align-items: center; border-radius: 50%; height: 40px; width: 40px;">
+                                              <i class="fa-solid fa-m fw-bold fa-lg" style="color: #fff; font-weight: 800;"></i>
+                                          </div>
+                                      </td>
+                                      <td>Managing Committee Meeting</td>
+                                      
+                                      
+                                      <td>
+                                          <div style="display: flex; flex-direction: column; align-items: center;">
+                                              <p class="m-0 fw-bold fs-5">05</p>
+                                              <span class="ps-1 pe-1" style="background-color: #a5a5a4; color: #fff; border-radius: 5px;">July</span>
+                                          </div>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div> -->
+
+                      <div class="mb-3 p-2" style="border-left: 4px solid #FF8008; box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgb(22 95 255 / 30%) 0px 8px 16px -8px; border-radius: 6px;">
+                          <p class="p-0 m-0 fareen fw-bold fs-5" >Book Club Meeting</p>
+                          <div style="display: flex; justify-content: space-between;">
+                              <p class="m-0 p-0 ps-4 pe-1" style="font-size: 15px;">The next Book Club meeting will be held on 10th...</p>
+                              <p class="m-0 p-0 ps-1 pe-1" style="border-radius: 5px; background-color: #a5a5a4; color: #fff; font-size: 13px;">14-June-2024</p>
+                          </div>
+                      </div>
+
+                      <div class="mb-3 p-2" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgb(22 95 255 / 30%) 0px 8px 16px -8px; border-radius: 6px;">
+                          <p class="p-0 m-0 fareen fw-bold fs-5" >Book Club Meeting</p>
+                          <div style="display: flex; justify-content: space-between;">
+                              <p class="m-0 p-0 ps-4 pe-1" style="font-size: 15px;">The next Book Club meeting will be held on 10th...</p>
+                              <p class="m-0 p-0 ps-1 pe-1" style="border-radius: 5px; background-color: #a5a5a4; color: #fff; font-size: 13px;">14-June-2024</p>
+                          </div>
+                      </div>
+
+                      <div class="mb-3 p-2" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgb(22 95 255 / 30%) 0px 8px 16px -8px; border-radius: 6px;">
+                          <p class="p-0 m-0 fareen fw-bold fs-5" >Book Club Meeting</p>
+                          <div style="display: flex; justify-content: space-between;">
+                              <p class="m-0 p-0 ps-4 pe-1" style="font-size: 15px;">The next Book Club meeting will be held on 10th...</p>
+                              <p class="m-0 p-0 ps-1 pe-1" style="border-radius: 5px; background-color: #a5a5a4; color: #fff; font-size: 13px;">14-June-2024</p>
+                          </div>
+                      </div>
+
+                      
+                  </div>
+              </div>
+          </div>
+
+          
+      </div>
+  
+     
+      
+  </div>
+</div>
+
+<script>
+  let datatable_columns = {{ datatable_columns }};
+</script>
+
+{% endblock body %}

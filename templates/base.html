@@ -41,6 +41,12 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 
 </head>
@@ -79,12 +85,13 @@
 
 
     <div class="header">
-        <div class="container-fluid d-flex" style="background-color: #092635; height: 70px;">
+        <div class="container-fluid d-flex" style="background-color: #092635; height: 60px;">
             <div class="d-flex align-items-center gap-2">
-                <div class="logo-topbar">
+                <div class="logo-topbar d-flex">
                     <a href="#" style="text-decoration: none;">
-                        <h4 style="color: #fff;">Society<br> Management</h4>
-                    </a>
+                        <img src="../media/files/Zacow1-removebg-preview.png" alt="">
+                        </a>
+                    <!-- <h4 style="color: #fff; padding-top: 10px;">Green Earth Society</h4> -->
                 </div>
                 <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -92,8 +99,8 @@
                     <span class="navbar-toggler-icon bg-white fs-2"></span>
                 </button>
             </div>
-            <ul class="align-items-center ms-auto me-3 d-flex gap-3">
-                <li class="dropdown notification-list">
+            <ul class="align-items-center ms-auto me-3 d-flex gap-3 m-2">
+                <!-- <li class="dropdown notification-list">
                     <a class="nav-link dropdown-toggle arrow-none" data-bs-toggle="dropdown" href="#" role="button"
                         aria-haspopup="false" aria-expanded="false">
                         <i class="ri-mail-line fs-22"></i>
@@ -113,10 +120,10 @@
                             </div>
                         </div>
 
-                        <div style="max-height: 300px;" data-simplebar>
+                        <div style="max-height: 300px;" data-simplebar> -->
 
                             <!-- item-->
-                            <a href="javascript:void(0);"
+                            <!-- <a href="javascript:void(0);"
                                 class="dropdown-item p-0 notify-item read-noti card m-0 shadow-none">
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
@@ -139,26 +146,52 @@
                             </a>
                         </div>
                     </div>
+                </li> -->
+
+                <li>
+                    <button class="Btn" style="background-color: #0e3d5542;">
+  
+                        <div class="sign"><i class="fas fa-cogs"></i></div>
+                        
+                        <div class="text">Settings</div>
+                    </button> 
                 </li>
+                
+                <li>
+                    <button class="Btn" style="background-color: #0e3d5542;">
+  
+                        <div class="sign"><i class="fas fa-sign-out-alt"></i></div>
+                        
+                        <div class="text">Logout</div>
+                    </button>                      
+                </li>
+
 
             </ul>
         </div>
     </div>
     <div class="top-navbar">
         <nav class="navbar shadow-sm navbar-expand-lg bg-body-tertiary">
-            <div class="container">
-                <!-- <a class="navbar-brand" href="#">Navbar</a> -->
+            <div class="container-fluid">
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav gap-2 ms-auto me-auto mb-2 mb-lg-0"
+                    <ul class="navbar-nav gap-4 ms-auto me-auto mb-2 mb-lg-0"
                         style="font-family: 'Calibri', sans-serif;">
+                        <!-- <li class="nav-item dropdown">Dashboard</li> -->
+
+                        <li class="nav-item">
+                            <a class="nav-link nav-texxt"  href="{% url 'member_dashboard' %}">
+                                <span><i class="fa-solid fa-house"></i></span> Dashboard
+                            </a>                            
+                        </li>
+
                         <li class="nav-item dropdown">
-                            <a class="nav-link hoverMe" href="#" role="button" data-bs-toggle="dropdown"
+                            <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown"
                                 aria-expanded="false">
-                                Master Creation &nbsp;<i class="fa-solid fa-angle-down float-end"
-                                    style="padding-top: 6px;"></i>
+                                <span><i class="fa-solid fa-book"></i></span>
+                                Master Creation
                             </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu" style="height: 300px; overflow-y: scroll;">
                                 {% if society_exists %}
                                     <li><a class="dropdown-item" href="{% url 'society_details' %}">Society Details</a></li>
                                     <li><a class="dropdown-item" href="{% url 'member_details' %}">Members Master</a></li>
@@ -177,6 +210,8 @@
                                     <li><a class="dropdown-item" href="{% url 'ledger_creation' %}">Ledger Master</a></li>
                                     <li><a class="dropdown-item" href="{% url 'unit_test' %}">Unit Test</a></li>
                                     <li><a class="dropdown-item" href="{% url 'voucher_creation' %}">Voucher Creation</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}">Admin Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'member_dashboard' %}">Member Dashboard</a></li>
                                 {% else %}
                                     <li><a class="dropdown-item" href="{% url 'create_society' %}">Society Master Creation</a></li>
                                 {% endif %}
@@ -190,9 +225,8 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Accounts &nbsp;<i class="fa-solid fa-angle-down float-end"
-                                    style="padding-top: 6px;"></i>
+                            <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                               <span><i class="fa-solid fa-cash-register"></i></span> Accounts 
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
@@ -205,9 +239,8 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Meeting & Election &nbsp;<i class="fa-solid fa-angle-down float-end"
-                                    style="padding-top: 6px;"></i>
+                            <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span><i class="fa-solid fa-handshake"></i></span> Meeting & Election
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">AGM</a></li>
@@ -215,14 +248,13 @@
                                 <li><a class="dropdown-item" href="#">Extra Ordinary General Meeting</a></li>
                                 <li><a class="dropdown-item" href="#">Managing Committee Meeting</a></li>
                                 <li><a class="dropdown-item" href="#">Election</a></li>
-                                <li><a class="dropdown-item" href="#">Managig Committee</a></li>
+                                <li><a class="dropdown-item" href="#">Managing Committee</a></li>
                                 <li><a class="dropdown-item" href="#">Office Bearer</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Raise Request &nbsp;<i class="fa-solid fa-angle-down float-end"
-                                    style="padding-top: 6px;"></i>
+                            <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                               <span><i class="fa-solid fa-file-circle-check"></i></span> Raise Request 
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">NOC</a></li>
@@ -233,9 +265,8 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Gate Management &nbsp;<i class="fa-solid fa-angle-down float-end"
-                                    style="padding-top: 6px;"></i>
+                            <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                               <span><i class="fa-solid fa-list-check"></i></span> Gate Management 
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Visitors Record</a></li>
@@ -243,17 +274,16 @@
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Empanelment of Contractor &nbsp;<i class="fa-solid fa-angle-down float-end"
-                                    style="padding-top: 6px;"></i>
+                            <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                               <span><i class="fa-solid fa-file-signature"></i></span> Empanelment of Contractor
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Register Vendor with Skills</a></li>
                             </ul>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link " href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Reports &nbsp;<i class="fa-solid fa-angle-down float-end" style="padding-top: 6px;"></i>
+                            <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span><i class="fa-solid fa-square-poll-horizontal"></i></span> Reports 
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Register Vehicle</a></li>
@@ -261,10 +291,7 @@
                         </li>
 
                     </ul>
-                    <!-- <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-                </form> -->
+                   
                 </div>
             </div>
         </nav>

@@ -120,7 +120,8 @@ urlpatterns = [
     path('api/get_all_cost_centers/', apiviews.CostCenterView.as_view({'get': 'select_cost_center'}), name='get_all_cost_centers'),
     # path('get_ledgers/', apiviews.LedgerView.as_view({'get': 'get_ledgers'}), name='get_ledgers')
 
-
+    path('admin-dashboard/', views.dashboard_admin, name='admin_dashboard'),
+    path('member-dashboard/', views.dashboard_member, name='member_dashboard'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

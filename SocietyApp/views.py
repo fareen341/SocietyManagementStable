@@ -574,3 +574,13 @@ def profit_and_loss(request):
 def general_ledger(request):
     datatable_columns = [1, 2, 3, 4, 5, 6, 7]
     return render(request, 'general_ledger.html', {'datatable_columns': datatable_columns})
+
+
+def dashboard_admin(request):
+    datatable_columns = [0, 1]
+    return render(request, 'admin_dashboard.html', {'datatable_columns': datatable_columns})
+
+
+def dashboard_member(request):
+    datatable_columns = [0, 1]
+    return render(request, 'member_dashboard.html', {'datatable_columns': datatable_columns})
