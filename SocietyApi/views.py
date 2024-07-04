@@ -1214,18 +1214,24 @@ import requests
 
 def calculate_running_balance(grp_name, debit, credit, running_balance):
     # CALLING AN API
-    api_url = f'http://127.0.0.1:8000/api/leadger_group_creation/?name={grp_name}'
+    # api_url = f'http://127.0.0.1:8000/api/leadger_group_creation/?name={grp_name}'
+    api_url = f'http://127.0.0.1:8000/group_data/{grp_name}/'
+    print("grp name============", grp_name)
     child_obj = None
     new_balance = 0
 
     try:
         response = requests.get(api_url)
+        print("response================================================================!!!!!!!!!!!!!!!", response)
         if response.status_code == 200:
             data = response.json()
-            parent_object = data[0]['parent']
-            if data[0]['parent'] == None:
-                parent_object = data[0]['id']
-            child_obj = Childs.objects.get(id=parent_object)                       
+            print("data ================", data)
+            child_obj = data['groups'][0]['super_parent']
+            # if data[0]['parent'] == None:
+            #     print("going in if statement")
+            #     parent_object = data[0]['id']
+            # child_obj = Childs.objects.get(id=parent_object)                      
+            # print(" group is group =========================", parent_object)
     
     except requests.exceptions.RequestException as e:
         print("Something went wrong")
@@ -1233,9 +1239,6 @@ def calculate_running_balance(grp_name, debit, credit, running_balance):
 
     if child_obj is not None:
         x = str(child_obj)
-        print("json is ==========", x)
-        print("json is ==========", type(x))
-        print("runnig balance is========", running_balance)
 
         if str(child_obj) in ['Assets', 'Expenses']:
             if debit is not None:
@@ -1328,7 +1331,7 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     credit = request.data['related_ledgers'][index].get('credit_amount', None)
                     
                     get_running_balance = calculate_running_balance(
-                        Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']).group_name, # FROM LEDGER ONE
+                        Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']).group_name).id, # FROM LEDGER ONE
                         debit,
                         credit,
                         running_balance
@@ -1360,7 +1363,7 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     credit = request.data['related_ledgers'][index].get('credit_amount', None)
                     
                     get_running_balance = calculate_running_balance(
-                        Ledger.objects.get(id=Ledger.objects.get(id=req['ledger_name'])).group_name, # FROM LEDGER ONE
+                        Childs.objects.get(name=Ledger.objects.get(id=req['ledger_name']).group_name).id, # FROM LEDGER ONE
                         debit,
                         credit,
                         running_balance
@@ -1395,7 +1398,7 @@ class VoucherCreationView(viewsets.ModelViewSet):
                 credit = request.data['related_ledgers'][index].get('credit_amount', None)
 
                 get_running_balance = calculate_running_balance(
-                    Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']).group_name, # FROM LEDGER ONE
+                    Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']).group_name).id, # FROM LEDGER ONE
                     debit,
                     credit,
                     running_balance
@@ -1436,7 +1439,7 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     credit = request.data['related_ledgers'][length - 1 - index].get('credit_amount', None)
                     
                     get_running_balance = calculate_running_balance(
-                        Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']).group_name, # FROM LEDGER ONE
+                        Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']).group_name).id, # FROM LEDGER ONE
                         debit,
                         credit,
                         running_balance
@@ -1469,7 +1472,7 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     credit = reverse_order[index + 1].get('credit_amount', None)
                     
                     get_running_balance = calculate_running_balance(
-                        Ledger.objects.get(id=req['ledger_name']).group_name, # FROM LEDGER ONE
+                        Childs.objects.get(name=Ledger.objects.get(id=req['ledger_name']).group_name).id, # FROM LEDGER ONE
                         debit,
                         credit,
                         running_balance
@@ -1503,7 +1506,7 @@ class VoucherCreationView(viewsets.ModelViewSet):
                 credit = request.data['related_ledgers'][length - 1].get('credit_amount', None)
                 
                 get_running_balance = calculate_running_balance(
-                    Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']).group_name, # FROM LEDGER ONE
+                    Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']).group_name).id, # FROM LEDGER ONE
                     debit,
                     credit,
                     running_balance

@@ -46,8 +46,8 @@
               <td></td>
             </tr>
             {% for group, items in group1.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -62,8 +62,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
             </tr>
 
@@ -74,8 +74,8 @@
               <td></td>
             </tr>
             {% for group, items in group2.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -90,8 +90,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
 
 
@@ -102,8 +102,8 @@
               <td></td>
             </tr>
             {% for group, items in group3.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -118,8 +118,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
             
 
@@ -130,8 +130,8 @@
               <td></td>
             </tr>
             {% for group, items in group4.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -146,8 +146,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
 
             <tr>
@@ -157,8 +157,8 @@
               <td></td>
             </tr>
             {% for group, items in group5.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -173,8 +173,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
 
             <tr>
@@ -190,19 +190,15 @@
                         {% if amt.from_ledger__ledger_name == item %}
                             <td></td>
                             <td class="ps-4">
-                              <!-- <h5>Ledgers under {{ group }}:</h5> -->
+                              <!-- {{ group }}<br> -->
                               {{ item }}
                             </td>
-                            <td>
-                              <!-- <br> -->
-                              {{ amt.balance }}
-                            </td>
-                            <!-- <td></td> -->
-                            <td>{{ amt.date }}</td>
+                            <td>{{ amt.balance }}</td>
+                            <td></td>
                         {% endif %}
                     {% endfor %}
               </tr>
-                {% endfor %}
+              {% endfor %}
             {% endfor %}
 
             <tr>
@@ -212,8 +208,8 @@
               <td></td>
             </tr>
             {% for group, items in group7.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -228,8 +224,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
 
 
@@ -262,8 +258,8 @@
               <td></td>
             </tr>
             {% for group, items in group8.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -278,8 +274,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
 
             <tr>
@@ -289,8 +285,8 @@
               <td></td>
             </tr>
             {% for group, items in group9.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -305,8 +301,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
 
             <tr>
@@ -316,8 +312,8 @@
               <td></td>
             </tr>
             {% for group, items in group10.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -332,8 +328,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
 
             <tr>
@@ -343,8 +339,8 @@
               <td></td>
             </tr>
             {% for group, items in group11.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -359,8 +355,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
 
             <tr>
@@ -397,8 +393,8 @@
               <td></td>
             </tr>
             {% for group, items in group13.items %}
-            <tr>
               {% for item in items %}
+            <tr>
                   {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
@@ -413,8 +409,8 @@
                           <td></td>
                       {% endif %}
                   {% endfor %}
-              {% endfor %}
-            </tr>
+                </tr>
+                {% endfor %}
             {% endfor %}
 
 
