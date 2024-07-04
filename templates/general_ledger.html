@@ -5,10 +5,17 @@
 
 {% block body %}
 
+<style>
+    .text-below-buttons h4{
+        text-decoration: underline;
+        padding-top: 30px;
+    }
+</style>
+
 <div class="container">
     <div class="mt-3">
         <h3 class="text-center">Index</h3>
-        <table id="generalLedgerVue" class="display dt-table order-column" style="width:100%">
+        <table id="generalLedgerVue" class="display table-sm dt-table order-column" style="width:100%">
             <thead>
                 <tr>
                     <th>Date</th>
@@ -63,7 +70,6 @@ var app = new Vue({
 
 <script>
     $(document).ready(function() {
-    // Adjust column sizes when a tab is shown
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
         $($.fn.dataTable.tables(true)).DataTable()
             .columns.adjust();
@@ -86,7 +92,6 @@ var app = new Vue({
              {
                  extend: 'print',
                  exportOptions: {
-                     // columns: ':visible',
                      columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
                      modifier: { search: 'applied', order: 'applied' },
                  }
@@ -96,7 +101,6 @@ var app = new Vue({
                  text: 'Print All',
                  exportOptions: {
                      columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
-                     // modifier: { search: 'applied', order: 'applied' },/
                  }
              },
          ],
@@ -109,8 +113,6 @@ var app = new Vue({
          fixedColumns: {
              left: 2
          },
-         // "paging": true,
-         // 'pageLength': '5',
          pagingType: "simple",
          paginate: {
              previous: "<",
@@ -119,16 +121,26 @@ var app = new Vue({
          scrollCollapse: false,
          scrollX: true
      });
-    // Set the DataTable info text to be centered
+
+    var textBelowButtons = $('<div class="text-below-buttons pt-4 pb-0 view-label text-center"><h4 id="selectedValue">From Ledger</h4> <p></p></div>');
+    $('#generalLedgerVue_filter').after(textBelowButtons);
+    $(document).on('change', '.dtsb-select', function() {
+        var selectedValue = $(this).val();
+        $('#selectedValue').text(selectedValue);
+    });
+
+    var initialSelectedValue = $('.dtsb-select').val();
+    $('#selectedValue').text(initialSelectedValue);
+
     $('#generalLedgerVue_info').css({
         'text-align': 'center',
         'position': 'relative',
         'left': '40%',
         'padding-top': '20px',
-        // 'margin-right': 'auto',
-        'display': 'block'
+        'display': 'block',
+        'margin-left': 'auto',
+        'margin-right': 'auto'
     });
-    // Adjust the info text position when the table is redrawn
     table.on('draw.dt', function () {
         $('#generalLedgerVue_info').css({
             'text-align': 'center',
