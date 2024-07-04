@@ -391,6 +391,16 @@ def balance_sheet(request):
     datatable_columns = [0, 1]
 
     # GROUPS OF LIALIBILITIES.
+    # group0 = Ledger.objects.filter(group_name="Share Capital")
+    group0 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Share Capital"), cost_center=False, balance_sheet=True)
+    all_cost_center_group.append("Share Capital")
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    for ledger in filtered_ledgers:
+        group0[ledger.group_name].append(ledger.ledger_name)
+    group0 = dict(group0)
+
+
     # group1 = Ledger.objects.filter(group_name="Subscription Towards Shares")
     group1 = defaultdict(list)
     all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Subscription Towards Shares"), cost_center=False, balance_sheet=True)
@@ -461,6 +471,7 @@ def balance_sheet(request):
     all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Fixed Assets"), cost_center=False, balance_sheet=True)
     all_cost_center_group.append("Fixed Assets")
     filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    print("All groups are======>",filtered_ledgers)
     for ledger in filtered_ledgers:
         group8[ledger.group_name].append(ledger.ledger_name)
     group8 = dict(group8)
@@ -520,12 +531,21 @@ def balance_sheet(request):
 
     unique_latest_entries = GeneralLedger.objects.filter(id__in=unique_latest_ids).values("from_ledger__ledger_name", 'balance', 'date')
 
+    for group, items in group8.items():
+        total_balance = 0
+        for item in items:
+            for amt in unique_latest_entries:
+                if amt['from_ledger__ledger_name'] == item:
+                    total_balance += amt['balance']
+                    print(f"Group is: {group}, Item is:{item}: AMT is: {amt['balance']}")
+        # print(f"{group}:", total_balance)
     # TO GET THE ENTRY ON PARTICULAR DATE
     # on_given_date_entries = GeneralLedger.objects.filter(date="2024-08-08").values("from_ledger__ledger_name", 'balance', 'date')
     # print("entries on given date------>", on_given_date_entries)
 
     return render(request, 'balance_sheet.html', {
         'datatable_columns': datatable_columns,
+        'group0': group0,
         'group1': group1,
         'group2': group2,
         'group3': group3,
@@ -584,3 +604,7 @@ def dashboard_admin(request):
 def dashboard_member(request):
     datatable_columns = [0, 1]
     return render(request, 'member_dashboard.html', {'datatable_columns': datatable_columns})
+
+def visiting_cards(request):
+    datatable_columns = [1]
+    return render(request, 'visiting_cards.html', {'datatable_columns': datatable_columns})

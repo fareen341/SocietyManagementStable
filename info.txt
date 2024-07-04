@@ -138,3 +138,13 @@ i made filter date as "2024-08-09" i should get below amt, i.e 7000 and not abov
 2024-08-09	HDFC Acc.	Taori Marketing	expenses_voucher	1	        		8000        8000
 2024-08-09	HDFC Acc.	Sameer	expenses_voucher	        1		1000	                7000
 
+
+
+======================================================= BALANCE SHEET VIEW ====================================================================
+
++ Current Assets
+    + Vikas
+    + Neha
+        + GST         90000
+            - CGST  - 30000
+            - SGST  - 40000

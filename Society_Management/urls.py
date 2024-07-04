@@ -122,6 +122,7 @@ urlpatterns = [
 
     path('admin-dashboard/', views.dashboard_admin, name='admin_dashboard'),
     path('member-dashboard/', views.dashboard_member, name='member_dashboard'),
+    path('visiting_cards/', views.visiting_cards, name='visiting_cards'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

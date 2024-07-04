@@ -20,7 +20,7 @@
     <div class="row">
       <h3 class="text-center">BALANCE SHEET AS ON 31/03/24</h3>
       <div class="col-lg-6">
-        <table class="table table-borderless">
+        <table class="table table-bordered">
           <thead class="dark-border table-dark">
             <tr>
               <th scope="col">Previous Year</th>
@@ -36,8 +36,28 @@
               <td></td>
               <td></td>
             </tr>
-            <tr>
-              
+            {% for group, items in group0.items %}
+              <tr>
+                <td></td>
+                <td><u>{{ group }}</u></td>
+                <td>4000</td>
+                <td></td>
+              </tr>
+              {% for item in items %}
+                <tr>
+                  <td></td>
+                  <td class="ps-4">{{ item }}</td>
+                  <td>
+                    {% for amt in unique_latest_entries %}
+                      {% if amt.from_ledger__ledger_name == item %}
+                        {{ amt.balance }}
+                      {% endif %}
+                    {% endfor %}
+                  </td>
+                  <td></td>
+                </tr>
+              {% endfor %}
+            {% endfor %}
             
             <tr>
               <td></td>
@@ -258,25 +278,26 @@
               <td></td>
             </tr>
             {% for group, items in group8.items %}
+              <tr>
+                <td></td>
+                <td colspan="4"><u>{{ group }}</u></td>
+              </tr>
               {% for item in items %}
-            <tr>
-                  {% for amt in unique_latest_entries %}
+                <tr>
+                  <td></td>
+                  <td class="ps-4">{{ item }}</td>
+                  <td>
+                    {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
-                          <td></td>
-                          <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
-                            {{ item }}
-                          </td>
-                          <td>
-                            <!-- <br> -->
-                            {{ amt.balance }}
-                          </td>
-                          <td></td>
+                        {{ amt.balance }}
                       {% endif %}
-                  {% endfor %}
+                    {% endfor %}
+                  </td>
+                  <td></td>
                 </tr>
-                {% endfor %}
+              {% endfor %}
             {% endfor %}
+
 
             <tr>
               <td></td>

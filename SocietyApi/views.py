@@ -1213,25 +1213,20 @@ import requests
 
 
 def calculate_running_balance(grp_name, debit, credit, running_balance):
+    print("calling the function ))))))))))))))))))))))))(((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))))")
     # CALLING AN API
     # api_url = f'http://127.0.0.1:8000/api/leadger_group_creation/?name={grp_name}'
     api_url = f'http://127.0.0.1:8000/group_data/{grp_name}/'
-    print("grp name============", grp_name)
+    print("grouop name ---->", grp_name)
     child_obj = None
     new_balance = 0
 
     try:
         response = requests.get(api_url)
-        print("response================================================================!!!!!!!!!!!!!!!", response)
         if response.status_code == 200:
             data = response.json()
-            print("data ================", data)
             child_obj = data['groups'][0]['super_parent']
-            # if data[0]['parent'] == None:
-            #     print("going in if statement")
-            #     parent_object = data[0]['id']
-            # child_obj = Childs.objects.get(id=parent_object)                      
-            # print(" group is group =========================", parent_object)
+            print("chils is======", child_obj)
     
     except requests.exceptions.RequestException as e:
         print("Something went wrong")
@@ -1241,6 +1236,7 @@ def calculate_running_balance(grp_name, debit, credit, running_balance):
         x = str(child_obj)
 
         if str(child_obj) in ['Assets', 'Expenses']:
+            print(f"IN IF CONDITION debit is: {debit}, credit is: {credit}, running balance is: {running_balance}")
             if debit is not None:
                 new_balance = running_balance + float(debit)
                 print("new_balance==============1", new_balance)
@@ -1249,6 +1245,7 @@ def calculate_running_balance(grp_name, debit, credit, running_balance):
                 print("new_balance============== 2", new_balance)
 
         elif str(child_obj) in ['Liabilities', 'Income']:
+            print(f"IN ELSE CONDITION debit is: {debit}, credit is: {credit}, running balance is: {running_balance}")
             if debit is not None:
                 new_balance = running_balance - float(debit)
                 print("new_balance==============3", new_balance)
@@ -1276,7 +1273,6 @@ class VoucherCreationView(viewsets.ModelViewSet):
         # Step 2: Save related ledgers
         related_ledgers_data = request.data.get('related_ledgers', [])
         for ledger_data in related_ledgers_data:
-            print("related ledgers ========== to be continue......")
             ledger_data['voucher_type'] = voucher.id  # Link the voucher
             ledger_serializer = RelatedLedgersSerializers(data=ledger_data)
             if ledger_serializer.is_valid():
@@ -1350,17 +1346,17 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     first_done = False
 
                 if first_val != last_val:
-                    print("2-------------------------------------------------------")
                     final_val.append({req['ledger_name'], request.data['related_ledgers'][-1]['ledger_name']})
-                    running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][0]['ledger_name']).order_by('id').last()
+                    running_balance = GeneralLedger.objects.filter(from_ledger=req['ledger_name']).order_by('id').last()
                     if running_balance:
                         running_balance = running_balance.balance
                     else: 
                         running_balance = 0
                     
                     new_balance = 0
-                    debit = request.data['related_ledgers'][index].get('debit_amount', None)
-                    credit = request.data['related_ledgers'][index].get('credit_amount', None)
+                    debit = request.data['related_ledgers'][index + 1].get('debit_amount', None)
+                    credit = request.data['related_ledgers'][index + 1].get('credit_amount', None)
+                    print("2--------------------------coming here----------------------debit amt is-------", debit)
                     
                     get_running_balance = calculate_running_balance(
                         Childs.objects.get(name=Ledger.objects.get(id=req['ledger_name']).group_name).id, # FROM LEDGER ONE
@@ -1426,17 +1422,18 @@ class VoucherCreationView(viewsets.ModelViewSet):
         for index, req in enumerate(reverse_order[1:]):
             if req['payment_option'] == first_val:
                 if first_done:
+                    print("4-------------------------------------------------------")
                     reverse_val.append({request.data['related_ledgers'][-1]['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
                     running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][-1]['ledger_name']).order_by('id').last()
-                    print("11=====================================", running_balance)
                     if running_balance:
                         running_balance = running_balance.balance
                     else: 
                         running_balance = 0
-                    
+
                     new_balance = 0
                     debit = request.data['related_ledgers'][length - 1 - index].get('debit_amount', None)
                     credit = request.data['related_ledgers'][length - 1 - index].get('credit_amount', None)
+                    print(f" 500,,,,,,,,,Debit is: {debit}, credit is:{credit}==================")
                     
                     get_running_balance = calculate_running_balance(
                         Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']).group_name).id, # FROM LEDGER ONE
@@ -1458,8 +1455,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     first_done = False
 
                 if first_val != last_val:
+                    print("5-------------------------------------------------------")
                     reverse_val.append({req['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
-                    print("12=====================================", request.data['related_ledgers'][-1]['ledger_name'])
 
                     running_balance = GeneralLedger.objects.filter(from_ledger=req['ledger_name']).order_by('id').last()
                     if running_balance:
@@ -1491,9 +1488,9 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     single_val_condn_rev = False
 
             elif single_val_condn_rev:
+                print("6-------------------------------------------------------")
                 single_val_condn_rev = False
                 reverse_val.append({request.data['related_ledgers'][-1]['ledger_name'], request.data['related_ledgers'][0]['ledger_name']})
-                print("13=====================================")
 
                 running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][-1]['ledger_name']).order_by('id').last()
                 if running_balance:

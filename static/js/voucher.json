@@ -111,3 +111,172 @@ jv does'nt have bank details?
     "cheque_date": "2000-09-09",
     "bank_name": "25000"
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    "related_ledgers": [
+        {
+            "payment_option": "dr",
+            "debit_amount": "30000",
+            "ledger_name": 26,
+            "against_refrence": [
+                {
+                    "against_voucher": 1,
+                    "voucher_number": "VOUCHER-123-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 200,
+                    "final_amt": 500,
+                    "allocated_amt": 10
+                },
+                {
+                    "against_voucher": 2,
+                    "voucher_number": "VOUCHER-456-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 300,
+                    "final_amt": 500,
+                    "allocated_amt": 10
+                }
+            ],
+            "cost_center": [
+                {
+                    "cost_center": 2,
+                    "amount": "10"
+                }
+            ]
+        },
+        {
+            "payment_option": "dr",
+            "debit_amount": "2700",
+            "ledger_name": 27,
+            "against_refrence": [
+                {
+                    "against_voucher": 1,
+                    "voucher_number": "VOUCHER-123-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 200,
+                    "final_amt": 500,
+                    "allocated_amt": 10
+                },
+                {
+                    "against_voucher": 2,
+                    "voucher_number": "VOUCHER-456-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 300,
+                    "final_amt": 500,
+                    "allocated_amt": 10
+                }
+            ],
+            "cost_center": [
+                {
+                    "cost_center": 3,
+                    "amount": "2700"
+                }
+            ]
+        },
+        {
+            "payment_option": "dr",
+            "debit_amount": "2700",
+            "ledger_name": 28,
+            "against_refrence": [
+                {
+                    "against_voucher": 1,
+                    "voucher_number": "VOUCHER-123-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 200,
+                    "final_amt": 500,
+                    "allocated_amt": 10
+                },
+                {
+                    "against_voucher": 2,
+                    "voucher_number": "VOUCHER-456-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 300,
+                    "final_amt": 500,
+                    "allocated_amt": 10
+                }
+            ],
+            "cost_center": [
+                {
+                    "cost_center": 2,
+                    "amount": "2700"
+                }
+            ]
+        },
+        {
+            "payment_option": "cr",
+            "credit_amount": "35400",
+            "ledger_name": 23,
+            "against_refrence": [
+                {
+                    "against_voucher": 1,
+                    "voucher_number": "VOUCHER-123-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 200,
+                    "final_amt": 500,
+                    "allocated_amt": 10
+                },
+                {
+                    "against_voucher": 2,
+                    "voucher_number": "VOUCHER-456-2024",
+                    "voucher_date": "2000-09-09",
+                    "pending_amt": 300,
+                    "final_amt": 500,
+                    "allocated_amt": 10
+                }
+            ],
+            "cost_center": [
+                {
+                    "cost_center": 2,
+                    "amount": "35400"
+                }
+            ]
+        }
+    ],
+    "voucher_name": "expenses_voucher",
+    "voucher_type": 4,
+    "voucher_number": 1,
+    "booking_date": "2024-08-10",
+    "voucher_date": "2024-08-10",
+    "debit_total": 35400,
+    "credit_total": 35400,
+    "amount_in_words": "thirty-five thousand, four hundred",
+    "narration": "35400",
+    "cheque_number": "35400",
+    "cheque_date": "2024-07-06",
+    "bank_name": "35400"
+}
+
+
+
+
+
+{
+    "Fixed Assets":
+    {
+        "Sales Computer":[
+            {
+                "Computers": 30000
+            }
+        ],
+        "Fixed Assets":[
+            {
+                "Furniture": 70000,
+                "Building": 200000
+            }
+        ]
+    }
+}
