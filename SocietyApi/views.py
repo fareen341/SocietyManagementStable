@@ -1552,3 +1552,7 @@ class GeneralLedgerView(viewsets.ModelViewSet):
     serializer_class = GeneralLedgerSerializers
 
 
+class VistingCardView(viewsets.ModelViewSet):
+    queryset = VistingCard.objects.all()
+    serializer_class = VistingCardSerializers
+

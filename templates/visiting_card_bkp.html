@@ -127,7 +127,8 @@ body {
   }
 </style>
 <body>
-  <div>
+  <div id="app">
+    {% verbatim %}
     <div class="cardContainer mt-5">
       <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
         Add Card
@@ -143,19 +144,29 @@ body {
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              Name: <input type="text" class="w-100 sty-inp">
+              Name: <input type="text" class="w-100 sty-inp" v-model="formData.name">
+              <span class="text-danger" v-if="errors.name">{{ errors.name[0] }}</span>
+              <span v-else=""></span>
               <br>
 
-              Email: <input type="text" class="w-100 sty-inp">
+              Email: <input type="text" class="w-100 sty-inp" v-model="formData.email">
+              <span class="text-danger" v-if="errors.email">{{ errors.email[0] }}</span>
+              <span v-else=""></span>
               <br>
 
-              Contact: <input type="text" class="w-100 sty-inp">
+              Contact: <input type="text" class="w-100 sty-inp" v-model="formData.contact">
+              <span class="text-danger" v-if="errors.contact">{{ errors.contact[0] }}</span>
+              <span v-else=""></span>
               <br>
 
-              Website: <input type="text" class="w-100 sty-inp">
+              Website: <input type="text" class="w-100 sty-inp" v-model="formData.website">
+              <span class="text-danger" v-if="errors.website">{{ errors.website[0] }}</span>
+              <span v-else=""></span>
               <br>
 
-              Address: <textarea class="w-100 sty-inp"></textarea>
+              Address: <textarea class="w-100 sty-inp" v-model="formData.address"></textarea>
+              <span class="text-danger" v-if="errors.address">{{ errors.address[0] }}</span>
+              <span v-else=""></span>
               <br>
 
             </div>
@@ -171,7 +182,7 @@ body {
 
       <div class="card mb-5" v-for="card in cardDetails">
         <div class="text-card">
-          <span class="content fs-4">Fareen<span class="text-right ps-5" style="cursor: pointer;">&#x270E;</span></span>
+          <span class="content fs-4">{{ card.name }} <span class="text-right ps-5" style="cursor: pointer;" @click="openModal(card.id)">&#x270E;</span></span>
           <span class="content" style="margin-bottom: 5px;"><b>Email</b>: fareen@gmail.com</span>
           <span class="content" style="margin-bottom: 5px;"><b>Contact</b>: +91 9819463410</span>
           <span class="content"><b>Website</b>: www.fintract.com</span>
@@ -186,6 +197,7 @@ body {
         <div class="ball ball3"></div>
       </div>
   
+      {% endverbatim %}
     </div>
 
 
@@ -220,6 +232,82 @@ body {
         });
 
     </script>
-    
+    <script>
+      // Vue code 
+      new Vue({
+        el: "#app",
+        data: {
+          myname: "fareen ansari",
+          formData: {
+            // name: '',
+            // email: '',
+            // contact: '',
+            // email: '',
+          },
+          errors: {},
+          cardDetails: {},
+          title: 'Create',
+          id: null,
+        },
+        methods:{
+          saveCardDetails(id){
+            axios.defaults.xsrfCookieName = 'csrftoken';
+            axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+           if(!this.id){ 
+              axios.post('http://127.0.0.1:8000/api/visting_card/', this.formData)
+                .then(response => {
+                  toastr.success("Card Added Successfully!");
+                  this.cardDetails.push(response.data);
+                  $('#exampleModal').modal('hide');
+                  // setTimeout(function() {
+                  //     location.reload();
+                  // }, 600);
+                })
+                .catch(errors => {
+                  toastr.error("Something went wrong!");
+                  this.errors = errors.response.data;
+                });
+              }else{
+                  axios.patch(`http://127.0.0.1:8000/api/visting_card/${this.id}/`, this.formData)
+                  .then(response => {
+                    toastr.success("Card Updated Successfully!");
+                    $('#exampleModal').modal('hide');
+                    const index = this.cardDetails.findIndex(index => index.id === this.id);
+                    if (index !== -1) {
+                        this.$set(this.cardDetails, index, response.data);
+                    }
+                  })
+                  .catch(errors => {
+                    toastr.error("Something went wrong!");
+                    this.errors = errors.response.data;
+                  });
+                }
+            },
+            openModal(id){
+              this.id = id;
+              this.title = 'update';
+              $('#exampleModal').modal('show');
+              axios.get(`http://127.0.0.1:8000/api/visting_card/${this.id}/`)
+                .then(response => {
+                    this.formData = response.data;
+                    console.log("Success Response:", this.formData);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+            }
+        },
+        mounted(){
+          axios.get('http://127.0.0.1:8000/api/visting_card/')
+            .then(response => {
+              this.cardDetails = response.data;
+            })
+            .catch(errors => {
+              toastr.error("Something went wrong!");
+            });
+        }
+      })
+    </script>
 </body>
 </html>
