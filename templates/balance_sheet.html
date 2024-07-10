@@ -203,6 +203,7 @@
               <td></td>
               <td></td>
             </tr>
+            
             {% for group, items in group6.items %}
               {% for item in items %}
               <tr>
@@ -210,8 +211,14 @@
                         {% if amt.from_ledger__ledger_name == item %}
                             <td></td>
                             <td class="ps-4">
+                              {% for parent in abcd %}
+                                  {% if parent == group  %}
+                                    <span>=========================----------{{ forloop.first }}</span>
+                                  {% endif %}
+                                  <span>{{ parent }}, {{ group }}</span><br>
+                              {% endfor %}
                               <!-- {{ group }}<br> -->
-                              {{ item }}
+                              ITEM = {{ item }}
                             </td>
                             <td>{{ amt.balance }}</td>
                             <td></td>

@@ -96,6 +96,9 @@ urlpatterns = [
     path('api/get_voucher_index/<int:voucher_type_id>/', apiviews.VoucherIndexingView.as_view({'get': 'get_voucher_indexing'}), name='get_voucher_index'),
     path('api/get_voucher_number/<int:voucher_type_id>/', apiviews.VoucherIndexingView.as_view({'get': 'get_voucher_number'}), name='get_voucher_number'),
 
+    path('api/related-ledgers/<int:parent_id>/', apiviews.RelatedLedgersView.as_view({'get': 'list', 'post': 'create'}), name='related-ledgers-list'),
+
+
 
     # REGISTERS
     path('nominee-register/', views.nominee_register_view, name='nominee_register_view'),
@@ -125,6 +128,8 @@ urlpatterns = [
     path('admin-dashboard/', views.dashboard_admin, name='admin_dashboard'),
     path('member-dashboard/', views.dashboard_member, name='member_dashboard'),
     path('visiting_cards/', views.visiting_cards, name='visiting_cards'),
+
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

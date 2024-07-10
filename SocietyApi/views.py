@@ -1273,6 +1273,7 @@ class VoucherCreationView(viewsets.ModelViewSet):
         # Step 2: Save related ledgers
         related_ledgers_data = request.data.get('related_ledgers', [])
         for ledger_data in related_ledgers_data:
+            print("related legder is>-----------", ledger_data)
             ledger_data['voucher_type'] = voucher.id  # Link the voucher
             ledger_serializer = RelatedLedgersSerializers(data=ledger_data)
             if ledger_serializer.is_valid():
@@ -1323,8 +1324,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         running_balance = 0
                     
                     new_balance = 0
-                    debit = request.data['related_ledgers'][index].get('debit_amount', None)
-                    credit = request.data['related_ledgers'][index].get('credit_amount', None)
+                    debit = request.data['related_ledgers'][index].get('debit_amt', None)
+                    credit = request.data['related_ledgers'][index].get('credit_amt', None)
                     
                     get_running_balance = calculate_running_balance(
                         Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']).group_name).id, # FROM LEDGER ONE
@@ -1339,8 +1340,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         particulars = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
                         voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
                         voucher_number = request.data['voucher_number'],
-                        debit = request.data['related_ledgers'][index].get('debit_amount', None),
-                        credit = request.data['related_ledgers'][index].get('credit_amount', None),
+                        debit = request.data['related_ledgers'][index].get('debit_amt', None),
+                        credit = request.data['related_ledgers'][index].get('credit_amt', None),
                         balance = get_running_balance
                     )
                     first_done = False
@@ -1354,8 +1355,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         running_balance = 0
                     
                     new_balance = 0
-                    debit = request.data['related_ledgers'][index + 1].get('debit_amount', None)
-                    credit = request.data['related_ledgers'][index + 1].get('credit_amount', None)
+                    debit = request.data['related_ledgers'][index + 1].get('debit_amt', None)
+                    credit = request.data['related_ledgers'][index + 1].get('credit_amt', None)
                     print("2--------------------------coming here----------------------debit amt is-------", debit)
                     
                     get_running_balance = calculate_running_balance(
@@ -1371,8 +1372,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         particulars = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
                         voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
                         voucher_number = request.data['voucher_number'],
-                        debit = request.data['related_ledgers'][index + 1].get('debit_amount', None),
-                        credit = request.data['related_ledgers'][index + 1].get('credit_amount', None),
+                        debit = request.data['related_ledgers'][index + 1].get('debit_amt', None),
+                        credit = request.data['related_ledgers'][index + 1].get('credit_amt', None),
                         balance = get_running_balance
                     )
                     single_val_condn = False
@@ -1390,8 +1391,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     running_balance = 0
                 
                 new_balance = 0
-                debit = request.data['related_ledgers'][index].get('debit_amount', None)
-                credit = request.data['related_ledgers'][index].get('credit_amount', None)
+                debit = request.data['related_ledgers'][index].get('debit_amt', None)
+                credit = request.data['related_ledgers'][index].get('credit_amt', None)
 
                 get_running_balance = calculate_running_balance(
                     Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']).group_name).id, # FROM LEDGER ONE
@@ -1406,8 +1407,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         particulars = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
                         voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
                         voucher_number = request.data['voucher_number'],
-                        debit = request.data['related_ledgers'][index].get('debit_amount', None),
-                        credit = request.data['related_ledgers'][index].get('credit_amount', None),
+                        debit = request.data['related_ledgers'][index].get('debit_amt', None),
+                        credit = request.data['related_ledgers'][index].get('credit_amt', None),
                         balance = get_running_balance
                     )
 
@@ -1431,8 +1432,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         running_balance = 0
 
                     new_balance = 0
-                    debit = request.data['related_ledgers'][length - 1 - index].get('debit_amount', None)
-                    credit = request.data['related_ledgers'][length - 1 - index].get('credit_amount', None)
+                    debit = request.data['related_ledgers'][length - 1 - index].get('debit_amt', None)
+                    credit = request.data['related_ledgers'][length - 1 - index].get('credit_amt', None)
                     print(f" 500,,,,,,,,,Debit is: {debit}, credit is:{credit}==================")
                     
                     get_running_balance = calculate_running_balance(
@@ -1448,8 +1449,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         from_ledger = Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']),
                         voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
                         voucher_number = request.data['voucher_number'],
-                        debit = request.data['related_ledgers'][length - 1 - index].get('debit_amount', None),
-                        credit = request.data['related_ledgers'][length - 1 - index].get('credit_amount', None),
+                        debit = request.data['related_ledgers'][length - 1 - index].get('debit_amt', None),
+                        credit = request.data['related_ledgers'][length - 1 - index].get('credit_amt', None),
                         balance = get_running_balance
                     )
                     first_done = False
@@ -1465,8 +1466,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         running_balance = 0
                     
                     new_balance = 0
-                    debit = reverse_order[index + 1].get('debit_amount', None)
-                    credit = reverse_order[index + 1].get('credit_amount', None)
+                    debit = reverse_order[index + 1].get('debit_amt', None)
+                    credit = reverse_order[index + 1].get('credit_amt', None)
                     
                     get_running_balance = calculate_running_balance(
                         Childs.objects.get(name=Ledger.objects.get(id=req['ledger_name']).group_name).id, # FROM LEDGER ONE
@@ -1481,8 +1482,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         particulars = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
                         voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
                         voucher_number = request.data['voucher_number'],
-                        debit = reverse_order[index + 1].get('debit_amount', None),
-                        credit = reverse_order[index + 1].get('credit_amount', None),
+                        debit = reverse_order[index + 1].get('debit_amt', None),
+                        credit = reverse_order[index + 1].get('credit_amt', None),
                         balance = get_running_balance
                     )
                     single_val_condn_rev = False
@@ -1499,8 +1500,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     running_balance = 0
                 
                 new_balance = 0
-                debit = request.data['related_ledgers'][length - 1].get('debit_amount', None)
-                credit = request.data['related_ledgers'][length - 1].get('credit_amount', None)
+                debit = request.data['related_ledgers'][length - 1].get('debit_amt', None)
+                credit = request.data['related_ledgers'][length - 1].get('credit_amt', None)
                 
                 get_running_balance = calculate_running_balance(
                     Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']).group_name).id, # FROM LEDGER ONE
@@ -1515,8 +1516,8 @@ class VoucherCreationView(viewsets.ModelViewSet):
                         particulars = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
                         voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
                         voucher_number = request.data['voucher_number'],
-                        debit = request.data['related_ledgers'][length - 1].get('debit_amount', None),
-                        credit = request.data['related_ledgers'][length - 1].get('credit_amount', None),
+                        debit = request.data['related_ledgers'][length - 1].get('debit_amt', None),
+                        credit = request.data['related_ledgers'][length - 1].get('credit_amt', None),
                         balance = get_running_balance
                     )
 
@@ -1528,8 +1529,22 @@ class VoucherCreationView(viewsets.ModelViewSet):
 
 
 class RelatedLedgersView(viewsets.ModelViewSet):
-    queryset = RelatedLedgersModel.objects.all()
+    # queryset = RelatedLedgersModel.objects.all()
     serializer_class = RelatedLedgersSerializers
+
+    # def get_queryset(self):
+    #     return RelatedLedgersModel.objects.filter(voucher_type_id=self.kwargs['parent_id']).values('ledger_name__ledger_name')
+    def get_serializer_class(self):
+        if self.action in ['create', 'retrieve', 'partial_update', 'update']:
+            return RelatedLedgersSerializers
+        return RelatedLedgersReadOnlySerializers
+    
+    def get_queryset(self):
+        parent_id = self.kwargs.get('parent_id')
+        if parent_id is not None:
+            return RelatedLedgersModel.objects.filter(voucher_type_id=parent_id)
+        else:
+            return RelatedLedgersModel.objects.none()
 
 
 class RelatedSharesView(viewsets.ModelViewSet):

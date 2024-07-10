@@ -449,11 +449,25 @@ def balance_sheet(request):
     # group6 = Ledger.objects.filter(group_name="Current Liabilities And Provisions")
     group6 = defaultdict(list)
     all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Current Liabilities And Provisions"), cost_center=False, balance_sheet=True)
+    print("all grops print===>", all_cost_center_group)
+    abcd = []
+    for i in all_cost_center_group:
+        if isinstance(i, str):
+            abcd.append(i)  # Append the string directly
+        elif hasattr(i, 'name'):  # Assuming 'name' is an attribute you want to access
+            abcd.append(i.name)  # Append the attribute value if it exists
+        else:
+            abcd.append(str(i))  # Fallback to string representation if needed
+
     all_cost_center_group.append("Current Liabilities And Provisions")
     filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    print("all grops print===>3", filtered_ledgers)
     for ledger in filtered_ledgers:
         group6[ledger.group_name].append(ledger.ledger_name)
     group6 = dict(group6)
+    print("group 5 is----->", group6)
+    
+    
 
     # group7 = Ledger.objects.filter(group_name="Interest Accrued Due But Not Paid")
     group7 = defaultdict(list)
@@ -537,7 +551,7 @@ def balance_sheet(request):
             for amt in unique_latest_entries:
                 if amt['from_ledger__ledger_name'] == item:
                     total_balance += amt['balance']
-                    print(f"Group is: {group}, Item is:{item}: AMT is: {amt['balance']}")
+                    print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Group is: {group}, Item is:{item}: AMT is: {amt['balance']}")
         # print(f"{group}:", total_balance)
     # TO GET THE ENTRY ON PARTICULAR DATE
     # on_given_date_entries = GeneralLedger.objects.filter(date="2024-08-08").values("from_ledger__ledger_name", 'balance', 'date')
@@ -560,6 +574,7 @@ def balance_sheet(request):
         'group12': group12,
         'group13': group13,
         'unique_latest_entries': unique_latest_entries,
+        'abcd': abcd,
     })
 
 

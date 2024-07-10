@@ -688,6 +688,15 @@ class RelatedLedgersSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class RelatedLedgersReadOnlySerializers(serializers.ModelSerializer):
+    ledger_name = serializers.CharField(source='ledger_name.ledger_name', read_only=True)
+
+    class Meta:
+        model = RelatedLedgersModel
+        fields = '__all__'
+
+
+
 class RelatedSharesSerializers(serializers.ModelSerializer):
     class Meta:
         model = RelatedSharesModel
