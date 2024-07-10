@@ -37,26 +37,22 @@
               <td></td>
             </tr>
             {% for group, items in group0.items %}
-              <tr>
-                <td></td>
-                <td><u>{{ group }}</u></td>
-                <td>4000</td>
-                <td></td>
-              </tr>
               {% for item in items %}
-                <tr>
-                  <td></td>
-                  <td class="ps-4">{{ item }}</td>
-                  <td>
-                    {% for amt in unique_latest_entries %}
+            <tr>
+                  {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
-                        {{ amt.balance }}
+                          <td></td>
+                          <td class="ps-4">
+                            {{ item }}
+                          </td>
+                          <td>
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
                       {% endif %}
-                    {% endfor %}
-                  </td>
-                  <td></td>
+                  {% endfor %}
                 </tr>
-              {% endfor %}
+                {% endfor %}
             {% endfor %}
             
             <tr>
@@ -72,11 +68,9 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
                             {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
@@ -100,11 +94,9 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
                             {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
@@ -128,11 +120,9 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
                             {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
@@ -156,11 +146,9 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
                             {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
@@ -183,11 +171,9 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
-                            <p>{{ item }}</p>
+                            {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
@@ -211,14 +197,14 @@
                         {% if amt.from_ledger__ledger_name == item %}
                             <td></td>
                             <td class="ps-4">
-                              {% for parent in abcd %}
+                              <!-- {% for parent in abcd %}
                                   {% if parent == group  %}
                                     <span>=========================----------{{ forloop.first }}</span>
                                   {% endif %}
                                   <span>{{ parent }}, {{ group }}</span><br>
-                              {% endfor %}
+                              {% endfor %} -->
                               <!-- {{ group }}<br> -->
-                              ITEM = {{ item }}
+                              {{ item }}
                             </td>
                             <td>{{ amt.balance }}</td>
                             <td></td>
@@ -241,11 +227,9 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
                             {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
@@ -285,24 +269,22 @@
               <td></td>
             </tr>
             {% for group, items in group8.items %}
-              <tr>
-                <td></td>
-                <td colspan="4"><u>{{ group }}</u></td>
-              </tr>
               {% for item in items %}
-                <tr>
-                  <td></td>
-                  <td class="ps-4">{{ item }}</td>
-                  <td>
-                    {% for amt in unique_latest_entries %}
+            <tr>
+                  {% for amt in unique_latest_entries %}
                       {% if amt.from_ledger__ledger_name == item %}
-                        {{ amt.balance }}
+                          <td></td>
+                          <td class="ps-4">
+                            {{ item }}
+                          </td>
+                          <td>
+                            {{ amt.balance }}
+                          </td>
+                          <td></td>
                       {% endif %}
-                    {% endfor %}
-                  </td>
-                  <td></td>
+                  {% endfor %}
                 </tr>
-              {% endfor %}
+                {% endfor %}
             {% endfor %}
 
 
@@ -319,11 +301,9 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
                             {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
@@ -346,11 +326,9 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
                             {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
@@ -373,11 +351,9 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
                             {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
@@ -400,18 +376,16 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
                             {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
                       {% endif %}
                   {% endfor %}
-            </tr>
-            {% endfor %}
+                </tr>
+                {% endfor %}
             {% endfor %}
             
             <tr>
@@ -427,11 +401,9 @@
                       {% if amt.from_ledger__ledger_name == item %}
                           <td></td>
                           <td class="ps-4">
-                            <!-- <h5>Ledgers under {{ group }}:</h5> -->
                             {{ item }}
                           </td>
                           <td>
-                            <!-- <br> -->
                             {{ amt.balance }}
                           </td>
                           <td></td>
