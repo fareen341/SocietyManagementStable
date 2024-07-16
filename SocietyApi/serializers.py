@@ -664,9 +664,9 @@ class PurchaseVoucherSerializers(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SharesOnLedgerSerializers(serializers.ModelSerializer):
+class StockOnLedgerModelSerializers(serializers.ModelSerializer):
     class Meta:
-        model = ShareOnLedgerModel
+        model = StockOnLedgerModel
         fields = '__all__'
 
 
@@ -690,6 +690,7 @@ class RelatedLedgersSerializers(serializers.ModelSerializer):
 
 class RelatedLedgersReadOnlySerializers(serializers.ModelSerializer):
     ledger_name = serializers.CharField(source='ledger_name.ledger_name', read_only=True)
+    ledger_id = serializers.IntegerField(source='ledger_name.id', read_only=True)
 
     class Meta:
         model = RelatedLedgersModel
@@ -697,9 +698,9 @@ class RelatedLedgersReadOnlySerializers(serializers.ModelSerializer):
 
 
 
-class RelatedSharesSerializers(serializers.ModelSerializer):
+class RelatedStockSerializers(serializers.ModelSerializer):
     class Meta:
-        model = RelatedSharesModel
+        model = RelatedStockModel
         fields = '__all__'
 
 
@@ -728,11 +729,10 @@ class GeneralLedgerSerializers(serializers.ModelSerializer):
         return obj.particulars.ledger_name
 
     def get_from_ledger_name(self, obj):
-        # Check if from_ledger is not None before accessing its attributes
         return obj.from_ledger.ledger_name if obj.from_ledger else None
 
     def get_voucher_type_choices(self, obj):
-        return obj.voucher_type.voucher_type
+        return obj.voucher_type.voucher_type if obj.voucher_type else None
 
 
 class VistingCardSerializers(serializers.ModelSerializer):

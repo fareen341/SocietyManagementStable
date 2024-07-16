@@ -54,7 +54,7 @@
                 </tr>
                 {% endfor %}
             {% endfor %}
-            
+
             <tr>
               <td></td>
               <td><b>Subscription Towards Shares</b></td>
@@ -131,7 +131,7 @@
                 </tr>
                 {% endfor %}
             {% endfor %}
-            
+
 
             <tr>
               <td></td>
@@ -189,7 +189,7 @@
               <td></td>
               <td></td>
             </tr>
-            
+
             {% for group, items in group6.items %}
               {% for item in items %}
               <tr>
@@ -387,7 +387,7 @@
                 </tr>
                 {% endfor %}
             {% endfor %}
-            
+
             <tr>
               <td></td>
               <td><b>Profit And Loss Account</b></td>
@@ -428,6 +428,25 @@
         </table>
       </div>
     </div>
+
+
+
+    <table border="1">
+      <tr>
+          <th>Element</th>
+          <th>Amount</th>
+      </tr>
+      {% for item in grps %}
+      <tr>
+          {% for key, value in item.items %}
+          <td>{{ key }}</td>
+          <td>{{ value }}</td>
+          {% endfor %}
+      </tr>
+      {% endfor %}
+  </table>
+
+
 
 </div>
 

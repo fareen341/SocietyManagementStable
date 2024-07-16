@@ -466,8 +466,8 @@ def balance_sheet(request):
         group6[ledger.group_name].append(ledger.ledger_name)
     group6 = dict(group6)
     print("group 5 is----->", group6)
-    
-    
+
+
 
     # group7 = Ledger.objects.filter(group_name="Interest Accrued Due But Not Paid")
     group7 = defaultdict(list)
@@ -517,14 +517,7 @@ def balance_sheet(request):
         group11[ledger.group_name].append(ledger.ledger_name)
     group11 = dict(group11)
 
-    # group12 = Ledger.objects.filter(group_name="Current Assets")
-    group12 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Current Assest"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Current Assest")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group12[ledger.group_name].append(ledger.ledger_name)
-    group12 = dict(group12)
+
 
     # group13 = Ledger.objects.filter(group_name="Profit And Loss Account")
     group13 = defaultdict(list)
@@ -536,6 +529,19 @@ def balance_sheet(request):
     group13 = dict(group13)
 
 
+    # group12 = Ledger.objects.filter(group_name="Current Assets")
+    group12 = defaultdict(list)
+    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Current Assest"), cost_center=False, balance_sheet=True)
+    # print("all grou[s*********************************************]", all_cost_center_group)
+    # print("can be fixed from here, to be continue...........................")
+    all_cost_center_group.insert(0, "Current Assest")
+    final_all_cost_center_group = all_cost_center_group
+    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group).order_by('ledger_name')
+    for ledger in filtered_ledgers:
+        group12[ledger.group_name].append(ledger.ledger_name)
+    group12 = dict(group12)
+    print("gtoup 12 printing-------", group12)
+
     unique_latest_ids = (
         GeneralLedger.objects.all()
         .values('from_ledger')
@@ -545,17 +551,43 @@ def balance_sheet(request):
 
     unique_latest_entries = GeneralLedger.objects.filter(id__in=unique_latest_ids).values("from_ledger__ledger_name", 'balance', 'date')
 
-    for group, items in group8.items():
-        total_balance = 0
+    total_balance = 0
+    final_break_amt = {}
+    for group, items in group12.items():
+        break_balance = 0
         for item in items:
             for amt in unique_latest_entries:
                 if amt['from_ledger__ledger_name'] == item:
                     total_balance += amt['balance']
-                    print(f"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Group is: {group}, Item is:{item}: AMT is: {amt['balance']}")
-        # print(f"{group}:", total_balance)
-    # TO GET THE ENTRY ON PARTICULAR DATE
-    # on_given_date_entries = GeneralLedger.objects.filter(date="2024-08-08").values("from_ledger__ledger_name", 'balance', 'date')
-    # print("entries on given date------>", on_given_date_entries)
+                    break_balance += amt['balance']
+                    final_break_amt.update({group: break_balance})
+                    # print(f"total amt is====> {total_balance} break_balance: {break_balance}")
+    print(f"---------------------final: {final_break_amt}--------------------------")
+    print(f"-------------------------total: {total_balance}")
+
+    print(" FINAL GRP", final_all_cost_center_group)
+    for led in final_break_amt:
+        # print("led is====", final_break_amt[led])
+        for grp in final_all_cost_center_group:
+            print(f"LED IS: {led}, GRP IS: {grp}, AMT IS: {final_break_amt[led]}")
+            if str(led) == str(grp):
+                break
+        print("===============================END=====================================")
+
+    grps = [
+        {'Current Assest': 400},
+        {'→ Sundry Debtors': 500},
+        {'→→ Vikas': 400},
+        {'→→→ Vikas 1': 400},
+        {'→→→→ Vikas 2': 0},
+        {'→→→→→ Misc Assets': 400},
+        {'→ Input Sgst': 400},
+        {'→ Gst Input': 0},
+        {'→ Tax': 400},
+        {'→→ Gst': 400},
+        {'→→→ Payable Tax': 400},
+        {'→→→→ Input Cgst': 400},
+    ]
 
     return render(request, 'balance_sheet.html', {
         'datatable_columns': datatable_columns,
@@ -575,6 +607,7 @@ def balance_sheet(request):
         'group13': group13,
         'unique_latest_entries': unique_latest_entries,
         'abcd': abcd,
+        'grps': grps,
     })
 
 
@@ -600,7 +633,7 @@ def profit_and_loss(request):
     expense_groups.append("Expenses")
     expense = Ledger.objects.filter(group_name__in=expense_groups)
     return render(request, 'profit_and_loss.html', {
-        'datatable_columns': datatable_columns, 
+        'datatable_columns': datatable_columns,
         'incomes': incomes, 'expense': expense,
         'unique_latest_entries': unique_latest_entries,
     })

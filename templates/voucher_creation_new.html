@@ -68,11 +68,15 @@
                             <tbody>
                                 {% verbatim %}
                                 <tr v-for="(item, index) in againstRefrences" :key="index">
-                                    <td>{{ item.against_voucher }}</td>
+                                    <td>{{ index }}</td>
                                     <td>{{ item.voucher_number }}</td>
                                     <td>{{ item.voucher_date }}</td>
                                     <td>{{ item.pending_amt }}</td>
                                     <td>{{ item.final_amt }}</td>
+                                    <!-- <td v-if="item.credit">{{ item.credit }}</td>
+                                    <td v-else>{{ item.debit }}</td>
+                                    <td v-if="item.credit">{{ item.credit }}</td>
+                                    <td v-else>{{ item.debit }}</td> -->
                                     <td class="text-center">
                                         <input class="mt-1" v-model="item.allocated_amt" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" placeholder="Enter Allocate Amt">
                                     </td>
@@ -122,6 +126,32 @@
                                 </div>
                             </div>
 
+                            <!-- Required for stock -->
+                            <!-- <div class="row">
+                                <h3><u>Voucher Details</u></h3>
+                                <div class="col-lg-4">
+                                    <span><b>Vendor Name: </b></span><span>{{ showVoucherDetails.vendor_name }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Vendor Invoice Number: </b></span><span>{{ showVoucherDetails.vendor_invoice_number }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Voucher Type: </b></span><span>{{ showVoucherDetails.voucher_name }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Voucher Number: </b>{{ showVoucherDetails.voucher_number }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Booking Date: </b>{{ showVoucherDetails.booking_date }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Narration: </b>{{ showVoucherDetails.narration }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Cheque No: </b>{{ showVoucherDetails.cheque_number }}</span>
+                                </div>
+                            </div> -->
+
                             <hr>
                             <div class="row text-center mx-5">
                                 <h3 class="mt-2"><u>Entry Details</u></h3>
@@ -131,6 +161,7 @@
                                         <th style="text-align:center;">Ledger Name</th>
                                         <th style="text-align:center;">Debit Amount</th>
                                         <th style="text-align:center;">Credit Amount</th>
+                                        <th style="text-align:center;">Credit Amount</th>
                                     </thead>
                                     <tbody>
                                         <tr v-for="(item, index) in showRelatedLedgers" :key="index">
@@ -139,7 +170,7 @@
                                                 <span v-else>CR</span>
                                             </td>
                                             <td class="text-center">
-                                                {{ item.ledger_name }}
+                                                {{ item.ledger_name }} Id: {{ item.voucher_type }} ledger: {{ item.ledger_id }}
                                             </td>
                                             <td class="text-center">
                                                 {{ item.debit_amt }}
@@ -147,15 +178,64 @@
                                             <td class="text-center">
                                                 {{ item.credit_amt }}
                                             </td>
+                                            <td>
+                                                <table class="table table-sm table-bordered">
+                                                    <thead class="table-dark">
+                                                        <th style="text-align:center;">Pending Amount</th>
+                                                        <th style="text-align:center;">Final Amount</th>
+                                                        <!-- <th style="text-align:center;">Allocated Amount</th> -->
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for="(ref, index) in item.show_against_refrence" :key="index">
+                                                            <td>{{ ref.pending_amt }}</td>
+                                                            <td>{{ ref.final_amt }}</td>
+                                                            <!-- <td>data</td> -->
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th id="total" colspan="2" class="text-center">Total :</th>
-                                            <td style="text-align: center" v-model="formData.debit_total">Debit Total: <span class="ms-3">25,000</span></td>
-                                            <td style="text-align: center" v-model="formData.credit_total">Credit Total: <span class="ms-3">25,000</span></td>
+                                            <td style="text-align: center">Debit Total: <span class="ms-3">{{ showVoucherDetails.debit_total }}</span></td>
+                                            <td style="text-align: center">Credit Total: <span class="ms-3">{{ showVoucherDetails.credit_total }}</span></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
+
+                            <!-- Required for stock -->
+                            <!-- <div class="row text-center mx-5">
+                                <h3 class="mt-2"><u>Stock Details</u></h3>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-dark">
+                                        <th style="text-align:center;">Stock</th>
+                                        <th style="text-align:center;">Quantity</th>
+                                        <th style="text-align:center;">Rate</th>
+                                        <th style="text-align:center;">Amount</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, index) in showStocks" :key="index">
+                                            <td class="text-center">
+                                                {{ item.stock_name }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.quantity }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.rate }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.amount }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th id="total" colspan="2" class="text-center">Total :</th>
+                                            <td style="text-align: center">Total Amount: <span class="ms-3">{{ showVoucherDetails.total_purchases }}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div> -->
 
                             <!-- <div class="row text-center mt-3 mx-3">
                                 <h3><u>Against Refrence Details</u></h3>
@@ -583,22 +663,22 @@
                     <div class="row">
                         <div class="col-6">
                             <div class="sty-input-wrapper w-100 mb-3">
-                                <input type="text" class="sty-inp form-control" v-model="sharesData.shares_name" :class="{ 'error-message': errors.shares_name }">
+                                <input type="text" class="sty-inp form-control" v-model="sharesData.stock_name" :class="{ 'error-message': errors.stock_name }">
                                 <label class="sty-label">Stock Name</label>
-                                <span v-if="errors.shares_name" class="error">{{ errors.shares_name[0] }}</span>
+                                <span v-if="errors.stock_name" class="error">{{ errors.stock_name[0] }}</span>
                                 <span v-else></span>
                             </div>
                         </div>
 
                         <div class="col-6">
                             <div class="sty-input-wrapper w-100 mb-3">
-                                <select class="w-100 sty-inp" style="background-color: white;" v-model="sharesData.shares_type" :class="{ 'error-message': errors.shares_type }">
+                                <select class="w-100 sty-inp" style="background-color: white;" v-model="sharesData.stock_type" :class="{ 'error-message': errors.stock_type }">
                                     <option value="Select Stock Type">Select Stock Type</option>
                                     <option value="unit">Unit</option>
                                     <option value="pieces">Pieces</option>
                                 </select>
                                 <label class="sty-label">Stock Type</label>
-                                <span v-if="errors.shares_type" class="error">{{ errors.shares_type[0] }}</span>
+                                <span v-if="errors.stock_type" class="error">{{ errors.stock_type[0] }}</span>
                                 <span v-else></span>
                             </div>
                         </div>
@@ -731,9 +811,9 @@
                                             <td style="text-align:center;" width="5%">
                                                 <select class="selectLedger" style="width: 50%; border: none; border-color: transparent;">
                                                     <option value="">Select Stock</option>
-                                                    <option v-for="shares in sharesList" :value="shares.id">{{ shares.shares_name }}</option>
+                                                    <option v-for="shares in sharesList" :value="shares.id">{{ shares.stock_name }}</option>
                                                 </select>
-                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].shares_name">{{  errors[index].ledger_name[0] }}</p>
+                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].stock_name">{{  errors[index].ledger_name[0] }}</p>
                                                 <span v-else></span>
                                             </td>
 
@@ -767,7 +847,7 @@
                                         <tr>
                                             <th style="text-align:center;" colspan="3">Total</th>
                                             <td style="text-align: center;">
-                                                <input type="text" style="width: 50%; border: none; border-color: transparent; outline: none;" placeholder="Total Amount" v-model="totalAmountValue" readonly>
+                                                <input type="text" style="width: 50%; border: none; border-color: transparent; outline: none;" placeholder="Total Amount" v-model="formData2.total_purchases" readonly>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -776,7 +856,7 @@
                                 <div class="row">
                                     <div class="col-6 mb-3">
                                         <div class="sty-input-wrapper w-100">
-                                            <input type="text" class="sty-inp form-control" style="text-transform: capitalize;" v-model="formData2.amount_in_words" readonly>
+                                            <input type="text" class="sty-inp form-control" style="text-transform: capitalize;" v-model="formData2.amount_in_words">
                                             <label class="sty-label" for="">Amount in Words</label>
                                         </div>
                                     </div>
@@ -801,7 +881,7 @@
             </div>
         </div>
 
-        <!-- CREATE MODAL FOR ADD COST CENTER (CSM) -->
+        <!-- CREATE MODAL FOR ADD COST CENTER (CCM) -->
         <div class="modal fade" id="CostCenterModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="CostCenterModalLabel" aria-hidden="true">
          {% verbatim %}
             <div class="modal-dialog modal-lg">
@@ -971,9 +1051,9 @@
                                             <td style="text-align:center;" width="5%">
                                                 <select class="selectLedgerOnSale" style="width: 50%; border: none; border-color: transparent;">
                                                     <option value="">Select Stock</option>
-                                                    <option v-for="shares in sharesList" :value="shares.id">{{ shares.shares_name }}</option>
+                                                    <option v-for="shares in sharesList" :value="shares.id">{{ shares.stock_name }}</option>
                                                 </select>
-                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].shares_name">{{  errors[index].ledger_name[0] }}</p>
+                                                <p class="mt-1 text-danger" v-if="errors[index] && errors[index].stock_name">{{  errors[index].ledger_name[0] }}</p>
                                                 <span v-else></span>
                                             </td>
 
@@ -1007,7 +1087,7 @@
                                         <tr>
                                             <th style="text-align:center;" colspan="3">Total</th>
                                             <td style="text-align: center;">
-                                                <input type="text" style="width: 50%; border: none; border-color: transparent; outline: none;" placeholder="Total Amount" v-model="totalAmountValue" readonly>
+                                                <input type="text" style="width: 50%; border: none; border-color: transparent; outline: none;" placeholder="Total Amount" v-model="formData2.total_purchases" readonly>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -1836,16 +1916,16 @@
                                                 </select>
                                             </td>
                                             <td class="text-center">
-                                                <select class="selectLedgerOnReceipt" style="width: 50%; border: none; border-color: transparent;">
+                                                <select id="ledgerSelect" class="selectLedgerOnReceipt" style="width: 50%; border: none; border-color: transparent;">
                                                     <option value="">Select Ledger</option>
                                                     <option v-for="ledger in ledgerList" :value="ledger.id">{{ ledger.ledger_name }}</option>
                                                 </select>
                                             </td>
                                             <td class="text-center">
-                                                <input class="mt-1" v-show="item.payment_option === 'dr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.debit_amt" placeholder="Enter Debit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
+                                                <input class="mt-1" v-show="item.payment_option === 'dr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.debit_amt" placeholder="Enter Debit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher', document.getElementById('ledgerSelect').value)">
                                             </td>
                                             <td class="text-center">
-                                                <input class="mt-1" v-show="item.payment_option === 'cr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.credit_amt" placeholder="Enter Credit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
+                                                <input class="mt-1" v-show="item.payment_option === 'cr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.credit_amt" placeholder="Enter Credit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher', document.getElementById('ledgerSelect').value)">
                                             </td>
                                             <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
                                                 <span class="ms-auto me-auto" @click="removeCostCenter(index)" v-if="index !== 0">
@@ -2131,6 +2211,9 @@ new Vue({
         completeJSON: {
             related_ledgers: [],
         },
+        stockJson:{
+            stocks: [],
+        },
         indexNumber: 0,
         voucher_type_to_open: '',
         modalNameToOpen: '',
@@ -2138,8 +2221,8 @@ new Vue({
         addShares: false,
         sharesList: [],
         sharesData: {
-            shares_name: '',
-            shares_type: 'Select Stock Type'
+            stock_name: '',
+            stock_type: 'Select Stock Type'
         },
         purchaseVoucherDatatable: {},
         salesVoucherDatatable: {},
@@ -2150,24 +2233,28 @@ new Vue({
         receiptVoucherDatatable: {},
         showVoucherDetails: {},
         showRelatedLedgers: {},
-        againstRefrences: [
-            {
-                'against_voucher': 1,
-                'voucher_number': 'VOUCHER-123-2024',
-                'voucher_date': '2000-09-09',
-                'pending_amt': 200,
-                'final_amt': 500,
-                'allocated_amt': null
-            },
-            {
-                'against_voucher': 2,
-                'voucher_number': 'VOUCHER-456-2024',
-                'voucher_date': '2000-09-09',
-                'pending_amt': 300,
-                'final_amt': 500,
-                'allocated_amt': null
-            },
-        ]
+        showStocks: {},
+        againstRefrences: [],
+        already_traversed_ledgers: [],
+        showAgainstRefrence: [],
+        //againstRefrences: [
+        //    {
+        //        'against_voucher': 1,
+        //        'voucher_number': 'VOUCHER-123-2024',
+        //        'voucher_date': '2000-09-09',
+        //        'pending_amt': 200,
+        //        'final_amt': 500,
+        //        'allocated_amt': null
+        //    },
+        //    {
+        //        'against_voucher': 2,
+        //        'voucher_number': 'VOUCHER-456-2024',
+        //        'voucher_date': '2000-09-09',
+        //        'pending_amt': 300,
+        //        'final_amt': 500,
+        //        'allocated_amt': null
+        //    },
+        //]
     },
     methods: {
         // EXTRA
@@ -2402,16 +2489,56 @@ new Vue({
                 this.formData.booking_date = this.formData.voucher_date;
             }
         },
-        openRefrenceModal(event, index){
+        // countOccurrencesOfLedger(array, element) {
+        //     return array.reduce((count, currentElement) => {
+        //         return currentElement === element ? count + 1 : count;
+        //     }, 0);
+        // },
+        openRefrenceModal(event, index, voucher_type, ledger_id){
+            this.againstRefrences = [];
             this.indexNumber = index;
-            $(`#${this.modalNameToOpen}`).modal('hide');
-            $('#addRefrenceModal').modal('show');
+            let ledger_name = parseInt(document.querySelectorAll(`.${this.className}`)[index].value)
 
-            this.purchases[index]['ledger_name'] = parseInt(document.querySelectorAll(`.${this.className}`)[index].value);
-            related_ledgers = this.purchases[index];
-            related_ledgers['against_refrence'] = []
-            related_ledgers['cost_center'] = []
-            this.completeJSON['related_ledgers'].push(related_ledgers);
+            // Get bills from general ledger
+            axios.get(`http://127.0.0.1:8000/api/against_refrence/?ledger=${ledger_name}`)
+                .then(response => {
+                    let newRefrence = [];
+                    // To get the already created against refrence data, if present
+                    let newArray = this.completeJSON.related_ledgers;
+                    newArray.forEach(item => {
+                        const ledgerName = item.ledger_name;
+                        if (ledgerName === ledger_name){
+                            newRefrence = item.against_refrence;
+                        }
+                    });
+
+                    if (newRefrence.length === 0) {
+                        this.againstRefrences = response.data;
+                    }else{
+                        this.againstRefrences = newRefrence;
+                    }
+
+                    $(`#${this.modalNameToOpen}`).modal('hide');
+                    $('#addRefrenceModal').modal('show');
+                })
+                .catch(error => {
+                    this.totalForFormData2()
+                    this.totalAmountOnTable()
+                    this.purchases.push({
+                        payment_option: '',
+                    });
+
+                    this.$nextTick(() => {
+                        this.initializeSelect2($(`.${this.className}`), this.modalNameToOpen);
+                    });
+                })
+                .finally(() => {
+                    this.purchases[index]['ledger_name'] = ledger_name;
+                    related_ledgers = this.purchases[index];
+                    related_ledgers['against_refrence'] = []
+                    related_ledgers['cost_center'] = []
+                    this.completeJSON['related_ledgers'].push(related_ledgers);
+                });
         },
         closeRefrenceModal(){
             $('#receiptVoucherCreate').modal('show');
@@ -2428,64 +2555,101 @@ new Vue({
             this.totalAmountValue = total_amount;
             this.formData2.amount_in_words = window.numberToWords.toWords(this.totalAmountValue);
         },
+        stockTotalAmt(){
+            let stockSum = 0;
+            this.purchases.forEach(item => {
+                if (!isNaN(parseFloat(item.amount))) {
+                    stockSum += parseFloat(item.amount);
+                }
+            });
+            this.formData2.total_purchases = stockSum;
+            this.formData2.total_sales = stockSum;
+            this.formData2.amount_in_words = window.numberToWords.toWords(stockSum);
+        },
         openCostCenter2(index){
             this.indexNumber = index;
+            this.purchases[index]['stock_name'] = parseInt(document.querySelectorAll(`.${this.className}`)[index + 1].value);
+            this.stockJson['stocks'].push(this.purchases[index]);
+            this.stockTotalAmt();
+            this.purchases.push({
+                payment_option: '',
+            });
+            this.$nextTick(() => {
+                this.initializeSelect2($(`.${this.className}`), this.modalNameToOpen);
+            });
+
             // USEFULL FOR SALES, PURCHASE, ETC.
-            $(`#${this.modalNameToOpen}`).modal('hide');
-            $('#CostCenterModal').modal('show');
+            // $(`#${this.modalNameToOpen}`).modal('hide');
+            // $('#CostCenterModal').modal('show');
 
-            this.purchases[index]['ledger_name'] = parseInt(document.querySelectorAll(`.${this.className}`)[index + 1].value);
-            related_ledgers = this.purchases[index];
-            related_ledgers['cost_center'] = []
-            this.completeJSON['related_ledgers'].push(related_ledgers);
+            // related_ledgers = this.purchases[index];
+            // related_ledgers['cost_center'] = []
 
-            this.items = [{
-                cost_center_name: '',
-                cost_center_amount: null
-            }]
-            axios.get(`http://127.0.0.1:8000/api/cost_center/`)
-                .then(response => {
-                    this.costCenterData = response.data;
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
+
+            //this.items = [{
+            //    cost_center_name: '',
+            //    cost_center_amount: null
+            //}]
+            //axios.get(`http://127.0.0.1:8000/api/cost_center/`)
+            //    .then(response => {
+            //        this.costCenterData = response.data;
+            //    })
+            //    .catch(error => {
+            //        console.error('Error fetching data:', error);
+            //    });
         },
         openCostCenter(){
             // SAVE AGAINST REFRENCE IN BEFORE OPENING COST CENTER.
             this.againstRefrences.forEach(item => {
+                let pending_amt;
+                if(item.allocated_amt){
+                    pending_amt = item.pending_amt - parseFloat(item.allocated_amt)
+                }
+                console.log("pending_amt:", pending_amt);
                 let against_refrences = {
                     'against_voucher': item.against_voucher,
                     'voucher_number': item.voucher_number,
                     'voucher_date': item.voucher_date,
-                    'pending_amt': item.pending_amt,
+                    'pending_amt': pending_amt,
                     'final_amt': item.final_amt,
-                    'allocated_amt': parseFloat(item.allocated_amt)
+                    // 'allocated_amt': parseFloat(item.allocated_amt)
                 }
                 this.completeJSON.related_ledgers[this.indexNumber]['against_refrence'].push(against_refrences);
             });
+            console.log("complete json print is===============>", this.completeJSON)
 
             $('#addRefrenceModal').modal('hide');
-            $('#CostCenterModal').modal('show');
+            // $('#CostCenterModal').modal('show');
+            $(`#${this.modalNameToOpen}`).modal('show');
+
+            this.totalForFormData2()
+            this.totalAmountOnTable()
+            this.purchases.push({
+                payment_option: '',
+            });
+
+            this.$nextTick(() => {
+                this.initializeSelect2($(`.${this.className}`), this.modalNameToOpen);
+            });
 
             // HARDCODING THIS, WHEN VOUCHER NUMBER ACTUAL DATA WILL COME UNCOMMENT BELOW CODE AND REMOVE UNCOMMENTED CODE
             // this.againstRefrences = {};
 
-            this.$nextTick(() => {
-                this.initializeSelect2ForCostCenter($('.costCenterSelect2'), 'CostCenterModal');
-            });
+            //this.$nextTick(() => {
+            //    this.initializeSelect2ForCostCenter($('.costCenterSelect2'), 'CostCenterModal');
+            //});
 
-            this.items = [{
-                cost_center_name: '',
-                cost_center_amount: null
-            }]
-            axios.get(`http://127.0.0.1:8000/api/cost_center/`)
-                .then(response => {
-                    this.costCenterData = response.data;
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
+            //this.items = [{
+            //    cost_center_name: '',
+            //    cost_center_amount: null
+            //}]
+            //axios.get(`http://127.0.0.1:8000/api/cost_center/`)
+            //    .then(response => {
+            //        this.costCenterData = response.data;
+            //    })
+            //    .catch(error => {
+            //        console.error('Error fetching data:', error);
+            //    });
         },
         totalAmountOnTable() {
             let debit_amt = 0;
@@ -2504,7 +2668,9 @@ new Vue({
             // this.totalAmountValue = total_amount;
             this.formData.amount_in_words = window.numberToWords.toWords(debit_amt);
         },
-        addRowOnSaveOnMainModal(event, index, pram){
+        addRowOnSaveOnMainModal(){
+            let index = this.indexNumber;
+            alert(index)
             // ADD COST CENTER BRFORE ADDING ANOTHER ROW
             // this.items.forEach(item => {
             //     let cost_center = {
@@ -2573,18 +2739,18 @@ new Vue({
                 });
         },
         saveVoucherDetailsHavingFormData2(){
-            this.completeJSON['voucher_name'] = this.voucher_type_to_open;
-            this.completeJSON['ledger_name'] = document.getElementsByClassName(this.className)[0].value;
+            this.stockJson['voucher_name'] = this.voucher_type_to_open;
+            this.stockJson['vendor_name'] = document.getElementsByClassName(this.className)[0].value;
             for (const key in this.formData2) {
                 if (Object.prototype.hasOwnProperty.call(this.formData2, key)) {
                     if (this.formData2[key] !== null) {
-                        this.completeJSON[key] = this.formData2[key];
+                        this.stockJson[key] = this.formData2[key];
                     }
                 }
             }
-            console.log("Final data===========", this.completeJSON)
+            console.log("Final data===========", this.stockJson)
 
-            axios.post(`http://127.0.0.1:8000/api/voucher_create_ledger/`, this.completeJSON)
+            axios.post(`http://127.0.0.1:8000/api/voucher_create_purchase_sale/`, this.stockJson)
                 .then(response => {
                     console.log("Success", response.data)
                 })
@@ -2862,7 +3028,8 @@ new Vue({
                     console.log("Error: ->", this.errors);
                 });
         },
-        viewRequestedData(id){            
+        viewRequestedData(id){
+            alert(id);
             $('#viewVoucherDataModal').modal('show');
             axios.get(`http://127.0.0.1:8000/api/voucher_create_ledger/${id}`)
             .then(response => {
@@ -2873,15 +3040,43 @@ new Vue({
                 console.log("erorr is >", error.response.data);
             })
 
-
+            // Fetch Related Ledgers
             axios.get(`http://127.0.0.1:8000/api/related-ledgers/${id}`)
             .then(response => {
                 this.showRelatedLedgers = response.data;
+                console.log("response of view is", response.data);
+
+                let requests = this.showRelatedLedgers.map(item => {
+                    return axios.get(`http://127.0.0.1:8000/api/against_refrence_for_self/?against_related_ledger_id__ledger_name=${item.ledger_id}&voucher_type=${item.voucher_type}`)
+                        .then(innerResponse => {
+                            // Ensure that the 'show_against_refrence' property is set for each item
+                            this.$set(item, 'show_against_refrence', innerResponse.data);
+                            console.log("showAgainstRefrence =========final=================", innerResponse.data);
+                        })
+                        .catch(error => {
+                            console.log("error is >", error.response.data);
+                        });
+                });
+
+                // Wait for all inner API calls to complete
+                Promise.all(requests).then(() => {
+                    console.log("fina final final==============", this.showRelatedLedgers);
+                });
+            })
+            .catch(error => {
+                console.log("error is >", error.response.data);
+            });
+
+            // Fetch Related Stocks
+            axios.get(`http://127.0.0.1:8000/api/stock_vouchers/${id}`)
+            .then(response => {
+                this.showStocks = response.data;
                 console.log("response of view is", response.data);
             })
             .catch(error => {
                 console.log("erorr is >", error.response.data);
             })
+
 
         },
     },

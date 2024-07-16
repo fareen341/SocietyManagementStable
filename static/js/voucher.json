@@ -280,3 +280,102 @@ jv does'nt have bank details?
         ]
     }
 }
+
+
+
+
+
+
+{
+    "stocks": [
+        {
+            "payment_option": "",
+            "quantity": "10",
+            "rate": "2",
+            "amount": 20,
+            "ledger_name": 1
+        },
+        {
+            "payment_option": "",
+            "quantity": "30",
+            "rate": "3",
+            "amount": 90,
+            "ledger_name": 1
+        }
+    ],
+    "voucher_name": "purchase_voucher",
+    "ledger_name": "1",  // vendor name
+    "voucher_type": 1,
+    "voucher_number": 1,
+    "booking_date": "2024-07-27",
+    "invoice_date": "2024-07-26",
+    "invoice_number": "2456789",
+    "amount_in_words": "One",
+    "narration": "245678"
+}
+
+
+
+{
+    "voucher_name": "expenses_voucher",
+    "voucher_type": 4,
+    "voucher_number": 1,
+    "booking_date": "2024-08-10",
+    "voucher_date": "2024-08-10",
+    "stocks_total": 35400,
+    // "credit_total": 35400,
+    "amount_in_words": "thirty-five thousand, four hundred",
+    "narration": "35400",
+    // "cheque_number": "35400",
+    // "cheque_date": "2024-07-06",
+    // "bank_name": "35400"
+    "vendor_name": "Ganesh",
+    "vendor_invoice_number": "VEN6878-9",
+    "stocks": [
+        {
+            "stock_name": "abc",
+            "quantity": 20,
+            "rate": 40,
+            "amt": 80,
+            "final_amt": 80
+        },
+        {
+            "stock_name": "abc",
+            "quantity": 20,
+            "rate": 40,
+            "amt": 80,
+            "final_amt": 80
+        },
+    ]
+}
+
+
+
+
+
+
+
+
+
+
+{
+    "stocks": [
+        {
+            "payment_option": "",
+            "quantity": "10",
+            "rate": "20",
+            "amount": 200,
+            "vendor_name": 1
+        }
+    ],
+    "voucher_name": "purchase_voucher",
+    "voucher_type": 1,
+    "voucher_number": 1,
+    "booking_date": "2024-08-01",
+    "invoice_date": "2024-07-26",
+    "invoice_number": "45678",
+    "total_purchases": 200,
+    "amount_in_words": "two hundred",
+    "narration": "34567"
+}
+

@@ -62,7 +62,7 @@ var app = new Vue({
             })
             .catch(error => {
                 this.errors = error.response.data;
-                console.error('Error fetching shares data:', this.errors);
+                console.error('Error Fetching General Ledger Data:', this.errors);
             });
     }
 });

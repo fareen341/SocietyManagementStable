@@ -888,7 +888,7 @@ def get_all_child_investments(parent):
 class CreateGroupForLedgerView(viewsets.ModelViewSet):
     queryset = Childs.objects.all()
     serializer_class = CreateGroupForLedgerSerializers
-    
+
     filter_backends = [DjangoFilterBackend,]
     filterset_fields = ['name']
 
@@ -1204,20 +1204,16 @@ class PurchaseVoucherView(viewsets.ModelViewSet):
     serializer_class = PurchaseVoucherSerializers
 
 
-class ShareOnLedgerView(viewsets.ModelViewSet):
-    queryset = ShareOnLedgerModel.objects.all()
-    serializer_class = SharesOnLedgerSerializers
+class StockOnLedgerView(viewsets.ModelViewSet):
+    queryset = StockOnLedgerModel.objects.all()
+    serializer_class = StockOnLedgerModelSerializers
 
 
-import requests 
+import requests
 
 
 def calculate_running_balance(grp_name, debit, credit, running_balance):
-    print("calling the function ))))))))))))))))))))))))(((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))))")
-    # CALLING AN API
-    # api_url = f'http://127.0.0.1:8000/api/leadger_group_creation/?name={grp_name}'
     api_url = f'http://127.0.0.1:8000/group_data/{grp_name}/'
-    print("grouop name ---->", grp_name)
     child_obj = None
     new_balance = 0
 
@@ -1226,35 +1222,111 @@ def calculate_running_balance(grp_name, debit, credit, running_balance):
         if response.status_code == 200:
             data = response.json()
             child_obj = data['groups'][0]['super_parent']
-            print("chils is======", child_obj)
-    
+
     except requests.exceptions.RequestException as e:
         print("Something went wrong")
 
 
     if child_obj is not None:
         x = str(child_obj)
+        print("child object is======", x)
 
         if str(child_obj) in ['Assets', 'Expenses']:
-            print(f"IN IF CONDITION debit is: {debit}, credit is: {credit}, running balance is: {running_balance}")
             if debit is not None:
                 new_balance = running_balance + float(debit)
-                print("new_balance==============1", new_balance)
             else:
                 new_balance = running_balance - float(credit)
-                print("new_balance============== 2", new_balance)
 
         elif str(child_obj) in ['Liabilities', 'Income']:
-            print(f"IN ELSE CONDITION debit is: {debit}, credit is: {credit}, running balance is: {running_balance}")
             if debit is not None:
                 new_balance = running_balance - float(debit)
-                print("new_balance==============3", new_balance)
             else:
+                print(f"going in 2========== running bal: {running_balance}, credit bal {credit}")
                 new_balance = running_balance + float(credit)
-        
-        print("==========================END ====================================")
+
     return new_balance
-                
+
+
+# for purchase & sale
+class VoucherCreationForPurSaleView(viewsets.ModelViewSet):
+    queryset = VoucherCreationModel.objects.all()
+    serializer_class = VoucherCreationSerializers
+
+    def create(self, request, *args, **kwargs):
+        # Step 1: Save the main voucher data
+        voucher_serializer = self.get_serializer(data=request.data)
+        voucher_serializer.is_valid(raise_exception=True)
+        voucher = voucher_serializer.save()
+        headers = self.get_success_headers(voucher_serializer.data)
+
+        # STEP 2: Save RelatedStockModel instances
+        stock_list = request.data.get('stocks', [])
+        for stock_data in stock_list:
+            stock_data['voucher_type'] = voucher.id  # Link the voucher
+            stock_serializer = RelatedStockSerializers(data=stock_data)
+            if stock_serializer.is_valid():
+                stock_serializer.save()
+            else:
+                return Response(stock_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Deciding if it is a purchase or sales voucher
+        details = []
+        if request.data['voucher_name'] == 'purchase_voucher':
+            details = ['Purchases', request.data['total_purchases'], None, 'Expenses']
+        elif request.data['voucher_name'] == 'sale_voucher':
+            details = ['Sales', None, request.data['total_sales'], 'Income']
+
+        # FIRST RUN: FROM PURCHASE TO VENDOR
+        running_balance = GeneralLedger.objects.filter(from_ledger=Ledger.objects.get(ledger_name=details[0])).order_by('id').last()
+        if running_balance:
+            running_balance = running_balance.balance
+        else:
+            running_balance = 0
+
+        get_running_balance = calculate_running_balance(
+            Childs.objects.get(name=details[3]).id,
+            details[1],    # debit amount for purchase else credit
+            details[2],
+            running_balance
+        )
+
+        GeneralLedger.objects.create(
+            date = request.data['booking_date'],
+            from_ledger = Ledger.objects.get(ledger_name=details[0]),
+            particulars = Ledger.objects.get(id=request.data['vendor_name']),
+            voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
+            voucher_number = request.data['voucher_number'],
+            debit = details[1],
+            credit = details[2],
+            balance = get_running_balance
+        )
+
+        # SECOND RUN:
+        running_balance = GeneralLedger.objects.filter(from_ledger=request.data['vendor_name']).order_by('id').last()
+        if running_balance:
+            running_balance = running_balance.balance
+        else:
+            running_balance = 0
+
+        get_running_balance = calculate_running_balance(
+            Childs.objects.get(name=Ledger.objects.get(id=request.data['vendor_name']).group_name).id,
+            details[2],
+            details[1],    # credit amount for purchase else debit
+            running_balance
+        )
+
+        GeneralLedger.objects.create(
+            date = request.data['booking_date'],
+            from_ledger = Ledger.objects.get(id=request.data['vendor_name']),
+            particulars = Ledger.objects.get(ledger_name=details[0]),
+            voucher_type = VoucherType.objects.get(id=request.data['voucher_type']),
+            voucher_number = request.data['voucher_number'],
+            debit = details[2],
+            credit = details[1],
+            balance = get_running_balance
+        )
+        return Response(voucher_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class VoucherCreationView(viewsets.ModelViewSet):
     queryset = VoucherCreationModel.objects.all()
@@ -1282,9 +1354,10 @@ class VoucherCreationView(viewsets.ModelViewSet):
                 return Response(ledger_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-            # Step 3: Save cost centers for each related ledger
+            # Step 3: Save against refrence
             against_refrence_data = ledger_data.get('against_refrence', [])
             for against_refrence in against_refrence_data:
+                against_refrence['voucher_type'] = voucher.id  # Link the related ledger
                 against_refrence['against_related_ledger'] = related_ledger.id  # Link the related ledger
                 against_refrence_serializer = AgainstRefrenceSerializers(data=against_refrence)
                 if against_refrence_serializer.is_valid():
@@ -1294,14 +1367,14 @@ class VoucherCreationView(viewsets.ModelViewSet):
 
 
             # Step 3: Save cost centers for each related ledger
-            cost_centers_data = ledger_data.get('cost_center', [])
-            for cost_center_data in cost_centers_data:
-                cost_center_data['related_ledger'] = related_ledger.id  # Link the related ledger
-                cost_center_serializer = CostCenterOnLedgerSerializers(data=cost_center_data)
-                if cost_center_serializer.is_valid():
-                    cost_center_serializer.save()
-                else:
-                    return Response(cost_center_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # cost_centers_data = ledger_data.get('cost_center', [])
+            # for cost_center_data in cost_centers_data:
+            #     cost_center_data['related_ledger'] = related_ledger.id  # Link the related ledger
+            #     cost_center_serializer = CostCenterOnLedgerSerializers(data=cost_center_data)
+            #     if cost_center_serializer.is_valid():
+            #         cost_center_serializer.save()
+            #     else:
+            #         return Response(cost_center_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
         headers = self.get_success_headers(voucher_serializer.data)
@@ -1320,20 +1393,20 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][0]['ledger_name']).order_by('id').last()
                     if running_balance:
                         running_balance = running_balance.balance
-                    else: 
+                    else:
                         running_balance = 0
-                    
+
                     new_balance = 0
                     debit = request.data['related_ledgers'][index].get('debit_amt', None)
                     credit = request.data['related_ledgers'][index].get('credit_amt', None)
-                    
+
                     get_running_balance = calculate_running_balance(
                         Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']).group_name).id, # FROM LEDGER ONE
                         debit,
                         credit,
                         running_balance
                     )
-                    
+
                     GeneralLedger.objects.create(
                         date = request.data['booking_date'],
                         from_ledger = Ledger.objects.get(id=request.data['related_ledgers'][0]['ledger_name']),
@@ -1351,21 +1424,21 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     running_balance = GeneralLedger.objects.filter(from_ledger=req['ledger_name']).order_by('id').last()
                     if running_balance:
                         running_balance = running_balance.balance
-                    else: 
+                    else:
                         running_balance = 0
-                    
+
                     new_balance = 0
                     debit = request.data['related_ledgers'][index + 1].get('debit_amt', None)
                     credit = request.data['related_ledgers'][index + 1].get('credit_amt', None)
                     print("2--------------------------coming here----------------------debit amt is-------", debit)
-                    
+
                     get_running_balance = calculate_running_balance(
                         Childs.objects.get(name=Ledger.objects.get(id=req['ledger_name']).group_name).id, # FROM LEDGER ONE
                         debit,
                         credit,
                         running_balance
                     )
-                    
+
                     GeneralLedger.objects.create(
                         date = request.data['booking_date'],
                         from_ledger = Ledger.objects.get(id=req['ledger_name']),
@@ -1387,9 +1460,9 @@ class VoucherCreationView(viewsets.ModelViewSet):
                 running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][0]['ledger_name']).order_by('id').last()
                 if running_balance:
                     running_balance = running_balance.balance
-                else: 
+                else:
                     running_balance = 0
-                
+
                 new_balance = 0
                 debit = request.data['related_ledgers'][index].get('debit_amt', None)
                 credit = request.data['related_ledgers'][index].get('credit_amt', None)
@@ -1428,14 +1501,14 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][-1]['ledger_name']).order_by('id').last()
                     if running_balance:
                         running_balance = running_balance.balance
-                    else: 
+                    else:
                         running_balance = 0
 
                     new_balance = 0
                     debit = request.data['related_ledgers'][length - 1 - index].get('debit_amt', None)
                     credit = request.data['related_ledgers'][length - 1 - index].get('credit_amt', None)
                     print(f" 500,,,,,,,,,Debit is: {debit}, credit is:{credit}==================")
-                    
+
                     get_running_balance = calculate_running_balance(
                         Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']).group_name).id, # FROM LEDGER ONE
                         debit,
@@ -1462,13 +1535,13 @@ class VoucherCreationView(viewsets.ModelViewSet):
                     running_balance = GeneralLedger.objects.filter(from_ledger=req['ledger_name']).order_by('id').last()
                     if running_balance:
                         running_balance = running_balance.balance
-                    else: 
+                    else:
                         running_balance = 0
-                    
+
                     new_balance = 0
                     debit = reverse_order[index + 1].get('debit_amt', None)
                     credit = reverse_order[index + 1].get('credit_amt', None)
-                    
+
                     get_running_balance = calculate_running_balance(
                         Childs.objects.get(name=Ledger.objects.get(id=req['ledger_name']).group_name).id, # FROM LEDGER ONE
                         debit,
@@ -1496,13 +1569,13 @@ class VoucherCreationView(viewsets.ModelViewSet):
                 running_balance = GeneralLedger.objects.filter(from_ledger=request.data['related_ledgers'][-1]['ledger_name']).order_by('id').last()
                 if running_balance:
                     running_balance = running_balance.balance
-                else: 
+                else:
                     running_balance = 0
-                
+
                 new_balance = 0
                 debit = request.data['related_ledgers'][length - 1].get('debit_amt', None)
                 credit = request.data['related_ledgers'][length - 1].get('credit_amt', None)
-                
+
                 get_running_balance = calculate_running_balance(
                     Childs.objects.get(name=Ledger.objects.get(id=request.data['related_ledgers'][-1]['ledger_name']).group_name).id, # FROM LEDGER ONE
                     debit,
@@ -1523,7 +1596,7 @@ class VoucherCreationView(viewsets.ModelViewSet):
 
         # # RUNNING AMT CALCULATION START
         # for req in request.data['related_ledgers']:
-            
+
         #     print('break ==================')
         return Response(voucher_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -1538,23 +1611,100 @@ class RelatedLedgersView(viewsets.ModelViewSet):
         if self.action in ['create', 'retrieve', 'partial_update', 'update']:
             return RelatedLedgersSerializers
         return RelatedLedgersReadOnlySerializers
-    
+
     def get_queryset(self):
         parent_id = self.kwargs.get('parent_id')
+        print("parent id========", parent_id)
         if parent_id is not None:
             return RelatedLedgersModel.objects.filter(voucher_type_id=parent_id)
         else:
             return RelatedLedgersModel.objects.none()
 
 
-class RelatedSharesView(viewsets.ModelViewSet):
-    queryset = RelatedSharesModel.objects.all()
-    serializer_class = RelatedSharesSerializers
+class RelatedStockView(viewsets.ModelViewSet):
+    queryset = RelatedStockModel.objects.all()
+    serializer_class = RelatedStockSerializers
+
+    def retrieve(self, request, *args, **kwargs):
+        instance_id = kwargs.get('pk')
+        queryset = self.queryset.filter(voucher_type=instance_id)
+        if not queryset.exists():
+            return Response({"error": "Stock details not found!"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
+# To display the against refrences vouchers, another one below is for self like normal CRUD
 class AgainstRefrenceView(viewsets.ModelViewSet):
     queryset = AgainstRefrenceModel.objects.all()
     serializer_class = AgainstRefrenceSerializers
+    filter_backends = [DjangoFilterBackend,]
+    filterset_fields = ['against_related_ledger_id']
+
+    def list(self, request, *args, **kwargs):
+        ledger = request.query_params.get('ledger', None)
+        filtered_qs = self.queryset.filter(against_related_ledger_id=ledger)
+
+        combined_qs = []
+        if ledger:
+            ledger_under_grp = Ledger.objects.get(id=ledger).group_name
+            child_object = Childs.objects.get(name=ledger_under_grp).id
+            api_url = f'http://127.0.0.1:8000/group_data/{child_object}/'
+            try:
+                response = requests.get(api_url)
+                if response.status_code == 200:
+                    data = response.json()
+                    super_parent = data['groups'][0]['super_parent']
+                    # if super_parent == 'Assets':
+                    general_ledger_obj = GeneralLedger.objects.filter(from_ledger=ledger)
+                    qs = self.queryset.filter(against_related_ledger=ledger).values('voucher_number', 'voucher_date', 'pending_amt', 'final_amt')
+                    print("count is --------------", qs.count())
+                    final_dict = {}
+                    if qs:
+                        combined_qs.append(qs[0])
+                    for i in general_ledger_obj.values():
+                        debit_amt = i['debit']
+                        credit_amt = i['credit']
+                        if super_parent == "Assets":
+                            if debit_amt:
+                                final_dict = {
+                                    'voucher_number': i['voucher_number'],
+                                    'voucher_date': i['date'],
+                                    'pending_amt': debit_amt,
+                                    'final_amt': debit_amt
+                                }
+                                combined_qs.append(final_dict)
+                        elif super_parent == "Liabilities":
+                            final_dict = {
+                                'voucher_number': i['voucher_number'],
+                                'voucher_date': i['date'],
+                                'pending_amt': credit_amt,
+                                'final_amt': credit_amt
+                            }
+                            combined_qs.append(final_dict)
+
+                    # elif super_parent == 'Liabilities':
+                        # filtered_qs = self.queryset.filter(credit__isnull=True, from_ledger=ledger)
+            except requests.exceptions.RequestException as e:
+                print("Something went wrong: ", e)
+
+        if combined_qs:
+            return Response(combined_qs)
+        else:
+            return Response({"message": "No objects available."}, status=status.HTTP_404_NOT_FOUND)
+
+        # if filtered_qs is not None:
+        #     serializer = self.get_serializer(combined_qs, many=True)
+        #     return Response(serializer.data)
+        # else:
+        #     return Response({"message": "No objects available."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class AgainstRefrenceViewForSelf(viewsets.ModelViewSet):
+    queryset = AgainstRefrenceModel.objects.all()
+    serializer_class = AgainstRefrenceSerializers
+    filter_backends = [DjangoFilterBackend,]
+    filterset_fields = ['against_related_ledger_id__ledger_name', 'voucher_type']
 
 
 class CostCenterOnLedgerView(viewsets.ModelViewSet):
@@ -1562,6 +1712,7 @@ class CostCenterOnLedgerView(viewsets.ModelViewSet):
     serializer_class = CostCenterOnLedgerSerializers
 
 
+# USEFULL FOR AGAINST REFRENCE ALSO:
 class GeneralLedgerView(viewsets.ModelViewSet):
     queryset = GeneralLedger.objects.all()
     serializer_class = GeneralLedgerSerializers
@@ -1570,4 +1721,3 @@ class GeneralLedgerView(viewsets.ModelViewSet):
 class VistingCardView(viewsets.ModelViewSet):
     queryset = VistingCard.objects.all()
     serializer_class = VistingCardSerializers
-

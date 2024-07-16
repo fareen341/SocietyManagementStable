@@ -113,7 +113,7 @@ FOR BALANCE AMT:
 1. opitimize code,
 2. apply rule.
 3. calculate amt:
-    if amt directly, 
+    if amt directly,
     if amount is Dr +, Cr -, then
     cr = -5000
     dr = +6000
@@ -128,7 +128,7 @@ FOR BALANCE AMT:
 when we select the date filter from p and l date DropDown, it should show the running balance of that date:
 for example i have GL entries as:
 
-2024-08-11	HDFC Acc.	Nitesh	expenses_voucher	        1		5000	                5000    
+2024-08-11	HDFC Acc.	Nitesh	expenses_voucher	        1		5000	                5000
 2024-08-10	HDFC Acc.	Zaco Info Tech	expenses_voucher	1	    5000		            10000
 2024-08-09	HDFC Acc.	Taori Marketing	expenses_voucher	1	        		8000        2000
 2024-08-09	HDFC Acc.	Sameer	expenses_voucher	        1		1000	                3000
@@ -164,3 +164,234 @@ new Vue({
     mounted: {
     }
 });
+
+
+
+
+
+
+
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+CASE 1:
+========
+
+Current Assets
+    + Sundry Debitors(30000)
+        -> Vikas (Legder)  -- (30000)
+
+            + Vikas(2700)
+                --> Input SGST -- (2700)
+
+                    + Vikas 1(-20000)
+                        -> Dena Bank -- (-20000)
+
+                            + Vikas 2(62600)
+                                + Misc Assets(62600)
+                                    -> Cash Account -- (62600)
+
+    + Tax(2700)
+        + GST(2700)
+            + Payable Tax(2700)
+                --> Input CGST -- (2700)
+
+
+
+
+CASE 2:
+=======
+
+Current Assets (78000)
+    + Sundry Debitors(75300)
+        -> Vikas (Legder)  -- (30000)
+
+            + Vikas(45300)
+                --> Input SGST -- (2700)
+
+                    + Vikas 1(42600)
+                        -> Dena Bank -- (-20000)
+
+                            + Vikas 2(62600)
+                                + Misc Assets(62600)
+                                    -> Cash Account -- (62600)
+
+    + Tax(2700)
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
+
+
+CASE 1:
+========
+
+Current Assets
+    + Sundry Debitors(30000)
+        -> Vikas (Legder)  -- (30000)
+
+            + Vikas(2700)
+                --> Input SGST -- (2700)
+
+                    + Vikas 1(-20000)
+                        -> Dena Bank -- (-20000)
+
+                            + Vikas 2(62600)
+                                + Misc Assets(62600)
+                                    -> Cash Account -- (62600)
+
+    + Tax(2700)
+        + GST(2700)
+            + Payable Tax(2700)
+                --> Input CGST -- (2700)
+
+
+CASE 2:
+=======
+
+Current Assets (78000)
+    + Sundry Debitors(75300)
+        -> Vikas (Legder)  -- (30000)
+
+            + Vikas(45300)
+                --> Input SGST -- (2700)
+
+                    + Vikas 1(42600)
+                        -> Dena Bank -- (-20000)
+
+                            + Vikas 2(62600)
+                                + Misc Assets(62600)
+                                    -> Cash Account -- (62600)
+
+    + Tax(2700)
+        + GST(2700)
+            + Payable Tax(2700)
+                --> Input CGST -- (2700)
+
+
+
+
+
+
+
+
+
+vendor name
+
+purchase(*stock)
+sale(*stock)
+
+
+
+calculate_running_balance*(
+    Ganesh,
+    total amt of stock(debit),
+    None(credit),
+    get from GL
+)
+
+
+
+
+=======================================DATATABLE WARNING IN VOUCHER CREATION=============================
+It is cuz the models have new fields added for stock, change it later.
+
+
+PURCHASE
+from_ledger = purchases
+particular = Ganesh
+debit amt =
+
+
+
+from_ledger = Ganesh
+particular = purchases
+credit_amt =
+
+
+
+SALES
+
+from_ledger = sales
+particular = Ganesh
+credit amt =
+
+
+
+from_ledger = Ganesh
+particular = sales
+debit amt =
+
+
+{
+    "stocks": [
+        {
+            "payment_option": "",
+            "quantity": "10",
+            "rate": "2",
+            "amount": 20,
+            "stock_name": 1
+        },
+        {
+            "payment_option": "",
+            "quantity": "20",
+            "rate": "3",
+            "amount": 60,
+            "stock_name": 3
+        }
+    ],
+    "voucher_name": "purchase_voucher",
+    "vendor_name": "1",
+    "voucher_type": 1,
+    "voucher_number": 1,
+    "booking_date": "2024-08-08",
+    "invoice_date": "2024-07-21",
+    "invoice_number": "445678",
+    "total_purchases": 80,
+    "amount_in_words": "eighty",
+    "narration": "345678"
+}
+
+
+
+{
+    "stocks": [
+        {
+            "payment_option": "",
+            "quantity": "10",
+            "rate": "20",
+            "amount": 200,
+            "stock_name": 1
+        },
+        {
+            "payment_option": "",
+            "quantity": "20",
+            "rate": "20",
+            "amount": 400,
+            "stock_name": 1
+        }
+    ],
+    "voucher_name": "sale_voucher",
+    "vendor_name": "24",
+    "voucher_type": 2,
+    "voucher_number": 1,
+    "booking_date": "2024-08-01",
+    "invoice_date": "2024-07-27",
+    "invoice_number": "45678",
+    "total_purchases": 600,
+    "amount_in_words": "six hundred",
+    "narration": "3456789"
+}
+
+
+
+======================================================
+opening balance:
+date:
+from_ledger: ledger name
+particular: opening balance
+balance: 0
+
+
+
+MORE ACCOUNT PENDING:
+voucher number increment
+adding filter in balance sheet adn p & l
+opening balance is different for p & l
