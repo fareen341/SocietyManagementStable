@@ -161,7 +161,7 @@
                                         <th style="text-align:center;">Ledger Name</th>
                                         <th style="text-align:center;">Debit Amount</th>
                                         <th style="text-align:center;">Credit Amount</th>
-                                        <th style="text-align:center;">Credit Amount</th>
+                                        <th style="text-align:center;">Against Refrence</th>
                                     </thead>
                                     <tbody>
                                         <tr v-for="(item, index) in showRelatedLedgers" :key="index">
@@ -170,7 +170,7 @@
                                                 <span v-else>CR</span>
                                             </td>
                                             <td class="text-center">
-                                                {{ item.ledger_name }} Id: {{ item.voucher_type }} ledger: {{ item.ledger_id }}
+                                                {{ item.ledger_name }}
                                             </td>
                                             <td class="text-center">
                                                 {{ item.debit_amt }}
@@ -178,18 +178,21 @@
                                             <td class="text-center">
                                                 {{ item.credit_amt }}
                                             </td>
-                                            <td>
+                                            <!-- <td vif="item.show_against_refrence.length !== 0"> -->
+                                            <td v-if="Array.isArray(item.show_against_refrence) && item.show_against_refrence.length !== 0">
                                                 <table class="table table-sm table-bordered">
                                                     <thead class="table-dark">
+                                                        <th style="text-align:center;">Voucher Number</th>
                                                         <th style="text-align:center;">Pending Amount</th>
                                                         <th style="text-align:center;">Final Amount</th>
-                                                        <!-- <th style="text-align:center;">Allocated Amount</th> -->
+                                                        <th style="text-align:center;">Allocated Amount</th>
                                                     </thead>
                                                     <tbody>
                                                         <tr v-for="(ref, index) in item.show_against_refrence" :key="index">
+                                                            <td>{{ ref.voucher_number }}</td>
                                                             <td>{{ ref.pending_amt }}</td>
                                                             <td>{{ ref.final_amt }}</td>
-                                                            <!-- <td>data</td> -->
+                                                            <td>{{ ref.allocated_amt }}</td>
                                                         </tr>
                                                     </tbody>
                                                 </table>
@@ -717,6 +720,11 @@
                             <th>cheque_number</th>
                             <th>voucher_date</th>
                             <th>bank_name</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -759,6 +767,9 @@
                                         <label class="sty-label" for="">Voucher Number</label>
                                     </div>
                                 </div>
+
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -957,6 +968,13 @@
                                 <th>cheque_number</th>
                                 <th>voucher_date</th>
                                 <th>bank_name</th>
+                                <th>dummy</th>
+                                <th>dummy</th>
+                                <th>dummy</th>
+                                <th>dummy</th>
+                                <th>dummy</th>
+                                <th>dummy</th>
+                                <th>dummy</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -999,6 +1017,9 @@
                                         <label class="sty-label" for="">Voucher Number</label>
                                     </div>
                                 </div>
+
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1145,6 +1166,11 @@
                             <th>cheque_number</th>
                             <th>voucher_date</th>
                             <th>bank_name</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1187,6 +1213,9 @@
                                         <label class="sty-label" for="">Voucher Number</label>
                                     </div>
                                 </div>
+
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1317,6 +1346,11 @@
                             <th>cheque_number</th>
                             <th>voucher_date</th>
                             <th>bank_name</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1359,6 +1393,9 @@
                                         <label class="sty-label" for="">Voucher Number</label>
                                     </div>
                                 </div>
+
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1490,6 +1527,11 @@
                             <th>cheque_number</th>
                             <th>voucher_date</th>
                             <th>bank_name</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1505,7 +1547,7 @@
             </div>
             {% endverbatim %}
 
-            <!-- CREATE MODAL FOR INCOME VOUCHER(INMF) -->
+            <!-- CREATE MODAL FOR INCOME VOUCHER(IVM) -->
             <div class="modal fade" id="incomeVoucherCreate" tabindex="-1" aria-labelledby="incomeVoucherCreateLabel" data-bs-backdrop="static" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
@@ -1532,6 +1574,9 @@
                                         <label class="sty-label" for="">Voucher Number</label>
                                     </div>
                                 </div>
+
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1573,10 +1618,10 @@
                                                 </select>
                                             </td>
                                             <td class="text-center">
-                                                <input class="mt-1" v-show="item.payment_option === 'dr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.debit_amt" placeholder="Enter Debit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
+                                                <input class="mt-1" v-show="item.payment_option === 'dr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.debit_amt" placeholder="Enter Debit Amount" @keyup.enter="addRowOnSaveOnMainModal($event, index, 'receipt_voucher')">
                                             </td>
                                             <td class="text-center">
-                                                <input class="mt-1" v-show="item.payment_option === 'cr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.credit_amt" placeholder="Enter Credit Amount" @keyup.enter="openRefrenceModal($event, index, 'receipt_voucher')">
+                                                <input class="mt-1" v-show="item.payment_option === 'cr'" type="number" style="width: 75%; border: none; border-color: transparent; text-align:center;" v-model="item.credit_amt" placeholder="Enter Credit Amount" @keyup.enter="addRowOnSaveOnMainModal($event, index, 'receipt_voucher')">
                                             </td>
                                             <td style="display: flex !important; justify-content: center !important; align-items: center !important;">
                                                 <span class="ms-auto me-auto" @click="removeCostCenter(index)" v-if="index !== 0">
@@ -1665,6 +1710,11 @@
                             <th>cheque_number</th>
                             <th>voucher_date</th>
                             <th>bank_name</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1707,6 +1757,9 @@
                                         <label class="sty-label" for="">Voucher Number</label>
                                     </div>
                                 </div>
+
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1839,6 +1892,13 @@
                             <th>cheque_number</th>
                             <th>voucher_date</th>
                             <th>bank_name</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1881,6 +1941,9 @@
                                         <label class="sty-label" for="">Voucher Number</label>
                                     </div>
                                 </div>
+
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -2437,8 +2500,6 @@ new Vue({
             this.costCenterAmtNotProvided = '';
             let select2Ref = this.$refs[`select2-${item}`];
             let selectedValue = $(select2Ref).val();
-            alert(item);
-            alert(selectedValue);
             if(!item){
                 item = 0;
             }
@@ -2612,7 +2673,7 @@ new Vue({
                     'voucher_date': item.voucher_date,
                     'pending_amt': pending_amt,
                     'final_amt': item.final_amt,
-                    // 'allocated_amt': parseFloat(item.allocated_amt)
+                    'allocated_amt': parseFloat(item.allocated_amt)
                 }
                 this.completeJSON.related_ledgers[this.indexNumber]['against_refrence'].push(against_refrences);
             });
@@ -2670,7 +2731,6 @@ new Vue({
         },
         addRowOnSaveOnMainModal(){
             let index = this.indexNumber;
-            alert(index)
             // ADD COST CENTER BRFORE ADDING ANOTHER ROW
             // this.items.forEach(item => {
             //     let cost_center = {
@@ -2902,7 +2962,7 @@ new Vue({
 
             axios.get(`http://127.0.0.1:8000/api/get_voucher_number/${event.target.value}`)
                 .then(response => {
-                    console.log("Response in voucher number===>", response.data.voucher_number);
+                    console.log("Response in voucher number===>", response.data);
                     this.formData2.voucher_number = response.data.voucher_number;
                 })
                 .catch(error => {
@@ -2917,8 +2977,10 @@ new Vue({
 
             axios.get(`http://127.0.0.1:8000/api/get_voucher_number/${event.target.value}`)
                 .then(response => {
-                    console.log("Response in voucher number===>", response.data.voucher_number);
+                    console.log("Response in voucher number===>", response.data);
                     this.formData.voucher_number = response.data.voucher_number;
+                    this.formData.prefix = response.data.prefix;
+                    this.formData.suffix = response.data.suffix;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -3011,7 +3073,6 @@ new Vue({
             axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             axios.post('http://127.0.0.1:8000/api/ledger_creation/', ledgerData)
                 .then(response => {
-                    alert('response');
                     toastr.options = {
                         closeButton: true,
                         positionClass: 'toast-top-center',
@@ -3029,7 +3090,6 @@ new Vue({
                 });
         },
         viewRequestedData(id){
-            alert(id);
             $('#viewVoucherDataModal').modal('show');
             axios.get(`http://127.0.0.1:8000/api/voucher_create_ledger/${id}`)
             .then(response => {

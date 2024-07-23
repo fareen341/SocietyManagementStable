@@ -1,116 +1,153 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vuelidate Example</title>
-  <style>
+{% extends 'base.html' %}
+{% load static %}
 
-.container {
-    width: 500px;
-    font-family: Helvetica, sans-serif;
-  }
-  h1 {
-    text-align: center
-  }
-  img {
-    text-align: center
-  }
-  .submitted {
-    color: #4fc08d;
-  }
-  </style>
-</head>
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
 
-<body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.8/vue.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/g/lodash@4.17.2,vee-validate@2.0.0-beta.14"></script>
-    <script>
-      Vue.use(VeeValidate); // good to go.
-    </script>
+{% block body %}
 
-    <div id="app" class="container">
-        {% verbatim %}
-      <form @submit.prevent="validateBeforeSubmit" v-if="!formSubmitted">
-
-        <h1>Form Validation with Vue 2</h1>
-        <div class="form-group" :class="{'has-error': errors.has('name') }">
-          <label class="control-label" for="name">Name</label>
-          <input v-model="name" v-validate.initial="name" data-rules="required|alpha|min:3" class="form-control" type="text" placeholder="Full Name">
-          <p class="text-danger" v-if="errors.has('name')">{{ errors.first('name') }}</p>
-        </div>
-        <div class="form-group" :class="{'has-error': errors.has('email') }">
-          <label class="control-label" for="email">Email</label>
-          <input v-model="email" v-validate.initial="email" data-rules="required|email" class="form-control" type="email" placeholder="Email">
-          <p class="text-danger" v-if="errors.has('email')">{{ errors.first('email') }}</p>
-        </div>
-        <div class="form-group" :class="{'has-error': errors.has('url') }">
-          <label class="control-label" for="url">Website</label>
-          <input v-model="url" v-validate.initial="url" data-rules="required|url" class="form-control" type="text" placeholder="Website">
-          <p class="text-danger" v-if="errors.has('url')">{{ errors.first('url') }}</p>
-        </div>
-        <div class="form-group" :class="{'has-error': errors.has('secret') }">
-          <label class="control-label" for="secret">Secret</label>
-          <input v-model="secret" v-validate.initial="secret" data-rules="required|passphrase" class="form-control" type="text" placeholder="Code Phrase">
-          <p class="text-danger" v-if="errors.has('secret')">{{ errors.first('secret') }}</p>
-        </div>
-
-        <div class="form-group" :class="{'has-error': errors.has('name') }">
-            <label class="control-label" for="name">Name</label>
-            <input v-model="name" v-validate.initial="name" data-rules="required|alpha|min:3" class="form-control" type="text" placeholder="Full Name">
-            <p class="text-danger" v-if="errors.has('name')">{{ errors.first('name') }}</p>
-          </div>
-
-          <ValidationProvider rules="required" v-slot="{ validate, errors }">
-            <div>
-              <input type="file" @change="handleFileChange($event) || validate($event)">
-              <p id="error">{{ errors[0] }}</p>
-            </div>
-          </ValidationProvider>
-
-
-
-
-        <button class="btn btn-primary btn-block" type="submit">Submit</button>
-      </form>
-      {% endverbatim %}
-      <div v-else>
-        <h1 class="submitted">Form submitted successfully!</h1>
-      </div>
-    </div>
-
-
-    <script>
-        Vue.use(VeeValidate)
-
-
-new Vue({
-  el: '#app',
-  data: {
-      email: '',
-      name: '',
-      url: '',
-      secret: '',
-      formSubmitted: false
-    },
-  methods: {
-    validateBeforeSubmit(e) {
-        this.$validator.validateAll();
-        if (!this.errors.any()) {
-            this.submitForm()
-        }
-      },
-    submitForm(){
-      this.formSubmitted = true
+<style>
+    .text-below-buttons h4{
+        text-decoration: underline;
+        padding-top: 30px;
     }
-  }
-})
+</style>
 
-VeeValidate.Validator.extend('passphrase', {
-    getMessage: field => 'Sorry dude, wrong pass phrase.',
-    validate: value => value.toUpperCase() == 'Demogorgon'.toUpperCase()
+<div class="container">
+    <div class="mt-3">
+        <h3 class="text-center">Index</h3>
+        <table id="generalLedgerVue" class="display table-sm dt-table order-column" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>From Ledger</th>
+                    <th>Particulars</th>
+                    <th>Voucher Type</th>
+                    <th>Voucher Number</th>
+                    <th>Debit (₹)</th>
+                    <th>Credit (₹)</th>
+                    <th>Balance (₹)</th>
+                </tr>
+            </thead>
+            {% verbatim %}
+            <tbody>
+                <tr v-for="(item, index) in generalLedger" :key="index">
+                    <td v-for="(value, key) in item" :key="key">{{ value }}</td>
+                </tr>
+            </tbody>
+            {% endverbatim %}
+        </table>
+    </div>
+</div>
+
+
+<script>
+    let datatable_columns = {{ datatable_columns }};
+</script>
+
+<script>
+var app = new Vue({
+    el: '#generalLedgerVue',
+    data: {
+        generalLedger: {},
+        errors: {}
+    },
+    methods: {
+
+    },
+    mounted() {
+        axios.get(`http://127.0.0.1:8000/api/general_ledger_api/`)
+            .then(response => {
+                this.generalLedger = response.data;
+                console.log(this.generalLedger);
+            })
+            .catch(error => {
+                this.errors = error.response.data;
+                console.error('Error Fetching General Ledger Data:', this.errors);
+            });
+    }
 });
-    </script>
+</script>
 
-</body>
-</html>
+<script>
+    $(document).ready(function() {
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+        $($.fn.dataTable.tables(true)).DataTable()
+            .columns.adjust();
+    });
+
+    var table = $('#generalLedgerVue').DataTable({
+         "dom": '<"dt-buttons"Br><"clear">ftipl',
+         buttons: [
+             {
+                 extend: 'colvis',
+                 text: 'More Column',
+                 postfixButtons: [
+                     'colvisRestore'
+                 ]
+             },
+             {
+                 extend: 'searchBuilder',
+                 text: 'Filter'
+             },
+             {
+                 extend: 'print',
+                 exportOptions: {
+                     columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                     modifier: { search: 'applied', order: 'applied' },
+                 }
+             },
+             {
+                 extend: 'print',
+                 text: 'Print All',
+                 exportOptions: {
+                     columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                 }
+             },
+         ],
+         order: [],
+         "stripeClasses": [],
+         columnDefs: [
+             { "visible": true, "targets": datatable_columns },
+             { "visible": false, "targets": '_all' },
+         ],
+         fixedColumns: {
+             left: 2
+         },
+         pagingType: "simple",
+         paginate: {
+             previous: "<",
+             next: ">"
+         },
+         scrollCollapse: false,
+         scrollX: true
+     });
+
+    var textBelowButtons = $('<div class="text-below-buttons pt-4 pb-0 view-label text-center"><h4 id="selectedValue">From Ledger</h4> <p></p></div>');
+    $('#generalLedgerVue_filter').after(textBelowButtons);
+    $(document).on('change', '.dtsb-select', function() {
+        var selectedValue = $(this).val();
+        $('#selectedValue').text(selectedValue);
+    });
+
+    var initialSelectedValue = $('.dtsb-select').val();
+    $('#selectedValue').text(initialSelectedValue);
+
+    $('#generalLedgerVue_info').css({
+        'text-align': 'center',
+        'position': 'relative',
+        'left': '40%',
+        'padding-top': '20px',
+        'display': 'block',
+        'margin-left': 'auto',
+        'margin-right': 'auto'
+    });
+    table.on('draw.dt', function () {
+        $('#generalLedgerVue_info').css({
+            'text-align': 'center',
+            'margin-left': 'auto',
+            'margin-right': 'auto'
+        });
+    });
+});
+</script>
+{% endblock body %}

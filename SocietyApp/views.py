@@ -612,11 +612,22 @@ def balance_sheet(request):
 
 
 def profit_and_loss(request):
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+
+    print(f"from date: {from_date}, to date: {to_date}")
+
     datatable_columns = [0, 1]
     # INCOME
     income_groups = get_all_child_investments(Childs.objects.get(name="Income"), cost_center=False, balance_sheet=True)
     income_groups.append("Income")
-    incomes = Ledger.objects.filter(group_name__in=income_groups)
+    incomes = Ledger.objects.filter(group_name__in=income_groups).annotate(
+        priority=Case(
+            When(ledger_name='Sales', then=0),  # Highest priority for 'Purchases'
+            default=1,                              # Lower priority for other items
+            output_field=IntegerField()
+        )
+    ).order_by('priority', 'ledger_name')  # Order by priority first, then by group_name
 
     unique_latest_ids = (
         GeneralLedger.objects.all()
@@ -626,12 +637,23 @@ def profit_and_loss(request):
     )
 
     unique_latest_entries = GeneralLedger.objects.filter(id__in=unique_latest_ids).values("from_ledger__ledger_name", 'balance', 'date')
-    print("entries ------>", unique_latest_entries)
+    if from_date and to_date:
+        unique_latest_entries = GeneralLedger.objects.filter(
+            # id__in=unique_latest_ids,
+            date__range=[from_date, to_date]
+        ).values("from_ledger__ledger_name", 'balance', 'date')
 
     # EXPENSE
     expense_groups = get_all_child_investments(Childs.objects.get(name="Expenses"), cost_center=False, balance_sheet=True)
     expense_groups.append("Expenses")
-    expense = Ledger.objects.filter(group_name__in=expense_groups)
+    expense = Ledger.objects.filter(group_name__in=expense_groups).annotate(
+        priority=Case(
+            When(ledger_name='Purchases', then=0),  # Highest priority for 'Purchases'
+            default=1,                              # Lower priority for other items
+            output_field=IntegerField()
+        )
+    ).order_by('priority', 'ledger_name')  # Order by priority first, then by group_name
+
     return render(request, 'profit_and_loss.html', {
         'datatable_columns': datatable_columns,
         'incomes': incomes, 'expense': expense,

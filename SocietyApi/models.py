@@ -469,6 +469,11 @@ class VoucherIndexing(models.Model):
     voucher_number = models.CharField(max_length=250)
 
 
+against_refrence = [
+    ('NO', 'NO'),
+    ('YES', 'YES')
+]
+
 class Ledger(models.Model):
     ledger_name = models.CharField(max_length=200)
     nature = models.CharField(max_length=200)
@@ -495,6 +500,7 @@ class Ledger(models.Model):
     branch_name = models.CharField(max_length=200, null=True, blank=True)
     opening_balance = models.CharField(max_length=200)
     dr_cr = models.CharField(max_length=200)
+    allow_against_refrence = models.CharField(max_length=200, choices=against_refrence, default='NO')
 
     def __str__(self):
         return self.ledger_name
@@ -522,6 +528,8 @@ class VoucherCreationModel(models.Model):
     voucher_name = models.CharField(max_length=100)
     voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
     voucher_number = models.CharField(max_length=200)
+    prefix = models.CharField(max_length=200, null=True, blank=True)
+    suffix = models.CharField(max_length=200, null=True, blank=True)
     booking_date = models.DateField()
     amount_in_words = models.CharField(max_length=250)
     narration = models.CharField(max_length=300)
@@ -566,6 +574,7 @@ class AgainstRefrenceModel(models.Model):
     voucher_date = models.DateField()
     pending_amt = models.IntegerField()
     final_amt = models.IntegerField()
+    allocated_amt = models.IntegerField(null=True)
 
 
 class CostCenterOnLedger(models.Model):

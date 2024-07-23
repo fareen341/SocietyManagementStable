@@ -379,3 +379,216 @@ jv does'nt have bank details?
     "narration": "34567"
 }
 
+
+
+
+
+
+
+
+
+
+
+{
+    "related_ledgers": [
+        {
+            "payment_option": "dr",
+            "debit_amt": "100",
+            "ledger_name": 20,
+            "against_refrence": [
+                {
+                    "voucher_number": "VOUCHER-123-2024",
+                    "voucher_date": "2024-07-13",
+                    "pending_amt": 2000,
+                    "final_amt": 3000
+                }
+            ],
+            "cost_center": []
+        }
+    ],
+    "voucher_name": "receipt_voucher",
+    "voucher_type": 7,
+    "voucher_number": 1,
+    "booking_date": "2024-08-02",
+    "voucher_date": "2024-08-02",
+    "debit_total": 100,
+    "credit_total": 0,
+    "amount_in_words": "one hundred",
+    "narration": "345678",
+    "cheque_number": "345678",
+    "cheque_date": "2024-08-02",
+    "bank_name": "345678"
+}
+
+
+
+
+
+
+
+
+
+
+const completeJson = {
+    "related_ledgers": [
+        {
+            "payment_option": "dr",
+            "debit_amt": "100",
+            "ledger_name": 20,
+            "against_refrence": [
+                {
+                    "voucher_number": "VOUCHER-123-2024",
+                    "voucher_date": "2024-07-13",
+                    "pending_amt": 2900,
+                    "final_amt": 3000
+                }
+            ],
+            "cost_center": []
+        },
+        {
+            "payment_option": "cr",
+            "credit_amt": "50",
+            "ledger_name": 1,
+            "against_refrence": [
+                {
+                    "voucher_number": "1",
+                    "voucher_date": "2024-08-03",
+                    "pending_amt": 90,
+                    "final_amt": 100
+                }
+            ],
+            "cost_center": []
+        },
+        {
+            "payment_option": "cr",
+            "credit_amt": "50",
+            "ledger_name": 20,
+            "against_refrence": [],
+            "cost_center": []
+        }
+    ]
+};
+
+completeJson.related_ledgers.forEach(ledger => {
+    const ledgerAmt = ledger.ledger_name === 20;
+    if (ledgerAmt){
+        this.againstRefrences = ledger.against_refrence[0]
+    }
+    }
+});
+
+
+
+
+
+
+
+
+{
+    "related_ledgers": [
+        {
+            "payment_option": "dr",
+            "debit_amt": "25000",
+            "ledger_name": 20,
+            "against_refrence": [
+                {
+                    "voucher_number": "VOUCHER-123-2024",
+                    "voucher_date": "2024-07-13",
+                    "pending_amt": 5000,
+                    "final_amt": 10000,
+                    "allocated_amt": "1000"
+                }
+            ],
+            "cost_center": []
+        },
+        {
+            "payment_option": "cr",
+            "credit_amt": "2500",
+            "ledger_name": 9,
+            "against_refrence": [],
+            "cost_center": []
+        },
+        {
+            "payment_option": "cr",
+            "credit_amt": "22500",
+            "ledger_name": 20,
+            "against_refrence": [
+                {
+                    "voucher_number": "VOUCHER-123-2024",
+                    "voucher_date": "2024-07-13",
+                    "pending_amt": 4000,
+                    "final_amt": 10000
+                }
+            ],
+            "cost_center": []
+        }
+    ],
+    "voucher_name": "receipt_voucher",
+    "voucher_type": 7,
+    "voucher_number": 1,
+    "booking_date": "2024-08-09",
+    "debit_total": 25000,
+    "credit_total": 25000,
+    "amount_in_words": "twenty-five thousand",
+    "voucher_date": "2024-08-09",
+    "narration": "25000",
+    "cheque_number": "25000",
+    "cheque_date": "2000-09-09",
+    "bank_name": "25000"
+}
+
+
+
+[
+    {
+        "id": 1,
+        "voucher_number": "1",
+        "voucher_date": "2024-08-03",
+        "pending_amt": 50,
+        "final_amt": 100,
+        "voucher_type": 478,
+        "against_related_ledger": 1114
+    }
+]
+
+
+
+
+[
+    {
+        "id": 1114,
+        "ledger_name": "Ganesh",
+        "ledger_id": 1,
+        "debit_amt": 1000,
+        "credit_amt": null,
+        "quantity": null,
+        "rate": null,
+        "amount": null,
+        "total": null,
+        "voucher_type": 478,
+        "show_against_refrence": [
+            {
+                "id": 1,
+                "voucher_number": "1",
+                "voucher_date": "2024-08-03",
+                "pending_amt": 50,
+                "final_amt": 100,
+                "voucher_type": 478,
+                "against_related_ledger": 1114
+            }
+        ]
+    },
+    {
+        "id": 1115,
+        "ledger_name": "Fareen",
+        "ledger_id": 44,
+        "debit_amt": null,
+        "credit_amt": 1000,
+        "quantity": null,
+        "rate": null,
+        "amount": null,
+        "total": null,
+        "voucher_type": 478,
+        "show_against_refrence": []
+    }
+]

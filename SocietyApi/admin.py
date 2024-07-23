@@ -6,6 +6,12 @@ class GeneralLedgerAdmin(admin.ModelAdmin):
     list_display = [field.name for field in GeneralLedger._meta.get_fields()]
 
 
+class VoucherCreationModelAdmin(admin.ModelAdmin):
+    list_display = [
+        'id', 'voucher_name', 'voucher_type', 'voucher_number', 'prefix', 'suffix'
+    ]
+
+
 
 # Register your models here.
 admin.site.register(SocietyCreation)
@@ -34,7 +40,7 @@ admin.site.register(Ledger)
 admin.site.register(UnitTest)
 admin.site.register(PurchaseVoucherModel)
 admin.site.register(StockOnLedgerModel)
-admin.site.register(VoucherCreationModel)
+admin.site.register(VoucherCreationModel, VoucherCreationModelAdmin)
 admin.site.register(RelatedLedgersModel)
 admin.site.register(RelatedStockModel)
 admin.site.register(AgainstRefrenceModel)

@@ -270,6 +270,190 @@ Current Assets (78000)
 
 
 
+Current Assest
+→ Sundry Debtors
+→→ Vikas
+→→→ Vikas 1
+→→→→ Vikas 2
+→→→→→ Misc Assets
+→ Input Sgst
+→ Gst Input
+→ Tax
+→→ Gst
+→→→ Payable Tax
+→→→→ Input Cgst
+
+
+1. Misc Assets (62600)
+2. Vikas 2(62600)
+3. Vikas 1(42600)
+
+
+
+1. add dict in the order position, like if "Misc Assets" add it to 5th position.
+2. take the grops from bottom, even if it does not have sub grp or ledgers.
+3. loop over the given dict and show the data.
+4. add dummy data and try on ui.
+5. try below json as an api in vue, if that works then create array if that.
+6. first try the counter increment in vue js, consider below code:
+        <template>
+        <div>
+            <div v-for="(counter, index) in counters" :key="index">
+            <p>Counter {{ index + 1 }}: {{ cumulativeCounter(index) }}</p>
+            </div>
+        </div>
+        </template>
+
+        <script>
+        export default {
+            data() {
+                return {
+                counters: [20, 30, 40]  // Example counter values, replace with your API data
+                };
+            },
+            methods: {
+                cumulativeCounter(index) {
+                let sum = 0;
+                for (let i = 0; i <= index; i++) {
+                    sum += this.counters[i];
+                }
+                return sum;
+                }
+            }
+        };
+        </script>
+
+
+
+bkp:
+
+[
+    grp1: [
+        "Input Cgst": 0, "ledger": [],
+        "Payable Tax": 2700, "ledger": ["Input Cgst"],
+        "Gst": 0, "ledger": [],             # add here
+        "Tax": 0, "ledger": [],
+    ],
+    grp2: [
+        "Gst Input": 0, "ledger": [],
+    ],
+    grp3: [
+        "Input Sgst": 0, "ledger": [],
+    ],
+    grp3: [
+        "Misc Assets": 62600, "ledger": ['Cash Account'],
+        "Vikas 2": 62600, "ledger": [],
+        "Vikas 1": -20000, "ledger": ['Dena Bank '],             # do addition here above all amt + this amt
+        "Vikas": 2700, "ledger": ['Input SGST'],
+        "Sundry Debtors": 30000, "ledger": ['Vikas (Legder)'],
+    ],
+]
+
+
+
+const grp1 = {
+            "Tax": {
+                "amt": 0,
+                "ledger": [],
+                "Gst": {
+                    "amt": 0,
+                    "ledger": [],
+                    "Payable Tax": {
+                        "amt": 2700,
+                        "ledger": ["Input Cgst"]
+                    }
+                }
+            }
+        };
+
+
+[
+    grp1: [
+        "Input Cgst": {"ledger": [{}]},
+        "Payable Tax": {"ledger": [{"Input Cgst": 2700}]},
+        "Gst": {"ledger": []},             # add here
+        "Tax": {"ledger": []},
+    ],
+    grp2: [
+        "Gst Input": {"ledger": []},
+    ],
+    grp3: [
+        "Input Sgst": {"ledger": []},
+    ],
+    grp3: [
+        "Misc Assets": {"ledger": ['Cash Account': 62600]},
+        "Vikas 2": {"ledger": []},
+        "Vikas 1": {"ledger": ['Dena Bank': -20000]},             # do addition here above all amt + this amt
+        "Vikas": {"ledger": ['Input SGST': 2700]},
+        "Sundry Debtors": {"ledger": ['Vikas (Legder)': 30000]},
+    ],
+]
+
+
+
+
+
+
+
+in vue js i want to show the above ledgers_grps array in a
+table every new grp array is a new group so first group will be shown as:
+
+1. if the first elemnt of a new grp array has no amt and has no ledger dont show it on table
+2. for every new row, it should show the seperate grps,
+3. if there is no ledger its parent should show the ledger amt, else sum up the below ledger amt and show above
+4. above group should add elemnt as patent, like first Input CGST will be added as ledger and group name will be
+Payable Tax & then GST and so on
+
+5. so for first grp1 array the table will look likw below
++ Tax(2700)
+    + GST(2700)
+        + Payable Tax(2700)
+            --> Input CGST -- (2700)
+
+
+
+
+
+
+if elemnt is first and amout is 0 and have no ledger remove from the list
+
+
++ Sundry Debtors (75300)
+    * Vikas (Legder) 30000
+
+        + Vikas (45300)
+            * Input SGST (2700)
+
+                + Vikas 1 (-20000 + 62600)(42600)
+                    * Dena Bank (-20000)
+
+                        + Vikas 2 (62600)
+                            + Misc Assets (62600)
+                                * Cash Account (62600)
+
+
+
++ Tax(2700)
+    + GST (2700)
+        * Input Cgst (2700)
+            + Payable Tax
+
+
+
+
+
+Sundry Debtors
+    * Vikas (Legder) - 30000
+        -> Vikas (30000 + 2700) - (32700)
+            -> Vikas 1
+                * Dena Bank (32700 - 20000) ()
+
+
+
+
+
+
+
 
 
 
@@ -395,3 +579,52 @@ MORE ACCOUNT PENDING:
 voucher number increment
 adding filter in balance sheet adn p & l
 opening balance is different for p & l
+
+
+
+
+
+
+
+======================================================
+against Refrence  = 1
+group data = 2
+add one more option in ledger to ask for against refrence
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+============================= ACCOUNTS FINAL PENDING ===================================================
+1. voucher number increment - Done
+2. adding filter in balance sheet adn p & l( for now add in p & l only ): Done
+        --> add validation for date filter, provide both from and to date
+        --> to date cannot be less than from data
+3. opening balance is different for p & l
+4. add in ledger model if against refrence should be shown: Done
+---------------- Others -----------------------
+5. check if group update is working.
+6. add validation in sub group too.
+
+
+
+
+
+get all the vouchers modal created for voucher number RVM-JULY-001	and do the increment from there,
+if no vouchers are there in voucher create modal then take from indexing if not there also then defaul incr.
+

@@ -514,6 +514,18 @@
                                                     <span v-else></span>
                                                 </div>
                                             </div>
+
+                                            <div class="col-lg-4 mb-3 ">
+                                                <div class="sty-input-wrapper d-flex w-100">
+                                                    <select class="sty-inp form-control w-25" v-model="formData.allow_against_refrence" :class="{ 'error-message': errors.allow_against_refrence }">
+                                                        <option value="NO">NO</option>
+                                                        <option value="YES">YES</option>
+                                                    </select>
+                                                    <label class="sty-label">Allow Against Refrence</label>
+                                                    <span v-if="errors.allow_against_refrence" class="error">{{ errors.allow_against_refrence[0] }}</span>
+                                                    <span v-else></span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -832,6 +844,7 @@
                                         <th>branch_name</th>
                                         <th>opening_balance</th>
                                         <th>dr_cr</th>
+                                        <th>Against refrences</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -1766,6 +1779,7 @@ new Vue({
             dr_cr: '',
             area: '',
             fixed: '',
+            allow_against_refrence: 'NO'
         },
         errors: {},
         ledgerData: [],

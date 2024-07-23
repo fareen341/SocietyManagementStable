@@ -111,7 +111,7 @@
 
 
 {% verbatim %}
-<div class="container" style="margin-top: 200px;" id="app">
+<div class="container" style="margin-top: 200px;">
   <header>
     <a href="#" class="brand">GROUPS & LEDGERS</a>
   </header>
@@ -135,7 +135,7 @@
 
       <h1>=====================</h1>
 
-      <ul class="list">
+      <!-- <ul class="list">
         <li v-for="(value, key) in reversedGroups" :key="key"><a href="#" class="list-item">{{ key }}</a>
           <ul class="list" style="--depth: 3">
             <li v-for="(ledger, ledgerKey) in value.ledger" :key="ledgerKey">
@@ -143,7 +143,7 @@
             </li>
           </ul>
         </li>
-      </ul>
+      </ul> -->
 
 
       <h1>Break ==============================</h1>
@@ -171,6 +171,13 @@
 </div>
 {% endverbatim %}
 
+
+{% verbatim %}
+<h1>COMING HERE---------------------</h1>
+<div id="app" class="container">
+    <div id="balanceSheetHtml"></div>
+</div>
+{% endverbatim %}
 
 <!--
 <ul class="list">
@@ -273,6 +280,10 @@
 
 
 
+
+
+
+
 <script>
     const collapse = function(willCollapse = true, callback = (list) => {}) {
         this.collapsing = true;
@@ -346,191 +357,82 @@
 </script>
 
 
- <script>
-    new Vue({
-        el: "#app",
-        data: {
-            balance_sheet: [
-                {
-                    // "Input Cgst": { "ledger": [] },
-                    "Payable Tax": { "ledger": [{ "Input Cgst": 2700 }, {"Input Sgst": 9000}] },
-                    "Gst": { "ledger": [] },
-                    "Tax": { "ledger": [] }
-                },
-                {
-                    "Gst Input": { "ledger": [] }
-                },
-                {
-                    "Input Sgst": { "ledger": [] }
-                },
-                {
-                    "Misc Assets": { "ledger": [{ "Cash Account": 62600 }] },
-                    "Vikas 2": { "ledger": [] },
-                    "Vikas 1": { "ledger": [{ "Dena Bank": -20000 }] },
-                    "Vikas": { "ledger": [{ "Input Sgst": 2700 }] },
-                    "Sundry Debtors": { "ledger": [{ "Vikas (Ledger)": 30000 }] }
-                }
-            ],
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      balance_sheet: [
+        {
+          "Payable Tax": { "ledger": [{ "Input Cgst": 2700 }, { "Input Sgst": 9000 }] },
+          "Gst": { "ledger": [] },
+          "Tax": { "ledger": [] }
         },
-        computed: {
-          reversedGroups() {
-            const entries = Object.entries(this.balance_sheet[0]);
-            return entries.reverse().reduce((acc, [key, value]) => {
-              acc[key] = value;
-              return acc;
-            }, {});
-            //return this.balance_sheet[0].slice().reverse();
-          }
+        {
+          "Gst Input": { "ledger": [] }
         },
-        methods: {
-          formatLedger(ledger) {
-            return Object.entries(ledger).map(([key, value]) => `${key}: ${value}`).join(', ');
-          },
-          initializeCollapse() {
-            // Your existing JavaScript code
-            const collapse = function(willCollapse = true, callback = (list) => {}) {
-              this.collapsing = true;
-              const height = this.scrollHeight;
-              const stateFrom = {height: height + 'px'};
-              const stateTo = {height: '0px'};
+        {
+          "Input Sgst": { "ledger": [] }
+        },
+        {
+          "Misc Assets": { "ledger": [{ "Cash Account": 62600 }] },
+          "Vikas 2": { "ledger": [] },
+          "Vikas 1": { "ledger": [{ "Dena Bank": -20000 }] },
+          "Vikas": { "ledger": [{ "Input Sgst": 2700 }] },
+          "Sundry Debtors": { "ledger": [{ "Vikas (Ledger)": 30000 }] }
+        }
+      ]
+    },
+    computed: {
+      reversedGroups() {
+        const entries = Object.entries(this.balance_sheet[0]);
+        return entries.reverse().reduce((acc, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        }, {});
+      }
+    },
+    methods: {
+      formatLedger(ledger) {
+        return ledger.map(item => {
+          return Object.entries(item).map(([key, value]) => `<li><a href="#" class="list-item">${key}: ${value}</a></li>`).join('');
+        }).join('');
+      },
+      generateHtml(data, depth) {
+        let html = '';
+        for (const [key, value] of Object.entries(data)) {
+          html += `<li><a href="#" class="list-item">${key}</a>`;
 
-              let animateState = [stateFrom, stateTo];
-              if (!willCollapse) animateState = [stateTo, stateFrom];
-
-              this.animate(animateState, {
-                duration: 500,
-                iterations: 1,
-                easing: 'ease-in-out'
-              }).finished.then(val => {
-                this.collapsing = false;
-                if (callback && typeof(callback) == 'function') {
-                  callback(this);
-                }
-              });
-            };
-            const showActiveTab = (tab) => {
-              if (tab) {
-                document.querySelector('#active-tab').textContent = tab.textContent;
+          // Process nested objects
+          if (typeof value === 'object') {
+            if (value.ledger && value.ledger.length > 0) {
+              html += `<ul class="list open" style="--depth: ${depth + 1}">`;
+              html += this.formatLedger(value.ledger);
+              //html += `</ul>`;
+            } else {
+              const nestedHtml = this.generateHtml(value, depth + 1);
+              if (nestedHtml) {
+                html += `<ul class="list open" style="--depth: ${depth + 1}">${nestedHtml}</ul>`;
               }
-            };
-            showActiveTab(document.querySelector('.list-item.active'));
-
-            document.querySelectorAll('.list li').forEach(li => {
-              const list = li.querySelector('.list');
-              if (list) list.collapse = collapse.bind(list);
-              li.querySelector('.list-item').addEventListener('click', (event) => {
-                // if not a list (just list-item)
-                if (!list) {
-                  document.querySelectorAll('.list-item').forEach(listItem => {
-                    listItem.classList.remove('active');
-                  });
-                  event.target.classList.add('active');
-                  showActiveTab(event.target);
-                  event.preventDefault();
-                  return;
-                }
-                // if list still collapsing
-                if (list.collapsing) {
-                  event.preventDefault();
-                  return;
-                }
-                // set list collapse or open
-                if (!list.classList.contains('open')) {
-                  list.classList.add('open');
-                  list.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
-                  list.parentElement.parentElement.querySelectorAll('& > li > .list.open').forEach(oList => {
-                    if (oList !== list) {
-                      oList.collapse(true, ls => {
-                        ls.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
-                        ls.classList.remove('open');
-                      });
-                    }
-                  });
-                  // open
-                  list.collapse(false);
-                } else {
-                  // collapse
-                  list.collapse(true, ls => {
-                    ls.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
-                    ls.classList.remove('open');
-                  });
-                }
-              });
-            });
+            }
           }
-        },
-        mounted() {
-          this.initializeCollapse();
-        },
-        updated() {
-          this.initializeCollapse();
+
+          //html += `</li>`;
         }
-      });
-    </script>
+        return html;
+      },
+      createHtml() {
+        let html;
+        // let html = `<ul class="list open" style="--depth: 1">`;
+        html += this.generateHtml(this.reversedGroups, 1);
+        // html += `</ul>`;
+
+        document.getElementById('balanceSheetHtml').innerHTML = html;
+      }
+    },
+    mounted() {
+      this.createHtml();
+    }
+  });
+  </script>
+
 {% endblock body %}
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nested List</title>
-    <style>
-        ul {
-            list-style-type: none;
-        }
-    </style>
-</head>
-<body>
-    <div id="nested-list"></div>
-
-    <script>
-        const grp1 = {
-            "Tax": {
-                "amt": 0,
-                "ledger": [],
-                "Gst": {
-                    "amt": 0,
-                    "ledger": [],
-                    "Payable Tax": {
-                        "amt": 2700,
-                        "ledger": ["Input Cgst"]
-                    }
-                }
-            }
-        };
-
-        function createList(data) {
-            const ul = document.createElement('ul');
-
-            for (const [key, value] of Object.entries(data)) {
-                const li = document.createElement('li');
-                li.textContent = `${key}: ${value.amt}`;
-
-                if (value.ledger && value.ledger.length > 0) {
-                    const ledgerUl = document.createElement('ul');
-                    value.ledger.forEach(item => {
-                        const ledgerLi = document.createElement('li');
-                        ledgerLi.textContent = item;
-                        ledgerUl.appendChild(ledgerLi);
-                    });
-                    li.appendChild(ledgerUl);
-                }
-
-                if (typeof value === 'object' && Object.keys(value).some(k => k !== 'amt' && k !== 'ledger')) {
-                    li.appendChild(createList(value));
-                }
-
-                ul.appendChild(li);
-            }
-
-            return ul;
-        }
-
-        const container = document.getElementById('nested-list');
-        container.appendChild(createList(grp1));
-    </script>
-</body>
-</html> -->

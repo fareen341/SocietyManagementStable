@@ -1077,6 +1077,21 @@ class VoucherTypeView(viewsets.ModelViewSet):
         return super().partial_update(request, *args, **kwargs)
 
 
+
+def increment_number(original_number):
+    starts_with_zero = original_number.startswith('0')
+    number_as_int = int(original_number)
+    incremented_number = number_as_int + 1
+    if starts_with_zero:
+        original_length = len(original_number)
+        incremented_number_str = str(incremented_number).zfill(original_length)
+    else:
+        incremented_number_str = str(incremented_number)
+
+    return incremented_number_str
+
+
+
 class VoucherIndexingView(viewsets.ModelViewSet):
     queryset = VoucherIndexing.objects.all()
     serializer_class = VoucherIndexingSerializer
@@ -1105,28 +1120,70 @@ class VoucherIndexingView(viewsets.ModelViewSet):
             results = {}
             current_time = timezone.now().date()
             instances = VoucherIndexing.objects.filter(voucher_type=voucher_type_id)
-            print("instance ======", instances)
-            # CHECK FOR THE COST CENTER ALREADY ADDED, AND TAKE ITS SUFFIX AND DO ADDITION OF ONE
-            # FOR THAT WE NEED TO ADD SUFFIX TOO
+            print("voucher type id====>", instances.values('id'))
+
+            # Get the last object from the voucher creating table
+            if instances:
+                voucher_obj = VoucherCreationModel.objects.filter(~Q(prefix=''), Q(voucher_type__voucher_type = instances.values('voucher_type__voucher_type')[0]['voucher_type__voucher_type']))
+                if voucher_obj:
+                    voucher_obj = voucher_obj.latest('id')
+                    print("latest object for recript voucher is: ", voucher_obj.pk)
+
+            # Taking common increment for all the vouchers, it'll start from the number which does'nt have any voucher indeing created.
+            # If we want to make increment voucher specific we need to take one more url parameter which is voucher_type.
+
+
+            latest_number = ''
+            latest_voucher_without_suffix = VoucherCreationModel.objects.filter(prefix='')
+            if latest_voucher_without_suffix:
+                latest_number = latest_voucher_without_suffix.latest('id')
 
             if not instances:
+                num = 1
+                if latest_number:
+                    num = increment_number(latest_number.suffix)
+
+                inc_suffix = num
+                print("inc_suffix", inc_suffix)
                 results.update({
-                    'voucher_number': 1,
-                    'suffix': 1
+                    'voucher_number': inc_suffix,
+                    'suffix': inc_suffix,
+                    'prefix': '',
                 })
 
             for dates in instances:
                 if dates.from_date <= current_time <= dates.to_date:
-                    results.update({
-                        'voucher_number': dates.voucher_number,
-                        'suffix': dates.suffix
-                    })
-                    break
+                    if voucher_obj and dates.prefix == voucher_obj.prefix:
+                        print("went in if")
+                        inc_suffix = increment_number(voucher_obj.suffix)
+                        new_voucher = voucher_obj.prefix + inc_suffix
+                        results.update({
+                            'voucher_number': new_voucher,
+                            'suffix': inc_suffix,
+                            'prefix': voucher_obj.prefix
+                        })
+                        break
+                    else:
+                        results.update({
+                            'voucher_number': dates.voucher_number,
+                            'suffix': dates.suffix,
+                            'prefix': dates.prefix
+                        })
+                        break
                 else:
+                    print("went in else")
+                    num = 1
+                    print("latest_number========", latest_number)
+                    if latest_number:
+                        num = increment_number(latest_number.suffix)
+
+                    inc_suffix = num
                     results.update({
-                        'voucher_number': 1,
-                        'suffix': 1
+                        'voucher_number': inc_suffix,
+                        'suffix': inc_suffix,
+                        'prefix': ''
                     })
+
         except VoucherIndexing.DoesNotExist:
             return Response(data={"message": "Voucher not found"})
 
@@ -1643,61 +1700,130 @@ class AgainstRefrenceView(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         ledger = request.query_params.get('ledger', None)
-        filtered_qs = self.queryset.filter(against_related_ledger_id=ledger)
-
         combined_qs = []
+
         if ledger:
-            ledger_under_grp = Ledger.objects.get(id=ledger).group_name
-            child_object = Childs.objects.get(name=ledger_under_grp).id
-            api_url = f'http://127.0.0.1:8000/group_data/{child_object}/'
-            try:
-                response = requests.get(api_url)
-                if response.status_code == 200:
-                    data = response.json()
-                    super_parent = data['groups'][0]['super_parent']
-                    # if super_parent == 'Assets':
+            against_refrence_obj = Ledger.objects.get(id=ledger).allow_against_refrence
+            if against_refrence_obj == 'YES':
+                try:
                     general_ledger_obj = GeneralLedger.objects.filter(from_ledger=ledger)
-                    qs = self.queryset.filter(against_related_ledger=ledger).values('voucher_number', 'voucher_date', 'pending_amt', 'final_amt')
-                    print("count is --------------", qs.count())
+                    qs = self.queryset.filter(against_related_ledger__ledger_name=ledger).values('voucher_number', 'voucher_date', 'pending_amt', 'final_amt')
+
+                    latest_entries = (self.queryset.filter(against_related_ledger__ledger_name=ledger).values('voucher_number').annotate(max_id=Max('id')).values('max_id'))
+                    distinct_latest_entries = (self.queryset.filter(id__in=Subquery(latest_entries)))
+
+                    for i in distinct_latest_entries.values('voucher_number', 'voucher_date', 'pending_amt', 'final_amt'):
+                        combined_qs.append(i)
                     final_dict = {}
-                    if qs:
-                        combined_qs.append(qs[0])
                     for i in general_ledger_obj.values():
-                        debit_amt = i['debit']
-                        credit_amt = i['credit']
-                        if super_parent == "Assets":
-                            if debit_amt:
-                                final_dict = {
-                                    'voucher_number': i['voucher_number'],
-                                    'voucher_date': i['date'],
-                                    'pending_amt': debit_amt,
-                                    'final_amt': debit_amt
-                                }
-                                combined_qs.append(final_dict)
-                        elif super_parent == "Liabilities":
+                        if i['voucher_number'] not in qs.values_list('voucher_number', flat=True):
+                            amt = i['credit']
+                            if i['debit']:
+                                amt = i['debit']
                             final_dict = {
                                 'voucher_number': i['voucher_number'],
                                 'voucher_date': i['date'],
-                                'pending_amt': credit_amt,
-                                'final_amt': credit_amt
+                                'pending_amt': amt,
+                                'final_amt': amt
                             }
                             combined_qs.append(final_dict)
-
-                    # elif super_parent == 'Liabilities':
-                        # filtered_qs = self.queryset.filter(credit__isnull=True, from_ledger=ledger)
-            except requests.exceptions.RequestException as e:
-                print("Something went wrong: ", e)
+                except requests.exceptions.RequestException as e:
+                    print("Something went wrong: ", e)
 
         if combined_qs:
             return Response(combined_qs)
         else:
             return Response({"message": "No objects available."}, status=status.HTTP_404_NOT_FOUND)
 
-        # if filtered_qs is not None:
-        #     serializer = self.get_serializer(combined_qs, many=True)
-        #     return Response(serializer.data)
-        # else:
-        #     return Response({"message": "No objects available."}, status=status.HTTP_404_NOT_FOUND)
+
+
+# BKP CODE 2
+# # qs = self.queryset.filter(against_related_ledger__ledger_name=ledger).
+#                 # values('voucher_number', 'voucher_date', 'pending_amt', 'final_amt').order_by('voucher_number', '-id').distinct('voucher_number')
+#                 # Subquery to get the latest ID for each voucher_number
+#                 latest_ids = self.queryset.filter(
+#                     against_related_ledger__ledger_name=ledger
+#                 ).order_by('voucher_number', '-id').distinct('voucher_number').values('id')
+
+#                 # Main query to get the latest voucher entries based on the latest IDs
+#                 qs = self.queryset.filter(
+#                     id__in=Subquery(latest_ids)
+#                 ).values(
+#                     'voucher_number', 'voucher_date', 'pending_amt', 'final_amt'
+#                 )
+
+
+
+# BKP CODE
+# class AgainstRefrenceView(viewsets.ModelViewSet):
+#     queryset = AgainstRefrenceModel.objects.all()
+#     serializer_class = AgainstRefrenceSerializers
+#     filter_backends = [DjangoFilterBackend,]
+#     filterset_fields = ['against_related_ledger_id']
+
+#     def list(self, request, *args, **kwargs):
+#         ledger = request.query_params.get('ledger', None)
+#         filtered_qs = self.queryset.filter(against_related_ledger_id=ledger)
+
+#         combined_qs = []
+#         if ledger:
+#             # ledger_under_grp = Ledger.objects.get(id=ledger).group_name
+#             # child_object = Childs.objects.get(name=ledger_under_grp).id
+#             # api_url = f'http://127.0.0.1:8000/group_data/{child_object}/'
+#             try:
+#                 # response = requests.get(api_url)
+#                 # if response.status_code == 200:
+#                 #     data = response.json()
+#                 #     super_parent = data['groups'][0]['super_parent']
+#                     # if super_parent == 'Assets':
+#                     general_ledger_obj = GeneralLedger.objects.filter(from_ledger=ledger)
+#                     qs = self.queryset.filter(against_related_ledger__ledger_name=ledger).values('voucher_number', 'voucher_date', 'pending_amt', 'final_amt')
+#                     # print("count is --------------", general_ledger_obj)
+#                     final_dict = {}
+#                     if qs:
+#                         combined_qs.append(qs[0])
+#                         # print("combined qs before------>", combined_qs)
+#                     for i in general_ledger_obj.values():
+#                         if i['voucher_number'] not in qs.values_list('voucher_number', flat=True):
+#                             # print("general voucher here, voucher no.", i['voucher_number'])
+#                             amt = i['credit']
+#                             if i['debit']:
+#                                 amt = i['debit']
+#                             # if super_parent == "Assets":
+#                             final_dict = {
+#                                 'voucher_number': i['voucher_number'],
+#                                 'voucher_date': i['date'],
+#                                 'pending_amt': amt,
+#                                 'final_amt': amt
+#                             }
+#                             combined_qs.append(final_dict)
+#                             print("combined qs in if------>", combined_qs)
+#                             # elif super_parent == "Liabilities":
+#                             #     final_dict = {
+#                             #         'voucher_number': i['voucher_number'],
+#                             #         'voucher_date': i['date'],
+#                             #         'pending_amt': amt,
+#                             #         'final_amt': amt
+#                             #     }
+#                             #     combined_qs.append(final_dict)
+#                             #     print("combined qs after------>", combined_qs)
+
+#                     # elif super_parent == 'Liabilities':
+#                         # filtered_qs = self.queryset.filter(credit__isnull=True, from_ledger=ledger)
+#             except requests.exceptions.RequestException as e:
+#                 print("Something went wrong: ", e)
+
+#         if combined_qs:
+#             print("cobmined qs printing=======================", combined_qs)
+#             return Response(combined_qs)
+#         else:
+#             return Response({"message": "No objects available."}, status=status.HTTP_404_NOT_FOUND)
+
+#         # if filtered_qs is not None:
+#         #     serializer = self.get_serializer(combined_qs, many=True)
+#         #     return Response(serializer.data)
+#         # else:
+#         #     return Response({"message": "No objects available."}, status=status.HTTP_404_NOT_FOUND)
 
 
 class AgainstRefrenceViewForSelf(viewsets.ModelViewSet):
