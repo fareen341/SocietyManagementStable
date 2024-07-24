@@ -768,8 +768,8 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1018,8 +1018,8 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1214,8 +1214,8 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1394,8 +1394,8 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1575,8 +1575,8 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1715,6 +1715,8 @@
                             <th>dummy</th>
                             <th>dummy</th>
                             <th>dummy</th>
+                            <th>dummy</th>
+                            <th>dummy</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1758,8 +1760,8 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1942,8 +1944,8 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -2145,8 +2147,11 @@
 $(document).ready(function () {
     // Adjust column sizes when a tab is shown
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-        $($.fn.dataTable.tables(true)).DataTable()
-            .columns.adjust();
+        // $($.fn.dataTable.tables(true)).DataTable()
+        //     .columns.adjust();
+        setTimeout(function() {
+           $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+        }, 3000); // Adjust the delay as needed
     });
 
     var table = $('#costCenterDatatable, #purchaseVoucherDatatable, #salesVoucherDatatable, #generalVoucherDatatable, #expenseVoucherDatatable, #incomeVoucherDatatable, #paymentVoucherDatatable, #receiptVoucherDatatable').DataTable({
@@ -2205,6 +2210,32 @@ $(document).ready(function () {
         scrollX: true
     });
 
+    $('#costCenterDatatable_info, #purchaseVoucherDatatable_info, #salesVoucherDatatable_info, #generalVoucherDatatable_info, #expenseVoucherDatatable_info, #incomeVoucherDatatable_info, #paymentVoucherDatatable_info, #receiptVoucherDatatable_info').css({
+        'text-align': 'center',
+        'position': 'relative',
+        'left': '40%',
+        'padding-top': '20px',
+        'display': 'block'
+    });
+
+    // Adjust the info text position when the table is redrawn
+    table.on('draw.dt', function () {
+        $('#costCenterDatatable_info, #purchaseVoucherDatatable_info, #salesVoucherDatatable_info, #generalVoucherDatatable_info, #expenseVoucherDatatable_info, #incomeVoucherDatatable_info, #paymentVoucherDatatable_info, #receiptVoucherDatatable_info').css({
+            'text-align': 'center',
+            'margin-left': 'auto',
+            'margin-right': 'auto'
+        });
+    });
+
+    // Adjust column sizes for all tables after initialization with a slight delay
+        setTimeout(function() {
+            $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+        }, 3000); // Adjust the delay as needed
+    });
+    // Ensure columns adjust after the window has fully loaded
+    $(window).on('load', function() {
+        $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+
 
 });
 
@@ -2243,11 +2274,15 @@ new Vue({
             voucher_type: '',
             voucher_number: '',
             booking_date: '',
+            prefix: '',
+            suffix: ''
         },
         formData2: {
             voucher_type: '',
             voucher_number: '',
             totalAmountValue: null,
+            prefix: '',
+            suffix: ''
         },
         costCenterError: {
 

@@ -1713,20 +1713,23 @@ class AgainstRefrenceView(viewsets.ModelViewSet):
                     distinct_latest_entries = (self.queryset.filter(id__in=Subquery(latest_entries)))
 
                     for i in distinct_latest_entries.values('voucher_number', 'voucher_date', 'pending_amt', 'final_amt'):
+                        print("going in against ledger")
                         combined_qs.append(i)
                     final_dict = {}
+                    print("going in general ledger", general_ledger_obj.values())
                     for i in general_ledger_obj.values():
                         if i['voucher_number'] not in qs.values_list('voucher_number', flat=True):
                             amt = i['credit']
                             if i['debit']:
                                 amt = i['debit']
-                            final_dict = {
-                                'voucher_number': i['voucher_number'],
-                                'voucher_date': i['date'],
-                                'pending_amt': amt,
-                                'final_amt': amt
-                            }
-                            combined_qs.append(final_dict)
+                            if amt is not None:
+                                final_dict = {
+                                    'voucher_number': i['voucher_number'],
+                                    'voucher_date': i['date'],
+                                    'pending_amt': amt,
+                                    'final_amt': amt
+                                }
+                                combined_qs.append(final_dict)
                 except requests.exceptions.RequestException as e:
                     print("Something went wrong: ", e)
 
