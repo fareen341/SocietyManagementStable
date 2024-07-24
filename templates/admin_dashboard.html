@@ -5,6 +5,39 @@
 
 {% block body %}
 
+<style>
+    .card{
+        transition: 0.5s all ease-in-out;
+    }
+    .card:hover{
+        transform: scale(1.03);
+        cursor: pointer;
+    }
+
+    .progress {
+	background-color: #d8d8d8;
+	border-radius: 20px;
+	position: relative;
+	margin: 10px 0;
+	height: 20px;
+	width: 300px;
+    }
+
+    .progress-done {
+        background: linear-gradient(to left, #F2709C, #FF9472);
+        box-shadow: 0 3px 3px -5px #F2709C, 0 2px 5px #F2709C;
+        border-radius: 20px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 0;
+        opacity: 0;
+        transition: 1s ease 0.3s;
+    }
+</style>
+
 
 
 <div class="container-fluid"  style="background-color: rgb(237 245 250);">
@@ -193,16 +226,16 @@
       
               <div class="col-lg-8 mb-3" >
                   <div class="content p-2 shadow" style="background-color: #fff; border-radius: 6px; height: 100%; width: 100%;">
-                      <h4 class="fareen pt-2 mb-2">UPCOMING MEETINGS <span><i class="fa-solid fa-users fa-sm" style="color: #092635;"></i></span></h4>
+                      <h5 class="fareen pt-2 mb-2" style="text-decoration-color: #FC466B; text-decoration: underline;">UPCOMING MEETINGS <span><i class="fa-solid fa-users fa-sm" style="color: #092635;"></i></span></h5>
                       <div class="table-responsive">
                           <table class="table align-middle w-100" style="padding-bottom: 0px !important; margin-bottom: 0px !important;">
                               <thead>
                                   <tr>
                                       <th></th>
-                                      <th class="view-label text-muted" style="z-index: 0;">Meeting Type</th>
-                                      <th class="view-label text-muted" style="z-index: 0;">Meeting Place</th>
-                                      <th class="view-label text-muted" style="z-index: 0;">Meeting Time</th>
-                                      <th class="view-label text-muted" style="z-index: 0;">Meeting Date</th>
+                                      <th class="view-label text-muted" style="z-index: 0;">Type</th>
+                                      <th class="view-label text-muted" style="z-index: 0;">Place</th>
+                                      <th class="view-label text-muted" style="z-index: 0;">Time</th>
+                                      <th class="view-label text-muted" style="z-index: 0;">Date</th>
                                       <th class="view-label text-muted" style="z-index: 0;">Suggestions</th>
                                   </tr>
                               </thead>
@@ -226,7 +259,7 @@
                                               <span class="ps-1 pe-1" style="background-color: #a5a5a4; color: #fff; border-radius: 5px;">January</span>
                                           </div>
                                       </td>
-                                      <td><button class="btn btn-success">View</button></td>
+                                      <td class="text-center"><a class="btn btn-primary p-1 ps-2 pe-2" href="{% url 'meetings' %}">View</a></td>
                                   </tr>
       
                                   <tr>
@@ -248,7 +281,7 @@
                                               <span class="ps-1 pe-1" style="background-color: #a5a5a4; color: #fff; border-radius: 5px;">April</span>
                                           </div>
                                       </td>
-                                      <td><button class="btn btn-success">View</button></td>
+                                      <td class="text-center"><a class="btn btn-primary p-1 ps-2 pe-2" href="{% url 'meetings' %}">View</a></td>
                                   </tr>
       
                                   <tr>
@@ -270,7 +303,7 @@
                                               <span class="ps-1 pe-1" style="background-color: #a5a5a4; color: #fff; border-radius: 5px;">July</span>
                                           </div>
                                       </td>
-                                      <td><button class="btn btn-success">View</button></td>
+                                      <td class="text-center"><a class="btn btn-primary p-1 ps-2 pe-2" href="{% url 'meetings' %}">View</a></td>
                                   </tr>
                               </tbody>
                           </table>
@@ -280,7 +313,7 @@
       
               <div class="col-lg-4 mb-3 ">
                   <div class="shadow p-2" style="width: 100%; height: 100%; position: relative; background-color: #fff; border-radius: 6px;">
-                  <canvas id="myChart" style="height: 100%; width: 100%;"></canvas>
+                    <canvas id="myChart" style="height: 100%; width: 100%;"></canvas>
                   </div>
               </div>
       
@@ -291,10 +324,10 @@
           <div class="row mb-3">
               <div class="col-lg-6 mb-3 " id="app" >
                   <div class="content shadow p-2" style="background-color: #fff; border-radius: 6px;">
-                      <h4 class="fareen pt-2 mb-2">Polls <span><i class="fa-solid fa-chart-simple fa-sm" style="color: #092635;"></i></span></h4>
+                      <h5 class="fareen pt-2 mb-2" style="text-decoration-color: #FC466B; text-decoration: underline;">POLLS <span><i class="fa-solid fa-chart-simple fa-sm" style="color: #092635;"></i></span></h5>
                       <div class="progress-container mb-3" >
                           {% verbatim %}
-                          <h5 class="text-muted pt-3 fareen">{{ displayText }}<span class="view-label" v-if="!showFullText" @click="showFullText = true" style="color: #2b96f1; text-decoration: underline; cursor: pointer;">Read More</span><span class="view-label" v-else @click="showFullText = false" style="color: #2b96f1; text-decoration: underline; cursor: pointer;">Read Less</span></h5>
+                          <p class="text-muted pt-3 fareen">{{ displayText }}<span class="view-label" v-if="!showFullText" @click="showFullText = true" style="color: #2b96f1; text-decoration: underline; cursor: pointer;">Read More</span><span class="view-label" v-else @click="showFullText = false" style="color: #2b96f1; text-decoration: underline; cursor: pointer;">Read Less</span></p>
                           <div class="progress w-100 mb-3">
                               <div class="progress-done" data-done="70">
                                   70%
@@ -304,7 +337,7 @@
                       </div>
       
                       <div class="progress-container mb-3">
-                          <h5 class="text-muted fareen">Would you support the installation of CCTV cameras for enhanced security?</h5>
+                          <p class="text-muted fareen">Would you support the installation of CCTV cameras for enhanced security?</p>
                           <div class="progress w-100 mb-3">
                               <div class="progress-done" data-done="38">
                                   38%
@@ -313,7 +346,7 @@
                       </div>
       
                       <div class="progress-container mb-3">
-                          <h5 class="text-muted fareen">Should we enforce stricter parking regulations within the society premises?</h5>
+                          <p class="text-muted fareen">Should we enforce stricter parking regulations within the society premises?</p>
                           <div class="progress w-100 mb-3">
                               <div class="progress-done" data-done="56">
                                   56%
@@ -331,7 +364,7 @@
 
               <div class="col-lg-6 mb-3" >
                   <div class="content p-2 shadow" style="background-color: #fff; border-radius: 6px; height: 100%; width: 100%;">
-                      <h4 class="fareen pt-2 mb-3">NOTICE BOARD <span><i class="fa-solid fa-users fa-sm" style="color: #092635;"></i></span></h4>
+                      <h5 class="fareen pt-2 mb-3" style="text-decoration-color: #FC466B; text-decoration: underline;">NOTICE BOARD <span><i class="fa-solid fa-users fa-sm" style="color: #092635;"></i></span></h5>
                       <!-- <div class="table-responsive">
                           <table class="table align-middle w-100" style="padding-bottom: 0px !important; margin-bottom: 0px !important;">
                               <thead>
@@ -396,29 +429,37 @@
                           </table>
                       </div> -->
 
-                      <div class="mb-3 p-2" style="border-left: 4px solid #FF8008; box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgb(22 95 255 / 30%) 0px 8px 16px -8px; border-radius: 6px;">
-                          <p class="p-0 m-0 fareen fw-bold fs-5" >Book Club Meeting</p>
+                      <div class="mb-3 p-2 shadow" style="border-left: 4px solid #FF8008; border-radius: 5px;">
+                          <p class="p-0 m-0 fareen fw-bold" >Book Club Meeting</p>
                           <div style="display: flex; justify-content: space-between;">
                               <p class="m-0 p-0 ps-4 pe-1" style="font-size: 15px;">The next Book Club meeting will be held on 10th...</p>
                               <p class="m-0 p-0 ps-1 pe-1" style="border-radius: 5px; background-color: #a5a5a4; color: #fff; font-size: 13px;">14-June-2024</p>
                           </div>
                       </div>
 
-                      <div class="mb-3 p-2" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgb(22 95 255 / 30%) 0px 8px 16px -8px; border-radius: 6px;">
-                          <p class="p-0 m-0 fareen fw-bold fs-5" >Book Club Meeting</p>
+                      <div class="mb-3 p-2 shadow" style="border-left: 4px solid #3F5EFB; border-radius: 5px;">
+                          <p class="p-0 m-0 fareen fw-bold" >Book Club Meeting</p>
                           <div style="display: flex; justify-content: space-between;">
                               <p class="m-0 p-0 ps-4 pe-1" style="font-size: 15px;">The next Book Club meeting will be held on 10th...</p>
                               <p class="m-0 p-0 ps-1 pe-1" style="border-radius: 5px; background-color: #a5a5a4; color: #fff; font-size: 13px;">14-June-2024</p>
                           </div>
                       </div>
 
-                      <div class="mb-3 p-2" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgb(22 95 255 / 30%) 0px 8px 16px -8px; border-radius: 6px;">
-                          <p class="p-0 m-0 fareen fw-bold fs-5" >Book Club Meeting</p>
+                      <div class="mb-3 p-2 shadow" style="border-left: 4px solid #FC466B; border-radius: 5px;">
+                          <p class="p-0 m-0 fareen fw-bold" >Book Club Meeting</p>
                           <div style="display: flex; justify-content: space-between;">
                               <p class="m-0 p-0 ps-4 pe-1" style="font-size: 15px;">The next Book Club meeting will be held on 10th...</p>
                               <p class="m-0 p-0 ps-1 pe-1" style="border-radius: 5px; background-color: #a5a5a4; color: #fff; font-size: 13px;">14-June-2024</p>
                           </div>
                       </div>
+
+                      <div class="mb-3 p-2 shadow" style="border-left: 4px solid #108dc7; border-radius: 5px;">
+                        <p class="p-0 m-0 fareen fw-bold" >Book Club Meeting</p>
+                        <div style="display: flex; justify-content: space-between;">
+                            <p class="m-0 p-0 ps-4 pe-1" style="font-size: 15px;">The next Book Club meeting will be held on 10th...</p>
+                            <p class="m-0 p-0 ps-1 pe-1" style="border-radius: 5px; background-color: #a5a5a4; color: #fff; font-size: 13px;">14-June-2024</p>
+                        </div>
+                    </div>
 
                       
                   </div>
@@ -431,10 +472,203 @@
      
       
   </div>
+
+    
 </div>
+
+
+
 
 <script>
   let datatable_columns = {{ datatable_columns }};
 </script>
 
+<script>
+    const ctx = document.getElementById('myChart').getContext('2d');
+  
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+          label: '# of Votes',
+          data: [12, 19, 3, 5, 2, 3],
+          borderWidth: 1,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)', // Red
+            'rgba(54, 162, 235, 0.2)', // Blue
+            'rgba(255, 2016, 86, 0.2)', // Yellow
+            'rgba(75, 192, 192, 0.2)', // Green
+            'rgba(153, 102, 255, 0.2)', // Purple
+            'rgba(255, 159, 64, 0.2)' // Orange
+        ],
+        borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+        ]
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const progressBars = document.querySelectorAll('.progress-done');
+
+    progressBars.forEach(progress => {
+        setTimeout(() => {
+        progress.style.width = progress.getAttribute('data-done') + '%';
+        progress.style.opacity = 1;
+        }, 80); // Add a slight delay for better transition effect
+    });
+    });
+
+
+    new Vue({
+        el: '#app',
+        data: {
+            text: "Would you be interested in participating in a community garden project?",
+            showFullText: false
+        },
+        computed: {
+            displayText: function() {
+            return this.showFullText ? this.text : this.text.slice(0, Math.round(this.text.length * 0.4)) + "..."
+            }
+        }
+    });
+
+</script>
+
+<!-- <script>
+
+    let year = 1900;
+
+    console.log(year);
+
+    if(year%4 === 0 && year % 100 !== 0) {
+        alert('It is a Leap Year');
+    }
+    else if(year % 400 === 0 && year % 4 === 0) {
+        alert('Sameer It is a leap year');
+    }
+    
+    else {
+        alert('It is not a Leap Year');
+    }
+</script> -->
+<script>
+    let a = 60;
+    let b = 40;
+
+    // let c;
+    // c=a;
+    // a=b;
+    // b=c;
+
+    a,b == b,a;
+
+    console.log(a,b);
+
+    arr = [2,4,3,7,8,5,8];
+
+    let len = arr.length;
+    let num = -Infinity;
+    let num2 =-Infinity;
+
+    while(len--){
+        if(arr[len]>num) {
+            num = arr[len];
+        } else if(arr[len]> num2 && arr[len]<num) {
+            num2 = arr[len];
+        }
+    }
+    console.log('Sam',num, num2);
+
+    arr2 = arr.sort(myFunction);
+
+    function myFunction(a,b) {
+        return b-a;
+    }
+
+    console.log('Sameer',arr2);
+
+
+    // #swap these variable a = 40 b = 60
+
+
+    smarks = [['Harry', 37.21], ['Berry', 37.21], ['Tina', 37.2], ['Akriti', 41], ['Harsh', 39]];
+
+    let sLen = smarks.length;
+    // console.log(lowMark);
+
+    for (let i = 0; i < smarks.length; i++) {
+        if (Number(smarks[i][1])) {
+            console.log("dddooonnn",smarks[i][1]);
+        }
+    }
+
+    let lowMark = Infinity;
+
+    while (sLen--) {
+        // const element = array[i];
+        if (Number(smarks[sLen][sLen] < lowMark)) {
+            lowMark = Number(smarks[sLen][sLen]);
+        }
+    }
+
+    console.log('Giyaan', lowMark);
+
+    let smallest = smarks[0][1]; // Initialize with the first number in the array
+
+    // Loop through the arrays to find the smallest number
+    for (let i = 1; i < smarks.length; i++) {
+        if (smarks[i][1] < smallest) {
+            smallest = smarks[i][1];
+        }
+    }
+
+    console.log('The smallest number is:', smallest);
+
+    let smallestIndex = 0; // Initialize with the index of the first array
+
+    // smarks = [['Harry', 37.21], ['Berry', 37.21], ['Tina', 37.2], ['Akriti', 41], ['Harsh', 39]];
+
+    for (let i = 1; i < smarks.length; i++) {
+        if (smarks[i][1] < smarks[smallestIndex][1]) {
+            smallestIndex = i;
+        } else if ()
+    }
+
+    // Log the string value of the array with the smallest number
+    console.log('The string value of the array with the smallest number is:', smarks[smallestIndex][0]);
+
+
+
+
+    marks = [12,24,22,2,88];
+
+    let mLen = marks.length;
+    let lowestMark = Infinity;
+    let secondLowestMark = Infinity;
+
+    while(mLen--){
+        if(marks[mLen]<lowestMark) {
+            lowestMark = marks[mLen];
+        } else if(marks[mLen]<secondLowestMark && marks[mLen]>lowestMark) {
+            secondLowestMark = marks[mLen];
+        }
+    }
+    console.log("Ameer", lowestMark, secondLowestMark);
+    </script>
 {% endblock body %}

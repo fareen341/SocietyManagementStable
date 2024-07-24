@@ -10,11 +10,36 @@
         text-decoration: underline;
         padding-top: 30px;
     }
+    .hidden-table tbody{
+        /* display: none; */
+    }
+    .hidden{
+        display: none !important;
+    }
+    .custDate::placeholder {
+        color: #fff !important; /* Replace with your desired color */
+        opacity: 1; /* This is necessary in some browsers to ensure the color applies */
+        width: max-content !important;
+    }
+    .custDate {
+        width: 120px;
+        padding: 0px 16px;
+    }
+    .custFilter{
+        padding: 0px 18px;
+        width: max-content !important;
+    }
 </style>
 
 <div class="container">
     <div class="mt-3">
         <h3 class="text-center">Index</h3>
+        <!-- <div>
+            <label for="min-date">Min Date:</label>
+            <input type="text" id="min-date" class="date-picker">
+            <label for="max-date">Max Date:</label>
+            <input type="text" id="max-date" class="date-picker">
+        </div> -->
         <table id="generalLedgerVue" class="display table-sm dt-table order-column" style="width:100%">
             <thead>
                 <tr>
@@ -29,7 +54,7 @@
                 </tr>
             </thead>
             {% verbatim %}
-            <tbody>
+            <tbody class="hidden">
                 <tr v-for="(item, index) in generalLedger" :key="index">
                     <td v-for="(value, key) in item" :key="key">{{ value }}</td>
                 </tr>
@@ -69,11 +94,58 @@ var app = new Vue({
 </script>
 
 <script>
+
+
+
+
     $(document).ready(function() {
+
+        // Initialize date pickers
+    // $(".date-picker-min").datepicker({
+    //     dateFormat: "yy-mm-dd"
+    // });
+    // $(".date-picker-max").datepicker({
+    //     dateFormat: "yy-mm-dd"
+    // });
+
     $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
         $($.fn.dataTable.tables(true)).DataTable()
             .columns.adjust();
     });
+
+    $('#generalLedgerVue tbody').addClass('hidden');
+
+
+    
+
+    // Define a custom filter function
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+        var minDate = $('#min-date').datepicker("getDate");
+        var maxDate = $('#max-date').datepicker("getDate");
+        var date = new Date(data[0]); // Assuming date is in the first column
+
+        var selectedLedger = $('#fromLedgerFilter').val();
+        var ledger = data[1]; // Assuming ledger is in the second column
+
+        // if (selectedLedger !== "" && ledger !== selectedLedger) {
+        //     return false;
+        // }
+
+
+        if ((minDate == null && maxDate == null) ||
+            (minDate == null && date <= maxDate) ||
+            (minDate <= date && maxDate == null) ||
+            (minDate <= date && date <= maxDate)) {
+                if (selectedLedger === "All Ledgers" || selectedLedger === "" || ledger === selectedLedger) {
+                    return true;
+                }
+        }
+
+        return false;
+    });
+   
+    $('#generalLedgerVue tbody').removeClass('hidden');
+
 
     var table = $('#generalLedgerVue').DataTable({
          "dom": '<"dt-buttons"Br><"clear">ftipl',
@@ -85,10 +157,11 @@ var app = new Vue({
                      'colvisRestore'
                  ]
              },
-             {
-                 extend: 'searchBuilder',
-                 text: 'Filter'
-             },
+            //  {
+            //      extend: 'searchBuilder',
+            //      text: 'Filter',
+                
+            //  },
              {
                  extend: 'print',
                  exportOptions: {
@@ -107,12 +180,12 @@ var app = new Vue({
          order: [],
          "stripeClasses": [],
          columnDefs: [
-             { "visible": true, "targets": datatable_columns },
-             { "visible": false, "targets": '_all' },
+            //  { "visible": true, "targets": datatable_columns },
+             { "visible": false, "targets": 1 },
          ],
-         fixedColumns: {
-             left: 2
-         },
+        //  fixedColumns: {
+        //      left: 2
+        //  },
          pagingType: "simple",
          paginate: {
              previous: "<",
@@ -122,12 +195,33 @@ var app = new Vue({
          scrollX: true
      });
 
-    var textBelowButtons = $('<div class="text-below-buttons pt-4 pb-0 view-label text-center"><h4 id="selectedValue">From Ledger</h4> <p></p></div>');
+     $('.dt-buttons').attr('id', 'customButtons');
+
+
+    var textBelowButtons = $('<div class="text-below-buttons pt-4 pb-0 view-label text-center"><h4 id="selectedLedger">From Ledger</h4> <p></p></div>');
     $('#generalLedgerVue_filter').after(textBelowButtons);
-    $(document).on('change', '.dtsb-select', function() {
-        var selectedValue = $(this).val();
-        $('#selectedValue').text(selectedValue);
+
+    $(document).on('change', '#fromLedgerFilter', function() {
+        var selectedLedger = $(this).val();
+        $('#selectedLedger').text(selectedLedger);
+
     });
+
+    $(document).on('change', '.dtsb-condition', function() {
+        $('#generalLedgerVue tbody').removeClass('hidden');
+    });
+
+    let ledgerFilter = $(
+        '<select class="dt-button form-control custFilter" id="fromLedgerFilter"><option value="Select Ledgers">Select Ledgers</option><option value="All Ledgers">All Ledgers</option><option value="Capital">Capital</option><option value="Cash">Cash</option><option value="Salary">Salary</option><option value="Dena Bank">Dena Bank</option><option value="Kiran">Kiran</option></select>')
+        .on('change', function () {
+            table.draw();
+        });
+
+    $('#customButtons').append(ledgerFilter);
+
+    //Date input Code
+    let customDate = $('<input type="text" id="min-date" class="date-picker custDate dt-button" placeholder="Select From Date"> <input type="text" id="max-date" class="date-picker custDate dt-button" placeholder="Select To Date">');
+    $('#customButtons').append(customDate);
 
     var initialSelectedValue = $('.dtsb-select').val();
     $('#selectedValue').text(initialSelectedValue);
@@ -148,6 +242,20 @@ var app = new Vue({
             'margin-right': 'auto'
         });
     });
+
+
+     // Initialize date pickers
+     $(".date-picker").datepicker({
+        dateFormat: "yy-mm-dd",
+        onSelect: function () {
+            table.draw();
+        }
+    });
+
+    
+
+
+    table.draw()
 });
 </script>
 {% endblock body %}

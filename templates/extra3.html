@@ -1,338 +1,546 @@
-<!DOCTYPE html>
-<html>
-  <head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+{% extends 'base.html' %}
+{% load static %}
 
-    <style>
-      @import url(https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700);
-/* written by riliwan balogun https://www.facebook.com/riliwan.rabo*/
-.board{
-    width: 75%;
-margin: 60px auto;
-height: 500px;
-background: #fff;
-/*box-shadow: 10px 10px #ccc,-10px 20px #ddd;*/
-}
-.board .nav-tabs {
-    position: relative;
-    /* border-bottom: 0; */
-    /* width: 80%; */
-    margin: 40px auto;
-    margin-bottom: 0;
-    box-sizing: border-box;
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
 
-}
-
-.board > div.board-inner{
-    background: #fafafa url(https://subtlepatterns.com/patterns/geometry2.png);
-    background-size: 30%;
-}
-
-p.narrow{
-    width: 60%;
-    margin: 10px auto;
-}
-
-.liner{
-    height: 2px;
-    background: #ddd;
-    position: absolute;
-    width: 80%;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-    top: 50%;
-    z-index: 1;
-}
-
-.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-    color: #555555;
-    cursor: default;
-    /* background-color: #ffffff; */
-    border: 0;
-    border-bottom-color: transparent;
-}
-
-span.round-tabs{
-    width: 70px;
-    height: 70px;
-    line-height: 70px;
-    display: inline-block;
-    border-radius: 100px;
-    background: white;
-    z-index: 2;
-    position: absolute;
-    left: 0;
-    text-align: center;
-    font-size: 25px;
-}
-
-span.round-tabs.one{
-    color: rgb(34, 194, 34);border: 2px solid rgb(34, 194, 34);
-}
-
-li.active span.round-tabs.one{
-    background: #fff !important;
-    border: 2px solid #ddd;
-    color: rgb(34, 194, 34);
-}
-
-span.round-tabs.two{
-    color: #febe29;border: 2px solid #febe29;
-}
-
-li.active span.round-tabs.two{
-    background: #fff !important;
-    border: 2px solid #ddd;
-    color: #febe29;
-}
-
-span.round-tabs.three{
-    color: #3e5e9a;border: 2px solid #3e5e9a;
-}
-
-li.active span.round-tabs.three{
-    background: #fff !important;
-    border: 2px solid #ddd;
-    color: #3e5e9a;
-}
-
-span.round-tabs.four{
-    color: #f1685e;border: 2px solid #f1685e;
-}
-
-li.active span.round-tabs.four{
-    background: #fff !important;
-    border: 2px solid #ddd;
-    color: #f1685e;
-}
-
-span.round-tabs.five{
-    color: #999;border: 2px solid #999;
-}
-
-li.active span.round-tabs.five{
-    background: #fff !important;
-    border: 2px solid #ddd;
-    color: #999;
-}
-
-.nav-tabs > li.active > a span.round-tabs{
-    background: #fafafa;
-}
-.nav-tabs > li {
-    width: 20%;
-}
-/*li.active:before {
-    content: " ";
-    position: absolute;
-    left: 45%;
-    opacity:0;
-    margin: 0 auto;
-    bottom: -2px;
-    border: 10px solid transparent;
-    border-bottom-color: #fff;
-    z-index: 1;
-    transition:0.2s ease-in-out;
-}*/
-.nav-tabs > li:after {
-    content: " ";
-    position: absolute;
-    left: 45%;
-   opacity:0;
-    margin: 0 auto;
-    bottom: 0px;
-    border: 5px solid transparent;
-    border-bottom-color: #ddd;
-    transition:0.1s ease-in-out;
-
-}
-.nav-tabs > li.active:after {
-    content: " ";
-    position: absolute;
-    left: 45%;
-   opacity:1;
-    margin: 0 auto;
-    bottom: 0px;
-    border: 10px solid transparent;
-    border-bottom-color: #ddd;
-
-}
-.nav-tabs > li a{
-   width: 70px;
-   height: 70px;
-   margin: 20px auto;
-   border-radius: 100%;
-   padding: 0;
-}
-
-.nav-tabs > li a:hover{
-    background: transparent;
-}
-
-.tab-content{
-}
-.tab-pane{
-   position: relative;
-padding-top: 50px;
-}
-.tab-content .head{
-    font-family: 'Roboto Condensed', sans-serif;
-    font-size: 25px;
-    text-transform: uppercase;
-    padding-bottom: 10px;
-}
-.btn-outline-rounded{
-    padding: 10px 40px;
-    margin: 20px 0;
-    border: 2px solid transparent;
-    border-radius: 25px;
-}
-
-.btn.green{
-    background-color:#5cb85c;
-    /*border: 2px solid #5cb85c;*/
-    color: #ffffff;
-}
+{% block body %}
 
 
-
-@media( max-width : 585px ){
-
-    .board {
-width: 90%;
-height:auto !important;
-}
-    span.round-tabs {
-        font-size:16px;
-width: 50px;
-height: 50px;
-line-height: 50px;
-    }
-    .tab-content .head{
-        font-size:20px;
+<!-- <div class="container">
+  <div class=" mt-4">
+    {% verbatim %}
+    
+    <div id="appps" class="container">
+      <table id="pracTable" class="display dt-table table-sm table-bordered order-column" style="width:100%">
+          <thead>
+              <tr>
+                  <th>Flat No.</th>
+                  <th>Area</th>
+                  <th v-for="(column, index) in dynamicColumns" :key="index">
+                      <span v-if="column === '+'">
+                          <button @click="showModal(index)" type="button" class="btn btn-primary">+</button>
+                      </span>
+                      <span v-else>{{ column }}</span>
+                  </th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr v-for="row in rows" :key="row.id">
+                  <td>{{ row.flat_no }}</td>
+                  <td>{{ row.area }}</td>
+                  <td v-for="(column, index) in dynamicColumns" :key="index">
+                      <span v-if="index > 1">{{ getCellValue(row, column) }}</span>
+                      <span><input type="text" class="form-control" name="" id=""></span>
+                  </td>
+              </tr>
+          </tbody>
+      </table>
+  
+      
+      <div class="modal fade" id="dropdownModal" tabindex="-1" role="dialog" aria-labelledby="dropdownModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="dropdownModalLabel">Select Ledger</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <select @change="addColumn($event, dropdownIndex)" class="form-control">
+                          <option value="">Select Ledger</option>
+                          <option v-for="ledger in availableLedgers" :value="ledger.ledger_name">{{ ledger.ledger_name }}</option>
+                      </select>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    
+    </div>
+    </div>
+  {% endverbatim %} -->
+  
+  <style>
+    body {
+            font-family: Arial, sans-serif;
+            /* background-color: #000; */
+            /* color: #fff; */
         }
-    .nav-tabs > li a {
-width: 50px;
-height: 50px;
-line-height:50px;
-}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #333;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            /* background-color: #333; */
+            margin: 5% auto;
+            padding: 20px;
+            /* border: 1px solid #888; */
+            /* width: 80%; */
+        }
+        /* .close {
+            color: #aaa;
+            display: flex;
+            margin-left: auto !important;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover, .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        } */
+        /* button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            }
+            button:hover {
+            background-color: #666;
+            } */
+  </style>
+  
+<div class="container-fluid p-3" style="display: flex; flex-direction: column;">
+    <div class="btn-grp m-2 mt-3">
+        <button id="addfixedLedger" class="btn view-inps btn-primary" style="color: #fff !important;">Add Fixed Ledger</button>
+        <button id="addvariableLedger" class="btn view-inps btn-primary" style="color: #fff !important;">Add Variable Ledger</button>
+    </div>
+    <div class="table-responsive">
+    
 
-.nav-tabs > li.active:after {
-content: " ";
-position: absolute;
-left: 35%;
-}
+    <table class="table table-bordered text-center table-sm">
+        <thead id="table-head" class="table-dark text-center">
+            <!-- Headers will be inserted here by JavaScript -->
+             
+        </thead>
+        <tbody id="table-body">
+            <!-- Body will be inserted here by JavaScript -->
+        </tbody>
+    </table>
 
-.btn-outline-rounded {
-    padding:12px 20px;
+    <!-- The Modal -->
+    <div id="modal" class="modal mt-5" style="z-index: 1000;">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <!-- <span class="close">&times;</span> -->
+                <h3 class="fareen">Select Ledger</h3>
+                <select id="itemSelect" class="form-select mt-3">
+                    <!-- Options will be inserted here by JavaScript -->
+                </select>
+                <br><hr>
+                <div class="btn-grp ms-auto">
+                    <button class="close btn btn-secondary">Close</button>
+                    <button id="modalSave" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container-fluid" style="background-image: url(../templates/Skype_Picture_2024_07_19T11_25_07_385Z.jpeg);">
+
+    </div>
+    
+
+    <script>
+        const fixedLedger = ['Sinking Fund', 'Water Charges', 'Parking Charges'];
+        const defaultfixedLedger = [fixedLedger[0]];
+        const variableLedger = ['AMC Charges', 'Voltas', 'Computers'];
+        const defaultvariableLedger = [variableLedger[0]];
+
+        const flats = [
+            {'id': 1, 'wing-flat-name': 'A-Wing-1', 'name': 'Sameer', 'area': '783 sqft'},
+            {'id': 2, 'wing-flat-name': 'D-Wing-4', 'name': 'Fareen', 'area': '435 sqft'},
+            {'id': 3, 'wing-flat-name': 'B-Wing-8', 'name': 'Abhiraj', 'area': '528 sqft'},
+            {'id': 4, 'wing-flat-name': 'C-Wing-7', 'name': 'Atul', 'area': '692 sqft'}
+        ];
+        let selectedfixedLedger = [...defaultfixedLedger];
+        let selectedvariableLedger = [...defaultvariableLedger];
+
+        // Store previous input values before updating
+        let previousValues = {};
+
+        const tableHead = document.getElementById('table-head');
+        const tableBody = document.getElementById('table-body');
+        const modal = document.getElementById('modal');
+        const closeModal = document.getElementsByClassName('close')[0];
+        const itemSelect = document.getElementById('itemSelect');
+        const modalSave = document.getElementById('modalSave');
+        let currentCategory;
+
+        document.getElementById('addfixedLedger').onclick = function() {
+            currentCategory = 'fixedLedger';
+            showModal(fixedLedger);
+        };
+
+        document.getElementById('addvariableLedger').onclick = function() {
+            currentCategory = 'variableLedger';
+            showModal(variableLedger);
+        };
+
+        closeModal.onclick = function() {
+            modal.style.display = 'none';
+        };
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+        modalSave.onclick = function() {
+            const selectedItem = itemSelect.value;
+            if (currentCategory === 'fixedLedger') {
+                selectedfixedLedger = [...new Set([...selectedfixedLedger, selectedItem])];
+            } else if (currentCategory === 'variableLedger') {
+                selectedvariableLedger = [...new Set([...selectedvariableLedger, selectedItem])];
+            }
+            updateTable();
+            modal.style.display = 'none';
+        };
+
+        function showModal(items) {
+            itemSelect.innerHTML = '';
+            items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                itemSelect.appendChild(option);
+            });
+            modal.style.display = 'block';
+        }
+
+        function savePreviousValues() {
+            previousValues = {};
+            tableBody.querySelectorAll('tr').forEach((row, rowIndex) => {
+                if (rowIndex > 0) { // Skip header rows
+                    const inputs = row.querySelectorAll('input[type="number"]');
+                    previousValues[rowIndex] = [];
+                    inputs.forEach((input, colIndex) => {
+                        previousValues[rowIndex][colIndex] = input.value;
+                    });
+                }
+            });
+        }
+
+        function restorePreviousValues() {
+            tableBody.querySelectorAll('tr').forEach((row, rowIndex) => {
+                if (rowIndex > 0 && previousValues[rowIndex]) { // Skip header rows
+                    const inputs = row.querySelectorAll('input[type="number"]');
+                    inputs.forEach((input, colIndex) => {
+                        input.value = previousValues[rowIndex][colIndex] || '';
+                    });
+                }
+            });
+        }
+
+        function updateTableHeaders() {
+            tableHead.innerHTML = '';
+            const firstRow = document.createElement('tr');
+            const flatsTh = document.createElement('th');
+            flatsTh.rowSpan = 2;
+            flatsTh.textContent = 'Flats';
+            const namesTh = document.createElement('th');
+            namesTh.rowSpan = 2;
+            namesTh.textContent = 'Owners Name';
+            const areaTh = document.createElement('th');
+            areaTh.rowSpan = 2;
+            areaTh.textContent = 'Unit Area';
+            const fixedLedgerTh = document.createElement('th');
+            fixedLedgerTh.className = 'text-center';
+            fixedLedgerTh.colSpan = selectedfixedLedger.length;
+            fixedLedgerTh.textContent = 'Fixed Charges';
+            const variableLedgerTh = document.createElement('th');
+            variableLedgerTh.className = 'text-center';
+            variableLedgerTh.colSpan = selectedvariableLedger.length;
+            variableLedgerTh.textContent = 'Variable Charges';
+            const totalTh = document.createElement('th');
+            totalTh.rowSpan = 2;
+            totalTh.textContent = 'Total';
+            const openingTh = document.createElement('th');
+            openingTh.rowSpan = 2;
+            openingTh.textContent = 'Opening';
+            const interestTh = document.createElement('th');
+            interestTh.rowSpan = 2;
+            interestTh.textContent = 'Interest';
+            const closingTh = document.createElement('th');
+            closingTh.rowSpan = 2;
+            closingTh.textContent = 'Closing';
+            firstRow.appendChild(flatsTh);
+            firstRow.appendChild(namesTh);
+            firstRow.appendChild(areaTh);
+            firstRow.appendChild(fixedLedgerTh);
+            firstRow.appendChild(variableLedgerTh);
+            firstRow.appendChild(totalTh);
+            firstRow.appendChild(openingTh);
+            firstRow.appendChild(interestTh);
+            firstRow.appendChild(closingTh);
+            tableHead.appendChild(firstRow);
+
+            const secondRow = document.createElement('tr');
+            selectedfixedLedger.forEach(item => {
+                const th = document.createElement('th');
+                th.textContent = item;
+                secondRow.appendChild(th);
+            });
+            selectedvariableLedger.forEach(item => {
+                const th = document.createElement('th');
+                th.textContent = item;
+                secondRow.appendChild(th);
+            });
+            tableHead.appendChild(secondRow);
+        }
+
+        function updateTableBody() {
+            savePreviousValues();
+            tableBody.innerHTML = '';
+            flats.forEach(flat => {
+                const row = document.createElement('tr');
+                const flatTd = document.createElement('td');
+                flatTd.textContent = flat['wing-flat-name'];
+                const nameTd = document.createElement('td');
+                nameTd.textContent = flat['name'];
+                const areaTd = document.createElement('td');
+                areaTd.textContent = flat['area'];
+                row.appendChild(flatTd);
+                row.appendChild(nameTd);
+                row.appendChild(areaTd);
+                // Add input elements for the selected fixedLedger and variableLedger columns
+                selectedfixedLedger.forEach(() => {
+                    const inputTd = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.oninput = function() { updateTotal(row); };
+                    inputTd.appendChild(input);
+                    row.appendChild(inputTd);
+                });
+                selectedvariableLedger.forEach(() => {
+                    const inputTd = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.oninput = function() { updateTotal(row); };
+                    inputTd.appendChild(input);
+                    row.appendChild(inputTd);
+                });
+                const totalTd = document.createElement('td');
+                totalTd.className = 'total';
+                totalTd.textContent = '';
+                const openingTd = document.createElement('td');
+                openingTd.textContent = '';
+                const interestTd = document.createElement('td');
+                interestTd.textContent = '';
+                const closingTd = document.createElement('td');
+                closingTd.textContent = '';
+                row.appendChild(totalTd);
+                row.appendChild(openingTd);
+                row.appendChild(interestTd);
+                row.appendChild(closingTd);
+                tableBody.appendChild(row);
+            });
+            restorePreviousValues();
+        }
+
+        function updateTotal(row) {
+            let total = 0;
+            const inputs = row.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
+                total += Number(input.value) || 0;
+            });
+            row.querySelector('.total').textContent = total;
+        }
+
+        function updateTable() {
+            updateTableHeaders();
+            updateTableBody();
+        }
+
+        // Initial call to set table with default values
+        updateTable();
+
+    </script>
+
+    </div>
+</div>
+
+  <!-- <script>
+    $(document).ready(function () {
+    var table = $('#pracTable').DataTable({
+        "dom": '<"dt-buttons"Br><"clear">ftipl',
+        buttons: [
+            {
+                extend: 'colvis',
+                text: 'More Column',
+                postfixButtons: [
+                    'colvisRestore'
+                ]
+            },
+            {
+                extend: 'searchBuilder',
+                text: 'Filter'
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                    modifier: { search: 'applied', order: 'applied' },
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print All',
+                exportOptions: {
+                    columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                }
+            },
+        ],
+        order: [],
+        "stripeClasses": [],
+        pagingType: "simple",
+        paginate: {
+            previous: "<",
+            next: ">"
+        },
+        scrollCollapse: false,
+        responsive: true,
+        scrollX: true
+    });
+
+    $('#pracTable_info').css({
+        'text-align': 'center',
+        'position': 'relative',
+        'left': '40%',
+        'padding-top': '20px',
+        'display': 'block'
+    });
+
+    // Adjust the info text position when the table is redrawn
+    table.on('draw.dt', function () {
+        $('#pracTable_info').css({
+            'text-align': 'center',
+            'margin-left': 'auto',
+            'margin-right': 'auto'
+        });
+    });
+
+    // Adjust column sizes for all tables after initialization with a slight delay
+    setTimeout(function() {
+        $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+    }, 3000); // Adjust the delay as needed
+});
+
+// Ensure columns adjust after the window has fully loaded
+$(window).on('load', function() {
+    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+});
+
+new Vue({
+    el: '#appps',
+    data: {
+        rows: [
+            { id: 1, flat_no: '101', area: '720', columns: [] },
+            {id:2, flat_no: '102', area: '550', columns: [] }
+            // Additional rows as needed
+        ],
+        ledgers: [],
+        dynamicColumns: ['+'],
+        dropdownIndex: null
+    },
+    mounted() {
+        this.fetchLedgers();
+        this.initializeDataTable();
+    },
+    computed: {
+        availableLedgers() {
+            return this.ledgers.filter(ledger => !this.dynamicColumns.includes(ledger.ledger_name));
+        }
+    },
+    methods: {
+        fetchLedgers() {
+            axios.get('http://127.0.0.1:8000/api/ledger_creation/')
+                .then(response => {
+                    this.ledgers = response.data;
+                });
+        },
+        showModal(index) {
+            this.dropdownIndex = index;
+            $('#dropdownModal').modal('show');
+        },
+        addColumn(event, index) {
+            const ledger = event.target.value;
+            if (ledger && !this.dynamicColumns.includes(ledger)) {
+                this.$set(this.dynamicColumns, index, ledger);
+                if (!this.dynamicColumns.includes('+')) {
+                    this.dynamicColumns.push('+');
+                }
+
+                // Update each row's columns array to match the new number of dynamic columns
+                this.rows.forEach(row => {
+                    if (!row.columns) { row.columns = [];}
+                    while (row.columns.length < this.dynamicColumns.length - 1) {
+                        row.columns.push('');
+                    }
+                });
+
+                // Reinitialize DataTable after updating the table structure
+                this.reinitializeDataTable();
+                $('#dropdownModal').modal('hide');
+            } else {
+                alert('This ledger has already been selected.');
+            }
+        },
+        getCellValue(row, column) {
+            const index = this.dynamicColumns.indexOf(column) - 1;
+            return row.columns[index] || '';
+        },
+        initializeDataTable() {
+            this.$nextTick(() => {
+                $('#pracTable').DataTable({
+                    scrollX: true,
+                    autoWidth: true
+                });
+            });
+        },
+        reinitializeDataTable() {
+            this.$nextTick(() => {
+                const table = $('#pracTable').DataTable();
+                // table.destroy();
+            });
+            this.$nextTick(() => {
+                $('#pracTable').DataTable({
+                    scrollX: true,
+                    autoWidth: true // Ensure the table is auto width
+                });
+            });
+        }
     }
-}
-
-    </style>
-  </head>
-<body>
-
-  <section style="background:#efefe9;">
-    <div class="container">
-        <div class="row">
-            <div class="board">
-                <!-- <h2>Welcome to IGHALO!<sup>™</sup></h2>-->
-                <div class="board-inner">
-                <ul class="nav nav-tabs" id="myTab">
-                <div class="liner"></div>
-                 <li class="active">
-                 <a href="#home" data-toggle="tab" title="welcome">
-                  <span class="round-tabs one">
-                          <i class="glyphicon glyphicon-home"></i>
-                  </span>
-              </a></li>
-
-              <li><a href="#profile" data-toggle="tab" title="profile">
-                 <span class="round-tabs two">
-                     <i class="glyphicon glyphicon-user"></i>
-                 </span>
-       </a>
-             </li>
-             <li><a href="#messages" data-toggle="tab" title="bootsnipp goodies">
-                 <span class="round-tabs three">
-                      <i class="glyphicon glyphicon-gift"></i>
-                 </span> </a>
-                 </li>
-
-                 <li><a href="#settings" data-toggle="tab" title="blah blah">
-                     <span class="round-tabs four">
-                          <i class="glyphicon glyphicon-comment"></i>
-                     </span>
-                 </a></li>
-
-                 <li><a href="#doner" data-toggle="tab" title="completed">
-                     <span class="round-tabs five">
-                          <i class="glyphicon glyphicon-ok"></i>
-                     </span> </a>
-                 </li>
-
-                 </ul></div>
-
-                 <div class="tab-content">
-                  <div class="tab-pane fade in active" id="home">
-
-                      <h3 class="head text-center">Welcome to Bootsnipp<sup>™</sup> <span style="color:#f48260;">♥</span></h3>
-                      <p class="narrow text-center">
-                          Lorem ipsum dolor sit amet, his ea mollis fabellas principes. Quo mazim facilis tincidunt ut, utinam saperet facilisi an vim.
-                      </p>
-
-                      <p class="text-center">
-                <a href="" class="btn btn-success btn-outline-rounded green"> start using bootsnipp <span style="margin-left:10px;" class="glyphicon glyphicon-send"></span></a>
-            </p>
-                  </div>
-                  <div class="tab-pane fade" id="profile">
-                      <h3 class="head text-center">Create a Bootsnipp<sup>™</sup> Profile</h3>
-                      <p class="narrow text-center">
-                          Lorem ipsum dolor sit amet, his ea mollis fabellas principes. Quo mazim facilis tincidunt ut, utinam saperet facilisi an vim.
-                      </p>
-
-                      <p class="text-center">
-                <a href="" class="btn btn-success btn-outline-rounded green"> create your profile <span style="margin-left:10px;" class="glyphicon glyphicon-send"></span></a>
-            </p>
-
-                  </div>
-                  <div class="tab-pane fade" id="messages">
-                      <h3 class="head text-center">Bootsnipp goodies</h3>
-                      <p class="narrow text-center">
-                          Lorem ipsum dolor sit amet, his ea mollis fabellas principes. Quo mazim facilis tincidunt ut, utinam saperet facilisi an vim.
-                      </p>
-
-                      <p class="text-center">
-                <a href="" class="btn btn-success btn-outline-rounded green"> start using bootsnipp <span style="margin-left:10px;" class="glyphicon glyphicon-send"></span></a>
-            </p>
-                  </div>
-                  <div class="tab-pane fade" id="settings">
-                      <h3 class="head text-center">Drop comments!</h3>
-                      <p class="narrow text-center">
-                          Lorem ipsum dolor sit amet, his ea mollis fabellas principes. Quo mazim facilis tincidunt ut, utinam saperet facilisi an vim.
-                      </p>
-
-                      <p class="text-center">
-                <a href="" class="btn btn-success btn-outline-rounded green"> start using bootsnipp <span style="margin-left:10px;" class="glyphicon glyphicon-send"></span></a>
-            </p>
-                  </div>
-                  <div class="tab-pane fade" id="doner">
-<div class="text-center">
-<i class="img-intro icon-checkmark-circle"></i>
-</div>
-<h3 class="head text-center">thanks for staying tuned! <span style="color:#f48260;">♥</span> Bootstrap</h3>
-<p class="narrow text-center">
-Lorem ipsum dolor sit amet, his ea mollis fabellas principes. Quo mazim facilis tincidunt ut, utinam saperet facilisi an vim.
-</p>
-</div>
-<div class="clearfix"></div>
-</div>
-
-</div>
-</div>
-</div>
-</section>
-
-</body>
-</html>
+});
+    </script> -->
+{% endblock body %}
