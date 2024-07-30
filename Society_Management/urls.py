@@ -85,6 +85,7 @@ urlpatterns = [
     path('ledger-creation/', views.ledger_creation, name='ledger_creation'),
     path('group_data', views.get_group_datatable, name='group_data'),
     path('group_data/<int:id>/', views.get_group_datatable, name='group_data_retrive'),
+    # path('fareen/<int:id>/', views.fareen, name='fareen'),
     path('cost_center_data', views.get_cost_center_datatable, name='cost_center_data'),
     path('cost_center_data/<int:id>/', views.get_cost_center_datatable, name='cost_center_data_retrive'),
     path('voucher_creation', views.voucher_creation, name='voucher_creation'),
@@ -133,6 +134,8 @@ urlpatterns = [
     path('admin-dashboard/', views.dashboard_admin, name='admin_dashboard'),
     path('member-dashboard/', views.dashboard_member, name='member_dashboard'),
     path('visiting_cards/', views.visiting_cards, name='visiting_cards'),
+
+    path('api/balance_sheet', views.calling_balance_sheet, name='balance_sheet_api'),
 
 
 ]

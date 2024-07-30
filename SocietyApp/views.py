@@ -292,11 +292,10 @@ def unit_master(request):
 def ledger_creation(request):
     datatable_columns = [0, 2]
     # GROUPS LIST VIEW
-    under_grps = ["Assets", "Liabilities", "Income", "Expenses", "Bank"]
+    under_grps = ["Current Assest", "Liabilities", "Income", "Expenses", "Bank"]
     all_child_investments = {}
     for under_grp in under_grps:
         parent_investment = Childs.objects.get(name=under_grp)
-        # parent_investment = CostCenter.objects.get(name=under_grp)
         all_child_investments[under_grp] = get_all_child_investments(parent_investment)
 
     # COST CENTER LIST VIEW
@@ -334,6 +333,76 @@ def get_all_child_investments(parent, cost_center=False, balance_sheet=False):
     return all_childs
 
 
+
+def calling_balance_sheet(request):
+    filter_zero_param = request.GET.get('filter_zero', None)
+    from_date_param = request.GET.get('from_date', None)
+    to_date_param = request.GET.get('to_date', None)
+
+    assets_response = []
+    liabilities_response = []
+    groups = ['Assets', 'Liabilities']
+    for grp in groups:
+        function_call = balance_sheet_groups(Childs.objects.get(name=grp), filter_zero_param, from_date_param, to_date_param)
+        if grp == 'Assets':
+            assets_response.append(function_call)
+        else:
+            liabilities_response.append(function_call)
+
+    return JsonResponse({'assets_response': assets_response, 'libility_response': liabilities_response})
+
+
+def balance_sheet_groups(parent, filter_zero, from_date, to_date):
+    def traverse_children(investment):
+        Total = 0  # Initialize overall total
+
+        def helper(node):
+            nonlocal Total
+            ledgers_dict = {}
+            children_dict = {}
+            total_balance = 0
+
+            subquery = GeneralLedger.objects.filter(from_ledger__group_name=node.name).values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
+            gl_objs = GeneralLedger.objects.filter(id__in=Subquery(subquery))
+
+            if from_date and to_date:
+                gl_objs = gl_objs.filter(date__range=(from_date, to_date))
+            # elif from_date:
+            #     gl_objs = gl_objs.filter(date__gte=from_date)
+            # elif to_date:
+            #     gl_objs = gl_objs.filter(date__lte=to_date)
+
+            for gl_obj in gl_objs.values('from_ledger__ledger_name', 'balance'):
+                ledger_name = gl_obj['from_ledger__ledger_name']
+                balance = gl_obj['balance']
+                ledgers_dict[ledger_name] = balance
+                total_balance += balance
+
+            children = node.cost_center.all() if hasattr(node, 'cost_center') else node.children.all()
+
+            for child in children:
+                child_result, child_total = helper(child)
+                if filter_zero == 'all' or (filter_zero == 'zero' and child_total > 0):
+                    children_dict[child.name] = child_result
+                    total_balance += child_total
+
+            result_dict = {}
+            if ledgers_dict:
+                result_dict['ledgers'] = ledgers_dict
+            if children_dict:
+                result_dict.update(children_dict)
+            result_dict['final_total'] = total_balance
+
+            return result_dict, total_balance
+
+        final_result, Total = helper(investment)
+        final_result['Total'] = Total
+        return final_result
+
+    nested_dict = traverse_children(parent)
+    return nested_dict
+
+
 # UNIT TESTING VIEW
 def unit_test(request):
     datatable_columns = [0, 2, 3]
@@ -364,6 +433,9 @@ def get_group_datatable(request, id=None):
         data.append(group_data)
 
     return JsonResponse({'groups': data})
+
+
+from django.core.exceptions import ObjectDoesNotExist
 
 
 # FOR COST CENTER

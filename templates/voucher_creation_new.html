@@ -93,6 +93,87 @@
             </div>
         </div>
 
+        <!-- VIEW VOUCHER DATA(VVDPS) -->
+        <div class="modal fade" id="viewVoucherDataModalPS" tabindex="-1" aria-labelledby="viewVoucherDataModalPSLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="viewVoucherDataModalPSLabel">Voucher Details</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    {% verbatim %}
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <div class="row">
+                                <h3><u>Voucher Details</u></h3>
+                                <div class="col-lg-4">
+                                    <span><b>Vendor Name: </b></span><span>{{ showVoucherDetails.vendor_name }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Vendor Invoice Number: </b></span><span>{{ showVoucherDetails.vendor_invoice_number }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Voucher Type: </b></span><span>{{ showVoucherDetails.voucher_name }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Voucher Number: </b>{{ showVoucherDetails.voucher_number }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Booking Date: </b>{{ showVoucherDetails.booking_date }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Narration: </b>{{ showVoucherDetails.narration }}</span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span><b>Cheque No: </b>{{ showVoucherDetails.cheque_number }}</span>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Required for stock -->
+                            <div class="row text-center mx-5">
+                                <h3 class="mt-2"><u>Stock Details</u></h3>
+                                <table class="table table-sm table-bordered">
+                                    <thead class="table-dark">
+                                        <th style="text-align:center;">Stock</th>
+                                        <th style="text-align:center;">Quantity</th>
+                                        <th style="text-align:center;">Rate</th>
+                                        <th style="text-align:center;">Amount</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, index) in showStocks" :key="index">
+                                            <td class="text-center">
+                                                {{ item.stock_name }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.quantity }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.rate }}
+                                            </td>
+                                            <td class="text-center">
+                                                {{ item.amount }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th id="total" colspan="2" class="text-center">Total :</th>
+                                            <td style="text-align: center">Total Amount: <span class="ms-3">{{ showVoucherDetails.total_purchases }}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endverbatim %}
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- VIEW VOUCHER DATA(VVD) -->
         <div class="modal fade" id="viewVoucherDataModal" tabindex="-1" aria-labelledby="viewVoucherDataModalLabel" aria-hidden="true" data-bs-backdrop="static">
             <div class="modal-dialog modal-xl">
@@ -126,32 +207,6 @@
                                 </div>
                             </div>
 
-                            <!-- Required for stock -->
-                            <!-- <div class="row">
-                                <h3><u>Voucher Details</u></h3>
-                                <div class="col-lg-4">
-                                    <span><b>Vendor Name: </b></span><span>{{ showVoucherDetails.vendor_name }}</span>
-                                </div>
-                                <div class="col-lg-4">
-                                    <span><b>Vendor Invoice Number: </b></span><span>{{ showVoucherDetails.vendor_invoice_number }}</span>
-                                </div>
-                                <div class="col-lg-4">
-                                    <span><b>Voucher Type: </b></span><span>{{ showVoucherDetails.voucher_name }}</span>
-                                </div>
-                                <div class="col-lg-4">
-                                    <span><b>Voucher Number: </b>{{ showVoucherDetails.voucher_number }}</span>
-                                </div>
-                                <div class="col-lg-4">
-                                    <span><b>Booking Date: </b>{{ showVoucherDetails.booking_date }}</span>
-                                </div>
-                                <div class="col-lg-4">
-                                    <span><b>Narration: </b>{{ showVoucherDetails.narration }}</span>
-                                </div>
-                                <div class="col-lg-4">
-                                    <span><b>Cheque No: </b>{{ showVoucherDetails.cheque_number }}</span>
-                                </div>
-                            </div> -->
-
                             <hr>
                             <div class="row text-center mx-5">
                                 <h3 class="mt-2"><u>Entry Details</u></h3>
@@ -178,7 +233,6 @@
                                             <td class="text-center">
                                                 {{ item.credit_amt }}
                                             </td>
-                                            <!-- <td vif="item.show_against_refrence.length !== 0"> -->
                                             <td v-if="Array.isArray(item.show_against_refrence) && item.show_against_refrence.length !== 0">
                                                 <table class="table table-sm table-bordered">
                                                     <thead class="table-dark">
@@ -206,39 +260,6 @@
                                     </tbody>
                                 </table>
                             </div>
-
-                            <!-- Required for stock -->
-                            <!-- <div class="row text-center mx-5">
-                                <h3 class="mt-2"><u>Stock Details</u></h3>
-                                <table class="table table-sm table-bordered">
-                                    <thead class="table-dark">
-                                        <th style="text-align:center;">Stock</th>
-                                        <th style="text-align:center;">Quantity</th>
-                                        <th style="text-align:center;">Rate</th>
-                                        <th style="text-align:center;">Amount</th>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="(item, index) in showStocks" :key="index">
-                                            <td class="text-center">
-                                                {{ item.stock_name }}
-                                            </td>
-                                            <td class="text-center">
-                                                {{ item.quantity }}
-                                            </td>
-                                            <td class="text-center">
-                                                {{ item.rate }}
-                                            </td>
-                                            <td class="text-center">
-                                                {{ item.amount }}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th id="total" colspan="2" class="text-center">Total :</th>
-                                            <td style="text-align: center">Total Amount: <span class="ms-3">{{ showVoucherDetails.total_purchases }}</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div> -->
 
                             <!-- <div class="row text-center mt-3 mx-3">
                                 <h3><u>Against Refrence Details</u></h3>
@@ -711,26 +732,20 @@
                         <tr>
                             <th>Actions</th>
                             <th>Id</th>
-                            <th>voucher_name</th>
-                            <th>voucher_type</th>
-                            <th>voucher_number</th>
-                            <th>booking_date</th>
-                            <th>amount_in_words</th>
-                            <th>narration</th>
-                            <th>cheque_number</th>
-                            <th>voucher_date</th>
-                            <th>bank_name</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
+                            <th>Voucher Type</th>
+                            <th>Voucher Name</th>
+                            <th>Voucher Number</th>
+                            <th>Booking Date</th>
+                            <th>Vendor Name</th>
+                            <th>Vendor Invoice No.</th>
+                            <th>Amount In Words</th>
+                            <th>Narration</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(item, index) in purchaseVoucherDatatable" :key="index">
                             <td>
-                                <span @click="viewRequestedData(item.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                <span @click="viewRequestedData(item.id, 'true')" class="me-3"><i class="fa-solid fa-eye"></i></span>
                                 <span @click="editRequestedData(item.id)"><i class="fa-solid fa-pen-to-square"></i></span>
                             </td>
                             <td v-for="(value, key) in item" :key="key">{{ value }}</td>
@@ -768,8 +783,8 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData2.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData2.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -959,28 +974,20 @@
                             <tr>
                                 <th>Actions</th>
                                 <th>Id</th>
-                                <th>voucher_name</th>
-                                <th>voucher_type</th>
-                                <th>voucher_number</th>
-                                <th>booking_date</th>
-                                <th>amount_in_words</th>
-                                <th>narration</th>
-                                <th>cheque_number</th>
-                                <th>voucher_date</th>
-                                <th>bank_name</th>
-                                <th>dummy</th>
-                                <th>dummy</th>
-                                <th>dummy</th>
-                                <th>dummy</th>
-                                <th>dummy</th>
-                                <th>dummy</th>
-                                <th>dummy</th>
+                                <th>Voucher Type</th>
+                                <th>Voucher Name</th>
+                                <th>Voucher Number</th>
+                                <th>Booking Date</th>
+                                <th>Vendor Name</th>
+                                <th>Vendor Invoice No.</th>
+                                <th>Amount In Words</th>
+                                <th>Narration</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(item, index) in salesVoucherDatatable" :key="index">
                                 <td>
-                                    <span @click="viewRequestedData(item.id)" class="me-3"><i class="fa-solid fa-eye"></i></span>
+                                    <span @click="viewRequestedData(item.id, 'true')" class="me-3"><i class="fa-solid fa-eye"></i></span>
                                     <span @click="editRequestedData(item.id)"><i class="fa-solid fa-pen-to-square"></i></span>
                                 </td>
                                 <td v-for="(value, key) in item" :key="key">{{ value }}</td>
@@ -1018,8 +1025,8 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData2.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData2.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1157,20 +1164,15 @@
                         <tr>
                             <th>Actions</th>
                             <th>Id</th>
-                            <th>voucher_name</th>
-                            <th>voucher_type</th>
-                            <th>voucher_number</th>
-                            <th>booking_date</th>
-                            <th>amount_in_words</th>
-                            <th>narration</th>
-                            <th>cheque_number</th>
-                            <th>voucher_date</th>
-                            <th>bank_name</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
+                            <th>Voucher Type</th>
+                            <th>Voucher Number</th>
+                            <th>Voucher Date</th>
+                            <th>Booking Date</th>
+                            <th>Amount In Words</th>
+                            <th>Narration</th>
+                            <th>Cheque No.</th>
+                            <th>Cheque Date</th>
+                            <!-- <th>Bank Name</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -1337,20 +1339,15 @@
                         <tr>
                             <th>Actions</th>
                             <th>Id</th>
-                            <th>voucher_name</th>
-                            <th>voucher_type</th>
-                            <th>voucher_number</th>
-                            <th>booking_date</th>
-                            <th>amount_in_words</th>
-                            <th>narration</th>
-                            <th>cheque_number</th>
-                            <th>voucher_date</th>
-                            <th>bank_name</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
+                            <th>Voucher Type</th>
+                            <th>Voucher Number</th>
+                            <th>Voucher Date</th>
+                            <th>Booking Date</th>
+                            <th>Amount In Words</th>
+                            <th>Narration</th>
+                            <th>Cheque No.</th>
+                            <th>Cheque Date</th>
+                            <!-- <th>Bank Name</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -1518,20 +1515,15 @@
                         <tr>
                             <th>Actions</th>
                             <th>Id</th>
-                            <th>voucher_name</th>
-                            <th>voucher_type</th>
-                            <th>voucher_number</th>
-                            <th>booking_date</th>
-                            <th>amount_in_words</th>
-                            <th>narration</th>
-                            <th>cheque_number</th>
-                            <th>voucher_date</th>
-                            <th>bank_name</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
+                            <th>Voucher Type</th>
+                            <th>Voucher Number</th>
+                            <th>Voucher Date</th>
+                            <th>Booking Date</th>
+                            <th>Amount In Words</th>
+                            <th>Narration</th>
+                            <th>Cheque No.</th>
+                            <th>Cheque Date</th>
+                            <!-- <th>Bank Name</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -1701,22 +1693,15 @@
                         <tr>
                             <th>Actions</th>
                             <th>Id</th>
-                            <th>voucher_name</th>
-                            <th>voucher_type</th>
-                            <th>voucher_number</th>
-                            <th>booking_date</th>
-                            <th>amount_in_words</th>
-                            <th>narration</th>
-                            <th>cheque_number</th>
-                            <th>voucher_date</th>
-                            <th>bank_name</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
+                            <th>Voucher Type</th>
+                            <th>Voucher Number</th>
+                            <th>Voucher Date</th>
+                            <th>Booking Date</th>
+                            <th>Amount In Words</th>
+                            <th>Narration</th>
+                            <th>Cheque No.</th>
+                            <th>Cheque Date</th>
+                            <!-- <th>Bank Name</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -1885,22 +1870,15 @@
                         <tr>
                             <th>Actions</th>
                             <th>Id</th>
-                            <th>voucher_name</th>
-                            <th>voucher_type</th>
-                            <th>voucher_number</th>
-                            <th>booking_date</th>
-                            <th>amount_in_words</th>
-                            <th>narration</th>
-                            <th>cheque_number</th>
-                            <th>voucher_date</th>
-                            <th>bank_name</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
-                            <th>dummy</th>
+                            <th>Voucher Type</th>
+                            <th>Voucher Number</th>
+                            <th>Voucher Date</th>
+                            <th>Booking Date</th>
+                            <th>Amount In Words</th>
+                            <th>Narration</th>
+                            <th>Cheque No.</th>
+                            <th>Cheque Date</th>
+                            <!-- <th>Bank Name</th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -2143,6 +2121,8 @@
 </script>
 
 <script>
+
+// DATATABLE FOR PURCHASE & SALE
 /* DATATABLE */
 $(document).ready(function () {
     // Adjust column sizes when a tab is shown
@@ -2194,7 +2174,7 @@ $(document).ready(function () {
         columnDefs: [
 
             { "visible": true, "targets": datatable_columns },
-            { "visible": false, "targets": '_all' },
+            { "visible": false, "targets": [1,2] },
         ],
         fixedColumns: {
             left: 2
@@ -2235,9 +2215,11 @@ $(document).ready(function () {
     // Ensure columns adjust after the window has fully loaded
     $(window).on('load', function() {
         $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-
-
 });
+
+
+
+
 
 
 Vue.directive('select2', {
@@ -2335,6 +2317,7 @@ new Vue({
         againstRefrences: [],
         already_traversed_ledgers: [],
         showAgainstRefrence: [],
+        isPurchaseSaleVoucher: false,
         //againstRefrences: [
         //    {
         //        'against_voucher': 1,
@@ -2764,8 +2747,8 @@ new Vue({
             // this.totalAmountValue = total_amount;
             this.formData.amount_in_words = window.numberToWords.toWords(debit_amt);
         },
-        addRowOnSaveOnMainModal(){
-            let index = this.indexNumber;
+        addRowOnSaveOnMainModal(event, index){
+            // let index = this.indexNumber;
             // ADD COST CENTER BRFORE ADDING ANOTHER ROW
             // this.items.forEach(item => {
             //     let cost_center = {
@@ -2784,6 +2767,7 @@ new Vue({
             // $(`#${this.modalNameToOpen}`).modal('show');
 
             this.purchases[index]['ledger_name'] = parseInt(document.querySelectorAll(`.${this.className}`)[index].value);
+            console.log("payment options===================", this.purchases[index]);
             related_ledgers = this.purchases[index];
             related_ledgers['against_refrence'] = []
             related_ledgers['cost_center'] = []
@@ -2819,9 +2803,9 @@ new Vue({
                             timeOut: 5000
                         };
                     toastr.success("Voucher Added Successfully!");
-                    setTimeout(function() {
-                        location.reload();
-                    }, 600);
+                    // setTimeout(function() {
+                    //     location.reload();
+                    // }, 600);
                 })
                 .catch(error => {
                     console.log("Error", error.response.data);
@@ -2999,6 +2983,8 @@ new Vue({
                 .then(response => {
                     console.log("Response in voucher number===>", response.data);
                     this.formData2.voucher_number = response.data.voucher_number;
+                    this.formData2.prefix = response.data.prefix;
+                    this.formData2.suffix = response.data.suffix;
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
@@ -3124,8 +3110,13 @@ new Vue({
                     console.log("Error: ->", this.errors);
                 });
         },
-        viewRequestedData(id){
-            $('#viewVoucherDataModal').modal('show');
+        viewRequestedData(id, isPurchaseSale){
+            console.log("purchase and sale--------->", isPurchaseSale);
+            if(Boolean(isPurchaseSale)){
+                $('#viewVoucherDataModalPS').modal('show');
+            }else{
+                $('#viewVoucherDataModal').modal('show');
+            }
             axios.get(`http://127.0.0.1:8000/api/voucher_create_ledger/${id}`)
             .then(response => {
                 this.showVoucherDetails = response.data;

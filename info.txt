@@ -284,6 +284,37 @@ Current Assest
 →→→→ Input Cgst
 
 
+
+
+Current Assest: [
+    {
+        Sundry Debtors: [Vikas,    Vikas 1,    Vikas 2,    Misc Assets]
+    },
+    {
+        "Input Sgst": []
+    },
+    {
+        "Tax": [Gst, Payable Tax, Input Cgst]
+    }
+]
+
+
+
+→ Sundry Debtors
+→→ Vikas
+→→→ Vikas 1
+→→→→ Vikas 2
+→→→→→ Misc Assets
+→ Input Sgst
+→ Gst Input
+→ Tax
+→→ Gst
+→→→ Payable Tax
+→→→→ Input Cgst
+
+
+
+
 1. Misc Assets (62600)
 2. Vikas 2(62600)
 3. Vikas 1(42600)
@@ -349,6 +380,36 @@ bkp:
     ],
 ]
 
+
+
+
+Current Assest
+→ Sundry Debtors
+→→ Vikas
+→→→ Vikas 1
+→→→→ Vikas 2
+→→→→→ Misc Assets
+→ Input Sgst
+→ Gst Input
+→ Tax
+→→ Gst
+→→→ Payable Tax
+→→→→ Input Cgst
+
+
+
+
+const grp1 = {
+            "Tax": {
+                "amt": 0,
+                "Gst": {
+                    "amt": 0,
+                    "Payable Tax": {
+                        "amt": 2700,
+                    }
+                }
+            }
+        };
 
 
 const grp1 = {
@@ -627,4 +688,1317 @@ add one more option in ledger to ask for against refrence
 
 get all the vouchers modal created for voucher number RVM-JULY-001	and do the increment from there,
 if no vouchers are there in voucher create modal then take from indexing if not there also then defaul incr.
+
+
+
+
+
+
+
+
+================================ BUG FIXES IN ACCOUNTS ====================================================
+1. If i have 2 purchases or more then i am getting both, which one should i take?
+2. show data on eye view of purchase and sale
+3. what to do on edit?
+4. change counter of voucher
+5. for composite entry of same ledger, getting wrong against refrences
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Input data
+const data = `
+→ Tax
+→→ Gst
+→→→ Payable Tax
+→→→→ Input Cgst
+`;
+
+// Function to convert the input data into a nested object
+function convertData(input) {
+    const lines = input.trim().split('\n');
+    const root = {};
+    let current = root;
+
+    // Stack to keep track of the current path
+    const pathStack = [{ level: 0, obj: root }];
+
+    lines.forEach(line => {
+        const levels = line.match(/→/g).length; // Count the number of arrows
+        const name = line.replace(/→/g, '').trim(); // Get the name after arrows
+
+        // Find the correct parent object from the stack
+        while (pathStack.length > 0 && pathStack[pathStack.length - 1].level >= levels) {
+            pathStack.pop();
+        }
+
+        const parent = pathStack[pathStack.length - 1].obj;
+
+        // Create the new object
+        parent[name] = { "amt": 0 };
+
+        // Add the new object to the stack
+        pathStack.push({ level: levels, obj: parent[name] });
+    });
+
+    return root;
+}
+
+// Convert the input data
+const result = convertData(data);
+
+// Display the result
+console.log(JSON.stringify(result, null, 2));
+
+
+
+
+
+
+
+{
+  "Sundry Debtors": {
+    "amt": 0,
+    "Vikas": {
+        ledgers: [
+            {"gold" : 300000},
+            {"silver" : 300000},
+        ]
+      "amt": 0,
+      "Vikas 1": {
+        "amt": 0,
+        "Vikas 2": {
+          "amt": 0,
+          "Misc Assets": {
+            "amt": 0
+          }
+        }
+      }
+    }
+  },
+
+
+}
+
+
+
+{'Assets': {'Current Assets':
+{
+    'Sundry Debtors': {
+        'Vikas': {
+            'Vikas 1': {
+                'Vikas 2':
+                {}}}}}}}
+
+{
+  "Sundry Debtors": {
+    "Vikas": {
+      "Vikas 1": {
+        "Vikas 2": {
+          "Misc Assets": {
+          }
+        }
+      }
+    }
+  },
+  "Input Sgst": {
+    "amt": 0
+  },
+  "Gst Input": {
+    "amt": 0
+  },
+  "Tax": {
+    "amt": 0,
+    "Gst": {
+      "amt": 0,
+      "Payable Tax": {
+        "amt": 0,
+        "Input Cgst": {
+          "amt": 0
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+{
+  "Sundry Debtors": {
+    "Vikas": {
+      "Vikas 1": {
+        "Vikas 2": {
+          "Misc Assets": {
+          }
+        }
+      }
+    }
+  },
+  "Input Sgst": {
+  },
+  "Gst Input": {
+  },
+  "Tax": {
+    "Gst": {
+      "Payable Tax": {
+        "Input Cgst": {
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+childs are =============> Vikas 2
+childs are =============> Vikas 1
+childs are =============> Vikas
+childs are =============> Sundry Debtors
+childs are =============> Current Assest
+childs are =============> Assets
+
+
+
+
+
+
+
+
+
+
+
+all_childs = []
+balance_sheet_childs = []
+def traverse_children(investment, depth=0):
+    child = 0
+    if cost_center:
+        children = investment.cost_center.all()
+    else:
+        children = investment.children.all()
+    if children:
+        print("Out side==============================================")
+        for child in children:
+            show = f"{'→'* depth} {child}"
+            # show = f"{child}"
+            print("childs---------->", child)
+            print("childs---------->", depth)
+            if balance_sheet:
+                balance_sheet_childs.append(child)
+            else:
+                all_childs.append(show)
+            traverse_children(child, depth + 1)
+traverse_children(parent)
+if balance_sheet:
+    return balance_sheet_childs
+return all_childs
+
+in above django code i get below output:
+
+Out side==============================================
+childs----------> Sundry Debtors
+childs----------> 0
+Out side==============================================
+childs----------> Vikas
+childs----------> 1
+Out side==============================================
+childs----------> Vikas 1
+childs----------> 2
+Out side==============================================
+childs----------> Vikas 2
+childs----------> 3
+Out side==============================================
+childs----------> Misc Assets
+childs----------> 4
+childs----------> Input Sgst
+childs----------> 0
+childs----------> Gst Input
+childs----------> 0
+childs----------> Tax
+childs----------> 0
+Out side==============================================
+childs----------> Gst
+childs----------> 1
+Out side==============================================
+childs----------> Payable Tax
+childs----------> 2
+Out side==============================================
+childs----------> Input Cgst
+childs----------> 3
+
+
+but instead of showing the number i want to create a nested dict, like below:
+
+
+
+{
+  "Sundry Debtors": {
+    "Vikas": {
+      "Vikas 1": {
+        "Vikas 2": {
+          "Misc Assets": {
+          }
+        }
+      }
+    }
+  },
+  "Input Sgst": {
+  },
+  "Gst Input": {
+  },
+  "Tax": {
+    "Gst": {
+      "Payable Tax": {
+        "Input Cgst": {
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{'Sundry Debtors': {'Vikas': {'Vikas 1': {'Vikas 2': {'Misc Assets': {}}}}}, 'Input Sgst': {}, 'Gst Input': {}, 'Tax': {'Gst': {'Payable Tax': {'Input Cgst': {}}}}}
+
+
+
+{'Capital': {'Capital Account': {}}, 'Reserve': {}, 'Loan': {}, 'Current Liabilities': {'Creditors': {}}, 'Misc Liabilities': {}, 'Subscription Towards Shares': {}, 'Reserve Fund And Other Funds': {}, 'Secured Loans': {}, 'Unsecured Loans': {}, 'Deposits': {}, 'Current Liabilities And Provisions': {'Current Liability For Ac': {}, 'Current Liability Example': {}, 'Liability Purchase': {}, 'Sundry Creditor': {'Kiran': {}}}, 'Interest Accrued Due But Not Paid': {}, 'Share Capital': {'Shares On Demand': {'Supply Shares': {}}}}
+
+
+{'Direct Income': {'Maintainance': {}}, 'Indirect Income': {}}
+
+
+{'Direct Expenses': {'Couriers': {}}, 'Indirect Expenses': {'Rent Account': {}, 'Salary': {}}}
+
+
+
+
+
+<ul class="list">
+        <li><a href="#" class="list-item">Current Assets</a>
+          <ul class="list open" style="--depth: 2">
+            <li><a href="#" class="list-item">Item 1.1</a>
+              <ul class="list" style="--depth: 3">
+                <li><a href="#" class="list-item">Item 1.1.1</a></li>
+                <li><a href="#" class="list-item">Item 1.1.2</a>
+                  <ul class="list" style="--depth: 3">
+                    <li><a href="#" class="list-item">Item 1.2</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+
+make above code dynamic, balance_sheet code should show all the childs and parent in above list format, below code is vue js
+p.s: i am using vue js cdn
+
+balance_sheet = {
+    'Sundry Debtors': {
+        'ledgers': {
+            'Ganesh': 2000,
+            'Web Development Charges': 10000
+        },
+        'Vikas': {
+            'ledgers': {
+                'Sam': 2000,
+            },
+            'Vikas 1': {
+                'Vikas 2': {
+                    'Misc Assets': {}
+                }
+            }
+        }
+    },
+    'Input Sgst': {},
+    'Gst Input': {},
+    'Tax': {
+        'Gst': {
+            'Payable Tax': {
+                'Input Cgst': {}
+            }
+        }
+    }
+}
+
+
+
+{
+    'Sundry Debtors': {
+        'ledgers': {
+            'Ganesh': 2000,
+            'Web Development Charges': 10000
+        }
+        'Vikas': {
+            'Vikas 1': {
+                'Vikas 2': {
+                    'ledgers': {
+                        'Sameer': 2500
+                    }
+                    'Misc Assets': {},
+                }
+            }
+        },
+
+    },
+    'Input Sgst': {},
+    'Gst Input': {},
+    'Tax': {
+        'Gst': {
+            'Payable Tax': {
+                'Input Cgst': {}
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Child is: Misc Assets GL OBJ IS:<QuerySet []>
+Child is: Vikas 2 GL OBJ IS:<QuerySet [{'from_ledger__ledger_name': 'Sameer'}]>
+Child is: Vikas 1 GL OBJ IS:<QuerySet []>
+Child is: Vikas GL OBJ IS:<QuerySet []>
+Child is: Sundry Debtors GL OBJ IS:<QuerySet [{'from_ledger__ledger_name': 'Ganesh'}, {'from_ledger__ledger_name': 'Web Development Charges'}]>
+Child is: Input Sgst GL OBJ IS:<QuerySet []>
+Child is: Gst Input GL OBJ IS:<QuerySet []>
+Child is: Input Cgst GL OBJ IS:<QuerySet []>
+Child is: Payable Tax GL OBJ IS:<QuerySet []>
+Child is: Gst GL OBJ IS:<QuerySet []>
+Child is: Tax GL OBJ IS:<QuerySet []>
+
+
+
+
+
+{
+    'Sundry Debtors': {
+        'total': 14500,
+        'ledgers': {
+            'Ganesh': 2000,
+            'Web Development Charges': 10000
+        },
+        'Vikas': {
+            'total': 2500,
+            'Vikas 1': {
+                'total': 2500,
+                'Vikas 2': {
+                    'total': 2500,
+                    'ledgers': {
+                        'Sameer': 2500
+                    },
+                    'Misc Assets': {}
+                }
+            }
+        }
+    },
+    'Input Sgst': {},
+    'Gst Input': {},
+    'Tax': {
+        'Gst': {
+            'Payable Tax': {
+                'Input Cgst': {}
+            }
+        }
+    }
+}
+
+
+
+can we do the ledger amount total, show total in each parent group in like below:
+
+
+{
+    'Sundry Debtors': {
+        'total': 14500,
+        'ledgers': {
+            'Ganesh': 2000,
+            'Web Development Charges': 10000
+        },
+        'Vikas': {
+            'total': 2500,
+            'Vikas 1': {
+                'total': 2500,
+                'Vikas 2': {
+                    'total': 2500,
+                    'ledgers': {
+                        'Sameer': 2500
+                    },
+                    'Misc Assets': {}
+                }
+            }
+        }
+    },
+    'Input Sgst': {},
+    'Gst Input': {},
+    'Tax': {
+        'Gst': {
+            'Payable Tax': {
+                'Input Cgst': {}
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    'Sundry Debtors': {
+        'ledgers': {
+            'Ganesh': 2000,
+            'Web Development Charges': 10000
+        },
+        'Vikas': {
+            'Vikas 1': {
+                'Vikas 2': {
+                    'ledgers': {
+                        'Sameer': 2500
+                    },
+                    'Misc Assets': {}
+                }
+            }
+        }
+    },
+    'Input Sgst': {},
+    'Gst Input': {},
+    'Tax': {
+        'Gst': {
+            'Payable Tax': {
+                'Input Cgst': {}
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Sundry Debtors
+→ Vikas
+→→ Vikas 1
+→→→ Vikas 2
+→→→→ Misc Assets
+Input Sgst
+Gst Input
+Tax
+→ Gst
+→→ Payable Tax
+→→→ Input Cgst
+
+
+
+<ul class="list" :style="{ '--depth': depth }">
+    <li v-for="(value, key) in data" :key="key">
+        <a href="#" class="list-item">{{ key }}</a>
+        <nested-list v-if="isObject(value)" :data="value" :depth="depth + 1"></nested-list>
+    </li>
+</ul>
+
+
+
+{% verbatim %}
+    <ul class="list" :style="{ '--depth': depth }">
+        <li v-for="(value, key) in data" :key="key">
+        <a v-if="key !== 'ledgers'" href="#" class="list-item">
+            {{ key }} abcd
+        </a>
+        <p v-if="key === 'ledgers'" v-for="(amount, ledger) in value" :key="ledger">
+            {{ ledger }}: <span class="amount">{{ amount }}</span><br>
+        </p>
+            <nested-list v-if="isObject(value)" :data="value" :depth="depth + 1"></nested-list>
+        </li>
+    </ul>
+{% endverbatim %}
+
+
+
+
+
+also i want to calculate the total of gl_obj['balance'] and send that total in as the name total_amt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    'ledgers': {
+        'Fareen': 30000
+    },
+    'total_amt': 30000,
+    'Sundry Debtors': {
+        'ledgers': {
+            'Ganesh': 2000,
+            'Web Development Charges': 10000
+        },
+        'total_amt': 12000,
+        'Vikas': {
+            'Vikas 1': {
+                'Vikas 2': {
+                    'ledgers': {
+                        'Transport Charges': 2000,
+                        'Sameer': 2500
+                    },
+                    'total_amt': 4500,
+                    'Misc Assets': {
+                        'ledgers': {
+                            'GST': 10000
+                        },
+                        'total_amt': 10000
+                    }
+                }
+            }
+        }
+    },
+    'Input Sgst': {},
+    'Gst Input': {},
+    'Tax': {
+        'Gst': {
+            'Payable Tax': {
+                'Input Cgst': {}
+            }
+        }
+    }
+}
+
+
+
+
+
+'Vikas 2': {
+    'final_total': 14500,
+    'ledgers': {
+        'Transport Charges': 2000,
+        'Sameer': 2500
+    },
+    'Misc Assets': {
+        'final_total': 10000,
+        'ledgers': {
+            'GST': 10000
+        },
+    },
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<ul class="list" :style="{ '--depth': depth }">
+    <li v-for="(value, key) in data" :key="key">
+        <a v-if="key !== 'ledgers' && key !== 'final_total'" href="#" class="list-item">
+            {{ key }}: <span class="amount">{{ value.final_total }}</span>
+        </a>
+        <p v-if="key === 'ledgers'" v-for="(amount, ledger) in value" :key="ledger">
+            {{ ledger }}: <span class="amount">{{ amount }}</span><br>
+        </p>
+        <nested-list v-if="isObject(value) && key !== 'ledgers' && key !== 'final_total'" :data="value" :depth="depth + 1"></nested-list>
+    </li>
+</ul>
+
+
+
+
+<ul class="list" :style="{ '--depth': depth }">
+    <li v-for="(value, key) in data" :key="key">
+      <a v-if="key !== 'ledgers' && key !== 'final_total'" href="#" class="list-item">
+        {{ key }} ----
+      </a>
+      <p v-if="key === 'ledgers'" v-for="(amount, ledger) in value" :key="ledger">
+        {{ ledger }}: <span class="amount">{{ amount }}</span><br>
+      </p>
+      <nested-list v-if="isObject(value) && key !== 'final_total'" :data="value" :depth="depth + 1"></nested-list>
+      <p v-if="key === 'final_total'" class="final-total">
+        {{ 'final_total: ' + value }}
+      </p>
+    </li>
+  </ul>
+
+
+
+
+
+
+
+
+  # FINAL WORKING:
+
+  <ul class="list" :style="{ '--depth': depth }">
+    <li v-for="(value, key) in data" :key="key" v-if="key !== 'final_total'">
+    <a v-if="key !== 'ledgers'" href="#" class="list-item">
+        {{ key }} ---- <span class="amount">{{ value.final_total !== undefined ? value.final_total : 0 }}</span>
+    </a>
+    <p v-if="key === 'ledgers'" v-for="(amount, ledger) in value" :key="ledger">
+        {{ ledger }}: <span class="amount">{{ amount }}</span><br>
+    </p>
+    <nested-list v-if="isObject(value)" :data="value" :depth="depth + 1"></nested-list>
+    </li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+BKP CODE:
+
+
+
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<style>
+    :root {
+        --color-theme-rgb: 40, 40, 40;
+        --color-text-rgb: 250, 250, 250;
+        --color-primary-rgb: 80, 110, 120;
+        --color-box-rgb: 30, 30, 30;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      aside {
+        width: 250px;
+        padding: 1em 0;
+        flex-shrink: 0;
+        flex-basis: 250px;
+      }
+
+      aside .list,
+      aside .list-item {
+        display: block;
+        padding: 0;
+        margin: 0;
+      }
+      aside .list {
+        --depth: 1;
+      }
+      aside .list-item {
+        padding: 0.5em 1em 0.5em calc(2em * var(--depth));
+        margin: 0 0 3px 0;
+        display: flex;
+        align-items: center;
+        position: relative;
+      }
+      aside .list-item:hover,
+      aside .list li:has(.list-item.active) > .list-item,
+      aside .list-item.active {
+        background-color: rgb(var(--color-primary-rgb));
+        border-top-right-radius: 999px;
+        border-bottom-right-radius: 999px;
+        cursor: pointer;
+      }
+      aside .list-item:has(+ .list)::before {
+        content: '';
+        display: block;
+        position: absolute;
+        margin-left: -1.15em;
+        width: 0.3em;
+        height: 0.3em;
+        border-width: 0 1px 1px 0;
+        border-style: solid;
+        transform: rotate(-45deg);
+        transition: transform 300ms;
+      }
+
+      .list .list {
+        overflow-y: hidden;
+        height: 0;
+      }
+      .list .list.open {
+        height: auto;
+      }
+      .list .list-item:has(+ .list.open)::before {
+        transform: rotate(45deg);
+      }
+
+      #main {
+        display: block;
+        padding: 0.5em 1em;
+        min-width: 500px;
+        max-width: calc(100% - 250px);
+        flex-grow: 1;
+      }
+      .box {
+        display: block;
+        max-width: 300px;
+        margin: 0 auto;
+        padding: 0.5em 1em;
+        background-color: rgb(var(--color-box-rgb));
+      }
+</style>
+
+
+{% verbatim %}
+<div class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-lg-6" style="font-size: 21px;" id="app">
+      <nested-list :data="balance_sheet2" :depth="1"></nested-list>
+    </div>
+  </div>
+</div>
+{% endverbatim %}
+
+
+
+
+<script>
+    const collapse = function(willCollapse = true, callback = (list) => {}) {
+        this.collapsing = true;
+        const height = this.scrollHeight;
+        const stateFrom = {height: height + 'px'};
+        const stateTo = {height: '0px'};
+
+        let animateState = [stateFrom, stateTo];
+        if(!willCollapse) animateState = [stateTo, stateFrom];
+
+        this.animate(animateState,{
+          duration:500,
+          iterations:1,
+          easing:'ease-in-out'
+        }).finished.then(val => {
+          this.collapsing = false;
+          if(callback && typeof(callback) == 'function'){
+            callback(this);
+          }
+        });
+      }
+      const showActiveTab = (tab) => {
+        if(tab){
+          document.querySelector('#active-tab').textContent = tab.textContent;
+        }
+      }
+      showActiveTab(document.querySelector('.list-item.active'));
+
+      document.querySelectorAll('.list li').forEach(li => {
+          const list = li.querySelector('.list');
+          if(list)list.collapse = collapse.bind(list);
+          li.querySelector('.list-item').addEventListener('click', (event) => {
+              // if not a list (just list-item)
+              if(!list){
+                document.querySelectorAll('.list-item').forEach(listItem => {
+                  listItem.classList.remove('active');
+                });
+                event.target.classList.add('active');
+                showActiveTab(event.target);
+                event.preventDefault();
+                return;
+              }
+              // if list still collapsing
+              if(list.collapsing){
+                  event.preventDefault();
+                  return;
+              }
+              // set list collapse or open
+              if(!list.classList.contains('open')) {
+                  list.classList.add('open')
+                  list.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
+                  list.parentElement.parentElement.querySelectorAll('& > li > .list.open').forEach(oList => {
+                    if(oList !== list){
+                      oList.collapse(true, ls => {
+                          ls.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
+                          ls.classList.remove('open');
+                      });
+                    }
+                  });
+                  // open
+                  list.collapse(false);
+              } else {
+                  // collapse
+                  list.collapse(true, ls => {
+                      ls.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
+                      ls.classList.remove('open');
+                  });
+              }
+          })
+      })
+</script>
+
+<script>
+  Vue.component('nested-list', {
+      props: ['data', 'depth'],
+      template: `
+      {% verbatim %}
+      <ul class="list row" :style="{ '--depth': depth }">
+        <li v-for="(value, key) in data" :key="key" v-if="key !== 'final_total'" class="col-12">
+          <div class="row">
+            <div class="col-md-3 text-start">
+              {{ key !== 'ledgers' ? (value.final_total !== undefined ? value.final_total.toLocaleString() : '0') : '' }}
+            </div>
+            <div class="col-md-3">
+              <a v-if="key !== 'ledgers'" href="#" class="list-item">
+                <span>{{ key }}</span>
+              </a>
+              <template v-if="key === 'ledgers'">
+                <p v-if="Object.keys(value).length > 0" v-for="(amount, ledger) in value" :key="ledger">
+                  {{ ledger }}: <span class="amount">{{ amount }}</span><br>
+                </p>
+              </template>
+            </div>
+            <div class="col-md-3 text-end">
+              {{ key !== 'ledgers' ? (value.final_total !== undefined ? value.final_total.toLocaleString() : '0') : '' }}
+            </div>
+            <div class="col-md-3 text-end">
+              {{ key !== 'ledgers' ? (value.final_total !== undefined ? value.final_total.toLocaleString() : '0') : '' }}
+            </div>
+          </div>
+          <nested-list v-if="isObject(value)" :data="value" :depth="depth + 1"></nested-list>
+        </li>
+      </ul>
+      {% endverbatim %}
+      `,
+      methods: {
+          isObject(value) {
+              return value && typeof value === 'object';
+          },
+          initializeCollapse() {
+            // Your existing JavaScript code
+            const collapse = function(willCollapse = true, callback = (list) => {}) {
+              this.collapsing = true;
+              const height = this.scrollHeight;
+              const stateFrom = {height: height + 'px'};
+              const stateTo = {height: '0px'};
+
+              let animateState = [stateFrom, stateTo];
+              if (!willCollapse) animateState = [stateTo, stateFrom];
+
+              this.animate(animateState, {
+                duration: 500,
+                iterations: 1,
+                easing: 'ease-in-out'
+              }).finished.then(val => {
+                this.collapsing = false;
+                if (callback && typeof(callback) == 'function') {
+                  callback(this);
+                }
+              });
+            };
+            const showActiveTab = (tab) => {
+              if (tab) {
+                document.querySelector('#active-tab').textContent = tab.textContent;
+              }
+            };
+            showActiveTab(document.querySelector('.list-item.active'));
+
+            document.querySelectorAll('.list li').forEach(li => {
+              const list = li.querySelector('.list');
+              if (list) list.collapse = collapse.bind(list);
+              li.querySelector('.list-item').addEventListener('click', (event) => {
+                // if not a list (just list-item)
+                if (!list) {
+                  document.querySelectorAll('.list-item').forEach(listItem => {
+                    listItem.classList.remove('active');
+                  });
+                  event.target.classList.add('active');
+                  showActiveTab(event.target);
+                  event.preventDefault();
+                  return;
+                }
+                // if list still collapsing
+                if (list.collapsing) {
+                  event.preventDefault();
+                  return;
+                }
+                // set list collapse or open
+                if (!list.classList.contains('open')) {
+                  list.classList.add('open');
+                  list.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
+                  list.parentElement.parentElement.querySelectorAll('& > li > .list.open').forEach(oList => {
+                    if (oList !== list) {
+                      oList.collapse(true, ls => {
+                        ls.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
+                        ls.classList.remove('open');
+                      });
+                    }
+                  });
+                  // open
+                  list.collapse(false);
+                } else {
+                  // collapse
+                  list.collapse(true, ls => {
+                    ls.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
+                    ls.classList.remove('open');
+                  });
+                }
+              });
+            });
+          },
+      },
+    mounted() {
+      this.initializeCollapse();
+    },
+    updated() {
+      this.initializeCollapse();
+    }
+  });
+
+  new Vue({
+      el: '#app',
+      data: {
+        // balance_sheet2: {},
+        balance_sheet2: {'Fixed Assets': {'Sold': {}, 'Furniture': {}, 'Computer Asset': {'ledgers': {'Sam': 16000}, 'Sales Computer': {}}, 'Cars': {'Super Cars': {}}}, 'Investment': {}, 'Current Assest': {'ledgers': {'Fareen': 30000}, 'Sundry Debtors': {'ledgers': {'Ganesh': 2000, 'Web Development Charges': 10000}, 'Vikas': {'Vikas 1': {'Vikas 2': {'ledgers': {'Transport Charges': 2000, 'Sameer': 2500}, 'Misc Assets': {'ledgers': {'GST': 10000}}}}}}, 'Input Sgst': {}, 'Gst Input': {}, 'Tax': {'Gst': {'Payable Tax': {'Input Cgst': {}}}}}, 'Gold': {'Mixed Gold': {}}, 'Silver': {'Pure Silver': {'Pure Gold': {'Pg': {}}}, 'Mixed Silver': {}}, 'Iron': {}, 'Cash And Bank Balances': {'Cash Account': {}, 'Bank Current Account': {}, 'Cash In Hand': {}}, 'Loans And Advances': {}, 'Profit And Loss Account': {}}
+
+        },
+      mounted(){
+        axios.get('http://127.0.0.1:8000/api/balance_sheet')
+        .then(response => {
+          this.balance_sheet2 = response.data['assets_response'][0];
+          console.log("response is================", this.balance_sheet2);
+        })
+        .catch(error => {
+          console.log("Error Fetching Balance Sheet Data.")
+        });
+      }
+  });
+</script>
+
+{% endblock body %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def calling_balance_sheet(request):
+    assets_response = []
+    liabilities_response = []
+    groups = ['Assets', 'Liabilities']
+    for grp in groups:
+        function_call = balance_sheet_groups(Childs.objects.get(name=grp))
+        liabilities_response.append(function_call)
+        if grp == 'Assets':
+            assets_response.append(function_call)
+        print("calling grp=============", function_call)
+    return JsonResponse({'assets_response': assets_response, 'libility_response': liabilities_response})
+
+
+def balance_sheet_groups(parent, cost_center=False):
+    def traverse_children(investment):
+        def helper(node):
+            ledgers_dict = {}
+            children_dict = {}
+            total_balance = 0
+
+            gl_objs = GeneralLedger.objects.filter(from_ledger__group_name=node.name)
+            for gl_obj in gl_objs.values('from_ledger__ledger_name', 'balance'):
+                ledgers_dict[gl_obj['from_ledger__ledger_name']] = gl_obj['balance']
+
+            children = node.cost_center.all() if hasattr(node, 'cost_center') else node.children.all()
+
+            # Process children nodes
+            for child in children:
+                child_result, child_total = helper(child)
+                children_dict[child.name] = child_result
+                total_balance += child_total  # Add the child's total balance to the parent's total balance
+
+            # Combine ledgers and children dictionaries
+            result_dict = {}
+            if ledgers_dict:
+                result_dict['ledgers'] = ledgers_dict
+            result_dict.update(children_dict)
+            result_dict['final_total'] = total_balance  # Add the total balance to the result_dict
+
+            return result_dict, total_balance
+
+        # Start the recursion from the investment node
+        final_result, _ = helper(investment)
+        return final_result
+
+    nested_dict = traverse_children(parent)
+    return nested_dict
+
+
+
+
+FALTU WALA CODE:
+
+# # BKP TRIAL
+# def get_all_child_investments(parent, cost_center=False, balance_sheet=False):
+#     all_childs = []
+#     balance_sheet_childs = []
+#     def traverse_children(investment):
+#         def helper(node):
+#             # Initialize dictionaries for ledgers and children
+#             ledgers_dict = {}
+#             children_dict = {}
+
+#             # Retrieve ledgers related to the current node
+#             gl_objs = GeneralLedger.objects.filter(from_ledger__group_name=node.name)
+#             for gl_obj in gl_objs.values('from_ledger__ledger_name', 'balance'):
+#                 ledgers_dict[gl_obj['from_ledger__ledger_name']] = gl_obj['balance']
+
+#             # Retrieve children of the current node
+#             children = node.cost_center.all() if cost_center else node.children.all()
+
+#             # Process children nodes
+#             for child in children:
+#                 children_dict[child.name] = helper(child)
+
+#             # Combine ledgers and children dictionaries
+#             result_dict = {}
+#             if ledgers_dict:
+#                 result_dict['ledgers'] = ledgers_dict
+#             result_dict.update(children_dict)
+
+#             return result_dict
+
+#         result = helper(investment)
+#         return result
+
+#     nested_dict = traverse_children(parent)
+#     print(nested_dict)
+
+#     if balance_sheet:
+#         return balance_sheet_childs
+#     return all_childs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def balance_sheet_groups(parent, filter_zero, from_date, to_date):
+    def traverse_children(investment):
+        def helper(node):
+            ledgers_dict = {}
+            children_dict = {}
+            total_balance = 0
+
+            subquery = GeneralLedger.objects.filter(from_ledger__group_name=node.name).values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
+            gl_objs = GeneralLedger.objects.filter(id__in=Subquery(subquery))
+
+            if from_date and to_date:
+                gl_objs = gl_objs.filter(date__range=(from_date, to_date))
+
+            # uncomment below code if required just both the dates
+            # elif from_date:
+            #     gl_objs = gl_objs.filter(date__gte=from_date)
+            # elif to_date:
+            #     gl_objs = gl_objs.filter(date__lte=to_date)
+
+            for gl_obj in gl_objs.values('from_ledger__ledger_name', 'balance'):
+                ledger_name = gl_obj['from_ledger__ledger_name']
+                balance = gl_obj['balance']
+                ledgers_dict[ledger_name] = balance
+                total_balance += balance  # Accumulate the total balance
+
+            children = node.cost_center.all() if hasattr(node, 'cost_center') else node.children.all()
+
+            for child in children:
+                child_result, child_total = helper(child)
+                if filter_zero == 'all':
+                    children_dict[child.name] = child_result
+                    total_balance += child_total
+                elif filter_zero == 'zero':
+                    if child_total > 0:
+                        children_dict[child.name] = child_result
+                        total_balance += child_total
+                else:
+                    children_dict[child.name] = child_result
+                    total_balance += child_total
+
+            result_dict = {}
+            if ledgers_dict:
+                result_dict['ledgers'] = ledgers_dict
+            result_dict.update(children_dict)
+            result_dict['final_total'] = total_balance  # Add the total balance to the result_dict
+
+            return result_dict, total_balance
+
+        final_result, _ = helper(investment)
+        return final_result
+
+    nested_dict = traverse_children(parent)
+
+    return nested_dict
 

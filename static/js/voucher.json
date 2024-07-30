@@ -592,3 +592,40 @@ completeJson.related_ledgers.forEach(ledger => {
         "show_against_refrence": []
     }
 ]
+
+
+
+
+
+{
+    "related_ledgers": [
+        {
+            "payment_option": "dr",
+            "debit_amt": "1000",
+            "ledger_name": 36,
+            "against_refrence": [],
+            "cost_center": []
+        },
+        {
+            "payment_option": "dr",
+            "debit_amt": "1000",
+            "ledger_name": 36,
+            "against_refrence": [],
+            "cost_center": []
+        }
+    ],
+    "voucher_name": "expenses_voucher",
+    "voucher_type": 4,
+    "voucher_number": "4",
+    "booking_date": "2024-08-03",
+    "prefix": "",
+    "suffix": "4",
+    "debit_total": 1000,
+    "credit_total": 1000,
+    "amount_in_words": "one thousand",
+    "narration": "1000",
+    "cheque_number": "1000",
+    "cheque_date": "2000-09-09",
+    "bank_name": "1000",
+    "voucher_date": "2024-08-03"
+}

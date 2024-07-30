@@ -14,6 +14,7 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models import Q
 from SocietyApp.models import *
 from django.utils import timezone
+import requests
 
 
 # Create your views here.
@@ -1137,6 +1138,7 @@ class VoucherIndexingView(viewsets.ModelViewSet):
             latest_voucher_without_suffix = VoucherCreationModel.objects.filter(prefix='')
             if latest_voucher_without_suffix:
                 latest_number = latest_voucher_without_suffix.latest('id')
+                print("latest number is:===>", latest_number)
 
             if not instances:
                 num = 1
@@ -1266,9 +1268,6 @@ class StockOnLedgerView(viewsets.ModelViewSet):
     serializer_class = StockOnLedgerModelSerializers
 
 
-import requests
-
-
 def calculate_running_balance(grp_name, debit, credit, running_balance):
     api_url = f'http://127.0.0.1:8000/group_data/{grp_name}/'
     child_obj = None
@@ -1388,9 +1387,13 @@ class VoucherCreationForPurSaleView(viewsets.ModelViewSet):
 class VoucherCreationView(viewsets.ModelViewSet):
     queryset = VoucherCreationModel.objects.all()
     serializer_class = VoucherCreationSerializers
-
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['voucher_type__voucher_type']
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'retrieve', 'partial_update', 'update']:
+            return VoucherCreationSerializers
+        return VoucherCreationSerializersReadOnly
 
     @transaction.atomic
     def create(self, request, *args, **kwargs):

@@ -536,6 +536,7 @@ class VoucherCreationModel(models.Model):
     cheque_number = models.CharField(max_length=100, null=True, blank=True)
     voucher_date = models.DateField(null=True, blank=True)
     bank_name = models.CharField(max_length=100, null=True, blank=True)
+    cheque_date = models.DateField(null=True, blank=True)
     vendor_name = models.ForeignKey(Ledger, on_delete=models.CASCADE, null=True, blank=True)
     vendor_invoice_number = models.CharField(max_length=100, null=True, blank=True)
     total_purchases = models.IntegerField(null=True, blank=True)

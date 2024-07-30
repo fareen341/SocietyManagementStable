@@ -30,6 +30,7 @@
 
     <!-- Number to words library -->
     <script src="https://cdn.jsdelivr.net/npm/number-to-words"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 
     <!-- datatables cdn -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
@@ -150,20 +151,20 @@
 
                 <li>
                     <button class="Btn" style="background-color: #0e3d5542;">
-  
+
                         <div class="sign"><i class="fas fa-cogs"></i></div>
-                        
+
                         <div class="text">Settings</div>
-                    </button> 
+                    </button>
                 </li>
-                
+
                 <li>
                     <button class="Btn" style="background-color: #0e3d5542;">
-  
+
                         <div class="sign"><i class="fas fa-sign-out-alt"></i></div>
-                        
+
                         <div class="text">Logout</div>
-                    </button>                      
+                    </button>
                 </li>
 
 
@@ -182,7 +183,7 @@
                         <li class="nav-item">
                             <a class="nav-link nav-texxt"  href="{% url 'member_dashboard' %}">
                                 <span><i class="fa-solid fa-house"></i></span> Dashboard
-                            </a>                            
+                            </a>
                         </li>
 
                         <li class="nav-item dropdown">
@@ -226,7 +227,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                               <span><i class="fa-solid fa-cash-register"></i></span> Accounts 
+                               <span><i class="fa-solid fa-cash-register"></i></span> Accounts
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'balance_sheet' %}">Balance Sheet</a></li>
@@ -254,7 +255,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                               <span><i class="fa-solid fa-file-circle-check"></i></span> Raise Request 
+                               <span><i class="fa-solid fa-file-circle-check"></i></span> Raise Request
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">NOC</a></li>
@@ -266,7 +267,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                               <span><i class="fa-solid fa-list-check"></i></span> Gate Management 
+                               <span><i class="fa-solid fa-list-check"></i></span> Gate Management
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Visitors Record</a></li>
@@ -283,7 +284,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link nav-texxt" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span><i class="fa-solid fa-square-poll-horizontal"></i></span> Reports 
+                                <span><i class="fa-solid fa-square-poll-horizontal"></i></span> Reports
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Register Vehicle</a></li>
@@ -291,7 +292,7 @@
                         </li>
 
                     </ul>
-                   
+
                 </div>
             </div>
         </nav>

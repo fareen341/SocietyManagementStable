@@ -675,11 +675,25 @@ class VoucherCreationSerializers(serializers.ModelSerializer):
         model = VoucherCreationModel
         fields = '__all__'
 
-    def create(self, validated_data):
-        indexing_data = validated_data.pop('related_ledgers', None)
-        print("indexing_data -------======================================", indexing_data)
-        voucher_type = VoucherCreationModel.objects.create(**validated_data)
-        return voucher_type
+
+# FOR OTHER VOUCHERS
+class VoucherCreationSerializersReadOnly(serializers.ModelSerializer):
+    voucher_type = serializers.CharField(source='voucher_type.voucher_name', read_only=True)
+
+    class Meta:
+        model = VoucherCreationModel
+        fields = [
+            'id',
+            'voucher_type',
+            'voucher_number',
+            'voucher_date',
+            'booking_date',
+            'amount_in_words',
+            'narration',
+            'cheque_number',
+            'cheque_date',
+            # 'bank_name',
+        ]
 
 
 class RelatedLedgersSerializers(serializers.ModelSerializer):
