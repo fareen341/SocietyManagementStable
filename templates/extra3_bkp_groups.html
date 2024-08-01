@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 {% load static %}
 
@@ -7,12 +6,12 @@
 {% block body %}
 
 <style>
-    /* :root {
+    :root {
         --color-theme-rgb: 40, 40, 40;
         --color-text-rgb: 250, 250, 250;
         --color-primary-rgb: 80, 110, 120;
         --color-box-rgb: 30, 30, 30;
-      } */
+      }
       * {
         box-sizing: border-box;
       }
@@ -52,7 +51,7 @@
         border-bottom-right-radius: 999px;
         cursor: pointer;
       }
-      .list .list-item:has(+ .list)::before {
+      aside .list-item:has(+ .list)::before {
         content: '';
         display: block;
         position: absolute;
@@ -76,99 +75,55 @@
         transform: rotate(45deg);
       }
 
-      /* #main {
+      #main {
         display: block;
         padding: 0.5em 1em;
         min-width: 500px;
         max-width: calc(100% - 250px);
         flex-grow: 1;
-      } */
-      /* .box {
+      }
+      .box {
         display: block;
         max-width: 300px;
         margin: 0 auto;
         padding: 0.5em 1em;
         background-color: rgb(var(--color-box-rgb));
-      } */
-
-       ul li {
-        list-style: none !important;
-       }
-
-       .open .toggle-icon {
-          content: '-';
-       }
+      }
 </style>
-
-<div class="">
-  <div class="col-lg-5 ms-auto me-auto" id="societyHead">
-    {% verbatim %}
-    <div class="text-center mt-2" id="print-head">
-      <h3 id="heading" style="color: #000 !important; font-family: 'Calibri', sans-serif;"><b>{{ society.society_name }}</b></h3>
-      <p style="font-family: 'Calibri', sans-serif;" class="mt-3 p-0 mb-0 print-head-content"><b>Registraion Number: </b> <span>{{ society.registration_number }}</span></p>
-      <p style="font-family: 'Calibri', sans-serif;" class="print-head-content">{{ society.society_reg_address }}, {{ society.socity_state }}, {{ society.pin_code }}</p>
-    </div>
-    {% endverbatim %}
-</div>
 
 
 {% verbatim %}
-
-  <div class="container" id="balanceSheetVue">
-    <div class="row">
-
-      <div class="d-flex justify-content-center">
-        <label>Filter Zero</label>
-        <select v-model="formData.selectZero" @change="filterZero">
-          <option value="all">All</option>
-          <option value="zero">Zero</option>
-        </select>
-
-        <label>From Date</label>
-        <input type="date" v-model="formData.from_date" @change="filterZero" />
-
-        <label>To Date</label>
-        <input type="date" v-model="formData.to_date" @change="filterZero" />
-      </div>
-
-      <div class="col-lg-6" style="border-right: 1px solid #212529; border-left: 2px solid #212529; border-bottom: 2px solid #212529;">
-        <div class="row">
-          <div class="col-lg-4 bg-dark text-light">
-            Previous Year
-          </div>
-          <div class="col-lg-4 bg-dark text-light">
-            Assets
-          </div>
-          <div class="col-lg-4 text-end bg-dark text-light">
-            Current Year
-          </div>
+<div class="container-fluid mt-5 ms-2" id="app">
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="row">
+        <div class="col-md-4 text-left bg-dark text-light">
+          Previous Year
         </div>
+        <div class="col-md-4 text-left bg-dark text-light">
+          Assets
+        </div>
+        <div class="col-md-4 text-left bg-dark text-light">
+          Current Year
+        </div>
+    </div>
+    </div>
+  </div>
 
-        <div>
-          <nested-list :data="assets_response" :depth="1"></nested-list>
-        </div>
-      </div>
+  <div class="row">
+    <div class="col-lg-6" style="font-size: 21px;" >
+      <nested-list :data="assets_response" :depth="1"></nested-list>
+    </div>
+  </div>
 
-      <div class="col-lg-6" style="border-left: 1px solid #212529; border-right: 2px solid #212529; border-bottom: 2px solid #212529;">
-        <div class="row">
-          <div class="col-lg-4 bg-dark text-light">
-            Previous Year
-          </div>
-          <div class="col-lg-4 bg-dark text-light">
-            Liability
-          </div>
-          <div class="col-lg-4 text-end bg-dark text-light">
-            Current Year
-          </div>
-        </div>
-        <div>
-          <nested-list :data="libility_response" :depth="1"></nested-list>
-        </div>
-      </div>
+  <hr>
+
+  <div class="row">
+    <div class="col-lg-6" style="font-size: 21px;" >
+      <nested-list :data="libility_response" :depth="1"></nested-list>
     </div>
   </div>
 </div>
-
 {% endverbatim %}
 
 
@@ -178,46 +133,27 @@
       template: `
       {% verbatim %}
       <ul class="list row" :style="{ '--depth': depth }">
-        <li v-for="(value, key, index) in data" :key="key" v-if="key !== 'final_total' && key !== 'previous_final_total'"  class="col-12">
+        <li v-for="(value, key) in data" :key="key" v-if="key !== 'final_total'" class="col-12">
           <div class="row">
-            <div class="col-md-3 text-start">
-              {{ key !== 'ledgers' ? (value.previous_final_total !== undefined ? value.previous_final_total.toLocaleString() : '0') : '' }}
+            <div class="col-md-4 text-start">
+              {{ key !== 'ledgers' ? (value.final_total !== undefined ? value.final_total.toLocaleString() : '0') : '' }}
             </div>
-
-            <div class="col-md-3">
+            <div class="col-md-4">
               <a v-if="key !== 'ledgers'" href="#" class="list-item">
-                <span class="toggle-icon">+</span>
-                <span :style="{fontWeight: value.parent_group ? 'bold' : 'normal', fontSize: value.parent_group ? '18px' : 'inherit'}">{{ key }}</span>
+                <span>{{ key }}</span>
               </a>
               <template v-if="key === 'ledgers'">
-                <p v-if="Object.keys(value).length > 0" v-for="(amount, ledger) in value" :key="ledger" class="view-label" style="font-style: italic;">
-                  {{ ledger }}:
-                </p>
-              </template>
-            </div>
-
-            <div class="col-md-3 text-end">
-              <template v-if="key === 'ledgers'">
                 <p v-if="Object.keys(value).length > 0" v-for="(amount, ledger) in value" :key="ledger">
-                  <span class="amount view-label" style="font-style: italic; margin-left: auto !important;">{{ amount }}</span><br>
+                  {{ ledger }}: <span class="amount">{{ amount }}</span><br>
                 </p>
               </template>
             </div>
-
-            <div class="col-md-3 text-end">
-              <span :style="{
-                fontWeight: value.parent_group ? 'bold' : 'normal',
-                fontSize: value.parent_group ? '18px' : 'inherit'
-              }">
-                {{ key !== 'ledgers'
-                  ? (value.final_total !== undefined
-                      ? value.final_total.toLocaleString()
-                      : '0')
-                  : ''
-                }}
-              </span>
+            <!-- <div class="col-md-3 text-end">
+              {{ key !== 'ledgers' ? (value.final_total !== undefined ? value.final_total.toLocaleString() : '0') : '' }}
+            </div> -->
+            <div class="col-md-4 text-end">
+              {{ key !== 'ledgers' ? (value.final_total !== undefined ? value.final_total.toLocaleString() : '0') : '' }}
             </div>
-
           </div>
           <nested-list v-if="isObject(value)" :data="value" :depth="depth + 1"></nested-list>
         </li>
@@ -261,15 +197,10 @@
               const list = li.querySelector('.list');
               if (list) list.collapse = collapse.bind(list);
               li.querySelector('.list-item').addEventListener('click', (event) => {
-                const listItem = event.currentTarget;
-                const item = listItem.nextElementSibling;
-                const icon = listItem.querySelector('.toggle-icon');
                 // if not a list (just list-item)
                 if (!list) {
                   document.querySelectorAll('.list-item').forEach(listItem => {
                     listItem.classList.remove('active');
-                    const icon = item.querySelector('.toggle-icon');
-                    if (icon) icon.textContent = '+';
                   });
                   event.target.classList.add('active');
                   showActiveTab(event.target);
@@ -284,17 +215,12 @@
                 // set list collapse or open
                 if (!list.classList.contains('open')) {
                   list.classList.add('open');
-                  if (icon) icon.textContent = '-';
                   list.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
                   list.parentElement.parentElement.querySelectorAll('& > li > .list.open').forEach(oList => {
-
                     if (oList !== list) {
                       oList.collapse(true, ls => {
                         ls.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
                         ls.classList.remove('open');
-                        const parentIcon = ls.parentElement.querySelector('.toggle-icon');
-                        if (parentIcon) parentIcon.textContent = '+';
-
                       });
                     }
                   });
@@ -302,11 +228,9 @@
                   list.collapse(false);
                 } else {
                   // collapse
-
                   list.collapse(true, ls => {
                     ls.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
                     ls.classList.remove('open');
-                    if (icon) icon.textContent = '+';
                   });
                 }
               });
@@ -322,53 +246,95 @@
   });
 
   new Vue({
-      el: '#balanceSheetVue',
+      el: '#app',
       data: {
         assets_response: {},
         libility_response: {},
-        formData: {
-          selectZero: 'all',
-        }
-        },
-        methods: {
-          filterZero(){
-            let fromDateVal = '';
-            let toDateVal = '';
-            let zeroFilter = '';
-
-            // Apply below condition when any of the date is required for filter
-            // if(this.formData.from_date){
-            //   fromDateVal = `&from_date=${this.formData.from_date}`
-            // }
-            // if(this.formData.to_date){
-            //   toDateVal = `&to_date=${this.formData.to_date}`
-            // }
-
-            if(this.formData.selectZero){
-              zeroFilter = this.formData.selectZero;
-            }
-            if(this.formData.from_date && this.formData.to_date){
-              fromDateVal = `&from_date=${this.formData.from_date}`
-              toDateVal = `&to_date=${this.formData.to_date}`
-            }
-            axios.get(`http://127.0.0.1:8000/api/balance_sheet?type=Assets,Liabilities&filter_zero=${zeroFilter}${fromDateVal}${toDateVal}`)
-              .then(response => {
-                this.assets_response = response.data['assets_response'][0];
-                this.libility_response = response.data['libility_response'][0];
-              })
-              .catch(error => {
-                console.log("Error Fetching Balance Sheet Data.")
-              });
-          }
         },
         mounted(){
-          this.filterZero();
+          axios.get('http://127.0.0.1:8000/api/balance_sheet')
+          .then(response => {
+            this.assets_response = response.data['assets_response'][0];
+            this.libility_response = response.data['libility_response'][0];
+          })
+          .catch(error => {
+            console.log("Error Fetching Balance Sheet Data.")
+          });
         }
   });
 </script>
 
+<script>
+  const collapse = function(willCollapse = true, callback = (list) => {}) {
+      this.collapsing = true;
+      const height = this.scrollHeight;
+      const stateFrom = {height: height + 'px'};
+      const stateTo = {height: '0px'};
 
+      let animateState = [stateFrom, stateTo];
+      if(!willCollapse) animateState = [stateTo, stateFrom];
+
+      this.animate(animateState,{
+        duration:500,
+        iterations:1,
+        easing:'ease-in-out'
+      }).finished.then(val => {
+        this.collapsing = false;
+        if(callback && typeof(callback) == 'function'){
+          callback(this);
+        }
+      });
+    }
+    const showActiveTab = (tab) => {
+      if(tab){
+        document.querySelector('#active-tab').textContent = tab.textContent;
+      }
+    }
+    showActiveTab(document.querySelector('.list-item.active'));
+
+    document.querySelectorAll('.list li').forEach(li => {
+        const list = li.querySelector('.list');
+        if(list)list.collapse = collapse.bind(list);
+        li.querySelector('.list-item').addEventListener('click', (event) => {
+            // if not a list (just list-item)
+            if(!list){
+              document.querySelectorAll('.list-item').forEach(listItem => {
+                listItem.classList.remove('active');
+              });
+              event.target.classList.add('active');
+              showActiveTab(event.target);
+              event.preventDefault();
+              return;
+            }
+            // if list still collapsing
+            if(list.collapsing){
+                event.preventDefault();
+                return;
+            }
+            // set list collapse or open
+            if(!list.classList.contains('open')) {
+                list.classList.add('open')
+                list.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
+                list.parentElement.parentElement.querySelectorAll('& > li > .list.open').forEach(oList => {
+                  if(oList !== list){
+                    oList.collapse(true, ls => {
+                        ls.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
+                        ls.classList.remove('open');
+                    });
+                  }
+                });
+                // open
+                list.collapse(false);
+            } else {
+                // collapse
+                list.collapse(true, ls => {
+                    ls.querySelectorAll('.list').forEach(oList => oList.classList.remove('open'));
+                    ls.classList.remove('open');
+                });
+            }
+        })
+    })
+</script>
 
 {% endblock body %}
-
 

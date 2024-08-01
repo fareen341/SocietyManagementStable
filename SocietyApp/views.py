@@ -338,13 +338,16 @@ def calling_balance_sheet(request):
     filter_zero_param = request.GET.get('filter_zero', None)
     from_date_param = request.GET.get('from_date', None)
     to_date_param = request.GET.get('to_date', None)
+    type_param = request.GET.get('type', None)
+    type_list = type_param.split(',')
+    print("Type is========================>", type_list)
 
     assets_response = []
     liabilities_response = []
-    groups = ['Assets', 'Liabilities']
+    groups = type_list
     for grp in groups:
         function_call, current_total, previous_total = balance_sheet_groups(Childs.objects.get(name=grp), filter_zero_param, from_date_param, to_date_param)
-        if grp == 'Assets':
+        if grp == type_list[0]:
             print(f"current total: {current_total}, previous_total: {previous_total}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
             asset_current_total = current_total
             asset_previous_total = previous_total
@@ -355,9 +358,9 @@ def calling_balance_sheet(request):
             liabilities_response.append(function_call)
 
     return JsonResponse({
-        'assets_response': assets_response, 
-        'libility_response': liabilities_response, 
-        'asset_current_total': asset_current_total, 
+        'assets_response': assets_response,
+        'libility_response': liabilities_response,
+        'asset_current_total': asset_current_total,
         'asset_previous_total': asset_previous_total,
         'liabilities_current_total': liabilities_current_total,
         'liabilities_previous_total': liabilities_previous_total
@@ -367,7 +370,6 @@ def calling_balance_sheet(request):
 import datetime
 from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
-
 
 
 def balance_sheet_groups(parent, filter_zero, from_date, to_date):
@@ -393,22 +395,25 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
             previous_start_date = start_date - relativedelta(years=2)
             previous_end_date = end_date - relativedelta(years=2)
 
-            current_date_subquery = GeneralLedger.objects.filter(
+            current_query = GeneralLedger.objects.filter(
                 from_ledger__group_name=node.name,
                 date__range=(current_start_date, current_end_date)
-            ).values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
-            
-            previous_date_subquery = GeneralLedger.objects.filter(
+            )
+
+            previous_query = GeneralLedger.objects.filter(
                 from_ledger__group_name=node.name,
                 date__range=(previous_start_date, previous_end_date)
-            ).values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
+            )
+
+            if from_date and to_date:
+                current_query = current_query.filter(date__range=(from_date, to_date))
+                previous_query = previous_query.filter(date__range=(from_date, to_date))
+
+            current_date_subquery = current_query.values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
+            previous_date_subquery = previous_query.values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
 
             gl_objs = GeneralLedger.objects.filter(id__in=Subquery(current_date_subquery))
             previous_gl_objs = GeneralLedger.objects.filter(id__in=Subquery(previous_date_subquery))
-
-            if from_date and to_date:
-                gl_objs = gl_objs.filter(date__range=(from_date, to_date))
-                previous_gl_objs = previous_gl_objs.filter(date__range=(from_date, to_date))
 
             for gl_obj in gl_objs.values('from_ledger__ledger_name', 'balance'):
                 ledger_name = gl_obj['from_ledger__ledger_name']
@@ -446,14 +451,14 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
             return result_dict, total_balance, previous_total_balance
 
         final_result, total_balance, previous_total_balance = helper(investment)
-        
+
         return final_result, total_balance, previous_total_balance
 
     nested_dict, total_balance, previous_total_balance = traverse_children(parent)
     # Return the overall totals
     return nested_dict, total_balance, previous_total_balance
 
-    
+
 # bkp code:
 # def balance_sheet_groups(parent, filter_zero, from_date, to_date):
 #     def traverse_children(investment):
@@ -492,7 +497,7 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
 
 #             if from_date and to_date:
 #                 gl_objs = gl_objs.filter(date__range=(from_date, to_date))
-                
+
 #             for gl_obj in gl_objs.values('from_ledger__ledger_name', 'balance'):
 #                 ledger_name = gl_obj['from_ledger__ledger_name']
 #                 balance = gl_obj['balance']
@@ -585,222 +590,222 @@ def balance_sheet(request):
 
     # GROUPS OF LIALIBILITIES.
     # group0 = Ledger.objects.filter(group_name="Share Capital")
-    group0 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Share Capital"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Share Capital")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group0[ledger.group_name].append(ledger.ledger_name)
-    group0 = dict(group0)
+    # group0 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Share Capital"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Share Capital")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group0[ledger.group_name].append(ledger.ledger_name)
+    # group0 = dict(group0)
 
 
-    # group1 = Ledger.objects.filter(group_name="Subscription Towards Shares")
-    group1 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Subscription Towards Shares"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Subscription Towards Shares")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group1[ledger.group_name].append(ledger.ledger_name)
-    group1 = dict(group1)
+    # # group1 = Ledger.objects.filter(group_name="Subscription Towards Shares")
+    # group1 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Subscription Towards Shares"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Subscription Towards Shares")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group1[ledger.group_name].append(ledger.ledger_name)
+    # group1 = dict(group1)
 
-    # group2 = Ledger.objects.filter(group_name="Reserve Fund And Other Funds")
-    group2 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Reserve Fund And Other Funds"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Reserve Fund And Other Funds")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group2[ledger.group_name].append(ledger.ledger_name)
-    group2 = dict(group2)
+    # # group2 = Ledger.objects.filter(group_name="Reserve Fund And Other Funds")
+    # group2 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Reserve Fund And Other Funds"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Reserve Fund And Other Funds")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group2[ledger.group_name].append(ledger.ledger_name)
+    # group2 = dict(group2)
 
-    # group3 = Ledger.objects.filter(group_name="Secured Loans")
-    group3 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Secured Loans"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Secured Loans")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group3[ledger.group_name].append(ledger.ledger_name)
-    group3 = dict(group3)
+    # # group3 = Ledger.objects.filter(group_name="Secured Loans")
+    # group3 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Secured Loans"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Secured Loans")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group3[ledger.group_name].append(ledger.ledger_name)
+    # group3 = dict(group3)
 
-    # group4 = Ledger.objects.filter(group_name="Unsecured Loans")
-    group4 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Unsecured Loans"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Unsecured Loans")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group4[ledger.group_name].append(ledger.ledger_name)
-    group4 = dict(group4)
+    # # group4 = Ledger.objects.filter(group_name="Unsecured Loans")
+    # group4 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Unsecured Loans"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Unsecured Loans")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group4[ledger.group_name].append(ledger.ledger_name)
+    # group4 = dict(group4)
 
-    # group5 = Ledger.objects.filter(group_name="Deposits")
-    group5 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Deposits"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Deposits")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group5[ledger.group_name].append(ledger.ledger_name)
-    group5 = dict(group5)
+    # # group5 = Ledger.objects.filter(group_name="Deposits")
+    # group5 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Deposits"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Deposits")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group5[ledger.group_name].append(ledger.ledger_name)
+    # group5 = dict(group5)
 
-    # group6 = Ledger.objects.filter(group_name="Current Liabilities And Provisions")
-    group6 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Current Liabilities And Provisions"), cost_center=False, balance_sheet=True)
-    # print("all grops print===>", all_cost_center_group)
-    abcd = []
-    for i in all_cost_center_group:
-        if isinstance(i, str):
-            abcd.append(i)  # Append the string directly
-        elif hasattr(i, 'name'):  # Assuming 'name' is an attribute you want to access
-            abcd.append(i.name)  # Append the attribute value if it exists
-        else:
-            abcd.append(str(i))  # Fallback to string representation if needed
+    # # group6 = Ledger.objects.filter(group_name="Current Liabilities And Provisions")
+    # group6 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Current Liabilities And Provisions"), cost_center=False, balance_sheet=True)
+    # # print("all grops print===>", all_cost_center_group)
+    # abcd = []
+    # for i in all_cost_center_group:
+    #     if isinstance(i, str):
+    #         abcd.append(i)  # Append the string directly
+    #     elif hasattr(i, 'name'):  # Assuming 'name' is an attribute you want to access
+    #         abcd.append(i.name)  # Append the attribute value if it exists
+    #     else:
+    #         abcd.append(str(i))  # Fallback to string representation if needed
 
-    all_cost_center_group.append("Current Liabilities And Provisions")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    # print("all grops print===>3", filtered_ledgers)
-    for ledger in filtered_ledgers:
-        group6[ledger.group_name].append(ledger.ledger_name)
-    group6 = dict(group6)
-    # print("group 5 is----->", group6)
-
-
-
-    # group7 = Ledger.objects.filter(group_name="Interest Accrued Due But Not Paid")
-    group7 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Interest Accrued Due But Not Paid"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Interest Accrued Due But Not Paid")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group7[ledger.group_name].append(ledger.ledger_name)
-    group7 = dict(group7)
-
-
-    # GROUPS OF ASSETS
-    # group8 = Ledger.objects.filter(group_name="Fixed Assets")
-    group8 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Fixed Assets"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Fixed Assets")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    # print("All groups are======>",filtered_ledgers)
-    for ledger in filtered_ledgers:
-        group8[ledger.group_name].append(ledger.ledger_name)
-    group8 = dict(group8)
-
-    # group9 = Ledger.objects.filter(group_name="Investment")
-    group9 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Investment"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Investment")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group9[ledger.group_name].append(ledger.ledger_name)
-    group9 = dict(group9)
-
-    # group10 = Ledger.objects.filter(group_name="Cash And Bank Balances")
-    group10 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Cash And Bank Balances"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Cash And Bank Balances")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group10[ledger.group_name].append(ledger.ledger_name)
-    group10 = dict(group10)
-
-    # group11 = Ledger.objects.filter(group_name="Loans And Advances")
-    group11 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Loans And Advances"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Loans And Advances")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group11[ledger.group_name].append(ledger.ledger_name)
-    group11 = dict(group11)
+    # all_cost_center_group.append("Current Liabilities And Provisions")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # # print("all grops print===>3", filtered_ledgers)
+    # for ledger in filtered_ledgers:
+    #     group6[ledger.group_name].append(ledger.ledger_name)
+    # group6 = dict(group6)
+    # # print("group 5 is----->", group6)
 
 
 
-    # group13 = Ledger.objects.filter(group_name="Profit And Loss Account")
-    group13 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Profit And Loss Account"), cost_center=False, balance_sheet=True)
-    all_cost_center_group.append("Profit And Loss Account")
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    for ledger in filtered_ledgers:
-        group13[ledger.group_name].append(ledger.ledger_name)
-    group13 = dict(group13)
+    # # group7 = Ledger.objects.filter(group_name="Interest Accrued Due But Not Paid")
+    # group7 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Interest Accrued Due But Not Paid"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Interest Accrued Due But Not Paid")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group7[ledger.group_name].append(ledger.ledger_name)
+    # group7 = dict(group7)
 
 
-    # group12 = Ledger.objects.filter(group_name="Current Assets")
-    group12 = defaultdict(list)
-    all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Current Assest"), cost_center=False, balance_sheet=True)
-    # print("all grou[s*********************************************]", all_cost_center_group)
-    # print("can be fixed from here, to be continue...........................")
-    all_cost_center_group.insert(0, "Current Assest")
-    final_all_cost_center_group = all_cost_center_group
-    filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group).order_by('ledger_name')
-    for ledger in filtered_ledgers:
-        group12[ledger.group_name].append(ledger.ledger_name)
-    group12 = dict(group12)
-    # print("gtoup 12 printing-------", group12)
+    # # GROUPS OF ASSETS
+    # # group8 = Ledger.objects.filter(group_name="Fixed Assets")
+    # group8 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Fixed Assets"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Fixed Assets")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # # print("All groups are======>",filtered_ledgers)
+    # for ledger in filtered_ledgers:
+    #     group8[ledger.group_name].append(ledger.ledger_name)
+    # group8 = dict(group8)
 
-    unique_latest_ids = (
-        GeneralLedger.objects.all()
-        .values('from_ledger')
-        .annotate(max_id=Max('id'))
-        .values_list('max_id', flat=True)
-    )
+    # # group9 = Ledger.objects.filter(group_name="Investment")
+    # group9 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Investment"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Investment")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group9[ledger.group_name].append(ledger.ledger_name)
+    # group9 = dict(group9)
 
-    unique_latest_entries = GeneralLedger.objects.filter(id__in=unique_latest_ids).values("from_ledger__ledger_name", 'balance', 'date')
+    # # group10 = Ledger.objects.filter(group_name="Cash And Bank Balances")
+    # group10 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Cash And Bank Balances"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Cash And Bank Balances")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group10[ledger.group_name].append(ledger.ledger_name)
+    # group10 = dict(group10)
 
-    total_balance = 0
-    final_break_amt = {}
-    for group, items in group12.items():
-        break_balance = 0
-        for item in items:
-            for amt in unique_latest_entries:
-                if amt['from_ledger__ledger_name'] == item:
-                    total_balance += amt['balance']
-                    break_balance += amt['balance']
-                    final_break_amt.update({group: break_balance})
-                    # print(f"total amt is====> {total_balance} break_balance: {break_balance}")
-    # print(f"---------------------final: {final_break_amt}--------------------------")
-    # print(f"-------------------------total: {total_balance}")
+    # # group11 = Ledger.objects.filter(group_name="Loans And Advances")
+    # group11 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Loans And Advances"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Loans And Advances")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group11[ledger.group_name].append(ledger.ledger_name)
+    # group11 = dict(group11)
 
-    # print(" FINAL GRP", final_all_cost_center_group)
-    for led in final_break_amt:
-        # print("led is====", final_break_amt[led])
-        for grp in final_all_cost_center_group:
-            # print(f"LED IS: {led}, GRP IS: {grp}, AMT IS: {final_break_amt[led]}")
-            if str(led) == str(grp):
-                break
-        # print("===============================END=====================================")
 
-    grps = [
-        {'Current Assest': 400},
-        {'→ Sundry Debtors': 500},
-        {'→→ Vikas': 400},
-        {'→→→ Vikas 1': 400},
-        {'→→→→ Vikas 2': 0},
-        {'→→→→→ Misc Assets': 400},
-        {'→ Input Sgst': 400},
-        {'→ Gst Input': 0},
-        {'→ Tax': 400},
-        {'→→ Gst': 400},
-        {'→→→ Payable Tax': 400},
-        {'→→→→ Input Cgst': 400},
-    ]
+
+    # # group13 = Ledger.objects.filter(group_name="Profit And Loss Account")
+    # group13 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Profit And Loss Account"), cost_center=False, balance_sheet=True)
+    # all_cost_center_group.append("Profit And Loss Account")
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
+    # for ledger in filtered_ledgers:
+    #     group13[ledger.group_name].append(ledger.ledger_name)
+    # group13 = dict(group13)
+
+
+    # # group12 = Ledger.objects.filter(group_name="Current Assets")
+    # group12 = defaultdict(list)
+    # all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Current Assest"), cost_center=False, balance_sheet=True)
+    # # print("all grou[s*********************************************]", all_cost_center_group)
+    # # print("can be fixed from here, to be continue...........................")
+    # all_cost_center_group.insert(0, "Current Assest")
+    # final_all_cost_center_group = all_cost_center_group
+    # filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group).order_by('ledger_name')
+    # for ledger in filtered_ledgers:
+    #     group12[ledger.group_name].append(ledger.ledger_name)
+    # group12 = dict(group12)
+    # # print("gtoup 12 printing-------", group12)
+
+    # unique_latest_ids = (
+    #     GeneralLedger.objects.all()
+    #     .values('from_ledger')
+    #     .annotate(max_id=Max('id'))
+    #     .values_list('max_id', flat=True)
+    # )
+
+    # unique_latest_entries = GeneralLedger.objects.filter(id__in=unique_latest_ids).values("from_ledger__ledger_name", 'balance', 'date')
+
+    # total_balance = 0
+    # final_break_amt = {}
+    # for group, items in group12.items():
+    #     break_balance = 0
+    #     for item in items:
+    #         for amt in unique_latest_entries:
+    #             if amt['from_ledger__ledger_name'] == item:
+    #                 total_balance += amt['balance']
+    #                 break_balance += amt['balance']
+    #                 final_break_amt.update({group: break_balance})
+    #                 # print(f"total amt is====> {total_balance} break_balance: {break_balance}")
+    # # print(f"---------------------final: {final_break_amt}--------------------------")
+    # # print(f"-------------------------total: {total_balance}")
+
+    # # print(" FINAL GRP", final_all_cost_center_group)
+    # for led in final_break_amt:
+    #     # print("led is====", final_break_amt[led])
+    #     for grp in final_all_cost_center_group:
+    #         # print(f"LED IS: {led}, GRP IS: {grp}, AMT IS: {final_break_amt[led]}")
+    #         if str(led) == str(grp):
+    #             break
+    #     # print("===============================END=====================================")
+
+    # grps = [
+    #     {'Current Assest': 400},
+    #     {'→ Sundry Debtors': 500},
+    #     {'→→ Vikas': 400},
+    #     {'→→→ Vikas 1': 400},
+    #     {'→→→→ Vikas 2': 0},
+    #     {'→→→→→ Misc Assets': 400},
+    #     {'→ Input Sgst': 400},
+    #     {'→ Gst Input': 0},
+    #     {'→ Tax': 400},
+    #     {'→→ Gst': 400},
+    #     {'→→→ Payable Tax': 400},
+    #     {'→→→→ Input Cgst': 400},
+    # ]
 
     return render(request, 'balance_sheet.html', {
         'datatable_columns': datatable_columns,
-        'group0': group0,
-        'group1': group1,
-        'group2': group2,
-        'group3': group3,
-        'group4': group4,
-        'group5': group5,
-        'group6': group6,
-        'group7': group7,
-        'group8': group8,
-        'group9': group9,
-        'group10': group10,
-        'group11': group11,
-        'group12': group12,
-        'group13': group13,
-        'unique_latest_entries': unique_latest_entries,
-        'abcd': abcd,
-        'grps': grps,
+        # 'group0': group0,
+        # 'group1': group1,
+        # 'group2': group2,
+        # 'group3': group3,
+        # 'group4': group4,
+        # 'group5': group5,
+        # 'group6': group6,
+        # 'group7': group7,
+        # 'group8': group8,
+        # 'group9': group9,
+        # 'group10': group10,
+        # 'group11': group11,
+        # 'group12': group12,
+        # 'group13': group13,
+        # 'unique_latest_entries': unique_latest_entries,
+        # 'abcd': abcd,
+        # 'grps': grps,
     })
 
 

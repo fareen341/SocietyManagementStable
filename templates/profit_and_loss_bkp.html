@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-5 ms-auto me-auto" id="societyHead">
+          {% verbatim %}
+          <div class="text-center mt-2" id="print-head">
+            <h3 id="heading" style="color: #000 !important; font-family: 'Calibri', sans-serif;"><b>{{ society.society_name }}</b></h3>
+            <p style="font-family: 'Calibri', sans-serif;" class="mt-3 p-0 mb-0 print-head-content"><b>Registraion Number: </b> <span>{{ society.registration_number }}</span></p>
+            <p style="font-family: 'Calibri', sans-serif;" class="print-head-content">{{ society.society_reg_address }}, {{ society.socity_state }}, {{ society.pin_code }}</p>
+          </div>
+          {% endverbatim %}
+        </div>
+    </div>
+    <div class="row">
+      <div>
+        <form method="get" action="{% url 'profit_and_loss' %}">
+          <div>
+              <label for="from-date">From:</label>
+              <input type="date" id="from-date" name="from_date">
+          </div>
+          <div>
+              <label for="to-date">To:</label>
+              <input type="date" id="to-date" name="to_date">
+          </div>
+          <div>
+              <button type="submit">Filter</button>
+          </div>
+      </form>
+      </div>
+      <h3 class="text-center">BALANCE SHEET AS ON 31/03/24</h3>
+
+      <div class="col-lg-6">
+        <table class="table table-bordered">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">Previous Year</th>
+              <th></th>
+              <th scope="col">Expenditure</th>
+              <th>Amt</th>
+              <th scope="col">Current Year</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for expense_ledger in expense %}
+            <tr>
+              {% for amt in unique_latest_entries %}
+                  {% if amt.from_ledger__ledger_name == expense_ledger.ledger_name %}
+                      <td></td>
+                      <td>To</td>
+                      <td>{{ expense_ledger.ledger_name }}</td>
+                      <td>{{ amt.balance }}</td>
+                      <td></td>
+                      <td></td>
+                  {% endif %}
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-lg-6">
+        <table class="table table-bordered">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">Previous Year</th>
+              <th></th>
+              <th scope="col">Income</th>
+              <th>Amt</th>
+              <th scope="col">Current Year</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for income_ledger in incomes %}
+            <tr>
+              {% for amt in unique_latest_entries %}
+                  {% if amt.from_ledger__ledger_name == income_ledger.ledger_name %}
+                      <td></td>
+                      <td>By</td>
+                      <td>{{ income_ledger.ledger_name }}</td>
+                      <td>{{ amt.balance }}</td>
+                      <td></td>
+                      <td></td>
+                  {% endif %}
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+</div>
+
+{% endblock body %}
