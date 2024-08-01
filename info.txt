@@ -2002,3 +2002,176 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
 
     return nested_dict
 
+
+
+
+
+--------------------------------------- PENDING ACCOUNTING ----------------------------------------------
+1. give validation when a ledger named 'ledger' is added in ledger creation, cuz i have applied condition in balance sheet.
+2. 
+
+
+
+
+
+----------------------- QUESTION -----------------------------
+current and previous year in balanace sheet.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from datetime import date
+
+start_date = date(2024, 07, 04)
+end_date = date(2024, 07, 31)
+
+# Query within this date range
+ledgers = GL.objects.filter(date__range=('2024-06-01', '2024-07-01'))
+print("Date Range Query Results:")
+print(ledgers)
+
+
+
+broad_start_date = date(2023, 4, 1)
+broad_end_date = date(2024, 3, 31)
+
+
+broad_start_date = date(2023, 4, 1)
+broad_end_date = date(2024, 3, 31)
+
+
+ledgers_broad = GL.objects.filter(date__range=(broad_start_date, broad_end_date)).values('date', 'from_ledger__ledger_name', 'balance')
+print(ledgers_broad)
+
+
+
+broad_start_date = date(2022, 4, 1) 
+broad_end_date = date(2023, 3, 31)
+
+
+GL.objects.filter(date__range=(broad_start_date, broad_end_date))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+================================ BKP CODE OF BALANCE SHEET VUE JS ===========================================================
+{% verbatim %}
+      <ul class="list row" :style="{ '--depth': depth }">
+        <li v-for="(value, key) in data" :key="key" v-if="key !== 'final_total' && key !== 'previous_final_total'" class="col-12">
+          <div class="row">
+            <div class="col-md-3 text-left">
+              {{ key !== 'ledgers' ? (key === 'Previous_Total' ? data[key].toLocaleString() : (value.previous_final_total !== undefined ? value.previous_final_total.toLocaleString() : '0')) : '' }}
+            </div>
+
+            <div class="col-md-3">
+              <a v-if="key !== 'ledgers'" href="#" class="list-item">
+                <span>{{ key }}</span>
+              </a>
+              <template v-if="key === 'ledgers'">
+                <p v-if="Object.keys(value).length > 0" v-for="(amount, ledger) in value" :key="ledger">
+                  {{ ledger }}:
+                </p>
+              </template>
+            </div>
+
+            <div class="col-md-3 text-end">
+              <template v-if="key === 'ledgers'">
+                <p v-if="Object.keys(value).length > 0" v-for="(amount, ledger) in value" :key="ledger">
+                  <span class="amount">{{ amount }}</span><br>
+                </p>
+              </template>
+            </div>
+
+            <div class="col-md-3 text-end">
+              {{ key !== 'ledgers' ? (key === 'Total' ? data[key].toLocaleString() : (value.final_total !== undefined ? value.final_total.toLocaleString() : '0')) : '' }}
+            </div>
+          </div>
+          <nested-list v-if="isObject(value)" :data="value" :depth="depth + 1"></nested-list>
+        </li>
+      </ul>
+
+      {% endverbatim %}
+
+
+
+
+
+
+
+
+
+
+
+
+BKP CODE:
+
+{% verbatim %}
+<ul class="list row" :style="{ '--depth': depth }">
+  <li v-for="(value, key, index) in data" :key="key" v-if="key !== 'final_total' && key !== 'previous_final_total'"  class="col-12">
+    <div class="row">
+      <div class="col-md-3 text-start">
+        {{ key !== 'ledgers' ? (value.final_total !== undefined ? value.final_total.toLocaleString() : '0') : '' }}
+      </div>
+
+      <div class="col-md-3">
+        <a v-if="key !== 'ledgers'" href="#" class="list-item">
+          <span class="toggle-icon">+</span>
+          <span :style="{fontWeight: value.parent_group ? 'bold' : 'normal', fontSize: value.parent_group ? '18px' : 'inherit'}">{{ key }}</span>
+        </a>
+        <template v-if="key === 'ledgers'">
+          <p v-if="Object.keys(value).length > 0" v-for="(amount, ledger) in value" :key="ledger" class="view-label" style="font-style: italic;">
+            {{ ledger }}:
+          </p>
+        </template>
+      </div>
+
+      <div class="col-md-3 text-end">
+        <template v-if="key === 'ledgers'">
+          <p v-if="Object.keys(value).length > 0" v-for="(amount, ledger) in value" :key="ledger">
+            <span class="amount view-label" style="font-style: italic; margin-left: auto !important;">{{ amount }}</span><br>
+          </p>
+        </template>
+      </div>
+
+      <div class="col-md-3 text-end">
+        <span :style="{ 
+          fontWeight: value.parent_group ? 'bold' : 'normal', 
+          fontSize: value.parent_group ? '18px' : 'inherit' 
+        }">
+          {{ key !== 'ledgers' 
+            ? (value.final_total !== undefined 
+                ? value.final_total.toLocaleString() 
+                : '0') 
+            : '' 
+          }}
+        </span>
+      </div>
+      
+    </div>
+    <nested-list v-if="isObject(value)" :data="value" :depth="depth + 1"></nested-list>
+  </li>
+</ul>
+{% endverbatim %}

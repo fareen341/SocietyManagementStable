@@ -343,34 +343,72 @@ def calling_balance_sheet(request):
     liabilities_response = []
     groups = ['Assets', 'Liabilities']
     for grp in groups:
-        function_call = balance_sheet_groups(Childs.objects.get(name=grp), filter_zero_param, from_date_param, to_date_param)
+        function_call, current_total, previous_total = balance_sheet_groups(Childs.objects.get(name=grp), filter_zero_param, from_date_param, to_date_param)
         if grp == 'Assets':
+            print(f"current total: {current_total}, previous_total: {previous_total}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
+            asset_current_total = current_total
+            asset_previous_total = previous_total
             assets_response.append(function_call)
         else:
+            liabilities_current_total = current_total
+            liabilities_previous_total = previous_total
             liabilities_response.append(function_call)
 
-    return JsonResponse({'assets_response': assets_response, 'libility_response': liabilities_response})
+    return JsonResponse({
+        'assets_response': assets_response, 
+        'libility_response': liabilities_response, 
+        'asset_current_total': asset_current_total, 
+        'asset_previous_total': asset_previous_total,
+        'liabilities_current_total': liabilities_current_total,
+        'liabilities_previous_total': liabilities_previous_total
+    })
+
+
+import datetime
+from datetime import datetime as dt
+from dateutil.relativedelta import relativedelta
+
 
 
 def balance_sheet_groups(parent, filter_zero, from_date, to_date):
     def traverse_children(investment):
-        Total = 0  # Initialize overall total
-
         def helper(node):
-            nonlocal Total
             ledgers_dict = {}
             children_dict = {}
             total_balance = 0
+            previous_total_balance = 0
 
-            subquery = GeneralLedger.objects.filter(from_ledger__group_name=node.name).values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
-            gl_objs = GeneralLedger.objects.filter(id__in=Subquery(subquery))
+            today = dt.today().date()
+            current_year = today.year
+
+            if today.month < 4:
+                start_date = dt.strptime(f"01-04-{current_year - 1}", "%d-%m-%Y").date()
+                end_date = dt.strptime(f"31-03-{current_year}", "%d-%m-%Y").date()
+            else:
+                start_date = dt.strptime(f"01-04-{current_year}", "%d-%m-%Y").date()
+                end_date = dt.strptime(f"31-03-{current_year + 1}", "%d-%m-%Y").date()
+
+            current_start_date = start_date - relativedelta(years=1)
+            current_end_date = end_date - relativedelta(years=1)
+            previous_start_date = start_date - relativedelta(years=2)
+            previous_end_date = end_date - relativedelta(years=2)
+
+            current_date_subquery = GeneralLedger.objects.filter(
+                from_ledger__group_name=node.name,
+                date__range=(current_start_date, current_end_date)
+            ).values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
+            
+            previous_date_subquery = GeneralLedger.objects.filter(
+                from_ledger__group_name=node.name,
+                date__range=(previous_start_date, previous_end_date)
+            ).values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
+
+            gl_objs = GeneralLedger.objects.filter(id__in=Subquery(current_date_subquery))
+            previous_gl_objs = GeneralLedger.objects.filter(id__in=Subquery(previous_date_subquery))
 
             if from_date and to_date:
                 gl_objs = gl_objs.filter(date__range=(from_date, to_date))
-            # elif from_date:
-            #     gl_objs = gl_objs.filter(date__gte=from_date)
-            # elif to_date:
-            #     gl_objs = gl_objs.filter(date__lte=to_date)
+                previous_gl_objs = previous_gl_objs.filter(date__range=(from_date, to_date))
 
             for gl_obj in gl_objs.values('from_ledger__ledger_name', 'balance'):
                 ledger_name = gl_obj['from_ledger__ledger_name']
@@ -378,13 +416,20 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
                 ledgers_dict[ledger_name] = balance
                 total_balance += balance
 
+            for prev_gl_obj in previous_gl_objs.values('from_ledger__ledger_name', 'balance'):
+                previous_total_balance += prev_gl_obj['balance']
+
             children = node.cost_center.all() if hasattr(node, 'cost_center') else node.children.all()
 
+            child_totals = {'current': 0, 'previous': 0}
             for child in children:
-                child_result, child_total = helper(child)
+                child_result, child_total, child_previous_total = helper(child)
                 if filter_zero == 'all' or (filter_zero == 'zero' and child_total > 0):
                     children_dict[child.name] = child_result
                     total_balance += child_total
+                    previous_total_balance += child_previous_total
+                    child_totals['current'] += child_total
+                    child_totals['previous'] += child_previous_total
 
             result_dict = {}
             if ledgers_dict:
@@ -392,15 +437,91 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
             if children_dict:
                 result_dict.update(children_dict)
             result_dict['final_total'] = total_balance
+            result_dict['previous_final_total'] = previous_total_balance
 
-            return result_dict, total_balance
+            # Add parent_group flag if node name matches specific values
+            if node.name in ['Fixed Assets', 'Gold', 'Silver']:
+                result_dict['parent_group'] = True
 
-        final_result, Total = helper(investment)
-        final_result['Total'] = Total
-        return final_result
+            return result_dict, total_balance, previous_total_balance
 
-    nested_dict = traverse_children(parent)
-    return nested_dict
+        final_result, total_balance, previous_total_balance = helper(investment)
+        
+        return final_result, total_balance, previous_total_balance
+
+    nested_dict, total_balance, previous_total_balance = traverse_children(parent)
+    # Return the overall totals
+    return nested_dict, total_balance, previous_total_balance
+
+    
+# bkp code:
+# def balance_sheet_groups(parent, filter_zero, from_date, to_date):
+#     def traverse_children(investment):
+#         Total = 0  # Initialize overall total
+
+#         def helper(node):
+#             nonlocal Total
+#             ledgers_dict = {}
+#             children_dict = {}
+#             total_balance = 0
+
+#             today = dt.today().date()
+#             current_year = today.year
+
+#             if today.month < 4:
+#                 start_date = dt.strptime(f"01-04-{current_year - 1}", "%d-%m-%Y").date()
+#                 end_date = dt.strptime(f"31-03-{current_year}", "%d-%m-%Y").date()
+#             else:
+#                 start_date = dt.strptime(f"01-04-{current_year}", "%d-%m-%Y").date()
+#                 end_date = dt.strptime(f"31-03-{current_year + 1}", "%d-%m-%Y").date()
+
+#             current_start_date = start_date - relativedelta(years=1)
+#             current_end_date = end_date - relativedelta(years=1)
+#             previous_start_date = start_date - relativedelta(years=2)
+#             previous_end_date = end_date - relativedelta(years=2)
+
+#             print(f"For current year: 2023 - 2024 =========={current_start_date}-{current_end_date}")
+#             print(f"For previous year: 2022 - 2023 =========={previous_start_date}-{previous_end_date}")
+
+#             # current_date_subquery = GeneralLedger.objects.filter(from_ledger__group_name=node.name).values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
+#             current_date_subquery = GeneralLedger.objects.filter(from_ledger__group_name=node.name, date__range=(current_start_date, current_end_date)).values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
+#             previous_date_subquery = GeneralLedger.objects.filter(from_ledger__group_name=node.name, date__range=(previous_start_date, previous_end_date)).values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
+#             # For Previous Year Use:
+
+#             gl_objs = GeneralLedger.objects.filter(id__in=Subquery(current_date_subquery))
+
+#             if from_date and to_date:
+#                 gl_objs = gl_objs.filter(date__range=(from_date, to_date))
+                
+#             for gl_obj in gl_objs.values('from_ledger__ledger_name', 'balance'):
+#                 ledger_name = gl_obj['from_ledger__ledger_name']
+#                 balance = gl_obj['balance']
+#                 ledgers_dict[ledger_name] = balance
+#                 total_balance += balance
+
+#             children = node.cost_center.all() if hasattr(node, 'cost_center') else node.children.all()
+
+#             for child in children:
+#                 child_result, child_total = helper(child)
+#                 if filter_zero == 'all' or (filter_zero == 'zero' and child_total > 0):
+#                     children_dict[child.name] = child_result
+#                     total_balance += child_total
+
+#             result_dict = {}
+#             if ledgers_dict:
+#                 result_dict['ledgers'] = ledgers_dict
+#             if children_dict:
+#                 result_dict.update(children_dict)
+#             result_dict['final_total'] = total_balance
+
+#             return result_dict, total_balance
+
+#         final_result, Total = helper(investment)
+#         final_result['Total'] = Total
+#         return final_result
+
+#     nested_dict = traverse_children(parent)
+#     return nested_dict
 
 
 # UNIT TESTING VIEW
@@ -521,7 +642,7 @@ def balance_sheet(request):
     # group6 = Ledger.objects.filter(group_name="Current Liabilities And Provisions")
     group6 = defaultdict(list)
     all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Current Liabilities And Provisions"), cost_center=False, balance_sheet=True)
-    print("all grops print===>", all_cost_center_group)
+    # print("all grops print===>", all_cost_center_group)
     abcd = []
     for i in all_cost_center_group:
         if isinstance(i, str):
@@ -533,11 +654,11 @@ def balance_sheet(request):
 
     all_cost_center_group.append("Current Liabilities And Provisions")
     filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    print("all grops print===>3", filtered_ledgers)
+    # print("all grops print===>3", filtered_ledgers)
     for ledger in filtered_ledgers:
         group6[ledger.group_name].append(ledger.ledger_name)
     group6 = dict(group6)
-    print("group 5 is----->", group6)
+    # print("group 5 is----->", group6)
 
 
 
@@ -557,7 +678,7 @@ def balance_sheet(request):
     all_cost_center_group = get_all_child_investments(Childs.objects.get(name="Fixed Assets"), cost_center=False, balance_sheet=True)
     all_cost_center_group.append("Fixed Assets")
     filtered_ledgers = Ledger.objects.filter(group_name__in=all_cost_center_group)
-    print("All groups are======>",filtered_ledgers)
+    # print("All groups are======>",filtered_ledgers)
     for ledger in filtered_ledgers:
         group8[ledger.group_name].append(ledger.ledger_name)
     group8 = dict(group8)
@@ -612,7 +733,7 @@ def balance_sheet(request):
     for ledger in filtered_ledgers:
         group12[ledger.group_name].append(ledger.ledger_name)
     group12 = dict(group12)
-    print("gtoup 12 printing-------", group12)
+    # print("gtoup 12 printing-------", group12)
 
     unique_latest_ids = (
         GeneralLedger.objects.all()
@@ -634,17 +755,17 @@ def balance_sheet(request):
                     break_balance += amt['balance']
                     final_break_amt.update({group: break_balance})
                     # print(f"total amt is====> {total_balance} break_balance: {break_balance}")
-    print(f"---------------------final: {final_break_amt}--------------------------")
-    print(f"-------------------------total: {total_balance}")
+    # print(f"---------------------final: {final_break_amt}--------------------------")
+    # print(f"-------------------------total: {total_balance}")
 
-    print(" FINAL GRP", final_all_cost_center_group)
+    # print(" FINAL GRP", final_all_cost_center_group)
     for led in final_break_amt:
         # print("led is====", final_break_amt[led])
         for grp in final_all_cost_center_group:
-            print(f"LED IS: {led}, GRP IS: {grp}, AMT IS: {final_break_amt[led]}")
+            # print(f"LED IS: {led}, GRP IS: {grp}, AMT IS: {final_break_amt[led]}")
             if str(led) == str(grp):
                 break
-        print("===============================END=====================================")
+        # print("===============================END=====================================")
 
     grps = [
         {'Current Assest': 400},
