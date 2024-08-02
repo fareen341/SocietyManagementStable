@@ -1199,7 +1199,17 @@
 
                                 <div class="col-4">
                                     <div class="sty-input-wrapper w-100 mb-3">
-                                        <input type="number" class="sty-inp form-control" v-model="form.suffix" :class="{ 'error-message': errors.voucher_indexing || errors.voucher_indexing && errors.voucher_indexing[index] && errors.voucher_indexing[index].suffix || voucherIndexingError && voucherIndexingError.suffix }" @input="updateVoucherNumber(index)">
+                                        <input type="number" class="sty-inp form-control" v-model="form.counter" :class="{ 'error-message': errors.voucher_indexing || errors.voucher_indexing && errors.voucher_indexing[index] && errors.voucher_indexing[index].prefix || voucherIndexingError && voucherIndexingError.prefix }" @input="updateVoucherNumber(index)">
+                                        <label class="sty-label">Counter</label>
+                                        <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].counter" class="error">{{ errors['voucher_indexing'][index].prefix[0] }}</span>
+                                        <span v-else-if="voucherIndexingError && voucherIndexingError.counter" class="error">{{ voucherIndexingError.counter[0] }}</span>
+                                        <span v-else></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-4">
+                                    <div class="sty-input-wrapper w-100 mb-3">
+                                        <input type="text" class="sty-inp form-control" v-model="form.suffix" :class="{ 'error-message': errors.voucher_indexing || errors.voucher_indexing && errors.voucher_indexing[index] && errors.voucher_indexing[index].suffix || voucherIndexingError && voucherIndexingError.suffix }" @input="updateVoucherNumber(index)">
                                         <label class="sty-label">Suffix</label>
                                         <span v-if="errors['voucher_indexing'] && errors['voucher_indexing'][index] && errors['voucher_indexing'][index].suffix" class="error">{{ errors['voucher_indexing'][index].suffix[0] }}</span>
                                         <span v-else-if="voucherIndexingError && voucherIndexingError.suffix" class="error">{{ voucherIndexingError.suffix[0] }}</span>
@@ -2137,8 +2147,9 @@ var app = new Vue({
         updateVoucherNumber(index) {
             index = index || 0; // If index is not provided, default it to 0
             const prefix = this.forms[index].prefix || '';
+            const counter = this.forms[index].counter || '';
             const suffix = this.forms[index].suffix || '';
-            this.forms[index].voucher_number = prefix + suffix;
+            this.forms[index].voucher_number = prefix + counter + suffix;
         },
         getFormNumber: index => index + 1,
         submitVoucherData(id){

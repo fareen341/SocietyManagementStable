@@ -429,7 +429,7 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
             child_totals = {'current': 0, 'previous': 0}
             for child in children:
                 child_result, child_total, child_previous_total = helper(child)
-                if filter_zero == 'all' or (filter_zero == 'zero' and child_total > 0):
+                if filter_zero == 'all' or (filter_zero == 'zero' and child_total != 0):
                     children_dict[child.name] = child_result
                     total_balance += child_total
                     previous_total_balance += child_previous_total

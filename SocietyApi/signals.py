@@ -37,3 +37,4 @@ def create_or_update_general_ledger(sender, instance, created, **kwargs):
 
 # do this step above post save of above code
 # CREATE A SIGNAL FOR LEGDER WHERE SUNDRY DEBITORS & PURCHASES AND SALE, ALSO ADD OPENING BALANCE AS A LEDGER IS CONSTANT
+# Also add purchase and sales group

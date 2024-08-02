@@ -465,6 +465,7 @@ class VoucherIndexing(models.Model):
     from_date = models.DateField()
     to_date = models.DateField()
     prefix = models.CharField(max_length=200)
+    counter = models.CharField(max_length=200, null=True, blank=True)
     suffix = models.CharField(max_length=200)
     voucher_number = models.CharField(max_length=250)
 
@@ -529,6 +530,7 @@ class VoucherCreationModel(models.Model):
     voucher_type = models.ForeignKey(VoucherType, on_delete=models.CASCADE)
     voucher_number = models.CharField(max_length=200)
     prefix = models.CharField(max_length=200, null=True, blank=True)
+    counter = models.CharField(max_length=200, null=True, blank=True)
     suffix = models.CharField(max_length=200, null=True, blank=True)
     booking_date = models.DateField()
     amount_in_words = models.CharField(max_length=250)

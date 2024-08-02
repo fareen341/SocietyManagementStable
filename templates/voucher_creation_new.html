@@ -1745,8 +1745,9 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.counter">
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -2257,6 +2258,7 @@ new Vue({
             voucher_number: '',
             booking_date: '',
             prefix: '',
+            counter: '',
             suffix: ''
         },
         formData2: {
@@ -2264,6 +2266,7 @@ new Vue({
             voucher_number: '',
             totalAmountValue: null,
             prefix: '',
+            counter: '',
             suffix: ''
         },
         costCenterError: {
@@ -2587,6 +2590,10 @@ new Vue({
                     newArray.forEach(item => {
                         const ledgerName = item.ledger_name;
                         if (ledgerName === ledger_name){
+                            item.against_refrence.forEach(reference => {
+                                reference.allocated_amt = '';
+                            });
+                            console.log("against refrences============", item.against_refrence);
                             newRefrence = item.against_refrence;
                         }
                     });
@@ -2984,6 +2991,7 @@ new Vue({
                     console.log("Response in voucher number===>", response.data);
                     this.formData2.voucher_number = response.data.voucher_number;
                     this.formData2.prefix = response.data.prefix;
+                    this.formData2.counter = response.data.counter;
                     this.formData2.suffix = response.data.suffix;
                 })
                 .catch(error => {
@@ -3001,6 +3009,7 @@ new Vue({
                     console.log("Response in voucher number===>", response.data);
                     this.formData.voucher_number = response.data.voucher_number;
                     this.formData.prefix = response.data.prefix;
+                    this.formData.counter = response.data.counter;
                     this.formData.suffix = response.data.suffix;
                 })
                 .catch(error => {

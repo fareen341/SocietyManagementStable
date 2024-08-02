@@ -1135,21 +1135,22 @@ class VoucherIndexingView(viewsets.ModelViewSet):
 
 
             latest_number = ''
-            latest_voucher_without_suffix = VoucherCreationModel.objects.filter(prefix='')
-            if latest_voucher_without_suffix:
-                latest_number = latest_voucher_without_suffix.latest('id')
+            latest_voucher_without_counter = VoucherCreationModel.objects.filter(prefix='')
+            if latest_voucher_without_counter:
+                latest_number = latest_voucher_without_counter.latest('id')
                 print("latest number is:===>", latest_number)
 
             if not instances:
                 num = 1
                 if latest_number:
-                    num = increment_number(latest_number.suffix)
+                    num = increment_number(latest_number.counter)
 
-                inc_suffix = num
-                print("inc_suffix", inc_suffix)
+                inc_counter = num
+                print("inc_counter", inc_counter)
                 results.update({
-                    'voucher_number': inc_suffix,
-                    'suffix': inc_suffix,
+                    'voucher_number': inc_counter,
+                    'suffix': '',
+                    'counter': inc_counter,
                     'prefix': '',
                 })
 
@@ -1157,11 +1158,13 @@ class VoucherIndexingView(viewsets.ModelViewSet):
                 if dates.from_date <= current_time <= dates.to_date:
                     if voucher_obj and dates.prefix == voucher_obj.prefix:
                         print("went in if")
-                        inc_suffix = increment_number(voucher_obj.suffix)
-                        new_voucher = voucher_obj.prefix + inc_suffix
+                        inc_counter = increment_number(voucher_obj.counter)
+                        print("INC COUNTER IS--------------->", inc_counter)
+                        new_voucher = voucher_obj.prefix + inc_counter + voucher_obj.suffix
                         results.update({
                             'voucher_number': new_voucher,
-                            'suffix': inc_suffix,
+                            'suffix': voucher_obj.suffix,
+                            'counter': inc_counter,
                             'prefix': voucher_obj.prefix
                         })
                         break
@@ -1169,6 +1172,7 @@ class VoucherIndexingView(viewsets.ModelViewSet):
                         results.update({
                             'voucher_number': dates.voucher_number,
                             'suffix': dates.suffix,
+                            'counter': dates.counter,
                             'prefix': dates.prefix
                         })
                         break
@@ -1177,12 +1181,13 @@ class VoucherIndexingView(viewsets.ModelViewSet):
                     num = 1
                     print("latest_number========", latest_number)
                     if latest_number:
-                        num = increment_number(latest_number.suffix)
+                        num = increment_number(latest_number.counter)
 
-                    inc_suffix = num
+                    inc_counter = num
                     results.update({
-                        'voucher_number': inc_suffix,
-                        'suffix': inc_suffix,
+                        'voucher_number': inc_counter,
+                        'suffix': '',
+                        'counter': inc_counter,
                         'prefix': ''
                     })
 

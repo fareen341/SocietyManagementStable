@@ -564,13 +564,13 @@ class CostCenterSerializersList(serializers.ModelSerializer):
 class VoucherCreateIndexingSerializer(serializers.ModelSerializer):
     class Meta:
         model = VoucherIndexing
-        fields = ['id', 'from_date', 'to_date', 'prefix', 'suffix', 'voucher_number']
+        fields = ['id', 'from_date', 'to_date', 'prefix', 'counter', 'suffix', 'voucher_number']
 
 # REQUIRED FOR ADDING ONLY VOUCHER INDEXING
 class VoucherIndexingSerializer(serializers.ModelSerializer):
     class Meta:
         model = VoucherIndexing
-        fields = ['id', 'voucher_type', 'from_date', 'to_date', 'prefix', 'suffix', 'voucher_number']
+        fields = ['id', 'voucher_type', 'from_date', 'to_date', 'prefix', 'counter', 'suffix', 'voucher_number']
 
 
 # CREATE SERIALIZERS(['create', 'retrieve', 'partial_update', 'update'])

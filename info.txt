@@ -2175,3 +2175,121 @@ BKP CODE:
   </li>
 </ul>
 {% endverbatim %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+for below json:
+
+
+
+{
+    "related_ledgers": [
+        {
+            "payment_option": "dr",
+            "debit_amt": "2000",
+            "ledger_name": 1,
+            "against_refrence": [
+                {
+                    "voucher_number": "RVM-JULY-001",
+                    "voucher_date": "2024-09-05",
+                    "pending_amt": 900,
+                    "final_amt": 1000,
+                    "allocated_amt": "200"
+                }
+            ],
+            "cost_center": []
+        },
+        {
+            "payment_option": "cr",
+            "credit_amt": "3000",
+            "ledger_name": 13,
+            "against_refrence": [],
+            "cost_center": []
+        },
+        {
+            "payment_option": "dr",
+            "debit_amt": "1000",
+            "ledger_name": 1,
+            "against_refrence": [
+                {
+                    "voucher_number": "RVM-JULY-001",
+                    "voucher_date": "2024-09-05",
+                    "pending_amt": 700,
+                    "final_amt": 1000,
+                    "allocated_amt": 200
+                }
+            ],
+            "cost_center": []
+        }
+    ],
+    "voucher_name": "receipt_voucher",
+    "voucher_type": 9,
+    "voucher_number": "RVM-JULY-002",
+    "booking_date": "2024-08-30",
+    "prefix": "RVM-JULY-",
+    "suffix": "002",
+    "debit_total": 3000,
+    "credit_total": 3000,
+    "amount_in_words": "three thousand",
+    "voucher_date": "2024-08-30",
+    "narration": "55",
+    "cheque_number": "55",
+    "cheque_date": "2024-08-15",
+    "bank_name": "55"
+}
+
+
+why my below django code,  my object for ledger_name is saving the against refrence which has pending  amt 900 and the last one which has pending
+amt 700 is getting saved both? it should save related ledger which has pending amt  900 with ledger name 1, which is my first object and last against refrence with ledger name as 1 with pending amt as 700
+
+@transaction.atomic
+    def create(self, request, *args, **kwargs):
+        # Step 1: Save the main voucher data
+        voucher_serializer = self.get_serializer(data=request.data)
+        voucher_serializer.is_valid(raise_exception=True)
+        voucher = voucher_serializer.save()
+
+        # Step 2: Save related ledgers
+        related_ledgers_data = request.data.get('related_ledgers', [])
+        for ledger_data in related_ledgers_data:
+            print("related legder is>-----------", ledger_data)
+            ledger_data['voucher_type'] = voucher.id  # Link the voucher
+            ledger_serializer = RelatedLedgersSerializers(data=ledger_data)
+            if ledger_serializer.is_valid():
+                related_ledger = ledger_serializer.save()
+            else:
+                return Response(ledger_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+            # Step 3: Save against refrence
+            against_refrence_data = ledger_data.get('against_refrence', [])
+            for against_refrence in against_refrence_data:
+                print("against refrence object ------------------>", against_refrence)
+                against_refrence['voucher_type'] = voucher.id  # Link the related ledger
+                against_refrence['against_related_ledger'] = related_ledger.id  # Link the related ledger
+                against_refrence_serializer = AgainstRefrenceSerializers(data=against_refrence)
+                if against_refrence_serializer.is_valid():
+                    against_refrence_serializer.save()
+                else:
+                    return Response(against_refrence_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
