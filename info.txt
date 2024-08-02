@@ -2008,7 +2008,7 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
 
 --------------------------------------- PENDING ACCOUNTING ----------------------------------------------
 1. give validation when a ledger named 'ledger' is added in ledger creation, cuz i have applied condition in balance sheet.
-2. 
+2.
 
 
 
@@ -2058,7 +2058,7 @@ print(ledgers_broad)
 
 
 
-broad_start_date = date(2022, 4, 1) 
+broad_start_date = date(2022, 4, 1)
 broad_end_date = date(2023, 3, 31)
 
 
@@ -2157,19 +2157,19 @@ BKP CODE:
       </div>
 
       <div class="col-md-3 text-end">
-        <span :style="{ 
-          fontWeight: value.parent_group ? 'bold' : 'normal', 
-          fontSize: value.parent_group ? '18px' : 'inherit' 
+        <span :style="{
+          fontWeight: value.parent_group ? 'bold' : 'normal',
+          fontSize: value.parent_group ? '18px' : 'inherit'
         }">
-          {{ key !== 'ledgers' 
-            ? (value.final_total !== undefined 
-                ? value.final_total.toLocaleString() 
-                : '0') 
-            : '' 
+          {{ key !== 'ledgers'
+            ? (value.final_total !== undefined
+                ? value.final_total.toLocaleString()
+                : '0')
+            : ''
           }}
         </span>
       </div>
-      
+
     </div>
     <nested-list v-if="isObject(value)" :data="value" :depth="depth + 1"></nested-list>
   </li>
@@ -2293,3 +2293,26 @@ amt 700 is getting saved both? it should save related ledger which has pending a
                     against_refrence_serializer.save()
                 else:
                     return Response(against_refrence_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+============================================= Pending Accounts ===============================================
+1. One ledger marked important fileds done. add 2 ledgers from signals which is purchase and sale with opening balance as 0.
+2. When deleting the childs not deleting the ledger, make childs as foreign key.
+3. The under group i am creating, take that from constants.
+4. add validation in update group.
+5. new table of ledgers
+6. search this is views.py of societyapp "Give these in signals as constants"
+
+
+================= Question =========================
+1. What are groups in p & l.
+2. Which fields needs to be add as mendatory in ledger master.
+3. Any predefined ledgers need to be create.
+4. Ask for filters in ledgers and p an l.
+5. What is those accumaleted groups in balance sheet

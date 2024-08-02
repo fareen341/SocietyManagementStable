@@ -292,7 +292,7 @@ def unit_master(request):
 def ledger_creation(request):
     datatable_columns = [0, 2]
     # GROUPS LIST VIEW
-    under_grps = ["Current Assest", "Liabilities", "Income", "Expenses", "Bank"]
+    under_grps = ["Assets", "Liabilities", "Income", "Expenses", "Bank"]    # Give these in signals as constants
     all_child_investments = {}
     for under_grp in under_grps:
         parent_investment = Childs.objects.get(name=under_grp)
@@ -370,7 +370,7 @@ def calling_balance_sheet(request):
 import datetime
 from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
-
+from SocietyApp.signals import constant_groups
 
 def balance_sheet_groups(parent, filter_zero, from_date, to_date):
     def traverse_children(investment):
@@ -445,7 +445,7 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
             result_dict['previous_final_total'] = previous_total_balance
 
             # Add parent_group flag if node name matches specific values
-            if node.name in ['Fixed Assets', 'Gold', 'Silver']:
+            if node.name in constant_groups:
                 result_dict['parent_group'] = True
 
             return result_dict, total_balance, previous_total_balance
