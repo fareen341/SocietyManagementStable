@@ -164,3 +164,22 @@ new Vue({
     mounted: {
     }
 });
+
+
+
+
+
+======================================================= New Changes Accounts ============================================================
+1. Groups validation: sub-group validation should show validation only for Assets, Liability i.e balnace sheet items.
+2. Profit & Loss: no predefined groups except purchase and sale, and last column of profit & loss which is (Excess of Income over Expesnses) always show even when amt is 0 .
+3. One more filter in both p & l and balance sheet:
+      i. give previous year date filter, by default when we select any filter like current filter 
+        as 01-01-2023 - 01-02-2023 then its previous filter will become 01-01-2024 - 01-02-2024.
+        And if they chnage any filter it'll act accordingly.
+      ii. Zero filter condition will be: if both current and previous is zero then only dont show group. cuz if any of the them is zero that group will hide.
+4. Ledger Creation: 
+      i. There are predefined ledger which needs to be created in signals, before creating ask for fixed of variable field.
+      ii. Fields mendatory in ledger master are: ledger name, group name, nature type, dr/cr, allow against refrences.
+4. In balance sheet, if there is profit show in "Income & Expenditure A/c" in Assest else show in Liabilities. Profilt and loss we get from p & l.
+5. In new form:
+  i. Add one serach & add button, one form to take interest rate. 
