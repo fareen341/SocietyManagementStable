@@ -753,3 +753,9 @@ class VistingCardSerializers(serializers.ModelSerializer):
     class Meta:
         model = VistingCard
         fields = '__all__'
+
+
+class SocietyMaintainanceBillSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = SocietyMaintainanceBill
+        fields = '__all__'

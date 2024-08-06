@@ -475,31 +475,36 @@ against_refrence = [
     ('YES', 'YES')
 ]
 
+nature = [
+    ('Fixed', 'Fixed'),
+    ('Variable', 'Variable')
+]
+
 class Ledger(models.Model):
     ledger_name = models.CharField(max_length=200)
-    nature = models.CharField(max_length=200)
-    gst_number = models.CharField(max_length=200)
-    alis = models.CharField(max_length=200)
+    nature = models.CharField(max_length=200, choices=nature)
+    gst_number = models.CharField(max_length=200, null=True, blank=True)
+    alis = models.CharField(max_length=200, null=True, blank=True)
     based_on = models.CharField(max_length=200, null=True, blank=True)
-    contact_person_name = models.CharField(max_length=200)
+    contact_person_name = models.CharField(max_length=200, null=True, blank=True)
     # make it a foreign key group name
     group_name = models.CharField(max_length=200)
     area = models.CharField(max_length=200, null=True, blank=True)
-    contact_person_number = models.CharField(max_length=200)
-    pan_number = models.CharField(max_length=200)
+    contact_person_number = models.CharField(max_length=200, null=True, blank=True)
+    pan_number = models.CharField(max_length=200, null=True, blank=True)
     fixed = models.CharField(max_length=200, null=True, blank=True)
-    contact_person_email = models.CharField(max_length=200)
-    address = models.CharField(max_length=200)
-    country = models.CharField(max_length=200)
-    state = models.CharField(max_length=200)
-    city = models.CharField(max_length=200)
-    pin_code = models.CharField(max_length=200)
-    beneficiary_name = models.CharField(max_length=200)
-    account_no = models.CharField(max_length=200)
-    ifsc_code = models.CharField(max_length=200)
-    bank_name = models.CharField(max_length=200)
+    contact_person_email = models.CharField(max_length=200, null=True, blank=True)
+    address = models.CharField(max_length=200, null=True, blank=True)
+    country = models.CharField(max_length=200, null=True, blank=True)
+    state = models.CharField(max_length=200, null=True, blank=True)
+    city = models.CharField(max_length=200, null=True, blank=True)
+    pin_code = models.CharField(max_length=200, null=True, blank=True)
+    beneficiary_name = models.CharField(max_length=200, null=True, blank=True)
+    account_no = models.CharField(max_length=200, null=True, blank=True)
+    ifsc_code = models.CharField(max_length=200, null=True, blank=True)
+    bank_name = models.CharField(max_length=200, null=True, blank=True)
     branch_name = models.CharField(max_length=200, null=True, blank=True)
-    opening_balance = models.CharField(max_length=200)
+    opening_balance = models.IntegerField(default=0)
     dr_cr = models.CharField(max_length=200)
     allow_against_refrence = models.CharField(max_length=200, choices=against_refrence, default='NO')
 
@@ -604,3 +609,9 @@ class VistingCard(models.Model):
     contact = models.CharField(max_length=400)
     website = models.CharField(max_length=400)
     address = models.CharField(max_length=400, default="Neque porro quisquam est qui dolorem ipsum quia dolor sit 403 sit.")
+
+
+class SocietyMaintainanceBill(models.Model):
+    invoice_date = models.DateField()
+    interest_rate = models.IntegerField(default=21)
+    invoice_due_date = models.DateField()

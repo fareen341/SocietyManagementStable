@@ -1858,3 +1858,8 @@ class GeneralLedgerView(viewsets.ModelViewSet):
 class VistingCardView(viewsets.ModelViewSet):
     queryset = VistingCard.objects.all()
     serializer_class = VistingCardSerializers
+
+
+class SocietyMaintainanceBillView(viewsets.ModelViewSet):
+    queryset = SocietyMaintainanceBill.objects.all()
+    serializer_class = SocietyMaintainanceBillSerializers

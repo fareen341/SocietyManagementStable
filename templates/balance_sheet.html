@@ -117,21 +117,47 @@
   <div class="container" id="balanceSheetVue">
     <div class="row">
 
-      <div class="d-flex justify-content-center">
-        <label>Filter Zero</label>
+      <div class="d-flex justify-content-center mb-4">
+        <label>Current Filter Zero</label>
         <select v-model="formData.selectZero" @change="filterZero">
           <option value="all">All</option>
           <option value="zero">Zero</option>
         </select>
 
-        <label>From Date</label>
+        <label>Current From Date</label>
         <input type="date" v-model="formData.from_date" @change="filterZero" />
 
-        <label>To Date</label>
+        <label>Current To Date</label>
         <input type="date" v-model="formData.to_date" @change="filterZero" />
       </div>
 
+      <div class="d-flex justify-content-center">
+        <label>Previous From Date</label>
+        <input type="date" v-model="formData.previous_from_date" @change="filterZero" />
+
+        <label>Previous To Date</label>
+        <input type="date" v-model="formData.previous_to_date" @change="filterZero" />
+      </div>
+
       <div class="col-lg-6" style="border-right: 1px solid #212529; border-left: 2px solid #212529; border-bottom: 2px solid #212529;">
+        <div class="row">
+          <div class="col-lg-4 bg-dark text-light">
+            Previous Year
+          </div>
+          <div class="col-lg-4 bg-dark text-light">
+            Liability
+          </div>
+          <div class="col-lg-4 text-end bg-dark text-light">
+            Current Year
+          </div>
+        </div>
+
+        <div>
+          <nested-list :data="libility_response" :depth="1"></nested-list>
+        </div>
+      </div>
+
+      <div class="col-lg-6" style="border-left: 1px solid #212529; border-right: 2px solid #212529; border-bottom: 2px solid #212529;">
         <div class="row">
           <div class="col-lg-4 bg-dark text-light">
             Previous Year
@@ -148,23 +174,6 @@
           <nested-list :data="assets_response" :depth="1"></nested-list>
         </div>
       </div>
-
-      <div class="col-lg-6" style="border-left: 1px solid #212529; border-right: 2px solid #212529; border-bottom: 2px solid #212529;">
-        <div class="row">
-          <div class="col-lg-4 bg-dark text-light">
-            Previous Year
-          </div>
-          <div class="col-lg-4 bg-dark text-light">
-            Liability
-          </div>
-          <div class="col-lg-4 text-end bg-dark text-light">
-            Current Year
-          </div>
-        </div>
-        <div>
-          <nested-list :data="libility_response" :depth="1"></nested-list>
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -178,7 +187,7 @@
       template: `
       {% verbatim %}
       <ul class="list row" :style="{ '--depth': depth }">
-        <li v-for="(value, key, index) in data" :key="key" v-if="key !== 'final_total' && key !== 'previous_final_total'"  class="col-12">
+        <li v-for="(value, key, index) in data" :key="key" v-if="key !== 'final_total' && key !== 'previous_final_total' && key !== 'parent_group'"  class="col-12">
           <div class="row">
             <div class="col-md-3 text-start">
               {{ key !== 'ledgers' ? (value.previous_final_total !== undefined ? value.previous_final_total.toLocaleString() : '0') : '' }}
@@ -328,30 +337,57 @@
         libility_response: {},
         formData: {
           selectZero: 'all',
+          from_date: '',
+          to_date: '',
+          previous_from_date: '',
+          previous_to_date: ''
         }
         },
         methods: {
           filterZero(){
+            let zeroFilter = '';
             let fromDateVal = '';
             let toDateVal = '';
-            let zeroFilter = '';
-
-            // Apply below condition when any of the date is required for filter
-            // if(this.formData.from_date){
-            //   fromDateVal = `&from_date=${this.formData.from_date}`
-            // }
-            // if(this.formData.to_date){
-            //   toDateVal = `&to_date=${this.formData.to_date}`
-            // }
+            let previousFromDateVal = '';
+            let previousToDateVal = '';
 
             if(this.formData.selectZero){
               zeroFilter = this.formData.selectZero;
             }
-            if(this.formData.from_date && this.formData.to_date){
+
+            if(this.formData.previous_from_date && this.formData.previous_to_date){
+              previousFromDateVal = `&previous_from_date=${this.formData.previous_from_date}`
+              previousToDateVal = `&previous_to_date=${this.formData.previous_to_date}`
+            }
+            else if(this.formData.from_date && this.formData.to_date){
               fromDateVal = `&from_date=${this.formData.from_date}`
               toDateVal = `&to_date=${this.formData.to_date}`
+
+              const fromDate = new Date(this.formData.from_date);
+              const toDate = new Date(this.formData.to_date);
+
+              // Subtract one year from the dates
+              fromDate.setFullYear(fromDate.getFullYear() - 1);
+              toDate.setFullYear(toDate.getFullYear() - 1);
+
+              // Format the dates back to YYYY-MM-DD
+              const formatDate = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+              };
+
+              this.formData.previous_from_date = formatDate(fromDate);
+              this.formData.previous_to_date = formatDate(toDate);
+
+              previousFromDateVal = `&previous_from_date=${this.formData.previous_from_date}`
+              previousToDateVal = `&previous_to_date=${this.formData.previous_to_date}`
+
+              console.log("previous from date:", this.formData.previous_from_date);
+              console.log("previous to date:", this.formData.previous_to_date);
             }
-            axios.get(`http://127.0.0.1:8000/api/balance_sheet?type=Assets,Liabilities&filter_zero=${zeroFilter}${fromDateVal}${toDateVal}`)
+            axios.get(`http://127.0.0.1:8000/api/balance_sheet?type=Assets,Liabilities&filter_zero=${zeroFilter}${fromDateVal}${toDateVal}${previousFromDateVal}${previousToDateVal}`)
               .then(response => {
                 this.assets_response = response.data['assets_response'][0];
                 this.libility_response = response.data['libility_response'][0];

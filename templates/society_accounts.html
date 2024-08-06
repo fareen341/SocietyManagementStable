@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        border: 1px solid #444;
+        padding: 8px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #333;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+        padding-top: 60px;
+    }
+
+    .modal-content {
+        margin: 5% auto;
+        padding: 20px;
+    }
+</style>
+
+
+{% verbatim %}
+<div id="maintainanceBillVue" class="container-fluid">
+    <div class="text-center mt-4" v-if="Object.keys(billData).length !== 0">
+        <h3>Adding For The Month Of: <span>{{ billData['invoice_date'] }}</span></h3>
+    </div>
+    <div class="btn-grp m-2 mt-3">
+        <button @click="openModal('fixedLedger')" class="btn view-inps btn-primary" style="color: #fff !important;">Add Fixed Ledger</button>
+        <button @click="openModal('variableLedger')" class="btn view-inps btn-primary" style="color: #fff !important;">Add Variable Ledger</button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDateModal">Add Date & Interest</button>
+        <button type="button" class="btn btn-primary">Download CSV Format</button>
+        <button type="button" class="btn btn-primary" @click="uploadCSV">Upload CSV</button>
+        <button type="button" class="btn btn-primary">Save</button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered text-center table-sm">
+            <thead id="table-head" class="table-dark text-center">
+                <tr>
+                    <th rowspan="2">Flats</th>
+                    <th rowspan="2">Owners Name</th>
+                    <th rowspan="2">Unit Area</th>
+                    <th class="text-center" :colspan="selectedFixedLedger.length">Fixed Charges</th>
+                    <th class="text-center" :colspan="selectedVariableLedger.length">Variable Charges</th>
+                    <th rowspan="2">Total</th>
+                    <th rowspan="2" class="text-center">Interest</th>
+                    <th rowspan="2">Due For Month</th>
+                    <th rowspan="2">Opening</th>
+                    <th rowspan="2">Closing</th>
+                </tr>
+                <tr>
+                    <th v-for="item in selectedFixedLedger" :key="item">{{ item }}</th>
+                    <th v-for="item in selectedVariableLedger" :key="item">{{ item }}</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tbody id="table-body">
+                    <tr v-for="(flat, rowIndex) in flats" :key="flat.id">
+                        <td>{{ flat['wing_flat_unique'] }}</td>
+                        <td>{{ flat.member_name }}</td>
+                        <td>{{ flat.unit_area }}</td>
+                        <td v-for="(item, colIndex) in selectedFixedLedger" :key="colIndex">
+                            <input type="number" v-model="formData[rowIndex].fixed[colIndex]" @input="updateTotal(rowIndex)">
+                        </td>
+                        <td v-for="(item, colIndex) in selectedVariableLedger" :key="colIndex">
+                            <input type="number" v-model="formData[rowIndex].variable[colIndex]" @input="updateTotal(rowIndex)">
+                        </td>
+                        <td class="total">{{ calculateTotal(rowIndex) }}</td>
+                        <td style="width: 8%;">
+                            <input type="number" v-model="formData[rowIndex].interest" style="width: 60%; border: none; border-color: transparent;" placeholder="Interest" @input="updateTotal(rowIndex)">
+                        </td>
+                        <td>{{ calculateDueForMonth(rowIndex) }}</td>
+                        <td><input type="number" v-model="formData[rowIndex].opening" placeholder="Opening" @input="updateTotal(rowIndex)"></td>
+                        <td>{{ calculateClosing(rowIndex) }}</td>
+                    </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <!-- Add Date & Interest Modal -->
+    <div class="modal fade" id="addDateModal" tabindex="-1" aria-labelledby="addDateModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="addDateModalLabel">Add Month</h1>
+                </div>
+                <div class="modal-body">
+                    <div class="sty-input-wrapper w-100 mb-2">
+                        <input type="date" class="sty-inp form-control w-50" v-model="billData.invoice_date">
+                        <label class="sty-label">Invoice Date</label>
+                        <!-- <span v-if="billData.invoice_date" class="error">{{ billData.invoice_date[0] }}</span> -->
+                        <!-- <span v-else></span> -->
+                    </div>
+
+                    <div class="sty-input-wrapper w-100 mb-2">
+                        <input type="number" class="sty-inp form-control w-50" v-model="billData.interest_rate" placeholder="Intereset rate in percent">
+                        <label class="sty-label">Interest Rate</label>
+                        <!-- <span v-if="errors.interest_rate" class="error">{{ errors.interest_rate[0] }}</span>
+                        <span v-else></span> -->
+                        <span>Default interest rate is 21%</span>
+                    </div>
+
+                    <div class="sty-input-wrapper w-100 mb-2">
+                        <input type="date" class="sty-inp form-control w-50" v-model="billData.invoice_due_date">
+                        <label class="sty-label">Invoice Due Date</label>
+                        <!-- <span v-if="errors.invoice_due_date" class="error">{{ errors.invoice_due_date[0] }}</span>
+                        <span v-else></span> -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                    <button type="button" class="btn btn-primary" @click="addMonth">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal mt-5" style="z-index: 1000;">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <h3 class="fareen">Select Ledger</h3>
+                <select v-model="selectedItem" class="form-select mt-3">
+                    <option v-for="item in modalItems" :key="item" :value="item">{{ item }}</option>
+                </select>
+                <br>
+                <hr>
+                <div class="btn-grp ms-auto">
+                    <button class="close btn btn-secondary" @click="closeModal">Close</button>
+                    <button class="btn btn-primary" @click="saveModalSelection">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endverbatim %}
+
+<!-- The uploaded csv file will be attached here -->
+<input type="file" id="fileInput" style="display: none;" />
+
+
+<script>
+new Vue({
+    el: '#maintainanceBillVue',
+    data: {
+        fixedLedger: [],
+        variableLedger: [],
+        selectedFixedLedger: ['Sinking Fund'],
+        selectedVariableLedger: ['AMC Charges'],
+        flats: [],
+        formData: [],
+        modalItems: [],
+        currentCategory: '',
+        selectedItem: '',
+        errors: {},
+        billData: {},
+        month: {},
+    },
+    mounted() {
+        this.getFlatDetails()
+    },
+    methods: {
+        initializeFormData() {
+            this.formData = this.flats.map(() => ({
+                fixed: Array(this.selectedFixedLedger.length).fill(0),
+                variable: Array(this.selectedVariableLedger.length).fill(0)
+            }));
+        },
+        getFlatDetails(){
+            axios.get(`http://127.0.0.1:8000/api/get_society_bill_data/`)
+            .then(response => {
+                this.flats = response.data['complete_bill_details'];
+                this.fixedLedger = response.data['fixed_ledgers'];
+                this.variableLedger = response.data['variable_ledgers'];
+                console.log("Response-------------->", response.data['complete_bill_details']);
+                this.initializeFormData();
+            })
+            .catch(error => {
+                console.log("Error Fetching Flat, Member, Area Details.")
+            });
+        },
+        addMonth(){
+            if(Object.keys(this.billData).length !== 0){
+                toastr.options = {
+                    closeButton: true,
+                    positionClass: 'toast-top-center',
+                    timeOut: 5000
+                };
+                toastr.success("Invoice date, intereset and Due date added!");
+                $('#addDateModal').modal('hide');
+            }else{
+                toastr.options = {
+                    closeButton: true,
+                    positionClass: 'toast-top-center',
+                    timeOut: 5000
+                };
+                toastr.error("Please provide date and due date!");
+            }
+
+            // axios.defaults.xsrfCookieName = 'csrftoken';
+            // axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+            // axios.post('http://127.0.0.1:8000/api/society_bill/', this.billData)
+            //     .then(response => {
+            //         toastr.options = {
+            //             closeButton: true,
+            //             positionClass: 'toast-top-center',
+            //             timeOut: 5000
+            //         };
+            //         toastr.success("Invoice date, intereset and Due date added!");
+            //         this.month = response.data;
+            //         console.log('Form submitted successfully:', response.data);
+            //     })
+            //     .catch(error => {
+            //         this.errors = error.response.data;
+            //         console.log("Error: ->", this.errors);
+            //         toastr.options = {
+            //             closeButton: true,
+            //             positionClass: 'toast-top-center',
+            //             timeOut: 5000
+            //         };
+            //         toastr.error("Something Went Wrong!");
+            //     });
+        },
+        openModal(category) {
+            this.currentCategory = category;
+            this.modalItems = this[category];
+            this.selectedItem = this.modalItems[0];
+            document.getElementById('modal').style.display = 'block';
+        },
+        closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        },
+        saveModalSelection() {
+            if (this.currentCategory === 'fixedLedger') {
+                if (!this.selectedFixedLedger.includes(this.selectedItem)) {
+                    this.selectedFixedLedger.push(this.selectedItem);
+                    this.formData.forEach(row => row.fixed.push(0));
+                }
+            } else if (this.currentCategory === 'variableLedger') {
+                if (!this.selectedVariableLedger.includes(this.selectedItem)) {
+                    this.selectedVariableLedger.push(this.selectedItem);
+                    this.formData.forEach(row => row.variable.push(0));
+                }
+            }
+            this.closeModal();
+        },
+        updateTotal(rowIndex) {
+            // Total is updated dynamically due to Vue's reactivity
+        },
+        calculateTotal(rowIndex) {
+            const row = this.formData[rowIndex];
+            return row.fixed.reduce((acc, val) => acc + Number(val), 0) + row.variable.reduce((acc, val) => acc + Number(val), 0);
+        },
+        calculateDueForMonth(rowIndex) {
+            const total = this.calculateTotal(rowIndex);
+            const interestValue = this.formData[rowIndex].interest;
+            const interest = isNaN(parseFloat(interestValue)) ? 0 : parseFloat(interestValue);
+
+            console.log("INTEREST AND TOTAL IS:->", total, interest);
+            return total + interest;
+        },
+        calculateClosing(rowIndex) {
+            const dueForMonth = this.calculateDueForMonth(rowIndex);
+            const openingVal = this.formData[rowIndex].opening;
+            const opening = isNaN(parseFloat(openingVal)) ? 0 : parseFloat(openingVal);
+            return dueForMonth + opening;
+        },
+        uploadCSV() {
+            Swal.fire({
+                text: "Please upload the downloaded CSV format only!",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Select File"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Directly access the file input element
+                    this.$nextTick(() => {
+                        document.getElementById('fileInput').click();
+                    });
+                }
+            });
+        }
+    }
+});
+</script>
+
+{% endblock body %}

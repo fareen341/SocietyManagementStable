@@ -340,13 +340,19 @@ def calling_balance_sheet(request):
     to_date_param = request.GET.get('to_date', None)
     type_param = request.GET.get('type', None)
     type_list = type_param.split(',')
+    previous_from_date = request.GET.get('previous_from_date', None)
+    previous_to_date = request.GET.get('previous_to_date', None)
     print("Type is========================>", type_list)
 
     assets_response = []
     liabilities_response = []
     groups = type_list
     for grp in groups:
-        function_call, current_total, previous_total = balance_sheet_groups(Childs.objects.get(name=grp), filter_zero_param, from_date_param, to_date_param)
+        function_call, current_total, previous_total = balance_sheet_groups(
+            Childs.objects.get(name=grp), filter_zero_param,
+            from_date_param, to_date_param,
+            previous_from_date, previous_to_date
+        )
         if grp == type_list[0]:
             print(f"current total: {current_total}, previous_total: {previous_total}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]")
             asset_current_total = current_total
@@ -372,7 +378,7 @@ from datetime import datetime as dt
 from dateutil.relativedelta import relativedelta
 from SocietyApp.signals import constant_groups
 
-def balance_sheet_groups(parent, filter_zero, from_date, to_date):
+def balance_sheet_groups(parent, filter_zero, from_date, to_date, previous_from_date, previous_to_date):
     def traverse_children(investment):
         def helper(node):
             ledgers_dict = {}
@@ -406,8 +412,13 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
             )
 
             if from_date and to_date:
+                print("current dates are.................", from_date, to_date)
                 current_query = current_query.filter(date__range=(from_date, to_date))
-                previous_query = previous_query.filter(date__range=(from_date, to_date))
+                # previous_query = previous_query.filter(date__range=(from_date, to_date))
+
+            if previous_from_date and previous_to_date:
+                print("previous dates are.................", previous_from_date, previous_to_date)
+                previous_query = previous_query.filter(date__range=(previous_from_date, previous_to_date))
 
             current_date_subquery = current_query.values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
             previous_date_subquery = previous_query.values('from_ledger__ledger_name').annotate(max_id=Max('id')).values('max_id')
@@ -429,7 +440,7 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date):
             child_totals = {'current': 0, 'previous': 0}
             for child in children:
                 child_result, child_total, child_previous_total = helper(child)
-                if filter_zero == 'all' or (filter_zero == 'zero' and child_total != 0):
+                if filter_zero == 'all' or (filter_zero == 'zero' and (child_total !=0 and child_previous_total !=0 )):
                     children_dict[child.name] = child_result
                     total_balance += child_total
                     previous_total_balance += child_previous_total
@@ -876,3 +887,50 @@ def dashboard_member(request):
 def visiting_cards(request):
     datatable_columns = [1]
     return render(request, 'visiting_cards.html', {'datatable_columns': datatable_columns})
+
+
+def society_accounts(request):
+    datatable_columns = [1]
+    return render(request, 'society_accounts.html', {'datatable_columns': datatable_columns})
+
+
+def get_society_bill_data(request):
+    fixed_ledgers = Ledger.objects.filter(nature='Fixed').values_list('ledger_name', flat=True)
+    variable_ledgers = Ledger.objects.filter(nature='Variable').values_list('ledger_name', flat=True)
+    complete_bill_details = []
+
+    bill_details = Members.objects.filter(
+        member_is_primary=True,
+        date_of_cessation__isnull=True
+    ).select_related('wingflatunique', 'flats').values('wing_flat__wing_flat_unique', 'member_name', 'wing_flat__flats__unit_area').order_by('wing_flat__wing_flat_unique')
+
+    # There is no possibility that the general ledger object does not found, so use below code when member name ledger got created
+    # for detail in bill_details:
+    #     try:
+    #         gl_obj = GeneralLedger.objects.get(from_ledger=detail['members__member_name']).balance
+    #         final_dict = {
+    #             'wing_flat_unique': detail['wing_flat_unique'],
+    #             'member_name': detail['members__member_name'],
+    #             'unit_area': detail['flats__unit_area'],
+    #             'balance': gl_obj,
+    #         }
+    #         complete_bill_details.append(final_dict)
+    #     except GeneralLedger.DoesNotExist:
+    #         pass
+
+    for detail in bill_details:
+        try:
+            gl_obj = GeneralLedger.objects.get(from_ledger__ledger_name=detail['member_name']).balance
+        except GeneralLedger.DoesNotExist:
+            gl_obj = 0
+
+        final_dict = {
+            'wing_flat_unique': detail['wing_flat__wing_flat_unique'],
+            'member_name': detail['member_name'],
+            'unit_area': detail['wing_flat__flats__unit_area'],
+            'opening_balance': gl_obj,
+        }
+        complete_bill_details.append(final_dict)
+
+    print("final dict is=========", complete_bill_details)
+    return JsonResponse({"complete_bill_details": complete_bill_details, 'fixed_ledgers': list(fixed_ledgers), 'variable_ledgers': list(variable_ledgers)})

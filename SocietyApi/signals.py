@@ -23,16 +23,16 @@ def create_initial_objects(sender, **kwargs):
 
 
 # When voucher entry is done, create its general entry with opening balane if given else 0
-@receiver(post_save, sender=Ledger)
-def create_or_update_general_ledger(sender, instance, created, **kwargs):
-    if created:
-        opening_balance = instance.opening_balance if instance.opening_balance is not None else 0
-        GeneralLedger.objects.create(
-            from_ledger = instance,
-            particulars = Ledger.objects.get(ledger_name="Opening Balance"),
-            balance = opening_balance
-        )
-        print("Opening Balance Created Successfully!")
+# @receiver(post_save, sender=Ledger)
+# def create_general_ledger(sender, instance, created, **kwargs):
+#     if created:
+#         opening_balance = instance.opening_balance if instance.opening_balance is not None else 0
+#         GeneralLedger.objects.create(
+#             from_ledger = instance,
+#             particulars = Ledger.objects.get(ledger_name="Opening Balance"),
+#             balance = opening_balance
+#         )
+#         print("Opening Balance Created Successfully!")
 
 
 # do this step above post save of above code

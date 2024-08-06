@@ -64,7 +64,7 @@ router.register('against_refrence_for_self', apiviews.AgainstRefrenceViewForSelf
 router.register('stock_vouchers', apiviews.RelatedStockView, basename='stock_vouchers')
 
 router.register('visting_card', apiviews.VistingCardView, basename='visting_card')
-
+router.register('society_bill', apiviews.SocietyMaintainanceBillView, basename='society_bill')
 
 
 # URLS
@@ -136,6 +136,8 @@ urlpatterns = [
     path('visiting_cards/', views.visiting_cards, name='visiting_cards'),
 
     path('api/balance_sheet', views.calling_balance_sheet, name='balance_sheet_api'),
+    path('society_accounts', views.society_accounts, name='society_accounts'),
+    path('api/get_society_bill_data/', views.get_society_bill_data, name='get_society_bill_data'),
 
 
 ]

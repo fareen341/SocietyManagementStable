@@ -336,15 +336,15 @@
                                                 <div class="sty-input-wrapper w-100 mb-2">
                                                     <select class="form-control sty-inp w-100" v-model="formData.nature" :class="{ 'error-message': errors.nature }">
                                                         <option value="" selected>Select Nature</option>
-                                                        <option value="fixed_nature">Fixed</option>
-                                                        <option value="variable_nature">Variable</option>
+                                                        <option value="Fixed">Fixed</option>
+                                                        <option value="Variable">Variable</option>
                                                     </select>
                                                     <label class="sty-label">Nature Type</label>
                                                     <span v-if="errors.nature" class="error">{{ errors.nature[0] }}</span>
                                                     <span v-else></span>
                                                 </div>
 
-                                                <div class="sty-input-wrapper w-100 mb-2" v-show="formData.nature === 'variable_nature'">
+                                                <div class="sty-input-wrapper w-100 mb-2" v-show="formData.nature === 'Variable'">
                                                     <select class="form-control sty-inp w-100" v-model="formData.based_on" :class="{ 'error-message': errors.based_on }">
                                                         <option value="" selected>Select Type</option>
                                                         <option value="area">Area</option>
@@ -355,14 +355,14 @@
                                                     <span v-else></span>
                                                 </div>
 
-                                                <div v-show="formData.nature === 'variable_nature' && formData.based_on === 'area'" class="sty-input-wrapper w-100" :class="{ 'error-message': errors.area }">
+                                                <div v-show="formData.nature === 'Variable' && formData.based_on === 'area'" class="sty-input-wrapper w-100" :class="{ 'error-message': errors.area }">
                                                     <input type="number" class="form-control sty-inp w-100" v-model="formData.area">
                                                     <label class="sty-label">Area</label>
                                                     <span v-if="errors.area" class="error">{{ errors.area[0] }}</span>
                                                     <span v-else></span>
                                                 </div>
 
-                                                <div v-show="formData.nature === 'variable_nature' && formData.based_on === 'fixed'" class="sty-input-wrapper w-100" :class="{ 'error-message': errors.fixed }">
+                                                <div v-show="formData.nature === 'Variable' && formData.based_on === 'fixed'" class="sty-input-wrapper w-100" :class="{ 'error-message': errors.fixed }">
                                                     <input type="number" class="form-control sty-inp w-100" v-model="formData.fixed">
                                                     <label class="sty-label">Fixed</label>
                                                     <span v-if="errors.fixed" class="error">{{ errors.fixed[0] }}</span>
@@ -1206,7 +1206,7 @@
                                         <span v-else></span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="col-4">
                                     <div class="sty-input-wrapper w-100 mb-3">
                                         <input type="text" class="sty-inp form-control" v-model="form.suffix" :class="{ 'error-message': errors.voucher_indexing || errors.voucher_indexing && errors.voucher_indexing[index] && errors.voucher_indexing[index].suffix || voucherIndexingError && voucherIndexingError.suffix }" @input="updateVoucherNumber(index)">
@@ -1809,7 +1809,7 @@ new Vue({
                 if (Object.prototype.hasOwnProperty.call(this.formData, key)) {
                     if (this.formData[key] !== null) {
                         ledgerData.append(key, this.formData[key]);
-                        if(key === 'nature' && this.formData[key] === 'fixed_nature'){
+                        if(key === 'nature' && this.formData[key] === 'Fixed'){
                             this.formData['based_on'] = '';
                             this.formData['area'] = '';
                             this.formData['fixed'] = '';
