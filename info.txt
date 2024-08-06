@@ -2357,3 +2357,4 @@ amt 700 is getting saved both? it should save related ledger which has pending a
 3. From where dr/cr is coming in bill
 4. where to give its DATATABLE?
 5. why we need unit ares, it helps in any calculation?
+6. do we need to add table and form in same page like we did in other old pages?
