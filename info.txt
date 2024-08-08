@@ -681,6 +681,7 @@ add one more option in ledger to ask for against refrence
 ---------------- Others -----------------------
 5. check if group update is working.
 6. add validation in sub group too.
+7. Where ever i have used ledger_name equals use exact there to not have confilcts.
 
 
 
@@ -2380,4 +2381,4 @@ amt 700 is getting saved both? it should save related ledger which has pending a
 ---------------------------------------- TODAY --------------------------------------------
 1. create static ledgers.
 2. new bill creation.
-3. test with balance sheet if possiblae. 
+3. test with balance sheet if possiblae.

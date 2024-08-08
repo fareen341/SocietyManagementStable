@@ -10,9 +10,7 @@ constant_groups = [
     'Fixed Assets', 'Investment', 'Cash and Bank Balances', 'Loans and Advances',
     'Current Assest', 'Profit and Loss Account', 'Share Capital', 'Subscription Towards Shares',
     'Reserve Fund and Other Funds', 'Secured Loans', 'Unsecured Loans', 'Deposits',
-    'Current Liabilities And Provisions', 'Interest Accrued Due But Not Paid',
-    'Direct Income', 'Indirect Income', 'Sales', 'Direct Expenses', 'Indirect Expenses',
-    'Purchases'
+    'Current Liabilities And Provisions', 'Interest Accrued Due But Not Paid'
 ]
 
 constant_member_group = "Receivable from Members"
@@ -51,12 +49,12 @@ def create_initial_objects(sender, **kwargs):
         # CHILDS OF INCOME
         Childs.objects.create(name='Direct Income', parent=income)
         Childs.objects.create(name='Indirect Income', parent=income)
-        Childs.objects.create(name='Sales', parent=income)
+        # Childs.objects.create(name='Sales', parent=income)
 
         # CHILDS OF EXPENSES
         Childs.objects.create(name='Direct Expenses', parent=expenses)
         Childs.objects.create(name='Indirect Expenses', parent=expenses)
-        Childs.objects.create(name='Purchases', parent=expenses)
+        # Childs.objects.create(name='Purchases', parent=expenses)
 
         # Sub-Childs of Current Assets
         sundry_debtor = Childs.objects.create(name="Sundry Debtor", parent=current_assets)
@@ -71,9 +69,11 @@ def create_initial_objects(sender, **kwargs):
         if not Ledger.objects.exists():
             Ledger.objects.create(ledger_name="Opening Balance", group_name=opening_balance, nature='Fixed', dr_cr='Dr')
             Ledger.objects.create(ledger_name="Cash", group_name=cash, nature='Fixed', dr_cr='Dr')
+            Ledger.objects.create(ledger_name="Purchases", group_name=expenses, nature='Fixed', dr_cr='Dr')
+            Ledger.objects.create(ledger_name="Sales", group_name=income, nature='Fixed', dr_cr='Dr')
             Ledger.objects.create(ledger_name="Excess of Income over Expenses", group_name=expenses, nature='Fixed', dr_cr='Dr')
             Ledger.objects.create(ledger_name="Excess of Expenses over Income", group_name=income, nature='Fixed', dr_cr='Dr')
-            
+
         print("Initial objects of childs models created successfully")
 
     # COST CENTER OBJECTS

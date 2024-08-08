@@ -57,9 +57,9 @@
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDateModal">Add Date & Interest</button>
         <button type="button" class="btn btn-primary">Download CSV Format</button>
         <button type="button" class="btn btn-primary" @click="uploadCSV">Upload CSV</button>
-        <button type="button" class="btn btn-primary">Save</button>
+        <button type="button" class="btn btn-primary" @click="collectTableData">Save</button>
     </div>
-    
+
     <div class="">
         <div class="sty-input-wrapper w-100 mb-2">
             <input type="date" class="sty-inp form-control w-50" v-model="billData.invoice_date">
@@ -273,11 +273,11 @@ new Vue({
             return total + interest;
         },
         calculateClosing(rowIndex) {
-        const dueForMonth = this.calculateDueForMonth(rowIndex);
-        const openingVal = this.flats[rowIndex].opening_balance;
-        const opening = isNaN(parseFloat(openingVal)) ? 0 : parseFloat(openingVal);
-        return dueForMonth + opening;
-    },
+            const dueForMonth = this.calculateDueForMonth(rowIndex);
+            const openingVal = this.flats[rowIndex].opening_balance;
+            const opening = isNaN(parseFloat(openingVal)) ? 0 : parseFloat(openingVal);
+            return dueForMonth + opening;
+        },
         uploadCSV() {
             Swal.fire({
                 text: "Please upload the downloaded CSV format only!",
@@ -293,6 +293,42 @@ new Vue({
                     });
                 }
             });
+        },
+        collectTableData() {
+            const tableData = {
+                invoice_date: this.billData.invoice_date,
+                interest_rate: this.billData.interest_rate,
+                invoice_due_date: this.billData.invoice_due_date,
+                rows: this.flats.map((flat, rowIndex) => {
+                    const fixedCharges = {};
+                    const variableCharges = {};
+
+                    this.selectedFixedLedger.forEach((item, colIndex) => {
+                        fixedCharges[item] = this.formData[rowIndex].fixed[colIndex] || 0;
+                    });
+
+                    this.selectedVariableLedger.forEach((item, colIndex) => {
+                        variableCharges[item] = this.formData[rowIndex].variable[colIndex] || 0;
+                    });
+
+                    return {
+                        flat: flat['wing_flat_unique'],
+                        member_name: flat.member_name,
+                        unit_area: flat.unit_area,
+                        fixed_charges: fixedCharges,
+                        variable_charges: variableCharges,
+                        total: this.calculateTotal(rowIndex),
+                        interest: this.formData[rowIndex].interest || 0,
+                        due_for_month: this.calculateDueForMonth(rowIndex),
+                        opening_balance: flat.opening_balance || 0,
+                        closing_balance: this.calculateClosing(rowIndex)
+                    };
+                })
+            };
+
+            console.log('Collected Table Data:', tableData); // Log the data
+
+            return tableData;
         }
     }
 });
