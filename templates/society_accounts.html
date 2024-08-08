@@ -59,6 +59,31 @@
         <button type="button" class="btn btn-primary" @click="uploadCSV">Upload CSV</button>
         <button type="button" class="btn btn-primary">Save</button>
     </div>
+    
+    <div class="">
+        <div class="sty-input-wrapper w-100 mb-2">
+            <input type="date" class="sty-inp form-control w-50" v-model="billData.invoice_date">
+            <label class="sty-label">Invoice Date</label>
+            <!-- <span v-if="billData.invoice_date" class="error">{{ billData.invoice_date[0] }}</span> -->
+            <!-- <span v-else></span> -->
+        </div>
+
+        <div class="sty-input-wrapper w-100 mb-2">
+            <input type="number" class="sty-inp form-control w-50" v-model="billData.interest_rate" placeholder="Intereset rate in percent">
+            <label class="sty-label">Interest Rate</label>
+            <!-- <span v-if="errors.interest_rate" class="error">{{ errors.interest_rate[0] }}</span>
+            <span v-else></span> -->
+            <span>Default interest rate is 21%</span>
+        </div>
+
+        <div class="sty-input-wrapper w-100 mb-2">
+            <input type="date" class="sty-inp form-control w-50" v-model="billData.invoice_due_date">
+            <label class="sty-label">Invoice Due Date</label>
+            <!-- <span v-if="errors.invoice_due_date" class="error">{{ errors.invoice_due_date[0] }}</span>
+            <span v-else></span> -->
+        </div>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-bordered text-center table-sm">
             <thead id="table-head" class="table-dark text-center">
@@ -96,51 +121,11 @@
                             <input type="number" v-model="formData[rowIndex].interest" style="width: 60%; border: none; border-color: transparent;" placeholder="Interest" @input="updateTotal(rowIndex)">
                         </td>
                         <td>{{ calculateDueForMonth(rowIndex) }}</td>
-                        <td><input type="number" v-model="formData[rowIndex].opening" placeholder="Opening" @input="updateTotal(rowIndex)"></td>
+                        <td><input type="number" v-model="flat.opening_balance" placeholder="Opening" @input="updateTotal(rowIndex)"></td>
                         <td>{{ calculateClosing(rowIndex) }}</td>
                     </tr>
             </tbody>
         </table>
-    </div>
-
-
-
-    <!-- Add Date & Interest Modal -->
-    <div class="modal fade" id="addDateModal" tabindex="-1" aria-labelledby="addDateModalLabel" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="addDateModalLabel">Add Month</h1>
-                </div>
-                <div class="modal-body">
-                    <div class="sty-input-wrapper w-100 mb-2">
-                        <input type="date" class="sty-inp form-control w-50" v-model="billData.invoice_date">
-                        <label class="sty-label">Invoice Date</label>
-                        <!-- <span v-if="billData.invoice_date" class="error">{{ billData.invoice_date[0] }}</span> -->
-                        <!-- <span v-else></span> -->
-                    </div>
-
-                    <div class="sty-input-wrapper w-100 mb-2">
-                        <input type="number" class="sty-inp form-control w-50" v-model="billData.interest_rate" placeholder="Intereset rate in percent">
-                        <label class="sty-label">Interest Rate</label>
-                        <!-- <span v-if="errors.interest_rate" class="error">{{ errors.interest_rate[0] }}</span>
-                        <span v-else></span> -->
-                        <span>Default interest rate is 21%</span>
-                    </div>
-
-                    <div class="sty-input-wrapper w-100 mb-2">
-                        <input type="date" class="sty-inp form-control w-50" v-model="billData.invoice_due_date">
-                        <label class="sty-label">Invoice Due Date</label>
-                        <!-- <span v-if="errors.invoice_due_date" class="error">{{ errors.invoice_due_date[0] }}</span>
-                        <span v-else></span> -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-                    <button type="button" class="btn btn-primary" @click="addMonth">Save</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div id="modal" class="modal mt-5" style="z-index: 1000;">
@@ -288,11 +273,11 @@ new Vue({
             return total + interest;
         },
         calculateClosing(rowIndex) {
-            const dueForMonth = this.calculateDueForMonth(rowIndex);
-            const openingVal = this.formData[rowIndex].opening;
-            const opening = isNaN(parseFloat(openingVal)) ? 0 : parseFloat(openingVal);
-            return dueForMonth + opening;
-        },
+        const dueForMonth = this.calculateDueForMonth(rowIndex);
+        const openingVal = this.flats[rowIndex].opening_balance;
+        const opening = isNaN(parseFloat(openingVal)) ? 0 : parseFloat(openingVal);
+        return dueForMonth + opening;
+    },
         uploadCSV() {
             Swal.fire({
                 text: "Please upload the downloaded CSV format only!",

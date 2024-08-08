@@ -629,3 +629,71 @@ completeJson.related_ledgers.forEach(ledger => {
     "bank_name": "1000",
     "voucher_date": "2024-08-03"
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    "related_ledgers": [
+        {
+            "payment_option": "dr",
+            "debit_amt": "2000",
+            "ledger_name": 1,
+            "against_refrence": [
+                {
+                    "voucher_number": "RVM-JULY-001",
+                    "voucher_date": "2024-09-05",
+                    "pending_amt": 900,
+                    "final_amt": 1000,
+                    "allocated_amt": "200"
+                }
+            ],
+            "cost_center": []
+        },
+        {
+            "payment_option": "cr",
+            "credit_amt": "3000",
+            "ledger_name": 13,
+            "against_refrence": [],
+            "cost_center": []
+        },
+        {
+            "payment_option": "dr",
+            "debit_amt": "1000",
+            "ledger_name": 1,
+            "against_refrence": [
+                {
+                    "voucher_number": "RVM-JULY-001",
+                    "voucher_date": "2024-09-05",
+                    "pending_amt": 700,
+                    "final_amt": 1000,
+                    "allocated_amt": 200
+                }
+            ],
+            "cost_center": []
+        }
+    ],
+    "voucher_name": "receipt_voucher",
+    "voucher_type": 9,
+    "voucher_number": "RVM-JULY-002",
+    "booking_date": "2024-08-30",
+    "prefix": "RVM-JULY-",
+    "suffix": "002",
+    "debit_total": 3000,
+    "credit_total": 3000,
+    "amount_in_words": "three thousand",
+    "voucher_date": "2024-08-30",
+    "narration": "55",
+    "cheque_number": "55",
+    "cheque_date": "2024-08-15",
+    "bank_name": "55"
+}

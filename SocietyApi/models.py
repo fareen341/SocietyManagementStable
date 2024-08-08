@@ -480,6 +480,11 @@ nature = [
     ('Variable', 'Variable')
 ]
 
+balance_type = [
+    ('Dr', 'Dr'),
+    ('Cr', 'Dr')
+]
+
 class Ledger(models.Model):
     ledger_name = models.CharField(max_length=200)
     nature = models.CharField(max_length=200, choices=nature)
@@ -505,7 +510,7 @@ class Ledger(models.Model):
     bank_name = models.CharField(max_length=200, null=True, blank=True)
     branch_name = models.CharField(max_length=200, null=True, blank=True)
     opening_balance = models.IntegerField(default=0)
-    dr_cr = models.CharField(max_length=200)
+    dr_cr = models.CharField(max_length=200, choices=balance_type)
     allow_against_refrence = models.CharField(max_length=200, choices=against_refrence, default='NO')
 
     def __str__(self):
@@ -615,3 +620,17 @@ class SocietyMaintainanceBill(models.Model):
     invoice_date = models.DateField()
     interest_rate = models.IntegerField(default=21)
     invoice_due_date = models.DateField()
+
+
+# class MaintainanceLedgerEntry(models.Model):
+#     invoice = models.ForeignKey(SocietyMaintainanceBill, related_name='maintainance_bill', on_delete=models.CASCADE)
+#     wing_flat_unique = models.ForeignKey(WingFlatUnique, on_delete=models.CASCADE)
+#     member_name = models.CharField(max_length=100)
+#     unit_area = models.CharField(max_length=100)
+#     fixed_charges = models.JSONField()
+#     variable_charges = models.JSONField()
+#     total = models.FloatField()
+#     interest = models.FloatField()
+#     due_for_month = models.FloatField()
+#     opening_balance = models.FloatField()
+#     closing_balance = models.FloatField()

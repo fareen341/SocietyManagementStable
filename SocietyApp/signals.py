@@ -2,6 +2,7 @@ from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.apps import apps
 from .models import Childs, CostCenter
+from SocietyApi.models import Ledger
 
 
 
@@ -13,6 +14,8 @@ constant_groups = [
     'Direct Income', 'Indirect Income', 'Sales', 'Direct Expenses', 'Indirect Expenses',
     'Purchases'
 ]
+
+constant_member_group = "Receivable from Members"
 
 @receiver(post_migrate)
 def create_initial_objects(sender, **kwargs):
@@ -30,7 +33,7 @@ def create_initial_objects(sender, **kwargs):
         # CHILDS OF ASSETS
         Childs.objects.create(name='Fixed Assets', parent=assets)
         Childs.objects.create(name='Investment', parent=assets)
-        Childs.objects.create(name='Cash and Bank Balances', parent=assets)
+        cash = Childs.objects.create(name='Cash and Bank Balances', parent=assets)
         Childs.objects.create(name='Loans and Advances', parent=assets)
         current_assets = Childs.objects.create(name='Current Assest', parent=assets)
         Childs.objects.create(name='Profit and Loss Account', parent=assets)
@@ -56,29 +59,22 @@ def create_initial_objects(sender, **kwargs):
         Childs.objects.create(name='Purchases', parent=expenses)
 
         # Sub-Childs of Current Assets
-        Childs.objects.create(name="Sundry Debtor", parent=current_assets)
+        sundry_debtor = Childs.objects.create(name="Sundry Debtor", parent=current_assets)
+        Childs.objects.create(name=constant_member_group, parent=sundry_debtor)
 
         # Sub-Childs of Current Liability
         Childs.objects.create(name="Sundry Creditor", parent=current_liablity)
 
-        # CHILDS OF LIABILITIES
-        # Childs.objects.create(name='Capital', parent=liabilities)
-        # Childs.objects.create(name='Reserve', parent=liabilities)
-        # Childs.objects.create(name='Loan', parent=liabilities)
-        # Childs.objects.create(name='Current Liabilities', parent=liabilities)
-        # Childs.objects.create(name='Misc Liabilities', parent=liabilities)
+        # Opening balance group
+        opening_balance = Childs.objects.create(name='Opening Balance')
 
-
-        # CHILDS OF ASSETS WHICH NEEDS TO BE SHOW IN (BALANCE SHEET)
-        # Childs.objects.create(name='Cash And Bank Balances', parent=assets)
-        # Childs.objects.create(name='Loans And Advances', parent=assets)
-        # Childs.objects.create(name='Profit And Loss Account', parent=assets)
-
-
-
-        print('SIGNALS NOT GETTING CALLED, WHEN CALLED VERIFY BEWLO DATA IS GETTING CREATED OR NOT!')
+        if not Ledger.objects.exists():
+            Ledger.objects.create(ledger_name="Opening Balance", group_name=opening_balance, nature='Fixed', dr_cr='Dr')
+            Ledger.objects.create(ledger_name="Cash", group_name=cash, nature='Fixed', dr_cr='Dr')
+            Ledger.objects.create(ledger_name="Excess of Income over Expenses", group_name=expenses, nature='Fixed', dr_cr='Dr')
+            Ledger.objects.create(ledger_name="Excess of Expenses over Income", group_name=income, nature='Fixed', dr_cr='Dr')
+            
         print("Initial objects of childs models created successfully")
-
 
     # COST CENTER OBJECTS
     if not CostCenter.objects.exists():

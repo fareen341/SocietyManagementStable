@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} <title>Society Management | Member-Master-Creation</title> {% endblock title %}
+
+{% block body %}
+
+<div class="container mt-4">
+    <div class="table-responsive">
+        <table id="maintenance_report" class="display table table-sm table-bordered w-100">
+        <thead class="w-100">
+            <tr>
+            <th>Action</th>
+            <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+            <td class="w-25">
+                <div class="d-flex" style="justify-content: space-evenly;">
+                <i class="fas fa-eye"></i>
+                <i class="fas fa-edit"></i>
+                </div>
+            </td>
+            <td>23-06-2024</td>
+            </tr>
+            <tr>
+            <td class="w-25">
+                <div class="d-flex" style="justify-content: space-evenly;">
+                <i class="fas fa-eye"></i>
+                <i class="fas fa-edit"></i>
+                </div>
+            </td>
+            <td>23-06-2024</td>
+            </tr>
+            <tr>
+            <td class="w-25">
+                <div class="d-flex" style="justify-content: space-evenly;">
+                <i class="fas fa-eye"></i>
+                <i class="fas fa-edit"></i>
+                </div>
+            </td>
+            <td>23-06-2024</td>
+            </tr>
+            <tr>
+            <td class="w-25">
+                <div class="d-flex" style="justify-content: space-evenly;">
+                <i class="fas fa-eye"></i>
+                <i class="fas fa-edit"></i>
+                </div>
+            </td>
+            <td>23-06-2024</td>
+            </tr>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    
+$(document).ready(function() {
+
+var table = $('#maintenance_report').DataTable({
+     "dom": '<"dt-buttons"Br><"clear">ftipl',
+     buttons: [
+         {
+             extend: 'colvis',
+             text: 'More Column',
+             postfixButtons: [
+                 'colvisRestore'
+             ]
+         },
+         {
+             extend: 'searchBuilder',
+             text: 'Filter'
+         },
+         {
+             extend: 'print',
+             exportOptions: {
+                 // columns: ':visible',
+                 columns: ':visible:not(.exclude-print)', // Exclude columns with the class 'exclude-print'
+                 modifier: { search: 'applied', order: 'applied' },
+             }
+         },
+         {
+             extend: 'print',
+             text: 'Print All',
+             exportOptions: {
+                 columns: '*:not(.exclude-print)' // Exclude columns with the class 'exclude-print'
+                 // modifier: { search: 'applied', order: 'applied' },/
+             }
+         },
+     ],
+     order: [],
+     "stripeClasses": [],
+    //  columnDefs: [
+    //      { "visible": true, "targets":  },
+    //      { "visible": false, "targets": '_all' },
+    //  ],
+     fixedColumns: {
+         left: 2
+     },
+     // "paging": true,
+     // 'pageLength': '5',
+     pagingType: "simple",
+     paginate: {
+         previous: "<",
+         next: ">"
+     },
+     scrollCollapse: false,
+     scrollX: true
+ });
+// Set the DataTable info text to be centered
+$('#maintenance_report_info').css({
+    'text-align': 'center',
+    'position': 'relative',
+    'left': '40%',
+    'padding-top': '20px',
+    // 'margin-right': 'auto',
+    'display': 'block'
+});
+// Adjust the info text position when the table is redrawn
+table.on('draw.dt', function () {
+    $('#maintenance_report_info').css({
+        'text-align': 'center',
+        'margin-left': 'auto',
+        'margin-right': 'auto'
+    });
+});
+});
+
+</script>
+
+{% endblock body %}

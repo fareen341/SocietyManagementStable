@@ -138,8 +138,7 @@ urlpatterns = [
     path('api/balance_sheet', views.calling_balance_sheet, name='balance_sheet_api'),
     path('society_accounts', views.society_accounts, name='society_accounts'),
     path('api/get_society_bill_data/', views.get_society_bill_data, name='get_society_bill_data'),
-
-
+    path('society_accounts_table/', views.society_accounts_table, name='society_accounts_table'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

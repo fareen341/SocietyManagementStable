@@ -784,6 +784,7 @@
                                 </div>
 
                                 <input class="sty-inp form-control" type="text" v-model="formData2.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.counter" hidden>
                                 <input class="sty-inp form-control" type="text" v-model="formData2.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
@@ -1026,6 +1027,7 @@
                                 </div>
 
                                 <input class="sty-inp form-control" type="text" v-model="formData2.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.counter" hidden>
                                 <input class="sty-inp form-control" type="text" v-model="formData2.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
@@ -1217,6 +1219,7 @@
                                 </div>
 
                                 <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.counter" hidden>
                                 <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
@@ -1392,6 +1395,7 @@
                                 </div>
 
                                 <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.counter" hidden>
                                 <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
@@ -1568,6 +1572,7 @@
                                 </div>
 
                                 <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.counter" hidden>
                                 <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
@@ -1745,9 +1750,9 @@
                                     </div>
                                 </div>
 
-                                <input class="sty-inp form-control" type="text" v-model="formData.suffix">
-                                <input class="sty-inp form-control" type="text" v-model="formData.counter">
-                                <input class="sty-inp form-control" type="text" v-model="formData.prefix">
+                                <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.counter" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
                                     <div class="sty-input-wrapper w-100">
@@ -1924,6 +1929,7 @@
                                 </div>
 
                                 <input class="sty-inp form-control" type="text" v-model="formData.suffix" hidden>
+                                <input class="sty-inp form-control" type="text" v-model="formData.counter" hidden>
                                 <input class="sty-inp form-control" type="text" v-model="formData.prefix" hidden>
 
                                 <div class="col-lg-4 mb-3">
@@ -2810,9 +2816,9 @@ new Vue({
                             timeOut: 5000
                         };
                     toastr.success("Voucher Added Successfully!");
-                    // setTimeout(function() {
-                    //     location.reload();
-                    // }, 600);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 600);
                 })
                 .catch(error => {
                     console.log("Error", error.response.data);

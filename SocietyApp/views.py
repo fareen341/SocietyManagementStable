@@ -403,7 +403,7 @@ def balance_sheet_groups(parent, filter_zero, from_date, to_date, previous_from_
 
             current_query = GeneralLedger.objects.filter(
                 from_ledger__group_name=node.name,
-                date__range=(current_start_date, current_end_date)
+                # date__range=(current_start_date, current_end_date)
             )
 
             previous_query = GeneralLedger.objects.filter(
@@ -884,6 +884,7 @@ def dashboard_member(request):
     datatable_columns = [0, 1]
     return render(request, 'member_dashboard.html', {'datatable_columns': datatable_columns})
 
+
 def visiting_cards(request):
     datatable_columns = [1]
     return render(request, 'visiting_cards.html', {'datatable_columns': datatable_columns})
@@ -892,6 +893,11 @@ def visiting_cards(request):
 def society_accounts(request):
     datatable_columns = [1]
     return render(request, 'society_accounts.html', {'datatable_columns': datatable_columns})
+
+
+def society_accounts_table(request):
+    datatable_columns = [1]
+    return render(request, 'society_accounts_table.html', {'datatable_columns': datatable_columns})
 
 
 def get_society_bill_data(request):
@@ -903,6 +909,8 @@ def get_society_bill_data(request):
         member_is_primary=True,
         date_of_cessation__isnull=True
     ).select_related('wingflatunique', 'flats').values('wing_flat__wing_flat_unique', 'member_name', 'wing_flat__flats__unit_area').order_by('wing_flat__wing_flat_unique')
+
+    print("members =================>", bill_details.values('member_name'))
 
     # There is no possibility that the general ledger object does not found, so use below code when member name ledger got created
     # for detail in bill_details:
@@ -918,17 +926,17 @@ def get_society_bill_data(request):
     #     except GeneralLedger.DoesNotExist:
     #         pass
 
+    new_gl_obj = 0
     for detail in bill_details:
-        try:
-            gl_obj = GeneralLedger.objects.get(from_ledger__ledger_name=detail['member_name']).balance
-        except GeneralLedger.DoesNotExist:
-            gl_obj = 0
-
+        gl_obj = GeneralLedger.objects.filter(from_ledger__ledger_name=detail['member_name']).order_by('id').last()
+        if gl_obj:
+            new_gl_obj = gl_obj.balance
+        print("gl objects -----------", new_gl_obj)
         final_dict = {
             'wing_flat_unique': detail['wing_flat__wing_flat_unique'],
             'member_name': detail['member_name'],
             'unit_area': detail['wing_flat__flats__unit_area'],
-            'opening_balance': gl_obj,
+            'opening_balance': new_gl_obj,
         }
         complete_bill_details.append(final_dict)
 

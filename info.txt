@@ -2358,3 +2358,26 @@ amt 700 is getting saved both? it should save related ledger which has pending a
 4. where to give its DATATABLE?
 5. why we need unit ares, it helps in any calculation?
 6. do we need to add table and form in same page like we did in other old pages?
+
+7. What is cr and dr in ledger creation?
+
+
+
+
+----------------------------------------PENDING--------------------------------------------------------
+1. group validation.
+2. remove assets, liability etc main groups from group name of ledger creation form.
+
+
+
+
+
+
+
+
+
+
+---------------------------------------- TODAY --------------------------------------------
+1. create static ledgers.
+2. new bill creation.
+3. test with balance sheet if possiblae. 
